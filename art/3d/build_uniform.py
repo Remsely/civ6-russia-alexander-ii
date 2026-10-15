@@ -58,6 +58,7 @@ TEX_OUT = os.path.join(HERE, 'textures', 'uniform_albedo.png')
 CLOTH_RGB = (0.010, 0.011, 0.016)
 PIPING_RGB = (0.50, 0.012, 0.010)
 PIPING_W, STRIPE_W, CUFF_T = 0.007, 0.012, 0.30
+WOOL_REPEATS, WOOL_CONTRAST = 10, 0.45  # textures/gen/wool.png over the UVs (~15 cm a tile), its weave's strength
 PLEAT_ANGLE = 90                  # degrees from the front centre to the piped pleats of the skirt (at the sides)
 
 sc = bpy.data.scenes['Human']
@@ -710,6 +711,19 @@ def uniform_colour(pos, part):
     return col
 
 
+def wool_detail():
+    """The weave of the generated broadcloth (textures/gen/wool.png, seamless) as a brightness factor round 1, tiled
+    WOOL_REPEATS times over the uniform's UVs (smart UV keeps the texel density even)."""
+    img = bpy.data.images.load(os.path.join(HERE, 'textures', 'gen', 'wool.png'), check_existing=False)
+    w, hh = img.size
+    a = np.array(img.pixels[:], np.float32).reshape(hh, w, 4)[..., :3] @ np.array([0.2126, 0.7152, 0.0722], np.float32)
+    bpy.data.images.remove(img)
+    a /= a.mean()
+    ys = (np.arange(TEX) * WOOL_REPEATS * hh // TEX) % hh
+    xs = (np.arange(TEX) * WOOL_REPEATS * w // TEX) % w
+    return (1 + (a[np.ix_(ys, xs)] - 1) * WOOL_CONTRAST).astype(np.float32)
+
+
 def paint_uniform(ob, mat):
     """Smart-UV the uniform and rasterise uniform_colour() into its albedo (supersampled, island edges dilated)."""
     for o in sc.objects:
@@ -751,6 +765,7 @@ def paint_uniform(ob, mat):
             acc[fill] = np.roll(np.roll(acc, dy, 0), dx, 1)[fill]; cov |= fill
     acc[~cov] = CLOTH_RGB
     img_px = acc.reshape(TEX, 2, TEX, 2, 3).mean((1, 3))
+    img_px *= wool_detail()[..., None]
     img_px = np.where(img_px <= 0.0031308, img_px * 12.92, 1.055 * np.power(img_px, 1 / 2.4) - 0.055)  # to sRGB
     img = bpy.data.images.get('Uniform_Albedo') or bpy.data.images.new('Uniform_Albedo', TEX, TEX)
     img.scale(TEX, TEX)

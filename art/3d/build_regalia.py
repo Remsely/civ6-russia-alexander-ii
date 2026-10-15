@@ -32,7 +32,7 @@ FRINGE_N, FRINGE_ARC = 28, 240.0  # strands over this arc of the rim, centred on
 FRINGE_LEN, FRINGE_R, FRINGE_OUT = 0.11, 0.0105, 0.028
 # Sash: a band 'SASH_W' wide round the torso in the plane through the top of the right shoulder and the left hip.
 SASH_SHOULDER = Vector((-0.175, 0.0, 1.76))
-SASH_HIP = Vector((0.17, 0.0, 1.29))   # the lower edge on the belt's top at the side
+SASH_HIP = Vector((0.17, 0.0, 1.31))   # the lower edge on the belt's top at the side
 SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.085, 0.005, 0.002, 160
 # Aiguillettes: cords from under the right epaulette's front to the closure, hanging in loops; two loose cords with
 # gold tips ('pencils') hang from the closure end over the sash.
@@ -46,11 +46,15 @@ CORD_UV_LEN = 0.6                # metres of cord over the width of its atlas re
 
 ATLAS = {
     'sash': (0.0, 0.0, 1.0, 0.125),
-    'cord': (0.0, 0.125, 0.5, 0.1875),
-    'bullion': (0.5, 0.125, 1.0, 0.1875),
-    'pole': (0.0, 0.25, 0.25, 0.5),
-    'gold': (0.25, 0.25, 0.3125, 0.3125),
+    'cord': (0.0, 0.125, 1.0, 0.1875),
+    'bullion': (0.0, 0.1875, 1.0, 0.25),
+    'pole': (0.0, 0.25, 0.5, 0.75),
+    'gold': (0.5, 0.25, 0.5625, 0.3125),
 }
+# The generated material pictures (textures/gen, see art/prompts.md) and how often they repeat in their regions.
+SASH_CONTRAST = 2.5               # the damask's light and dark, stronger than generated (it is faint on the model)
+SASH_REPEATS = 12                # mirrored, even: the band's ends meet on the same column
+CORD_REPEATS, BULLION_REPEATS = 8, 1  # the cord picture is seamless along its length (8 plies)
 
 sc = bpy.context.scene
 P = sc['uniform'].to_dict()
@@ -122,40 +126,49 @@ def srgb(c):
     return np.array(c, np.float32) / 255
 
 
+def gen_picture(name):
+    """textures/gen/<name>.png as an sRGB float array, row 0 = bottom (Blender's order)."""
+    img = bpy.data.images.load(os.path.join(TEXDIR, 'gen', name + '.png'), check_existing=False)
+    w, hh = img.size
+    a = np.array(img.pixels[:], np.float32).reshape(hh, w, 4)[..., :3]
+    bpy.data.images.remove(img)
+    return a
+
+
+def sample(img, u, v):
+    """Bilinear lookup at normalised coordinates (arrays), v = 0 bottom."""
+    hh, w = img.shape[:2]
+    x = np.clip(u * (w - 1), 0, w - 1.001); y = np.clip(v * (hh - 1), 0, hh - 1.001)
+    x0, y0 = np.floor(x).astype(int), np.floor(y).astype(int)
+    fx, fy = (x - x0)[..., None], (y - y0)[..., None]
+    return ((img[y0, x0] * (1 - fx) + img[y0, x0 + 1] * fx) * (1 - fy)
+            + (img[y0 + 1, x0] * (1 - fx) + img[y0 + 1, x0 + 1] * fx) * fy)
+
+
+def grid(w, hh):
+    return np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
+
+
 def sash_tex(w, hh):
-    """Watered silk: light blue with a moire of wavy bands along the length, faint damask scrolls, darker selvages."""
-    u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
-    L = u * 22.0                                  # ~2.2 m round the body: one unit per 10 cm
-    wave = np.sin(2 * math.pi * (v * 7 + 0.35 * np.sin(2 * math.pi * L * 0.9) + 0.15 * np.sin(2 * math.pi * L * 2.3)))
-    moire = 0.95 + 0.05 * wave
-    scroll = 0.97 + 0.04 * np.sin(2 * math.pi * (L * 2 + 0.3 * np.cos(2 * math.pi * v * 2))) * np.sin(2 * math.pi * v * 2)
-    edge = np.minimum(v, 1 - v)
-    selv = np.where(edge < 0.04, 0.82, 1.0) * np.where((edge > 0.055) & (edge < 0.07), 1.08, 1.0)
-    return np.clip(srgb(SASH_SRGB) * (moire * scroll * selv)[..., None], 0, 1)
+    """The generated damask moire, its height across the band, mirrored repeats along it; toned to the portrait's
+    blue."""
+    pic = gen_picture('sash_damask')
+    u, v = grid(w, hh)
+    t = (u * SASH_REPEATS) % 2.0
+    rgb = sample(pic, np.where(t > 1, 2 - t, t), v)
+    med = np.median(pic.reshape(-1, 3), 0)
+    return np.clip(srgb(SASH_SRGB) * (1 + (rgb / med - 1) * SASH_CONTRAST), 0, 1)  # the damask shows a little more
 
 
-def twist_tex(w, hh, turns, plies, groove):
-    """Twisted gold: plies spiralling round the cord (u along it, v round it), dark grooves between them."""
-    u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
-    ph = (u * turns + v) * plies
-    t = ph - np.floor(ph)
-    ridge = np.sin(t * math.pi) ** 0.6
-    shade = groove + (1 - groove) * ridge
-    rgb = srgb(GOLD_SRGB) * shade[..., None]
-    return rgb, ridge
+def cord_tex(w, hh, repeats):
+    """The generated twisted cord, its length along u (seamless repeats), its width round the tube."""
+    u, v = grid(w, hh)
+    return sample(gen_picture('gold_cord'), (u * repeats) % 1.0, v)
 
 
 def pole_tex(w, hh):
-    """The epaulette's field seen from above: brushed gold, a ring of beads, a raised centre with a sun of rays."""
-    x, y = np.meshgrid(np.linspace(-1, 1, w), np.linspace(-1, 1, hh))
-    r = np.hypot(x, y); a = np.arctan2(y, x)
-    shade = 0.85 + 0.1 * np.cos(a * 2) * r
-    beads = (np.abs(r - 0.72) < 0.07) * (0.5 + 0.5 * np.cos(a * 36) ** 8)
-    shade = shade * (1 - 0.35 * (np.abs(r - 0.72) < 0.085)) + 0.45 * beads
-    rays = (r < 0.45) * (0.8 + 0.3 * np.abs(np.cos(a * 8)) ** 6 * (1 - r / 0.45))
-    shade = np.where(r < 0.45, rays, shade)
-    shade = np.where(np.abs(r - 0.47) < 0.025, 0.55, shade)
-    return np.clip(srgb(GOLD_SRGB) * shade[..., None], 0, 1)
+    """The epaulette's field from above: the generated round plate (rope rim, beads, eagle)."""
+    return sample(gen_picture('epaulette_field'), *grid(w, hh))
 
 
 def build_atlas():
@@ -168,12 +181,19 @@ def build_atlas():
 
     x0, y0, x1, y1 = px('sash')
     rgb[y0:y1, x0:x1] = sash_tex(x1 - x0, y1 - y0); rough[y0:y1, x0:x1] = 0.6
-    for name, turns, plies, groove in (('cord', 48, 3, 0.35), ('bullion', 140, 1, 0.45)):
+
+    def gold(region, c):  # the pictures carry their own shading: bright thread shines, the gaps between are dull
+        x0, y0, x1, y1 = px(region)
+        lum = c @ np.array([0.2126, 0.7152, 0.0722], np.float32)
+        rgb[y0:y1, x0:x1] = c
+        metal[y0:y1, x0:x1] = np.clip(lum * 2.5, 0.3, 1.0)
+        rough[y0:y1, x0:x1] = np.clip(0.6 - lum * 0.5, 0.25, 0.6)
+
+    for name, n in (('cord', CORD_REPEATS), ('bullion', BULLION_REPEATS)):
         x0, y0, x1, y1 = px(name)
-        c, ridge = twist_tex(x1 - x0, y1 - y0, turns, plies, groove)
-        rgb[y0:y1, x0:x1] = c; metal[y0:y1, x0:x1] = 0.6 + 0.4 * ridge; rough[y0:y1, x0:x1] = 0.55 - 0.25 * ridge
+        gold(name, cord_tex(x1 - x0, y1 - y0, n))
     x0, y0, x1, y1 = px('pole')
-    rgb[y0:y1, x0:x1] = pole_tex(x1 - x0, y1 - y0); metal[y0:y1, x0:x1] = 1.0; rough[y0:y1, x0:x1] = 0.35
+    gold('pole', pole_tex(x1 - x0, y1 - y0))
     x0, y0, x1, y1 = px('gold')
     rgb[y0:y1, x0:x1] = srgb(GOLD_SRGB); metal[y0:y1, x0:x1] = 1.0; rough[y0:y1, x0:x1] = 0.3
     imgs = []

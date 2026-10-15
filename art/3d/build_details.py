@@ -33,7 +33,8 @@ CLOTH = (0.010, 0.011, 0.016)     # the tunic's wool (build_uniform.CLOTH_RGB)
 COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.05
 COLLAR_FLARE = 0.003              # the band widens downwards by at most this
 COLLAR_MIN_H = 0.045             # ... but at the front at least this tall (the chest turns out right under it)
-COLLAR_FRONT_GAP = 0.017          # half-width of the opening at the front
+COLLAR_FRONT_GAP = 0.017
+COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)          # half-width of the opening at the front
 COLLAR_THICK = 0.004
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
 BUTTON_R, BUTTON_H = 0.0085, 0.0055
@@ -180,9 +181,9 @@ def to_srgb(c):
     return np.where(c <= 0.0031308, c * 12.92, 1.055 * np.power(c, 1 / 2.4) - 0.055)
 
 
-def load_ref(name):
-    """textures/ref_<name>.png as an sRGB float array, row 0 = bottom (Blender's order)."""
-    img = bpy.data.images.load(os.path.join(TEXDIR, 'ref_%s.png' % name), check_existing=False)
+def load_ref(name, path=None):
+    """textures/ref_<name>.png (or path) as an sRGB float array, row 0 = bottom (Blender's order)."""
+    img = bpy.data.images.load(path or os.path.join(TEXDIR, 'ref_%s.png' % name), check_existing=False)
     w, hh = img.size
     a = np.array(img.pixels[:], np.float32).reshape(hh, w, 4)[..., :3]
     bpy.data.images.remove(img)
@@ -205,60 +206,49 @@ def gold_mask(rgb):
     return np.clip((g - 0.28) / 0.15, 0, 1) * np.clip((g - b - 0.08) / 0.1, 0, 1)
 
 
+def load_gen(name):
+    """textures/gen/<name>.png: the material pictures generated after the portrait (flat light, see art/prompts.md)."""
+    return load_ref(None, os.path.join(TEXDIR, 'gen', name + '.png'))
+
+
+def mirrored(u, n):
+    """u in 0..1 over n mirrored repeats: 0..1..0..1 - seamless wherever the picture's ends meet."""
+    t = (u * n) % 2.0
+    return np.where(t > 1, 2 - t, t)
+
+
 def collar_tex(w, hh):
-    """One half of the collar, front edge at u = 0, back centre at u = 1: the unwarped picture runs from the front to
-    the side; the back repeats its rear part mirrored, so both halves meet seamlessly at the back."""
-    ref = load_ref('collar')
+    """One half of the collar, front edge at u = 0, back centre at u = 1: the generated oak-leaf band, mirrored repeats
+    (the halves meet at the back on the same column); its gold edges at the collar's top and bottom."""
+    ref = load_gen('collar_oak')
     u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
-    su = np.where(u < 0.6, u / 0.6 * 0.92, 0.92 - (u - 0.6) / 0.4 * 0.44)
-    rgb = sample(ref, su, 0.07 + v * 0.93)  # the bottom piping is below the picked edge: drawn
-    rgb[v < 0.07] = to_srgb(RED) * (0.75 + 0.25 * np.sin(v[v < 0.07] / 0.07 * math.pi))[:, None]
-    return rgb
+    return sample(ref, mirrored(u, COLLAR_REPEATS), v)
 
 
 def cuff_tex(w, hh):
-    """Red cuff with beaded red piping at both edges and the collar's gold oak embroidery between, tiled around."""
-    ref = load_ref('collar')
+    """Round the cuff: red piping at both edges, the generated oak-leaf panel between, mirrored repeats."""
+    ref = load_gen('cuff_oak')
     u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
-    tiles = 3
-    t = (u * tiles) % 2.0
-    t = np.where(t > 1, 2 - t, t)  # mirrored tiles
-    rgb = sample(ref, 0.12 + t * 0.75, 0.15 + (v - 0.12) / 0.76 * 0.7)
+    rgb = sample(ref, mirrored(u, CUFF_REPEATS), (v - 0.12) / 0.76)
     edge = (v < 0.12) | (v > 0.88)
     shade = 0.7 + 0.3 * np.sin(np.where(v < 0.5, v, 1 - v)[edge] / 0.12 * math.pi)
     rgb[edge] = to_srgb(RED) * shade[:, None]
     return rgb
 
 
-# Belt stripes from the top edge down (fraction of the height) and their sRGB colours, measured on the belt in
-# alexander_ii_full.png (median of each row of textures/ref_belt.png).
-BELT_STRIPES = [(0.10, 'red'), (0.20, 'cream'), (0.46, 'gold'), (0.58, 'cream'), (0.84, 'gold'), (0.92, 'cream'),
-                (1.0, 'red')]
-BELT_SRGB = {'red': (190, 40, 22), 'cream': (225, 185, 105), 'gold': (196, 140, 40)}  # the gold a little yellower
-
-
 def belt_tex(w, hh):
-    """Galloon: red edges, two woven gold bands between pale stripes."""
-    u, v = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(hh, dtype=np.float32))
-    f = 1 - v / (hh - 1)  # 0 at the top edge
-    rgb = np.zeros((hh, w, 3), np.float32)
-    lo = 0.0
-    for hi, kind in BELT_STRIPES:
-        m = (f >= lo) & (f <= hi)
-        col = np.array(BELT_SRGB[kind], np.float32) / 255
-        if kind == 'gold':  # twill: diagonal ridges of metal thread
-            rng = np.random.default_rng(3)
-            shade = (0.75 + 0.3 * np.abs(np.sin((u + v) * 0.9)) * (0.8 + 0.2 * np.sin(v * 2.6))
-                     + 0.15 * rng.random((hh, w)))  # glints of the metal thread
-        elif kind == 'cream':
-            t = (f - lo) / (hi - lo)
-            shade = 0.9 + 0.15 * np.sin(t * math.pi) - 0.12 * (np.abs(t - 0.5) < 0.08)  # a fine line down the middle
-        else:
-            t = (f - lo) / (hi - lo)
-            shade = 0.8 + 0.25 * np.sin(np.clip(t, 0, 1) * math.pi)  # rounded edge
-        rgb[m] = col * shade[m][:, None] if np.ndim(shade) else col * shade
-        lo = hi
-    return rgb
+    """The generated galloon (red edges, woven gold), mirrored repeats round the waist."""
+    ref = load_gen('belt_galloon')
+    u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
+    return sample(ref, mirrored(u, BELT_REPEATS), v)
+
+
+def buckle_tex(w, hh):
+    """The generated buckle plate; its grey background in the cut corners becomes the plate's gold edge."""
+    c = sample(load_gen('buckle'), *np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh)))
+    grey = (c.max(2) - c.min(2) < 0.06) & (c.max(2) > 0.6)
+    c[grey] = np.array([0.72, 0.55, 0.25], np.float32)
+    return c
 
 
 VIVID_SAT, VIVID_GAMMA, VIVID_GAIN = 1.3, 0.85, 1.08  # the pictures carry the painting's light: rendered under ours
@@ -282,9 +272,10 @@ def build_atlas():
         u0, v0, u1, v1 = ATLAS[region]
         return int(u0 * TEX), int(v0 * TEX), int(u1 * TEX), int(v1 * TEX)
 
-    def put(region, fn):
+    def put(region, fn, raw=False):
         x0, y0, x1, y1 = px(region)
-        c = vivid(fn(x1 - x0, y1 - y0))
+        c = fn(x1 - x0, y1 - y0)
+        c = c if raw else vivid(c)
         g = gold_mask(c)
         rgb[y0:y1, x0:x1] = c
         metal[y0:y1, x0:x1] = 0.5 * g  # the pictures already carry the shading of the gold: some shine on top
@@ -300,18 +291,10 @@ def build_atlas():
             return sample(load_ref(name), u, v)
         return fn
 
-    put('collar', collar_tex)
-    put('cuff', cuff_tex)
-    put('belt', belt_tex)
-    def buckle(w, hh):  # the picture's background in the plate's corners becomes the red border
-        c = picture('buckle')(w, hh)
-        c[:, w - w // 2:] = c[:, :w // 2][:, ::-1]  # the plate is seen turned: its square-on left half, mirrored
-        u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
-        dark = (c.max(2) < 0.3) & ((np.minimum(u, 1 - u) < 0.2) | (np.minimum(v, 1 - v) < 0.2))
-        c[dark] = np.array(BELT_SRGB['red'], np.float32) / 255
-        return c
-
-    put('buckle', buckle)
+    put('collar', collar_tex, raw=True)
+    put('cuff', cuff_tex, raw=True)
+    put('belt', belt_tex, raw=True)
+    put('buckle', buckle_tex, raw=True)
     put('flap', picture('cuff_flap'))
     flat('gold', GOLD, 1.0, 0.3)
     flat('leather', LEATHER, 0.0, 0.16)
