@@ -1,12 +1,13 @@
-"""The whole 3D leader from art/3d/alexander_assembly.blend: build_uniform.py, build_details.py, build_head.py in
+"""The whole 3D leader from art/3d/alexander_assembly.blend: build_uniform.py, build_details.py, build_regalia.py, build_head.py in
 background Blender (env BLENDER or the default 4.5 install), each one's last lines printed; stops on the first error.
-    python art/3d/build_all.py [--from uniform|details|head]
+    python art/3d/build_all.py [--from uniform|details|regalia|head]
 """
 import os, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BLENDER = os.environ.get('BLENDER', r'C:\Program Files\Blender Foundation\Blender 4.5\blender.exe')
-STEPS = [('uniform', 'alexander_assembly.blend'), ('details', 'alexander_leader.blend'), ('head', 'alexander_leader.blend')]
+STEPS = [('uniform', 'alexander_assembly.blend'), ('details', 'alexander_leader.blend'), ('regalia', 'alexander_leader.blend'),
+         ('head', 'alexander_leader.blend')]
 start = sys.argv[sys.argv.index('--from') + 1] if '--from' in sys.argv else 'uniform'
 for name, blend in STEPS[[s for s, _ in STEPS].index(start):]:
     p = subprocess.run([BLENDER, '-b', os.path.join(HERE, blend), '--python-exit-code', '1', '--python',
