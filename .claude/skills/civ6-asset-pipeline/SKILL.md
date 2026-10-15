@@ -31,10 +31,17 @@ Asset Editor хрупкий (падает на импорте FBX-анимаци
 .venv\Scripts\python.exe tools\blend.py audit art\3d\alexander_leader.blend --scene Human [--json out.json] [--full]
 .venv\Scripts\python.exe tools\blend.py audit --fbx art\3d\test\LEAD_REMSELY_TEST.fbx
 .venv\Scripts\python.exe tools\blend.py render art\3d\alexander_leader.blend --scene Human [--frame N] [--out art\build\x.png]
+.venv\Scripts\python.exe tools\blend.py render art\3d\alexander_leader.blend --scene Human --out art\build\v\s.png --views full0,full45,full90,full180,head0,head45,head90,head180
 ```
+Модель смотреть **со всех сторон**, не только с камеры игры: `--views` — ракурсы вокруг модели (`full`/`bust`/`head` + угол: 0 спереди, 90 его левый бок, 180 сзади; `@град` — подъём камеры, например `head0@-20` — снизу на подбородок), плюс общий лист `<out>_sheet.png`.
 - `audit` (`tools/blender/audit.py`) — по каждой сетке треугольники, материалы, UV, кости, гистограмма влияний; ошибки: сетка или грани без материала, вершины с >8 костями, вершины без веса, пропавшие текстуры. Код выхода 1 при ошибках. Прогонять и по экспортированному FBX (`--fbx`): это то, что видит импортёр.
 - `render` (`tools/blender/render_leader.py`) — кадр с камеры Петра, модель поставлена как при экспорте (поворот +90° по Z, рост `--target-cm`, по умолчанию 150). Пишет, где в кадре макушка и ноги (0 — низ, 1 — верх). Объектив в `.fgx` камеры не хранится: вертикальный угол 19.2° оценён по скриншотам Петра; свет нейтральный, не игровой. Сравнивать кадр с референсом (`art/source/`) и только потом показывать пользователю.
-- Оба скрипта ничего не сохраняют в .blend; ~2–3 с каждый.
+- Оба скрипта ничего не сохраняют в .blend; ~2–3 с каждый (ракурсы — ~1 с на кадр).
+
+## Сборка лидера из исходников
+`.venv\Scripts\python.exe art\3d\build_all.py [--from uniform|details|head]` — `build_uniform.py` (MPFB-тело, мундир; из `alexander_assembly.blend`), `build_details.py` (воротник, пуговицы, пояс, обшлага, сапоги), `build_head.py` → `art/3d/alexander_leader.blend`, ~40 с. Моделирование — в позе покоя (A-поза MPFB): тестовая анимация с рига снимается.
+- Голова (`build_head.py`): голова Hunyuan + шея MPFB сливаются вокселями (`VOXEL` 2 мм) в одну замкнутую сетку, низ бороды и затылок сглаживаются, децимация до `TRIS`, своя UV (smart project), цвет запекается Cycles'ом из источников. Спереди цвет — сам портрет (`head/head_input.png` — фронтальный вид генерации, UV 'proj'), сбоку и сзади — перекрашенная текстура генерации; всё выше глаз, что не смотрит вперёд, — волосы. Не латать шею и текстуру генерации эвристиками: атлас Hunyuan разорван на сотни кусков, в нём запечён свет и синяки.
+- Размер головы — таргеты MPFB `head-scale-*` (`HEAD_SCALE` в `build_uniform.py`): у портрета голова 1/7,7 роста, у MPFB 1/8,6.
 
 ## FBX → .fgx
 ```

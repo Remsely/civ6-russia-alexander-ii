@@ -32,6 +32,7 @@ CLOTH = (0.010, 0.011, 0.016)     # the tunic's wool (build_uniform.CLOTH_RGB)
 # (by COLLAR_TURN, at most COLLAR_MAX_H); halves apart at the front, the tunic's dark collar between them.
 COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.05
 COLLAR_FLARE = 0.003              # the band widens downwards by at most this
+COLLAR_MIN_H = 0.045             # ... but at the front at least this tall (the chest turns out right under it)
 COLLAR_FRONT_GAP = 0.017          # half-width of the opening at the front
 COLLAR_THICK = 0.004
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
@@ -233,7 +234,7 @@ def cuff_tex(w, hh):
 # alexander_ii_full.png (median of each row of textures/ref_belt.png).
 BELT_STRIPES = [(0.10, 'red'), (0.20, 'cream'), (0.46, 'gold'), (0.58, 'cream'), (0.84, 'gold'), (0.92, 'cream'),
                 (1.0, 'red')]
-BELT_SRGB = {'red': (190, 40, 22), 'cream': (215, 165, 90), 'gold': (172, 108, 26)}
+BELT_SRGB = {'red': (190, 40, 22), 'cream': (225, 185, 105), 'gold': (196, 140, 40)}  # the gold a little yellower
 
 
 def belt_tex(w, hh):
@@ -451,7 +452,7 @@ def build_collar(nu=64, nv=7):
     dirs = [Vector((math.sin(t), -math.cos(t), 0.0)) for t in thetas]
     top_at = lambda t: P['STAND_TOP_FRONT'] + (P['STAND_TOP_BACK'] - P['STAND_TOP_FRONT']) * (1 - math.cos(t)) / 2
     cloth = lambda z, d: ray_dist(UNI_BVH, c0.to_3d() + Vector((0, 0, z)), d, 0.16)
-    tops, bots = [], []
+    tops, bots, turns = [], [], []
     for t, d in zip(thetas, dirs):
         zt = top_at(t) + 0.001  # over the tunic's top edge
         r0 = cloth(zt - 0.006, d) or 0.08
@@ -461,17 +462,22 @@ def build_collar(nu=64, nv=7):
             if r is None or r > r0 + COLLAR_TURN:
                 break
             z -= 0.002
-        tops.append(zt); bots.append(z)
+        turns.append(z)
+        front = smoothstep(math.cos(t), 0.4, 0.85)  # the front only: at the sides and back it would lie on the shoulders
+        tops.append(zt); bots.append(min(z, zt - COLLAR_MIN_H * front - (zt - z) * (1 - front)))
     bots = circ_smooth(bots, 3)
     rings = []
     for i in range(nv):
         f = i / (nv - 1)
         ring = []
-        for j, (d, zb, zt) in enumerate(zip(dirs, bots, tops)):
+        for j, (d, zb, zt, zturn) in enumerate(zip(dirs, bots, tops, turns)):
             z = zb + (zt - zb) * f
             r_top = cloth(zt - 0.004, d) or 0.08
-            # a straight band: where the cloth turns out below, the collar runs on into it (no flare onto the shoulders)
-            r = min(cloth(min(z, zt - 0.004), d) or 0.08, r_top + COLLAR_FLARE)
+            # a straight band down to where the cloth turns out (no flare onto the shoulders); below that (the front,
+            # down to COLLAR_MIN_H) it lies on the cloth
+            r = cloth(min(z, zt - 0.004), d) or 0.08
+            if z >= zturn:
+                r = min(r, r_top + COLLAR_FLARE)
             ring.append(c0.to_3d() + Vector((0, 0, z)) + d * (r + COLLAR_LIFT))
         rings.append(ring)
     for i in range(nv):  # smooth round: the rays catch the cloth's small dents

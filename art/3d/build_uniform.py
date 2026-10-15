@@ -18,15 +18,19 @@ import head_shape  # noqa: E402
 # Alexander's build (alexander_ii_full.png): a big chest and broad shoulders over a waist the belt can take in, a
 # V rather than a barrel. MPFB macros and extra targets from MPFB's library, applied to the 'Human' basemesh before
 # anything is measured; then his head (head_shape.py) and a neck for the collar; the rig is refitted to the new shape.
+HEAD_SCALE = 1.0
 BODY_MACROS = {'weight': 0.85, 'muscle': 0.7}
 BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dist-incr': 0.6,
-                'torso/torso-scale-horiz-incr': 0.35, 'torso/measure-bust-circ-incr': 0.3}
+                'torso/torso-scale-horiz-incr': 0.35, 'torso/measure-bust-circ-incr': 0.3,
+                # the portrait's head is 1/7.7 of his height, MPFB's 1/8.6: a bigger head (the generated one follows it)
+                'head/head-scale-vert-incr': HEAD_SCALE, 'head/head-scale-horiz-incr': HEAD_SCALE,
+                'head/head-scale-depth-incr': HEAD_SCALE}
 
 # Heights from alexander_ii_full.png scaled to the 2.07 m MPFB figure (feet 0, crown 2.07).
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
 # on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.035, 0.015
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.022, 0.015
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
 STAND_OFF = 0.006                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top)
 NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
@@ -70,6 +74,11 @@ root = bpy.data.objects.get('LEAD_REMSELY_TEST')
 if root:
     rig.parent = None
     bpy.data.objects.remove(root)
+# Modelling happens in the rest pose (MPFB's A-pose): no test animation on the rig, no posed bones.
+if rig.animation_data:
+    rig.animation_data_clear()
+for pb in rig.pose.bones:
+    pb.matrix_basis.identity()
 
 
 
@@ -754,7 +763,7 @@ def paint_uniform(ob, mat):
     tex = next((nd for nd in nt.nodes if nd.type == 'TEX_IMAGE'), None) or nt.nodes.new('ShaderNodeTexImage')
     tex.image = img
     nt.links.new(tex.outputs['Color'], bsdf.inputs['Base Color'])
-    bsdf.inputs['Roughness'].default_value = 0.85
+    bsdf.inputs['Roughness'].default_value = 0.95  # wool: no sheen
     print('painted', TEX_OUT)
 
 
@@ -844,6 +853,11 @@ under.data.materials.clear(); under.data.materials.append(skin)
 for ob in (uni, under):
     ob.modifiers.new('Armature', 'ARMATURE').object = rig
 h.hide_set(True); h.hide_render = True
+for ob in (uni, under):  # every vertex's weights sum to 1 (the importer does not normalise)
+    bpy.context.view_layer.objects.active = ob
+    for o in sc.objects:
+        o.select_set(o == ob)
+    bpy.ops.object.vertex_group_normalize_all(lock_active=False)
 
 print('uniform verts', len(uni.data.vertices), 'faces', len(uni.data.polygons))
 # Measurements the details (build_details.py) are fitted to.

@@ -3,6 +3,8 @@
     python tools/blend.py audit art/3d/alexander_leader.blend [--scene Human] [--json out.json] [--full]
     python tools/blend.py audit --fbx art/3d/test/LEAD_REMSELY_TEST.fbx
     python tools/blend.py render art/3d/alexander_leader.blend [--scene Human] [--out shot.png] [--frame N] ...
+    python tools/blend.py render art/3d/alexander_leader.blend --scene Human --views full0,full45,full90,full180,head0,head45,head90
+        (turntable views, plus <out stem>_sheet.png with all of them: one row of full views, one of head views)
 
 Blender: env BLENDER or the default 4.5 install. Exit code 1 if the audit found errors.
 """
@@ -71,7 +73,31 @@ def main():
     body = between(out, 'RENDER_BEGIN', 'RENDER_END')
     if body is None or code:
         sys.exit(out)
-    print(body.strip())
+    lines = body.strip().splitlines()
+    print('\n'.join(lines))
+    shots = [l for l in lines if l.lower().endswith('.png')]
+    if len(shots) > 1:
+        print(sheet(shots))
+
+
+def sheet(paths):
+    """All views on one picture: a row per kind (full, head), in the order given."""
+    from PIL import Image
+    rows = {}
+    for p in paths:
+        rows.setdefault(os.path.basename(p).rsplit('_', 1)[1][:4], []).append(Image.open(p))
+    rows = list(rows.values())
+    w = max(sum(i.width for i in r) for r in rows)
+    out = Image.new('RGB', (w, sum(max(i.height for i in r) for r in rows)))
+    y = 0
+    for r in rows:
+        x = 0
+        for i in r:
+            out.paste(i, (x, y)); x += i.width
+        y += max(i.height for i in r)
+    path = paths[0].rsplit('_', 1)[0] + '_sheet.png'
+    out.save(path)
+    return path
 
 
 if __name__ == '__main__':

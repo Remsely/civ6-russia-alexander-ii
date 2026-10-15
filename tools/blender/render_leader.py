@@ -28,6 +28,9 @@ ap.add_argument('--target-cm', type=float, default=150.0, help='model height in 
 ap.add_argument('--res', default='1280x720')
 ap.add_argument('--samples', type=int, default=32)
 ap.add_argument('--transparent', action='store_true')
+ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>, bust<yaw>, head<yaw> (yaw in degrees round the '
+                'model, 0 = front, 90 = his left side, 180 = back; @deg - camera elevation, default 3), e.g. full0,full45,full90,full180,head0,head45,head90; '
+                'each goes to <out stem>_<view>.png')
 args = ap.parse_args(argv)
 
 sc = bpy.data.scenes[args.scene] if args.scene else bpy.context.scene
@@ -58,11 +61,19 @@ cam_data.angle_y = math.radians(VFOV_DEG)
 cam_data.clip_start, cam_data.clip_end = 0.01, 100.0
 cam = bpy.data.objects.new('_LeaderCam', cam_data)
 sc.collection.objects.link(cam)
-cam.location = to_model @ EYE
-rot = (TARGET - EYE).to_track_quat('-Z', 'Y')
 cam.rotation_mode = 'QUATERNION'
-cam.rotation_quaternion = Matrix.Rotation(math.radians(-90), 4, 'Z').to_quaternion() @ rot
 sc.camera = cam
+
+
+def aim(eye, target):
+    """Camera at eye looking at target, both in leader space (cm)."""
+    cam.location = to_model @ eye
+    rot = (target - eye).to_track_quat('-Z', 'Y')
+    cam.rotation_quaternion = Matrix.Rotation(math.radians(-90), 4, 'Z').to_quaternion() @ rot
+    bpy.context.view_layer.update()
+
+
+aim(EYE, TARGET)
 
 
 def light(name, kind, energy, loc_leader, size=1.0):
@@ -91,7 +102,7 @@ for engine in ('BLENDER_EEVEE_NEXT', 'BLENDER_EEVEE'):
 if hasattr(sc, 'eevee'):
     sc.eevee.taa_render_samples = args.samples
 w, h = (int(x) for x in args.res.lower().split('x'))
-sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = w, h, 100
+sc.render.resolution_percentage = 100
 sc.render.film_transparent = args.transparent
 sc.render.image_settings.file_format = 'PNG'
 sc.render.image_settings.color_mode = 'RGBA' if args.transparent else 'RGB'
@@ -102,17 +113,43 @@ if not args.transparent:
     bg = next(n for n in world.node_tree.nodes if n.type == 'BACKGROUND')
     bg.inputs['Color'].default_value = (0.05, 0.05, 0.06, 1)
     bg.inputs['Strength'].default_value = 1.0
-out = os.path.abspath(args.out)
-os.makedirs(os.path.dirname(out), exist_ok=True)
-sc.render.filepath = out
-bpy.ops.render.render(write_still=True)
 
+
+def shoot(path, rw, rh):
+    sc.render.resolution_x, sc.render.resolution_y = rw, rh
+    path = os.path.abspath(path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    sc.render.filepath = path
+    bpy.ops.render.render(write_still=True)
+    return path
+
+
+print('RENDER_BEGIN')
+if args.views:
+    # turntable views: the camera goes round the model (leader space: faces +X, crown at target_cm), lights stay
+    stem = os.path.splitext(args.out)[0]
+    half = math.tan(math.radians(VFOV_DEG) / 2)
+    for view in args.views.split(','):
+        name, _, pitch = view.partition('@')
+        kind, yaw = name.rstrip('0123456789-'), math.radians(float(name.lstrip('fulheadbst') or 0))
+        pitch = math.radians(float(pitch or 3))
+        if kind == 'full':
+            target, span, size = Vector((0, 0, args.target_cm * 0.5)), args.target_cm * 1.1, (600, 900)
+        elif kind == 'bust':
+            target, span, size = Vector((0, 0, args.target_cm * 0.72)), args.target_cm * 0.42, (700, 700)
+        else:
+            target, span, size = Vector((0, 0, args.target_cm * 0.925)), args.target_cm * 0.19, (700, 700)
+        d = span / 2 / half
+        eye = target + Vector((math.cos(yaw) * math.cos(pitch), math.sin(yaw) * math.cos(pitch), math.sin(pitch))) * d
+        aim(eye, target)
+        print(shoot('%s_%s.png' % (stem, view.replace('@', 'e')), *size))
+else:
+    print(shoot(args.out, w, h))
 top = max(pts, key=lambda p: p.z)
 bottom = min(pts, key=lambda p: p.z)
+aim(EYE, TARGET)
 v_top = world_to_camera_view(sc, cam, top).y
 v_bot = world_to_camera_view(sc, cam, bottom).y
-print('RENDER_BEGIN')
-print(out)
 print('model %.3f m -> %.0f cm; frame: top of head at %.2f, feet at %.2f (0 bottom, 1 top)%s' % (
     height, args.target_cm, v_top, v_bot, '  HEAD CUT OFF' if v_top > 1 else ''))
 print('RENDER_END')
