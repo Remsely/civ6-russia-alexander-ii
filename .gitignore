@@ -36,6 +36,11 @@ cooker.log
 *.blend
 *.blend1
 *.glb
+# ...кроме того, из чего собирается лидер: alexander_assembly.blend — только сцена Human (полный оригинал с
+# экспериментами — alexander_assembly_full.blend, локально), alexander_leader.blend — результат art/3d/build_*.py
+!art/3d/alexander_assembly.blend
+!art/3d/alexander_leader.blend
+!art/3d/head/*.glb
 
 # BLP 3D-лидера: собирает tools/build.py, пока в них временные текстуры Петра
 mod/Platforms/*/BLPs/leaders/
