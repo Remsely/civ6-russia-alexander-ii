@@ -23,7 +23,18 @@ Asset Editor хрупкий (падает на импорте FBX-анимаци
 - Данные повернуть и ×100 (`transform_apply`), `apply_scale_options='FBX_SCALE_UNITS'`, `axis_forward='Y'`, `axis_up='Z'`, `bake_space_transform=False`. С `FBX_SCALE_NONE` корень получает масштаб ×100.
 - Анимация — отдельный FBX только со скелетом (`*_Anim.fbx`).
 - Экспортёр Blender выкидывает постоянные каналы: удерживаемую позу (руки вниз) сделать позой покоя (`armature_apply`), в анимации только движение.
-- Blender запускать в фоне: `blender -b art/3d/alexander_assembly.blend --python <скрипт>`; в живом Blender — через MCP.
+- Blender запускать в фоне: `blender -b art/3d/alexander_assembly.blend --python <скрипт>`; в живом Blender — через MCP (MCP for Blender, пакет `mcp-for-blender` в `.mcp.json`; пользователь нажимает Start MCP Server в N-панели).
+
+## Проверка сцены: числа и кадр игры (после каждого шага сборки)
+Не судить по вьюпорту и не показывать пользователю непроверенное:
+```
+.venv\Scripts\python.exe tools\blend.py audit art\3d\alexander_leader.blend --scene Human [--json out.json] [--full]
+.venv\Scripts\python.exe tools\blend.py audit --fbx art\3d\test\LEAD_REMSELY_TEST.fbx
+.venv\Scripts\python.exe tools\blend.py render art\3d\alexander_leader.blend --scene Human [--frame N] [--out art\build\x.png]
+```
+- `audit` (`tools/blender/audit.py`) — по каждой сетке треугольники, материалы, UV, кости, гистограмма влияний; ошибки: сетка или грани без материала, вершины с >8 костями, вершины без веса, пропавшие текстуры. Код выхода 1 при ошибках. Прогонять и по экспортированному FBX (`--fbx`): это то, что видит импортёр.
+- `render` (`tools/blender/render_leader.py`) — кадр с камеры Петра, модель поставлена как при экспорте (поворот +90° по Z, рост `--target-cm`, по умолчанию 150). Пишет, где в кадре макушка и ноги (0 — низ, 1 — верх). Объектив в `.fgx` камеры не хранится: вертикальный угол 19.2° оценён по скриншотам Петра; свет нейтральный, не игровой. Сравнивать кадр с референсом (`art/source/`) и только потом показывать пользователю.
+- Оба скрипта ничего не сохраняют в .blend; ~2–3 с каждый.
 
 ## FBX → .fgx
 ```
