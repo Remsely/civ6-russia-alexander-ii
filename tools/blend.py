@@ -7,6 +7,11 @@
         (turntable views, plus <out stem>_sheet.png with all of them: one row of full views, one of head views;
          the view 'ref' also gives <out stem>_refcmp.png - the model over alexander_ii_full.png, outline in cyan)
 
+    python tools/blend.py clash art/3d/alexander_leader.blend --scene Human [--motion test --frames 20,40,70]
+        (pairs of meshes that run through each other: crossing triangles at rest and at the frames)
+    render ... --motion idle|test --frames 1,40,80 - the views at frames of a motion (tools/blender/motion.py: the body
+        keyed, the loose pieces swinging on their springs)
+
 Blender: env BLENDER or the default 4.5 install. Exit code 1 if the audit found errors.
 """
 import json
@@ -16,7 +21,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BLENDER = os.environ.get('BLENDER', r'C:\Program Files\Blender Foundation\Blender 4.5\blender.exe')
-SCRIPTS = {'audit': 'audit.py', 'render': 'render_leader.py'}
+SCRIPTS = {'audit': 'audit.py', 'render': 'render_leader.py', 'clash': 'clash.py'}
 
 
 def run(cmd, rest):
@@ -71,6 +76,9 @@ def main():
         rep = json.loads(body)
         print(body) if full else audit_summary(rep)
         sys.exit(1 if rep['errors'] else 0)
+    if cmd == 'clash':
+        body = between(out, 'CLASH_BEGIN', 'CLASH_END')
+        sys.exit(out if body is None or code else print(body.strip()))
     body = between(out, 'RENDER_BEGIN', 'RENDER_END')
     if body is None or code:
         sys.exit(out)

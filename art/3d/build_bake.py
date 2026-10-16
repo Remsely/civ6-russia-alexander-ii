@@ -3,6 +3,7 @@
 # the material's AO map (textures/uniform_ao.png); the preview multiplies it into the colour.
 # blender -b art/3d/alexander_leader.blend --python art/3d/build_bake.py   (the last step; rewrites in place)
 import bpy, bmesh, os, sys
+import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -11,6 +12,12 @@ import mat_util  # noqa: E402
 OUT = os.path.join(HERE, 'alexander_leader.blend')
 AO_OUT = os.path.join(HERE, 'textures', 'uniform_ao.png')
 TEX, SAMPLES, AO_DIST = 2048, 48, 0.12  # AO_DIST: metres - how far something still shades
+# Hands (and what else of the body shows): the skin of the face (build_head.py's portrait colour, sRGB), redder over the
+# knuckles and fingertips, darker in the creases and between the fingers (their own AO), a fine pore relief.
+SKIN_SRGB, SKIN_RED = (0.88, 0.62, 0.48), (1.0, 0.82, 0.76)
+SKIN_AO_DIST, SKIN_TEX, PORE_H = 0.03, 2048, 0.35
+SKIN_OUT = os.path.join(HERE, 'textures', 'hands_albedo.png')
+SKIN_NORMAL_OUT = os.path.join(HERE, 'textures', 'hands_normal.png')
 
 sc = bpy.context.scene
 uni = bpy.data.objects['Uniform']
@@ -51,8 +58,69 @@ for p in uni.data.polygons:
     p.material_index = 0
 while len(uni.data.materials) > 1:
     uni.data.materials.pop()
+
+
+def bake_ao(ob, res, dist):
+    """Cycles AO of ob's UVs (everything in the scene shading it) into a new image."""
+    me = ob.data
+    keep = list(me.materials)
+    im = bpy.data.images.new('_AO_' + ob.name, res, res)
+    mat = bpy.data.materials.new('_AOBake2'); mat.use_nodes = True
+    nd = mat.node_tree.nodes.new('ShaderNodeTexImage'); nd.image = im
+    mat.node_tree.nodes.active = nd
+    me.materials.clear(); me.materials.append(mat)
+    sc.render.engine = 'CYCLES'
+    sc.world.light_settings.distance = dist
+    for o in sc.objects:
+        o.select_set(o == ob)
+    bpy.context.view_layer.objects.active = ob
+    bpy.ops.object.bake(type='AO')
+    sc.render.engine = engine
+    me.materials.clear()
+    for m in keep:
+        me.materials.append(m)
+    bpy.data.materials.remove(mat)
+    a = np.array(im.pixels[:], np.float32).reshape(res, res, 4)[..., 0]
+    bpy.data.images.remove(im)
+    return a
+
+
+def paint_skin():
+    under = bpy.data.objects.get('BodyUnder')
+    if under is None:
+        return
+    me = under.data
+    # convexity per vertex: how far it stands out of its neighbours along its normal (knuckles +, creases -)
+    n = len(me.vertices)
+    co = np.array([v.co[:] for v in me.vertices]); nr = np.array([v.normal[:] for v in me.vertices])
+    acc = np.zeros((n, 3)); cnt = np.zeros(n)
+    for e in me.edges:
+        a, b = e.vertices
+        acc[a] += co[b]; acc[b] += co[a]; cnt[a] += 1; cnt[b] += 1
+    lap = co - acc / np.maximum(cnt, 1)[:, None]
+    conv = np.clip((lap * nr).sum(1) / 0.0015, -1, 1)
+    data, cov = mat_util.raster(me, SKIN_TEX, conv[:, None])
+    conv_t = mat_util.blur(data[..., 6], 2)
+    ao = bake_ao(under, SKIN_TEX, SKIN_AO_DIST)
+    rng = np.random.default_rng(7)
+    mottle = mat_util.blur(rng.random((SKIN_TEX, SKIN_TEX)).astype(np.float32), 6)
+    mottle = (mottle - mottle.mean()) / (mottle.std() + 1e-6)
+    base = np.array(SKIN_SRGB, np.float32) * (1 + 0.03 * mottle)[..., None]
+    red = np.clip(conv_t, 0, 1)[..., None]
+    col = base * (1 - red * 0.6 + red * 0.6 * np.array(SKIN_RED, np.float32))
+    col *= (1 + np.clip(conv_t, -1, 0) * 0.25)[..., None]          # creases
+    col *= (0.55 + 0.45 * np.clip(ao, 0, 1))[..., None]             # between the fingers, under the cuffs
+    pores = mat_util.blur(rng.random((SKIN_TEX, SKIN_TEX)).astype(np.float32), 1) * PORE_H
+    alb = mat_util.save('Hands_Albedo', np.clip(col, 0, 1).astype(np.float32), SKIN_OUT, 'sRGB')
+    nrm = mat_util.save('Hands_Normal', (mat_util.normals(pores) * 0.5 + 0.5).astype(np.float32), SKIN_NORMAL_OUT,
+                        'Non-Color')
+    mat_util.material(me.materials[0].name, alb, None, nrm, rough=0.5, sheen=0.1, sheen_tint=(0.9, 0.6, 0.5))
+    print('skin', SKIN_OUT)
+
+
+paint_skin()
 imgs = bpy.data.images
-mat_util.material('Uniform_Cloth', imgs['Uniform_Albedo'], None, imgs['Uniform_Normal'], ao=img, rough=0.95, sheen=0.6, sheen_tint=(0.09, 0.10, 0.14))
+mat_util.material('Uniform_Cloth', imgs['Uniform_Albedo'], None, imgs['Uniform_Normal'], ao=img, rough=0.95, sheen=0.25, sheen_tint=(0.04, 0.045, 0.07))  # build_uniform.WOOL_SHEEN, SHEEN_TINT
 print('baked', AO_OUT)
 bpy.ops.outliner.orphans_purge(do_recursive=True)
 bpy.ops.wm.save_as_mainfile(filepath=OUT, compress=True)

@@ -59,13 +59,13 @@ FLAP_X, FLAP_STEP = -0.02, 0.003  # closure edge: 2 cm to the wearer's right, fl
 # Texture: dark green-black wool of the Imperial uniform, red piping (linear RGB); widths are half-widths in metres.
 TEX = 2048
 TEX_OUT = os.path.join(HERE, 'textures', 'uniform_albedo.png')
-CLOTH_RGB = (0.010, 0.011, 0.016)
+CLOTH_RGB = (0.0065, 0.007, 0.0105)
 PIPING_RGB = (0.50, 0.012, 0.010)
 PIPING_W, STRIPE_W, CUFF_T = 0.007, 0.012, 0.30
-WOOL_REPEATS, WOOL_CONTRAST = 10, 0.45  # textures/gen/wool.png over the UVs (~15 cm a tile), its weave's strength
+WOOL_REPEATS, WOOL_CONTRAST = 10, 0.22  # textures/gen/wool.png over the UVs (~15 cm a tile), its weave's strength
 NORMAL_OUT = os.path.join(HERE, 'textures', 'uniform_normal.png')
-WOOL_H, PIPING_H = 0.5, 2.5         # px of relief: the weave; the piping, a cord sewn into the seams
-WOOL_SHEEN, SHEEN_TINT = 0.6, (0.09, 0.10, 0.14)  # broadcloth's fuzz at grazing angles: a dark blue-grey
+WOOL_H, PIPING_H = 0.25, 2.5        # px of relief: the weave; the piping, a cord sewn into the seams
+WOOL_SHEEN, SHEEN_TINT = 0.25, (0.04, 0.045, 0.07)  # broadcloth's fuzz at grazing angles: a faint dark blue (the portrait's cloth is near black)
 PLEAT_ANGLE = 90                  # degrees from the front centre to the piped pleats of the skirt (at the sides)
 
 sc = bpy.data.scenes['Human']

@@ -20,6 +20,7 @@ OUT = os.path.join(HERE, 'alexander_leader.blend')
 POSE_FRAMES, SETTLE_FRAMES = 24, 24
 BONES_ONLY = ('Boot', 'Sole', 'Spur')   # details that follow the bones, not the cloth
 RIGID = ('Buttons', 'Buckle', 'CuffButtons')  # each piece of these moves as a whole with the cloth under it
+SUBDIVIDE = 1                           # cuts per edge of the uniform's sheet before the simulation
 SLEEVE_PIN = 0.5                        # sleeves held this much to the arm (less: they slide down and balloon)
 # cloth: heavy broadcloth
 CLOTH = dict(quality=8, mass=0.35, air_damping=1.0, tension_stiffness=40, compression_stiffness=40,
@@ -48,12 +49,33 @@ def activate(ob):
 
 
 # ---------------------------------------------------------------- 1. followers bound to the uniform sheet (rest pose)
+
+
+def neck_to_chest(ob):
+    """The collar sits on the shoulders: what the neck bone carried of ob goes to spine_03 (the neck turns inside it)."""
+    ng, cg = ob.vertex_groups.get('neck_01'), ob.vertex_groups.get('spine_03')
+    if ng is None:
+        return
+    cg = cg or ob.vertex_groups.new(name='spine_03')
+    for v in ob.data.vertices:
+        w = next((g.weight for g in v.groups if g.group == ng.index), 0.0)
+        if w > 0:
+            cg.add([v.index], w, 'ADD')
+    ob.vertex_groups.remove(ng)
+
+
+for o in sc.objects:
+    if o.type == 'MESH' and (o == uni or o.get('detail')):
+        neck_to_chest(o)
+
 thick = uni.modifiers['Thick']
 thick.show_viewport = thick.show_render = False
 activate(uni)  # Surface Deform binds only to convex faces
 bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
 bpy.ops.mesh.remove_doubles(threshold=0.0005)  # zero-length edges make the cloth solver explode
 bpy.ops.mesh.dissolve_degenerate(threshold=0.0005)
+bpy.ops.mesh.select_all(action='SELECT')
+bpy.ops.mesh.subdivide(number_cuts=SUBDIVIDE)  # a finer sheet folds finer
 bpy.ops.mesh.select_all(action='SELECT')
 bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
 bpy.ops.object.mode_set(mode='OBJECT')
@@ -149,6 +171,7 @@ cloth = uni.modifiers.new('Cloth', 'CLOTH')
 cs = cloth.settings
 for k, v in CLOTH.items():
     setattr(cs, k, v)
+cs.mass = CLOTH['mass'] / (SUBDIVIDE + 1) ** 2  # Blender's mass is per vertex: the sheet weighs the same
 cs.vertex_group_mass = 'pin'
 cc = cloth.collision_settings
 cc.use_collision = True

@@ -44,6 +44,7 @@ BEARD_SMOOTH = (0.03, 12)         # the bottom this high over the cut smoothed, 
 HAIR_SMOOTH = 60                  # rounds of smoothing the hair, whiskers and moustache (lumps of the generation)
 NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 16  # top ring this far inside the cut's outline; segments, rings
+NECK_TWIST_ZS = (1.74, 1.84)       # the neck's turn spreads between these heights (head bone above, chest below)
 NECK_FIT = 0.85                   # the tube to the collar's ellipse (the tunic's stand collar lies on that)
 HAIR_KEEP = 0.15                  # ... of the hair's own colour variation (its red and orange blotches)
 HAIR_MAX_L = 1.15                 # hair no brighter than this times the portrait's (pale patches of the generation)
@@ -917,7 +918,47 @@ def set_weights():
                 vg[k].add([v.index], x / tot, 'REPLACE')
 
 
+
+def smoothstep(x, a, b):
+    t = min(1.0, max(0.0, (x - a) / (b - a)))
+    return t * t * (3 - 2 * t)
+
+
+def neck_weights():
+    """The turn of the head spread along the neck: under the collar the neck goes with the chest (spine_03), up the
+    tube it passes from neck_01 to head over NECK_TWIST_ZS; whatever is outside the tube (the beard, jaw, face) is all
+    head - transferred from the body, the neck/head border ran along the beard's underside and sheared it when the
+    head turned."""
+    vg = head.vertex_groups
+    names = [g.name for g in vg]
+    ax = Vector(sc['uniform']['NECK_AXIS'])
+    co = [v.co for v in head.data.vertices]
+    sl = [c for c in co if NECK_TWIST_ZS[0] - 0.01 < c.z < NECK_TWIST_ZS[0] + 0.01]
+    rx = max(abs(c.x - ax.x) for c in sl); ry = max(abs(c.y - ax.y) for c in sl)
+    for v in head.data.vertices:
+        c = v.co
+        d = math.hypot((c.x - ax.x) / rx, (c.y - ax.y) / ry)  # 1 on the neck tube
+        up = max(smoothstep(c.z, *NECK_TWIST_ZS), smoothstep(d, 1.08, 1.35))
+        chest = 1 - smoothstep(c.z, NECK_Z0 + 0.005, NECK_TWIST_ZS[0])
+        w = {names[g.group]: g.weight for g in v.groups if g.weight > 0}
+        face = {k: x for k, x in w.items() if k not in ('head', 'neck_01', 'spine_03', 'spine_02', 'clavicle_l',
+                                                         'clavicle_r')}
+        fsum = sum(face.values())
+        body = 1 - fsum
+        new = dict(face)
+        new['head'] = body * up
+        new['neck_01'] = body * (1 - up) * (1 - chest)
+        new['spine_03'] = body * (1 - up) * chest
+        for g in list(v.groups):
+            vg[g.group].remove([v.index])
+        for k, x in new.items():
+            if x > 1e-4:
+                (vg.get(k) or vg.new(name=k)).add([v.index], x, 'REPLACE')
+    print('neck weights: tube %.3f x %.3f, twist over z %.2f..%.2f' % (rx, ry, *NECK_TWIST_ZS))
+
+
 set_weights()
+neck_weights()
 
 # ---------------------------------------------------------------- the body no longer carries the head
 under = bpy.data.objects['BodyUnder']

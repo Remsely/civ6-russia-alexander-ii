@@ -23,37 +23,63 @@ TEXDIR = os.path.join(HERE, 'textures')
 TEX = 1024
 # palette: name -> (sRGB, metal, roughness)
 PALETTE = {
-    'gold': ((214, 162, 70), 1.0, 0.3), 'silver': ((205, 205, 212), 1.0, 0.25), 'red': ((165, 18, 24), 0.0, 0.15),
+    'gold': (mat_util.GOLD_SRGB, 1.0, 0.3), 'silver': ((222, 224, 230), 0.55, 0.22), 'red': ((165, 18, 24), 0.0, 0.15),
     'blue': ((38, 82, 172), 0.0, 0.15), 'white': ((236, 234, 228), 0.0, 0.2), 'leather': ((14, 14, 16), 0.0, 0.35),
-    'steel': ((120, 122, 128), 1.0, 0.3), 'dark_gold': ((150, 105, 40), 1.0, 0.45),
+    'steel': ((120, 122, 128), 1.0, 0.3), 'dark_gold': ((150, 95, 38), 1.0, 0.45),
 }
 # the palette's cells are big (128 px): small ones bleed into the ribbons in the mipmaps
 ATLAS = {'pal': (0.0, 0.0, 1.0, 0.125), 'ribbons': (0.0, 0.125, 1.0, 0.25), 'star': (0.0, 0.25, 0.5, 0.75),
          'cross': (0.5, 0.25, 1.0, 0.75), 'medal': (0.0, 0.75, 0.25, 1.0), 'wcross': (0.25, 0.75, 0.5, 1.0),
-         'smedal': (0.5, 0.75, 0.75, 1.0)}
+         'smedal': (0.5, 0.75, 0.75, 1.0), 'badge': (0.75, 0.75, 1.0, 1.0)}
 # Ribbons left to right (stripes as (colour, share)): St George, St Alexander Nevsky, St Andrew, St Vladimir, St Anna,
 # the Crimean war medal.
-RIBBON_SRGB = {'O': (232, 118, 18), 'K': (18, 18, 20), 'R': (176, 22, 30), 'B': (60, 110, 200), 'Y': (230, 190, 40)}
+RIBBON_SRGB = {'O': (232, 118, 18), 'K': (18, 18, 20), 'R': (176, 22, 30), 'B': (60, 110, 200), 'Y': (230, 190, 40),
+               'L': (120, 170, 225)}
 RIBBONS = [[('O', 1), ('K', 1), ('O', 1), ('K', 1), ('O', 1)], [('R', 1)], [('B', 1)], [('K', 1), ('R', 1), ('K', 1)],
-           [('Y', 0.15), ('R', 0.7), ('Y', 0.15)], [('K', 1), ('O', 1), ('K', 1)]]
-MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal']
-BAR_X, BAR_Z, RIB_W, RIB_H = 0.075, 1.655, 0.019, 0.032  # left end of the bar (his left breast), its top; one ribbon
-MEDAL_R = 0.0115
-NECK_CROSS = (0.030, 1.695, 0.024)   # x, z of its centre, half-size
-BADGE = (0.172, 1.575, 0.012)
-STARS = [(0.155, 1.515, 0.036), (0.16, 1.425, 0.036)]  # x, z, radius
+           [('Y', 0.15), ('R', 0.7), ('Y', 0.15)], [('L', 1)], [('K', 1), ('O', 1), ('K', 1)]]
+MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal', 'smedal']
+# Measured on alexander_ii_full.png (1 px ~ 1.4 mm of the model): the bar ~105 mm wide, its ribbons ~50 mm long, the
+# medals ~28 mm across, the St George cross ~40 mm; the neck cross ~62 mm; the stars ~80 mm across.
+BAR_X, BAR_Z, RIB_W, RIB_H = -0.005, 1.69, 0.0152, 0.05  # left end of the bar (by the closure), its top; one ribbon
+MEDAL_R, WCROSS_S = 0.015, 0.021
+NECK_CROSS = (0.008, 1.712, 0.031)   # x, z of its centre, half-size (a Maltese cross under the collar)
+BADGE = (0.128, 1.575, 0.013, 0.019)  # x, z, half-width, half-height of the gold badge under the bar
+STARS = [(0.15, 1.555, 0.045), (0.155, 1.455, 0.045)]  # x, z, radius; moved out past the sash's edge if it is there
+STAR_OVER_SASH = 0.25                # how much of a star's radius may lie over the sash's edge
 LIFT = 0.003
 # Sabre: pommel under the left palm, the blade hanging down and a little back along the left hip and leg.
-POMMEL = Vector((0.222, -0.15, 1.095))
-GUARD = Vector((0.222, -0.118, 0.99))
-SCABBARD_L, SCABBARD_W, SCABBARD_D = 0.86, 0.04, 0.024
+POMMEL = Vector((0.24, -0.15, 1.125))   # where the left palm is not found (no rig): fallback
+GRIP_L = 0.105                      # pommel to guard
+GRIP_IN_PALM = 0.022                # the pommel this far from the hand's axis towards the palm (the fingers close round)
+SCABBARD_L, SCABBARD_W, SCABBARD_D = 0.86, 0.048, 0.028
 SWORD_CLEAR = 0.012                 # off the skirt, trousers and boot
 SWORD_DROP = Vector((0.035, 0.03, -1.0))  # the scabbard hangs nearly straight down, a little out and back
-KNOT_TASSEL = Vector((0.205, -0.15, 0.86))
+KNOT_TASSEL = None                  # under the guard, hanging (set from GUARD below)
 TASSEL_K = 1.8                      # the tassel's size (the portrait's is as long as a hand)
+TASSEL_STRANDS = 22
 
 sc = bpy.context.scene
 rig = bpy.data.objects['HumanRig']
+
+
+def palm_l():
+    """The left palm in the stance (the rig's rest is the stance): between the wrist and the knuckles, moved towards
+    the side the fingers curl to."""
+    bs = rig.data.bones
+    if 'hand_l' not in bs or 'middle_01_l' not in bs:
+        return POMMEL
+    wrist, knuck = bs['hand_l'].head_local, bs['middle_01_l'].head_local
+    tips = sum((bs[n].tail_local for n in ('index_03_l', 'middle_03_l', 'ring_03_l') if n in bs), Vector()) / 3
+    axis = (knuck - wrist).normalized()
+    to_palm = tips - knuck
+    to_palm = (to_palm - axis * to_palm.dot(axis)).normalized()
+    return wrist.lerp(knuck, 0.65) + to_palm * GRIP_IN_PALM
+
+
+POMMEL = palm_l()
+GUARD = POMMEL + Vector((0.0, 0.03, -1.0)).normalized() * GRIP_L
+KNOT_TASSEL = GUARD + Vector((-0.015, -0.035, -0.16))
+print('hilt: pommel %s guard %s' % (tuple(round(c, 3) for c in POMMEL), tuple(round(c, 3) for c in GUARD)))
 uni = bpy.data.objects['Uniform']
 for o in list(bpy.data.objects):
     if o.get('orders'):
@@ -79,6 +105,7 @@ def obj(name):
 
 
 CHEST = bvh_of([o for o in (uni, obj('Sash'), obj('Belt'), obj('Buttons'), obj('Aiguillettes')) if o])
+NO_SASH = bvh_of([o for o in (uni, obj('Belt'), obj('Buttons')) if o])  # the cloth's own slope under the stars
 LOWER = bvh_of([o for o in (uni, obj('Belt'), obj('Boot_l'), obj('Boot_r'), obj('Buckle')) if o])
 
 
@@ -122,6 +149,36 @@ def srgb(c):
 
 def blur1(a):
     return (a + np.roll(a, 1, 0) + np.roll(a, -1, 0) + np.roll(a, 1, 1) + np.roll(a, -1, 1)) / 5
+
+
+def in_poly(x, y, poly):
+    """Mask of the points (x, y arrays) inside the polygon [(x, y)] (even-odd)."""
+    inside = np.zeros(x.shape, bool)
+    n = len(poly)
+    for i in range(n):
+        (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % n]
+        cross = ((y1 > y) != (y2 > y)) & (x < (x2 - x1) * (y - y1) / (y2 - y1 + 1e-12) + x1)
+        inside ^= cross
+    return inside
+
+
+def erode(mask, k):
+    out = mask.copy()
+    for _ in range(k):
+        out = out & np.roll(out, 1, 0) & np.roll(out, -1, 0) & np.roll(out, 1, 1) & np.roll(out, -1, 1)
+    return out
+
+
+def _maltese():
+    arm = [(0.09, 0.09), (0.55, 1.0), (0.0, 0.72), (-0.55, 1.0)]
+    out = []
+    for k in range(4):
+        a = math.pi / 2 * k
+        out += [(x * math.cos(a) - y * math.sin(a), x * math.sin(a) + y * math.cos(a)) for x, y in arm]
+    return out
+
+
+MALTESE = _maltese()
 
 
 def build_atlas():
@@ -172,9 +229,9 @@ def build_atlas():
     # star: silver rays with fine grooves, a gold ring round a red enamel centre with a small gold cross
     r, th, x, y = polar('star')
     c = np.tile(srgb(PALETTE['silver'][0]), r.shape + (1,))
-    groove = 0.5 + 0.5 * np.cos(th * 90)
-    c = c * (0.8 + 0.2 * groove)[..., None]
-    m = np.ones_like(r); ro = 0.2 + 0.15 * (1 - groove); hg = groove * 0.3
+    groove = 0.5 + 0.5 * np.cos(th * 128)  # the rays are cut in fine facets (brilliants), each catching the light
+    c = c * (0.7 + 0.3 * groove)[..., None]
+    m = np.full_like(r, PALETTE['silver'][1]); ro = 0.2 + 0.15 * (1 - groove); hg = groove * 0.3
     ring = (r > 0.30) & (r < 0.38)
     centre = r <= 0.30
     c[ring] = srgb(PALETTE['gold'][0]); hg = np.where(ring, 0.8, hg)
@@ -206,8 +263,32 @@ def build_atlas():
         c[dot] = srgb(PALETTE['red'][0] if fill == 'blue' else PALETTE['red'][0]); m[dot] = 0.0; ro[dot] = 0.12
         put(region, c, m, ro, hg)
 
-    enamel_cross('cross', 'blue')
     enamel_cross('wcross', 'white')
+
+    # the neck cross: Maltese (eight points), white enamel arms edged in gold with a blue line inside, a blue medallion
+    r, th, x, y = polar('cross')
+    inside = in_poly(x, y, MALTESE)
+    inner = erode(inside, 6); line = erode(inside, 10) & ~erode(inside, 14)
+    c = np.tile(srgb(PALETTE['gold'][0]), r.shape + (1,)); m = np.ones_like(r); ro = np.full_like(r, 0.3)
+    hg = np.where(inside, 0.5, 0.0)
+    c[inner] = srgb(PALETTE['white'][0]); m[inner] = 0.0; ro[inner] = 0.12; hg[inner] = 0.75
+    c[line] = srgb(PALETTE['blue'][0])
+    for rr, col, met, h in ((0.27, 'gold', 1.0, 0.85), (0.23, 'white', 0.0, 0.9), (0.19, 'blue', 0.0, 0.95),
+                            (0.06, 'gold', 1.0, 1.0)):
+        d = r < rr
+        c[d] = srgb(PALETTE[col][0]); m[d] = met; ro[d] = 0.12 if not met else 0.3; hg[d] = h
+    put('cross', c, m, ro, hg)
+
+    # the badge under the bar: a gold oval with a raised rim and an enamelled red centre
+    r, th, x, y = polar('badge')
+    e = np.hypot(x, y * 13 / 19)
+    rim = e > 0.82
+    relief = np.where(rim, 1.0, 0.45 + 0.25 * np.cos(th * 12) * (e > 0.45))
+    c = srgb(PALETTE['gold'][0]) * (0.75 + 0.25 * relief)[..., None]
+    m = np.ones_like(r); ro = np.full_like(r, 0.28)
+    cen = e < 0.4
+    c[cen] = srgb(PALETTE['red'][0]); m[cen] = 0.0; ro[cen] = 0.12
+    put('badge', c, m, ro, relief)
 
     def medal(region, metal_name):
         r, th, x, y = polar(region)
@@ -215,7 +296,7 @@ def build_atlas():
         rim = (r > 0.85)
         relief = np.where(rim, 1.0, 0.4 + 0.3 * np.exp(-((r - 0.45) / 0.18) ** 2) + 0.15 * (r < 0.25))
         c = base * (0.7 + 0.3 * relief)[..., None]
-        put(region, c, 1.0, 0.3 - 0.1 * relief, relief)
+        put(region, c, PALETTE[metal_name][1], 0.3 - 0.1 * relief, relief)
 
     medal('medal', 'gold')
     medal('smedal', 'silver')
@@ -336,30 +417,38 @@ def plaque(part, outline, frame, size, thick, region, dome=0.0, w=None, flat=Fal
 
 
 def star_piece(part, frame, radius, w):
-    """Eight-pointed order star: each ray a ridge, faceted (flat shaded) so the silver catches the light by facets."""
+    """Eight-pointed order star of brilliants: eight long rays with shorter ones between, each ray a faceted ridge
+    (flat shaded, so the silver catches the light facet by facet); a raised enamel centre."""
     o, X, Y, N = frame
     P = lambda x, y, h: o + X * (x * radius) + Y * (y * radius) + N * h  # noqa: E731
-    centre = part.vert(P(0, 0, radius * 0.22), w)
+    centre = part.vert(P(0, 0, radius * 0.2), w)
     ring = []
-    for k in range(16):
-        a = math.pi / 2 + 2 * math.pi * k / 16
-        rr = 1.0 if k % 2 == 0 else 0.45
-        ring.append((math.cos(a) * rr, math.sin(a) * rr, 0.004 if k % 2 == 0 else 0.008))
+    for k in range(32):
+        a = math.pi / 2 + 2 * math.pi * k / 32
+        rr, hh = ((1.0, 0.003) if k % 4 == 0 else (0.78, 0.003) if k % 4 == 2 else (0.5, 0.006))
+        ring.append((math.cos(a) * rr, math.sin(a) * rr, hh))
+    # a ridge line half way out on each ray: the facets fold along it
+    mid = []
+    for k in range(32):
+        x, y, _ = ring[k]
+        mid.append((x * 0.55, y * 0.55, radius * (0.12 if k % 2 == 0 else 0.08)))
     rv = [part.vert(P(x, y, h), w) for x, y, h in ring]
-    uvc = uv_in('star', 0.5, 0.5)
-    for k in range(16):
-        a, b = k, (k + 1) % 16
-        part.face([centre, rv[a], rv[b]], [uvc, uv_in('star', ring[a][0] * 0.5 + 0.5, ring[a][1] * 0.5 + 0.5),
-                                           uv_in('star', ring[b][0] * 0.5 + 0.5, ring[b][1] * 0.5 + 0.5)], smooth=False)
+    mv = [part.vert(P(x, y, h), w) for x, y, h in mid]
+    uv = lambda q: uv_in('star', q[0] * 0.5 + 0.5, q[1] * 0.5 + 0.5)  # noqa: E731
+    for k in range(32):
+        k2 = (k + 1) % 32
+        part.face([centre, mv[k], mv[k2]], [uv((0, 0)), uv(mid[k]), uv(mid[k2])], smooth=False)
+        part.face([mv[k], rv[k], rv[k2], mv[k2]], [uv(mid[k]), uv(ring[k]), uv(ring[k2]), uv(mid[k2])], smooth=False)
     # the enamel centre: a low dome over the ridges
     medal = []
-    cen = part.vert(P(0, 0, radius * 0.27), w)
-    for k in range(20):
-        a = 2 * math.pi * k / 20
-        medal.append(part.vert(P(math.cos(a) * 0.38, math.sin(a) * 0.38, radius * 0.2), w))
-    for k in range(20):
-        a1, a2 = 2 * math.pi * k / 20, 2 * math.pi * (k + 1) / 20
-        part.face([cen, medal[k], medal[(k + 1) % 20]],
+    cen = part.vert(P(0, 0, radius * 0.26), w)
+    for k in range(24):
+        a = 2 * math.pi * k / 24
+        medal.append(part.vert(P(math.cos(a) * 0.38, math.sin(a) * 0.38, radius * 0.18), w))
+    uvc = uv_in('star', 0.5, 0.5)
+    for k in range(24):
+        a1, a2 = 2 * math.pi * k / 24, 2 * math.pi * (k + 1) / 24
+        part.face([cen, medal[k], medal[(k + 1) % 24]],
                   [uvc, uv_in('star', 0.5 + 0.19 * math.cos(a1), 0.5 + 0.19 * math.sin(a1)),
                    uv_in('star', 0.5 + 0.19 * math.cos(a2), 0.5 + 0.19 * math.sin(a2))])
 
@@ -419,20 +508,35 @@ CROSS_OUTLINE = [(0.18, 0.18), (0.5, 1), (-0.5, 1), (-0.18, 0.18), (-1, 0.5), (-
 DISC = [(math.cos(2 * math.pi * k / 24), math.sin(2 * math.pi * k / 24)) for k in range(24)]
 
 
+def sash_edge(z, r):
+    """The sash's outer edge (largest x) on the front of his left breast between z - r and z + r, or None."""
+    sash = obj('Sash')
+    if sash is None:
+        return None
+    xs = [v.co.x for v in sash.data.vertices if abs(v.co.z - z) < r and v.co.y < -0.05 and v.co.x > 0]
+    return max(xs) if xs else None
+
+
 def build_orders():
     part = Part()
-    # neck cross: on a short ribbon from the collar, a gold crown over it
+    # neck cross: on a short ribbon from under the collar, a gold crown over it
     x, z, s = NECK_CROSS
+    col = obj('Collar')
+    if col:  # hung just under the collar's front edge, the crown at the edge
+        zs = [v.co.z for v in col.data.vertices if abs(v.co.x - x) < 0.07 and v.co.y < 0]
+        if zs:
+            z = min(zs) - s * 1.6
+    print('neck cross at z %.3f' % z)
     o, X, Y, N = chest_frame(x, z)
     w = TORSO_W.at(o)
-    plaque(part, CROSS_OUTLINE, (o + N * LIFT, X, Y, N), s, 0.003, 'cross', dome=0.002, w=w)
-    crown = o + N * (LIFT + 0.004) + Y * (s * 1.25)
-    lathe(part, crown, N, [(0.0, 0.0), (0.0, 0.007), (0.004, 0.008), (0.008, 0.005), (0.010, 0.0)],
-          lambda i, k: pal_uv('gold'), w, 10)
-    rib_top = chest_frame(x, z + s * 2.6)
-    plaque(part, [(-0.4, -1), (0.4, -1), (0.4, 1), (-0.4, 1)], (rib_top[0] + rib_top[3] * LIFT * 0.5, *rib_top[1:]),
-           s * 0.5, 0.0015, 'ribbons', w=w)
-    # ribbon bar, the medals hanging from it
+    rib_top = chest_frame(x, z + s * 2.0)
+    plaque(part, [(-0.35, -1), (0.35, -1), (0.35, 1), (-0.35, 1)], (rib_top[0] + rib_top[3] * LIFT * 0.5, *rib_top[1:]),
+           s * 0.55, 0.0015, 'ribbons', w=w)
+    plaque(part, MALTESE, (o + N * (LIFT + 0.001), X, Y, N), s, 0.003, 'cross', dome=0.003, w=w)
+    crown = o + N * (LIFT + 0.004) + Y * (s * 1.22)
+    lathe(part, crown, N, [(0.0, 0.0), (0.0, 0.009), (0.005, 0.010), (0.010, 0.006), (0.013, 0.0)],
+          lambda i, k: pal_uv('gold'), w, 12)
+    # ribbon bar, the medals hanging from it (each a little over the one before: they overlap in the portrait)
     n = len(RIBBONS)
     for k in range(n):
         cx = BAR_X + RIB_W * (k + 0.5)
@@ -444,19 +548,30 @@ def build_orders():
         for v, (px_, py_) in zip(top, pts):  # the ribbon's own stripes: its share of the region
             for l in v.link_loops:
                 l[part.uv].uv = uv_in('ribbons', u0 + (px_ * 0.5 + 0.5) / n, py_ * 0.5 + 0.5)
-        mo, mX, mY, mN = chest_frame(cx, BAR_Z - RIB_H - MEDAL_R * 1.15)
         kind = MEDALS[k]
+        size = WCROSS_S if kind == 'wcross' else MEDAL_R
+        mo, mX, mY, mN = chest_frame(cx, BAR_Z - RIB_H - size * 0.9)
         outline = CROSS_OUTLINE if kind == 'wcross' else DISC
-        plaque(part, outline, (mo + mN * (LIFT + 0.002), mX, mY, mN), MEDAL_R * (1.05 if kind == 'wcross' else 1.0),
-               0.0025, kind, dome=0.0015, w=w)
-    # small badge
-    x, z, s = BADGE
+        plaque(part, outline, (mo + mN * (LIFT + 0.002 + 0.0012 * (n - k)), mX, mY, mN), size, 0.0025, kind,
+               dome=0.002, w=w)
+    # the gold badge under the bar, a small crown over it
+    x, z, bw, bh = BADGE
     o, X, Y, N = chest_frame(x, z)
-    plaque(part, CROSS_OUTLINE, (o + N * LIFT, X, Y, N), s, 0.003, 'cross', dome=0.002, w=TORSO_W.at(o))
-    # stars
+    w = TORSO_W.at(o)
+    plaque(part, [(math.cos(a) * 1.0, math.sin(a) * 1.0) for a in (2 * math.pi * k / 24 for k in range(24))],
+           (o + N * LIFT, X * (bw / bh), Y, N), bh, 0.003, 'badge', dome=0.003, w=w)
+    lathe(part, o + N * (LIFT + 0.003) + Y * (bh * 1.1), N, [(0.0, 0.0), (0.0, 0.006), (0.004, 0.007), (0.008, 0.0)],
+          lambda i, k: pal_uv('gold'), w, 10)
+    # stars: on the cloth beside the sash, not on it
     for x, z, r in STARS:
-        o, X, Y, N = chest_frame(x, z)
-        star_piece(part, (o + N * LIFT, X, Y, N), r, TORSO_W.at(o))
+        edge = sash_edge(z, r * 0.8)
+        if edge is not None:
+            x = max(x, edge + r * (1 - STAR_OVER_SASH))
+        o, X, Y, N = chest_frame(x, z, NO_SASH)
+        o2 = chest_frame(x, z)[0]  # over the sash's edge if it reaches under the star
+        lift = max(LIFT, (o2 - o).dot(N) + 0.002)
+        star_piece(part, (o + N * lift, X, Y, N), r, TORSO_W.at(o))
+        print('star at x %.3f z %.3f (sash edge %s)' % (x, z, edge and '%.3f' % edge))
     return part.build('Orders')
 
 
@@ -525,7 +640,10 @@ def build_sabre():
             from_bow.append(a.lerp(b, j / 4))
     from_bow.append(bow[-1])
     tube(part, from_bow, 0.0035, lambda i, k: pal_uv('gold'), w, sides=6)
-    # sword knot: a gold cord from the guard down to a tassel
+    sabre = part.build('Sabre')
+    # sword knot (its own object: build_dangles.py lets it swing): a gold cord from the guard down to a tassel - a
+    # turned head and a skirt of bullion strands
+    part = Part()
     knot = [GUARD + fwd * 0.02, GUARD + fwd * 0.03 + Vector((0, 0, -0.06)), KNOT_TASSEL + Vector((0.0, 0.01, 0.10)),
             KNOT_TASSEL + Vector((0, 0, 0.035))]
     kp = []
@@ -535,15 +653,29 @@ def build_sabre():
     kp.append(knot[-1])
     kp = clear_path(kp, 0.004)
     tube(part, kp, 0.0035, lambda i, k: pal_uv('gold'), w, sides=6)
-    lathe(part, KNOT_TASSEL, Vector((0, 0, -1)),
-          [(t * TASSEL_K, r * TASSEL_K) for t, r in ((-0.035, 0.0), (-0.035, 0.006), (-0.025, 0.012), (-0.012, 0.010),
-                                                     (-0.006, 0.013), (0.0, 0.016), (0.045, 0.02), (0.05, 0.012),
-                                                     (0.052, 0.0))], lambda i, k: pal_uv('gold'), w, 14)
-    return part.build('Sabre')
+    tassel(part, KNOT_TASSEL, TASSEL_K, w)
+    return sabre, part.build('SwordKnot')
+
+
+def tassel(part, top, k, w):
+    """A tassel hanging from top: a turned gold head and TASSEL_STRANDS bullion strands below it, splaying a little."""
+    lathe(part, top, Vector((0, 0, -1)),
+          [(t * k, r * k) for t, r in ((-0.035, 0.0), (-0.035, 0.006), (-0.025, 0.012), (-0.012, 0.010),
+                                       (-0.006, 0.013), (0.0, 0.016), (0.012, 0.017), (0.014, 0.0))],
+          lambda i, kk: pal_uv('gold'), w, 14)
+    for j in range(TASSEL_STRANDS):
+        a = 2 * math.pi * (j + 0.5 * (j % 2)) / TASSEL_STRANDS
+        d = Vector((math.cos(a), math.sin(a), 0))
+        r0 = 0.013 * k * (0.75 if j % 2 else 0.95)
+        p0 = top + Vector((0, 0, -0.008 * k)) + d * r0
+        p1 = top + Vector((0, 0, -0.05 * k)) + d * (r0 + 0.004 * k)
+        path = [p0.lerp(p1, i / 5) for i in range(6)]
+        rings = tube(part, path, 0.0022 * k / 1.8, lambda i, kk: pal_uv('gold' if i % 2 else 'dark_gold'), w, sides=5)
+        cap(part, rings[-1], path[-1] + Vector((0, 0, -0.002)), pal_uv('gold'))
 
 
 orders = build_orders()
-sabre = build_sabre()
+sabre, knot = build_sabre()
 bpy.ops.outliner.orphans_purge(do_recursive=True)
 bpy.ops.wm.save_as_mainfile(filepath=OUT, compress=True)
 print('saved', OUT, os.path.getsize(OUT))

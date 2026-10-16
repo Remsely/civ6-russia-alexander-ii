@@ -8,12 +8,14 @@
 import bpy, math
 from mathutils import Vector, Matrix
 
-YAW_DEG = 15.0                     # the figure turned towards his left (the closure is right of centre in the portrait)
-HEAD_YAW = (-4.0, -5.0)            # neck_01, head about Z: the face turned back towards the camera
+YAW_DEG = 18.0                     # the figure turned towards his left (the closure is right of centre in the portrait)
+SPINE_TWIST = (3.0, 4.0, 4.0)      # spine_01..03 about Z: the shoulders turned further than the hips (contrapposto)
+SPINE_LEAN = (0.0, 0.0, 0.0)       # ... and tilted about Y: his left shoulder a little lower (the weight on the right leg)
+HEAD_YAW = (-8.0, -12.0)          # neck_01, head about Z: the face turned back almost square to the camera
 HEAD_PITCH = 3.0                   # head bent forward a little (degrees about X)
 # His left hand rests on the sword's hilt at the left hip; his right hand is behind his back at the belt.
 ARM = {
-    'l': dict(wrist=(0.215, -0.105, 1.205), pole=(0.55, 0.35, 1.45), hand_to=(0.215, -0.15, 1.10), twist=0.0),
+    'l': dict(wrist=(0.232, -0.105, 1.205), pole=(0.6, 0.35, 1.45), hand_to=(0.235, -0.15, 1.10), twist=0.0),
     'r': dict(wrist=(-0.135, 0.135, 1.255), pole=(-0.6, 0.25, 1.35), hand_to=(-0.03, 0.155, 1.23), twist=0.0),
 }
 # Right leg in front, carrying the weight; the left a step behind, its toe turned further out.
@@ -23,7 +25,7 @@ LEG = {
 }
 # Fingers: curl about each bone's own X (degrees per joint 1, 2, 3); thumb separately.
 CURL = {
-    'l': dict(index=(55, 60, 35), middle=(60, 65, 40), ring=(65, 65, 40), pinky=(70, 65, 40), thumb=(10, 25, 20)),
+    'l': dict(index=(70, 75, 45), middle=(75, 80, 45), ring=(80, 80, 45), pinky=(85, 75, 45), thumb=(15, 30, 25)),
     'r': dict(index=(25, 35, 20), middle=(30, 40, 25), ring=(35, 40, 25), pinky=(40, 40, 25), thumb=(5, 15, 10)),
 }
 
@@ -62,10 +64,11 @@ def _ik(upper, lower, target, pole):
     _aim(lower, s + u * d)
 
 
-def _turn_z(pb, deg, pitch=0.0):
-    """Pose bone pb turned about the world Z (and then X) through its head."""
+def _turn_z(pb, deg, pitch=0.0, roll=0.0):
+    """Pose bone pb turned about the world Z (then X, then Y) through its head."""
     p = pb.head.copy()
-    r = Matrix.Rotation(math.radians(deg), 4, 'Z') @ Matrix.Rotation(math.radians(pitch), 4, 'X')
+    r = (Matrix.Rotation(math.radians(deg), 4, 'Z') @ Matrix.Rotation(math.radians(pitch), 4, 'X')
+         @ Matrix.Rotation(math.radians(roll), 4, 'Y'))
     pb.matrix = Matrix.Translation(p) @ r @ Matrix.Translation(-p) @ pb.matrix
     _upd()
 
@@ -98,6 +101,8 @@ def set_pose(rig):
         foot.matrix = (Matrix.Translation(ankle) @ Matrix.Rotation(math.radians(leg['turn']), 4, 'Z')
                        @ rest.to_3x3().to_4x4())
         _upd()
+    for i, (tw, ln) in enumerate(zip(SPINE_TWIST, SPINE_LEAN)):
+        _turn_z(pbs['spine_%02d' % (i + 1)], tw, 0.0, ln)
     for s, arm in ARM.items():
         _ik(pbs['upperarm_' + s], pbs['lowerarm_' + s], arm['wrist'], arm['pole'])
         _aim(pbs['hand_' + s], arm['hand_to'], arm['twist'])

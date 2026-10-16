@@ -7,6 +7,18 @@ import bpy
 import numpy as np
 
 LUM = np.array([0.2126, 0.7152, 0.0722], np.float32)
+# One gold for everything (embroidery, belt, epaulettes, cords, orders, sabre): the portrait's, sRGB - the median of its
+# gold pixels is (183, 118, 52) in the light it is painted in, the highlights (238, 188, 118).
+GOLD_SRGB = (225, 150, 62)
+
+
+def gold_grade(rgb, mask):
+    """sRGB picture pixels turned to GOLD_SRGB's hue, keeping their light and dark, by mask (0..1)."""
+    tgt = np.array(GOLD_SRGB, np.float32) / 255
+    lum = rgb @ LUM
+    graded = np.clip(tgt * (lum / float(tgt @ LUM))[..., None], 0, 1)
+    m = np.asarray(mask, np.float32)[..., None]
+    return rgb * (1 - m) + graded * m
 
 
 def blur(a, r=1):

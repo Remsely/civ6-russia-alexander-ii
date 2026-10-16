@@ -33,12 +33,21 @@ ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>,
                 'model, 0 = front, 90 = his left side, 180 = back; @deg - camera elevation, default 3), e.g. full0,full45,full90,full180,head0,head45,head90; '
                 'ref - orthographic front framed like art/source/alexander_ii_full.png (1024x1536, crown at REF_CROWN px, soles '
                 'at REF_SOLES px) for an overlay on it; each goes to <out stem>_<view>.png')
+ap.add_argument('--motion', help='a motion from tools/blender/motion.py (idle, test) keyed on the rig, the loose pieces '
+                'simulated over it; with --frames')
+ap.add_argument('--frames', help='comma list of frames: the views shot at each (<out stem>_f<frame>_<view>.png)')
 ap.add_argument('--hide', help='comma list of objects (name prefixes) left out of the render, e.g. Collar,Uniform')
 args = ap.parse_args(argv)
 
 sc = bpy.data.scenes[args.scene] if args.scene else bpy.context.scene
 if bpy.context.window:
     bpy.context.window.scene = sc
+if args.motion:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import motion
+    rig = next(o for o in sc.objects if o.type == 'ARMATURE')
+    print('motion %s: %d frames' % (args.motion, motion.apply(sc, rig, args.motion)))
+    sc.frame_set(1)
 if args.frame is not None:
     sc.frame_set(args.frame)
 
@@ -143,9 +152,13 @@ def shoot(path, rw, rh):
 
 
 print('RENDER_BEGIN')
-if args.views:
+frames = [int(f) for f in args.frames.split(',')] if args.frames else [None]
+for frame in frames if args.views else []:
     # turntable views: the camera goes round the model (leader space: faces +X, crown at target_cm), lights stay
     stem = os.path.splitext(args.out)[0]
+    if frame is not None:
+        sc.frame_set(frame)
+        stem += '_f%03d' % frame
     half = math.tan(math.radians(VFOV_DEG) / 2)
     for view in args.views.split(','):
         name, _, pitch = view.partition('@')
@@ -172,7 +185,7 @@ if args.views:
         eye = target + Vector((math.cos(yaw) * math.cos(pitch), math.sin(yaw) * math.cos(pitch), math.sin(pitch))) * d
         aim(eye, target)
         print(shoot('%s_%s.png' % (stem, view.replace('@', 'e')), *size))
-else:
+if not args.views:
     print(shoot(args.out, w, h))
 top = max(pts, key=lambda p: p.z)
 bottom = min(pts, key=lambda p: p.z)
