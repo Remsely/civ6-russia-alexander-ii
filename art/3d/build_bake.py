@@ -11,7 +11,8 @@ import mat_util  # noqa: E402
 
 OUT = os.path.join(HERE, 'alexander_leader.blend')
 AO_OUT = os.path.join(HERE, 'textures', 'uniform_ao.png')
-TEX, SAMPLES, AO_DIST = 2048, 48, 0.12  # AO_DIST: metres - how far something still shades
+TEX, SAMPLES, AO_DIST = 2048, 96, 0.12  # AO_DIST: metres - how far something still shades
+AO_BLUR = 2                       # px of blur over the baked AO (its noise)
 # Hands (and what else of the body shows): the skin of the face (build_head.py's portrait colour, sRGB), redder over the
 # knuckles and fingertips, darker in the creases and between the fingers (their own AO), a fine pore relief.
 SKIN_SRGB, SKIN_RED = (0.88, 0.62, 0.48), (1.0, 0.82, 0.76)
@@ -50,6 +51,13 @@ bpy.context.view_layer.objects.active = tgt
 bpy.ops.object.bake(type='AO')
 sc.render.engine = engine
 uni.hide_render = False
+# the bake's sampling noise out (on the cloth it read as grain): a masked blur, the islands not bled into each other
+ao = np.array(img.pixels[:], np.float32).reshape(TEX, TEX, 4)
+cov = (ao[..., 0] > 1e-4).astype(np.float32)  # baked texels (the empty background is black)
+v = ao[..., 0] * cov
+num, den = mat_util.blur(v, AO_BLUR), mat_util.blur(cov, AO_BLUR)
+ao[..., :3] = np.where(cov[..., None] > 0, (num / np.maximum(den, 1e-6))[..., None], ao[..., :3])
+img.pixels.foreach_set(ao.ravel())
 img.filepath_raw = AO_OUT; img.file_format = 'PNG'; mat_util.write(img)
 img.filepath = AO_OUT; img.source = 'FILE'; img.colorspace_settings.name = 'Non-Color'
 bpy.data.objects.remove(tgt); bpy.data.materials.remove(bake_mat)

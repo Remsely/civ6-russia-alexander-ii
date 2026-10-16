@@ -30,8 +30,10 @@ CLOTH = dict(quality=8, mass=0.35, air_damping=1.0, tension_stiffness=40, compre
 ELBOW_R = (0.05, 0.13)                  # sleeve smoothed fully within this of the elbow joint, fading out by the second
 SHOULDER_R = (0.06, 0.16)               # ... and the cloth round the shoulder joint
 JOINT_ROUNDS, JOINT_CLEAR = 12, 0.006   # Taubin rounds; the cloth at least this off the skin there
+SLEEVE_MIN_R, ELBOW_PASSES = 0.05, 4    # the sleeve this far at least from the arm bones round the elbow; rounds
 UNTANGLE_TRIES, UNTANGLE_RINGS = 6, 4      # rounds of smoothing round the sheet's self-crossings; rings of neighbours
 COLLIDE = dict(distance_min=0.004, self_distance_min=0.003, collision_quality=4)
+LEADER_CM, LEADER_CAMERA = 150.0, (320.0, 0.0, 137.741)  # the export's height and the leader camera (leader space, cm)
 
 sc = bpy.context.scene
 rig, h, uni = bpy.data.objects['HumanRig'], bpy.data.objects['Human'], bpy.data.objects['Uniform']
@@ -267,10 +269,41 @@ def smooth_joints():
             w = 1 - np.clip((d - r0) / (r1 - r0), 0, 1)
             k = np.maximum(k, w * w * (3 - 2 * w) * (only if only is not None else 1))
     zone = np.where(k > 0)[0]
-    for _ in range(JOINT_ROUNDS):
-        for f in (0.6, -0.63):
-            lap = np.array([co[nb[i]].mean(0) - co[i] if nb[i] else np.zeros(3) for i in zone])
-            co[zone] += lap * (f * k[zone])[:, None]
+    # the bent elbow: the sleeve round it at least SLEEVE_MIN_R off the two arm bones (capsules round the upper arm
+    # and forearm) - the skin pinches in the crook and the cloth followed it into a notch; the outside of the joint
+    # rounds off over the capsules' spheres instead of standing in a point. Smoothed, pushed out again, a few times.
+    segs = {s: [(np.array(rig.pose.bones[b + s].head), np.array(rig.pose.bones[b + s].tail))
+                 for b in ('upperarm_', 'lowerarm_')] for s in 'lr'}
+    elbow = {}
+    for s in 'lr':
+        d = np.linalg.norm(co - np.array(rig.pose.bones['lowerarm_' + s].head), axis=1)
+        elbow[s] = np.where(sleeve & (d < ELBOW_R[1] * 1.2))[0]
+
+    def capsules():
+        n = 0
+        for s, idx in elbow.items():
+            best = np.full(len(idx), 1e9); foot = np.zeros((len(idx), 3))
+            for a, b in segs[s]:
+                ab = b - a
+                t = np.clip(((co[idx] - a) @ ab) / (ab @ ab), 0, 1)
+                q = a + t[:, None] * ab
+                dd = np.linalg.norm(co[idx] - q, axis=1)
+                closer = dd < best
+                best[closer] = dd[closer]; foot[closer] = q[closer]
+            low = best < SLEEVE_MIN_R
+            out = (co[idx] - foot) / np.maximum(best, 1e-6)[:, None]
+            co[idx[low]] = foot[low] + out[low] * SLEEVE_MIN_R
+            n += int(low.sum())
+        return n
+    pushed_e = 0
+    for rnd in range(ELBOW_PASSES):
+        pushed_e += capsules()
+        for _ in range(JOINT_ROUNDS // 2):
+            for f in (0.6, -0.63):
+                lap = np.array([co[nb[i]].mean(0) - co[i] if nb[i] else np.zeros(3) for i in zone])
+                co[zone] += lap * (f * k[zone])[:, None]
+    pushed_e += capsules()
+    print('elbows: %d sleeve vertices brought out to the arm capsules' % pushed_e)
     tree = BVHTree.FromPolygons([v.co.copy() for v in h.data.vertices], [tuple(p.vertices) for p in h.data.polygons])
     pushed = 0
     for i in zone:
@@ -332,6 +365,34 @@ bpy.ops.object.mode_set(mode='OBJECT')
 rig.animation_data_clear()
 for pb in rig.pose.bones:
     pb.matrix_basis.identity()
+
+
+def aim_eyes():
+    """The eyeballs (build_head.py) turned in the stance to look into the leader camera - where the diplomacy screen's
+    camera stands in front of the figure (as tools/blender/render_leader.py places it: the export turns the model by
+    90 + YAW_DEG and scales it to 150 cm). The eye bones keep their rest; the eyeballs' mesh turns about them."""
+    from mathutils import Matrix, Vector
+    eyes = bpy.data.objects.get('Eyes')
+    if eyes is None:
+        return
+    top = max((o.matrix_world @ v.co).z for o in sc.objects if o.type == 'MESH' and not o.hide_render
+              for v in o.data.vertices)
+    leader = Matrix.Rotation(math.radians(90 + pose.YAW_DEG), 4, 'Z') @ Matrix.Scale(LEADER_CM / top, 4)
+    cam = leader.inverted() @ Vector(LEADER_CAMERA)
+    names = [g.name for g in eyes.vertex_groups]
+    for s in 'lr':
+        b = rig.data.bones['eye_' + s]
+        c = b.head_local
+        q = (b.tail_local - c).normalized().rotation_difference((cam - c).normalized())
+        gi = names.index('eye_' + s)
+        for v in eyes.data.vertices:
+            if any(g.group == gi and g.weight > 0.5 for g in v.groups):
+                v.co = c + q @ (v.co - c)
+        print('eye %s: turned %.1f deg to the camera at %s' % (s, math.degrees(q.angle), tuple(round(x, 2) for x in cam)))
+    eyes.data.update()
+
+
+aim_eyes()
 for o in skinned:
     o.modifiers.new('Armature', 'ARMATURE').object = rig
 uni.vertex_groups.remove(uni.vertex_groups['pin'])

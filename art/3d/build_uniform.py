@@ -40,7 +40,7 @@ BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dis
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
 # on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.022, 0.015
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.012, 0.015  # in the portrait the jaw and whiskers rest on the collar
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
 STAND_OFF = 0.006                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top)
 NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
@@ -69,9 +69,10 @@ TEX_OUT = os.path.join(HERE, 'textures', 'uniform_albedo.png')
 CLOTH_RGB = (0.0065, 0.007, 0.0105)
 PIPING_RGB = (0.50, 0.012, 0.010)
 PIPING_W, STRIPE_W, CUFF_T = 0.007, 0.012, 0.30
-WOOL_REPEATS, WOOL_CONTRAST = 10, 0.22  # textures/gen/wool.png over the UVs (~15 cm a tile), its weave's strength
+WOOL_REPEATS, WOOL_CONTRAST = 10, 0.07  # textures/gen/wool.png over the UVs (~15 cm a tile), its weave's strength (the
+                                    # portrait's broadcloth is smooth: a stronger weave read as grain)
 NORMAL_OUT = os.path.join(HERE, 'textures', 'uniform_normal.png')
-WOOL_H, PIPING_H = 0.25, 2.5        # px of relief: the weave; the piping, a cord sewn into the seams
+WOOL_H, PIPING_H = 0.06, 2.5        # px of relief: the weave; the piping, a cord sewn into the seams
 WOOL_SHEEN, SHEEN_TINT = 0.25, (0.04, 0.045, 0.07)  # broadcloth's fuzz at grazing angles: a faint dark blue (the portrait's cloth is near black)
 PLEAT_ANGLE = 90                  # degrees from the front centre to the piped pleats of the skirt (at the sides)
 

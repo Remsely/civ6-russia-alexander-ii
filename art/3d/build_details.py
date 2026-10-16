@@ -41,6 +41,8 @@ COLLAR_FRONT_GAP = 0.005          # half-width of the opening at the front, at t
 COLLAR_FRONT_GAP_BOTTOM = 0.016   # ... and at the bottom edge (the halves part downwards, the dark stand between)
 COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
 COLLAR_THICK = 0.004
+SHIRT_IN = 0.0045                 # the white shirt collar this far inside the tunic collar's outside (further in it ran into
+                                  # the neck and showed in white flecks round it)
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
 BUTTON_R, BUTTON_H = 0.0085, 0.0055
 BUTTON_ZS = (1.66, 1.60, 1.54, 1.48, 1.42, 1.36)  # above the belt
@@ -49,8 +51,8 @@ BUTTON_SKIP = ((0.031, 1.66),)     # (dx, z): under the ribbon bar (build_orders
 # Belt over the waist seam of the tunic; buckle plate taller than the belt, top corners cut off.
 BELT_THICK, BELT_EASE = 0.004, 0.001
 BELT_RED, BELT_EDGE = 0.24, 0.05  # across the belt: red borders to this, a gold edge outside them   # height and profile come from build_uniform.py (it takes the tunic in)
-BUCKLE_W, BUCKLE_H, BUCKLE_RAISE = 0.125, 0.088, 0.004
-BUCKLE_CUT_X, BUCKLE_CUT_Z = 0.020, 0.032  # cut-off top corners, measured on the plate in the picture
+BUCKLE_W, BUCKLE_H, BUCKLE_RAISE = 0.112, 0.074, 0.004  # a little over the belt's height (larger, it dominated the waist)
+BUCKLE_CUT_X, BUCKLE_CUT_Z = 0.018, 0.027  # cut-off top corners, measured on the plate in the picture
 BUCKLE_CLOSURE = 0.8               # the closure runs through the buckle this far across it (from the picture's left)
 # Cuffs: a band over the end of the sleeve with piped (beaded) edges; a gold flap with three buttons outside.
 CUFF_RAISE, CUFF_THICK, CUFF_LIP, CUFF_BEAD = 0.002, 0.003, 0.012, 0.003
@@ -58,6 +60,7 @@ FLAP_ACROSS, FLAP_ALONG, FLAP_RAISE = 0.068, 0.074, 0.003
 # Riding boots up to BOOT_TOP, wider than the tucked-in trousers; sole with a welt, heel, accordion folds over the
 # ankle, a spur at the heel.
 BOOT_EASE, BOOT_FOOT_OFF, BOOT_THICK = 0.018, 0.006, 0.003
+BOOT_ROUGH = 0.42                 # polished calf, not patent: the portrait's boots shine in soft broad highlights
 SOLE_H, WELT, HEEL_H = 0.012, 0.004, 0.032
 FOLD_Z0, FOLD_Z1, FOLD_PITCH, FOLD_AMP = 0.12, 0.27, 0.032, 0.005
 
@@ -315,7 +318,7 @@ def build_atlas():
     put('buckle', buckle_tex, raw=True)
     put('flap', picture('cuff_flap'))
     flat('gold', GOLD, 1.0, 0.3)
-    flat('leather', LEATHER, 0.0, 0.16)
+    flat('leather', LEATHER, 0.0, BOOT_ROUGH)
     flat('sole', SOLE, 0.0, 0.6)
     flat('red', RED, 0.0, 0.85)
     flat('white', WHITE, 0.0, 0.7)
@@ -497,9 +500,9 @@ def build_collar(nu=64, nv=7):
     for k in range(2):
         ring = []
         for zt, d in zip(tops, dirs):
-            z = zt - 0.008 + 0.0115 * k
+            z = zt - 0.008 + 0.0135 * k
             rn = cloth(zt - 0.006, d) or 0.07
-            ring.append(c0.to_3d() + Vector((0, 0, z)) + d * (rn - 0.0075))
+            ring.append(c0.to_3d() + Vector((0, 0, z)) + d * (rn - SHIRT_IN))
         rings.append(ring)
     bm, grid = loft(rings, closed=False)
     outward_normals(bm, lambda p: Vector((c0.x, c0.y, p.z)))

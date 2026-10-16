@@ -14,10 +14,15 @@ SPINE_LEAN = (0.0, 0.0, 0.0)       # ... and tilted about Y: his left shoulder a
 HEAD_YAW = (-17.5, -25.5)         # neck_01, head about Z: the head as the portrait saw it - its eyes, painted from the
                                    # portrait, look into the camera; the face then turned a little to his right, as there
 HEAD_PITCH = 3.0                   # head bent forward a little (degrees about X)
-# His left hand rests on the sword's hilt at the left hip; his right hand is behind his back at the belt.
+CLAVICLE_DROP = 11.0               # degrees: the shoulders let down (the portrait's epaulettes sit ~3 cm under the
+                                   # body's own shoulder line; raised, the figure looks hunched into its collar)
+# His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand on it
+# (raised to the side, as before, it stood out like a wing); his right arm hangs nearly straight from the shoulder, the
+# elbow out a little, the forearm taken behind the back, the hand on the belt there (hidden, as in the portrait).
+# elbow: where the upper arm points (else a two-bone IK with the pole decides it).
 ARM = {
-    'l': dict(wrist=(0.232, -0.105, 1.205), pole=(0.9, 0.15, 1.4), hand_to=(0.235, -0.15, 1.10), twist=0.0),
-    'r': dict(wrist=(-0.11, 0.155, 1.265), pole=(-0.6, 0.4, 1.35), hand_to=(-0.01, 0.17, 1.24), twist=0.0),
+    'l': dict(wrist=(0.215, -0.11, 1.19), elbow=(0.33, 0.04, 1.40), hand_to=(0.22, -0.155, 1.09), twist=0.0),
+    'r': dict(wrist=(-0.06, 0.19, 1.25), elbow=(-0.28, 0.04, 1.36), hand_to=(0.03, 0.205, 1.235), twist=0.0),
 }
 # Right leg in front, carrying the weight; the left a step behind, its toe turned further out.
 LEG = {
@@ -104,8 +109,20 @@ def set_pose(rig):
         _upd()
     for i, (tw, ln) in enumerate(zip(SPINE_TWIST, SPINE_LEAN)):
         _turn_z(pbs['spine_%02d' % (i + 1)], tw, 0.0, ln)
+    for s in 'lr':  # the clavicle turned about the axis that takes its tip straight down
+        pb = pbs['clavicle_' + s]
+        d = (pb.tail - pb.head).normalized()
+        ax = d.cross(Vector((0, 0, -1))).normalized()
+        p = pb.head.copy()
+        pb.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(CLAVICLE_DROP), 4, ax)
+                     @ Matrix.Translation(-p) @ pb.matrix)
+        _upd()
     for s, arm in ARM.items():
-        _ik(pbs['upperarm_' + s], pbs['lowerarm_' + s], arm['wrist'], arm['pole'])
+        if 'elbow' in arm:
+            _aim(pbs['upperarm_' + s], arm['elbow'])
+            _aim(pbs['lowerarm_' + s], arm['wrist'])
+        else:
+            _ik(pbs['upperarm_' + s], pbs['lowerarm_' + s], arm['wrist'], arm['pole'])
         _aim(pbs['hand_' + s], arm['hand_to'], arm['twist'])
         _curl(rig, s)
     _turn_z(pbs['neck_01'], HEAD_YAW[0])

@@ -84,13 +84,14 @@ def chain(ob, idx, name, parent, head, tail, kind, start=0.0):
     put_on(ob, idx, name, [smoothstep(x, start, start + 0.6) for x in t])
 
 
-# ---------------------------------------------------------------- sword knot: from the hilt down to the tassel
-knot = bpy.data.objects.get('SwordKnot')
-if knot:
-    co = coords(knot)
-    top = co[np.argmax(co[:, 2])]; bottom = co[np.argmin(co[:, 2])]
-    idx = np.arange(len(co))
-    chain(knot, idx, 'dangle_knot', dominant_bone(knot, idx), top, bottom, 'knot', 0.05)
+# ---------------------------------------------------------------- sword knot and the belt's cord: down to the tassels
+for name, bone in (('SwordKnot', 'dangle_knot'), ('BeltKnot', 'dangle_beltknot')):
+    knot = bpy.data.objects.get(name)
+    if knot:
+        co = coords(knot)
+        top = co[np.argmax(co[:, 2])]; bottom = co[np.argmin(co[:, 2])]
+        idx = np.arange(len(co))
+        chain(knot, idx, bone, dominant_bone(knot, idx), top, bottom, 'knot', 0.05)
 
 # ---------------------------------------------------------------- aiguillettes: each loop swings about its two ends
 aig = bpy.data.objects.get('Aiguillettes')
