@@ -42,6 +42,7 @@ VOXEL = 0.002                     # remesh voxel (m)
 TRIS = 24000                      # the head after decimation
 BEARD_SMOOTH = (0.03, 12)         # the bottom this high over the cut smoothed, rounds (the ragged beard ends)
 HAIR_SMOOTH = 60                  # rounds of smoothing the hair, whiskers and moustache (lumps of the generation)
+EAR_GROW, EAR_FACING = 0.006, 0.2  # the ears' box grown by this (m); how far sideways a face of the ear faces (normal x)
 NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 16  # top ring this far inside the cut's outline; segments, rings
 NECK_TWIST_ZS = (1.74, 1.84)       # the neck's turn spreads between these heights (head bone above, chest below)
@@ -205,6 +206,30 @@ for f, rgb in zip(gbm.faces, head_shape.face_colours(gbm, gimg)):
     f[CLS] = cls[f.index]
     hh_, ss_, vv_ = colorsys.rgb_to_hsv(*(min(1.0, max(0.0, float(c))) for c in rgb))
     f[UNIFORM] = int(head_shape.is_collar(hh_ * 360, ss_, vv_))
+def ears_are_skin():
+    """The generated texture shades the ears dark brown, so they classify as hair and get its strands: what faces
+    sideways inside the box of MPFB's ears (the head is fitted to them), a little grown, is skin."""
+    gi = h.vertex_groups['ears'].index
+    dg = bpy.context.evaluated_depsgraph_get()
+    me = h.evaluated_get(dg).to_mesh()
+    pts = np.array([v.co[:] for v, src in zip(me.vertices, h.data.vertices)
+                    if any(g.group == gi and g.weight > 0.5 for g in src.groups)])
+    h.evaluated_get(dg).to_mesh_clear()
+    n = 0
+    for side in (1, -1):
+        p = pts[pts[:, 0] * side > 0]
+        lo, hi = p.min(0) - EAR_GROW, p.max(0) + EAR_GROW
+        for f in gbm.faces:
+            c = f.calc_center_median()
+            if (lo <= np.array(c)).all() and (np.array(c) <= hi).all() and f.normal.x * side > EAR_FACING \
+                    and f[CLS] == head_shape.HAIR:
+                f[CLS] = head_shape.SKIN
+                n += 1
+    print('ears: %d hair faces made skin' % n)
+
+
+gbm.normal_update()
+ears_are_skin()
 n0 = len(gbm.verts)
 bmesh.ops.remove_doubles(gbm, verts=gbm.verts[:], dist=1e-6)  # glTF splits vertices along UV seams
 print('generated head: %d -> %d verts' % (n0, len(gbm.verts)))
@@ -856,6 +881,8 @@ def hair_detail():
     chroma = chroma + (target - chroma) * (HAIR_HUE * k)
     rgb = chroma * lum[..., None]
     px[..., :3] = np.clip(rgb * (1 + HAIR_CONTRAST * s[..., None] * k), 0, 1)
+    # the baked islands (and the bake's own margin) padded out over the background: no dark rims on the small ones
+    px[..., :3] = mat_util.pad(px[..., :3], px[..., :3].max(-1) > 0.004)
     img.pixels.foreach_set(px.ravel()); mat_util.write(img)
     height = s * k[..., 0] * HAIR_RELIEF
     nrm = mat_util.save('Head_Normal', mat_util.normals(height) * 0.5 + 0.5, HEAD_NORMAL, 'Non-Color')

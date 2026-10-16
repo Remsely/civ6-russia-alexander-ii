@@ -21,6 +21,24 @@ def gold_grade(rgb, mask):
     return rgb * (1 - m) + graded * m
 
 
+def pad(rgb, mask, rounds=32):
+    """Texels outside the UV islands (mask False) filled outwards from the islands' edges, so filtering and mipmaps
+    pull no black (or other background) into the islands' rims - small islands come out speckled otherwise."""
+    rgb = rgb.copy(); m = mask.astype(np.float32)
+    for _ in range(rounds):
+        acc = np.zeros_like(rgb); cnt = np.zeros_like(m)
+        for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+            acc += np.roll(np.roll(rgb * m[..., None], dy, 0), dx, 1)
+            cnt += np.roll(np.roll(m, dy, 0), dx, 1)
+        grow = (m == 0) & (cnt > 0)
+        rgb[grow] = acc[grow] / cnt[grow][:, None]
+        m = np.maximum(m, grow.astype(np.float32))
+    rest = m == 0
+    if rest.any():
+        rgb[rest] = rgb[~rest].mean(0)
+    return rgb
+
+
 def blur(a, r=1):
     """Box blur, r pixels each way, wrapping (the regions are tiles)."""
     for ax in (0, 1):
