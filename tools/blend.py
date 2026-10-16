@@ -4,7 +4,8 @@
     python tools/blend.py audit --fbx art/3d/test/LEAD_REMSELY_TEST.fbx
     python tools/blend.py render art/3d/alexander_leader.blend [--scene Human] [--out shot.png] [--frame N] ...
     python tools/blend.py render art/3d/alexander_leader.blend --scene Human --views full0,full45,full90,full180,head0,head45,head90
-        (turntable views, plus <out stem>_sheet.png with all of them: one row of full views, one of head views)
+        (turntable views, plus <out stem>_sheet.png with all of them: one row of full views, one of head views;
+         the view 'ref' also gives <out stem>_refcmp.png - the model over alexander_ii_full.png, outline in cyan)
 
 Blender: env BLENDER or the default 4.5 install. Exit code 1 if the audit found errors.
 """
@@ -76,8 +77,30 @@ def main():
     lines = body.strip().splitlines()
     print('\n'.join(lines))
     shots = [l for l in lines if l.lower().endswith('.png')]
+    for ref in [p for p in shots if p.endswith('_ref.png')]:
+        print(overlay(ref))
+    shots = [p for p in shots if not p.endswith('_ref.png')]
     if len(shots) > 1:
         print(sheet(shots))
+
+
+def overlay(path):
+    """The 'ref' view next to alexander_ii_full.png and over it (the model's outline in cyan): <stem>_refcmp.png."""
+    from PIL import Image, ImageChops, ImageFilter
+    ref = Image.open(os.path.join(ROOT, 'art', 'source', 'alexander_ii_full.png')).convert('RGB')
+    shot = Image.open(path).convert('RGB').resize(ref.size)
+    bg = shot.getpixel((2, 2))
+    mask = ImageChops.difference(shot, Image.new('RGB', shot.size, bg)).convert('L').point(lambda v: 255 if v > 6 else 0)
+    edge = mask.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.MaxFilter(3))
+    over = Image.blend(ref, shot, 0.5)
+    over.paste(Image.new('RGB', ref.size, (0, 255, 255)), (0, 0), edge)
+    ref_edge = ref.copy(); ref_edge.paste(Image.new('RGB', ref.size, (0, 255, 255)), (0, 0), edge)
+    out = Image.new('RGB', (ref.width * 3, ref.height))
+    for i, im in enumerate((ref_edge, shot, over)):
+        out.paste(im, (i * ref.width, 0))
+    dst = path[:-len('_ref.png')] + '_refcmp.png'
+    out.save(dst)
+    return dst
 
 
 def sheet(paths):

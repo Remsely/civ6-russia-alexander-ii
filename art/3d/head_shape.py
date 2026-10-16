@@ -181,6 +181,17 @@ def fit(h):
     P, lips_z = landmarks_mpfb(co, groups, body)
     M = np.array([P[k] for k in IMG_LANDMARKS]); W = np.array([LANDMARK_W[k] for k in IMG_LANDMARKS])
     s, R, t = similarity(np.array(H), M, W)
+    # The portrait is a little three-quarter: fitted as is, the face looks past the camera and leans (the left eye
+    # 12 mm ahead of the right, 5 mm higher). The eye line is turned level and square to the body about its middle,
+    # which goes onto the body's midline.
+    el, er = (s * R @ np.array(H[i]) + t for i in (0, 1))
+    d = el - er
+    C = Matrix.Rotation(math.atan2(d[2], math.hypot(d[0], d[1])), 3, 'Y') @ Matrix.Rotation(-math.atan2(d[1], d[0]), 3, 'Z')
+    C = np.array(C)
+    mid = (el + er) / 2
+    goal = mid.copy(); goal[0] = (M[0][0] + M[1][0]) / 2
+    R = C @ R
+    t = C @ (t - mid) + goal
     T = Matrix([list(s * R[i]) + [t[i]] for i in range(3)] + [[0, 0, 0, 1]])
     gbm.transform(T)
     print('head fit: scale %.4f, yaw %.1f, landmark error %.1f mm' % (

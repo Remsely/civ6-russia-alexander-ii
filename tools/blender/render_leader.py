@@ -18,6 +18,7 @@ from bpy_extras.object_utils import world_to_camera_view
 EYE = Vector((320.0, 0.0, 137.741))
 TARGET = Vector((0.0, 0.0, 110.39))
 VFOV_DEG = 19.2
+REF_SIZE, REF_CROWN, REF_SOLES, REF_X = (1024, 1536), 12, 1510, 515  # alexander_ii_full.png: px of the crown, soles, midline
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 ap = argparse.ArgumentParser(prog='render_leader.py')
@@ -30,7 +31,9 @@ ap.add_argument('--samples', type=int, default=32)
 ap.add_argument('--transparent', action='store_true')
 ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>, bust<yaw>, head<yaw> (yaw in degrees round the '
                 'model, 0 = front, 90 = his left side, 180 = back; @deg - camera elevation, default 3), e.g. full0,full45,full90,full180,head0,head45,head90; '
-                'each goes to <out stem>_<view>.png')
+                'ref - orthographic front framed like art/source/alexander_ii_full.png (1024x1536, crown at REF_CROWN px, soles '
+                'at REF_SOLES px) for an overlay on it; each goes to <out stem>_<view>.png')
+ap.add_argument('--hide', help='comma list of objects (name prefixes) left out of the render, e.g. Collar,Uniform')
 args = ap.parse_args(argv)
 
 sc = bpy.data.scenes[args.scene] if args.scene else bpy.context.scene
@@ -39,6 +42,9 @@ if bpy.context.window:
 if args.frame is not None:
     sc.frame_set(args.frame)
 
+for o in sc.objects:
+    if args.hide and o.name.startswith(tuple(args.hide.split(','))):
+        o.hide_render = True
 meshes = [o for o in sc.objects if o.type == 'MESH' and not o.hide_render]
 dg = bpy.context.evaluated_depsgraph_get()
 pts = []
@@ -131,8 +137,17 @@ if args.views:
     half = math.tan(math.radians(VFOV_DEG) / 2)
     for view in args.views.split(','):
         name, _, pitch = view.partition('@')
-        kind, yaw = name.rstrip('0123456789-'), math.radians(float(name.lstrip('fulheadbst') or 0))
+        kind, yaw = name.rstrip('0123456789-'), math.radians(float(name.lstrip('fulheadbstr') or 0))
         pitch = math.radians(float(pitch or 3))
+        if kind == 'ref':
+            px = args.target_cm / (REF_SOLES - REF_CROWN)  # cm per pixel
+            cam_data.type = 'ORTHO'
+            cam_data.ortho_scale = REF_SIZE[1] * px * height / args.target_cm  # in the scene's own units
+            c = Vector((0, -(REF_SIZE[0] / 2 - REF_X) * px, (REF_SOLES - REF_SIZE[1] / 2) * px))
+            aim(c + Vector((1000, 0, 0)), c)
+            print(shoot('%s_ref.png' % stem, *REF_SIZE))
+            cam_data.type = 'PERSP'
+            continue
         if kind == 'full':
             target, span, size = Vector((0, 0, args.target_cm * 0.5)), args.target_cm * 1.1, (600, 900)
         elif kind == 'bust':
