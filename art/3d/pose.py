@@ -11,7 +11,8 @@ from mathutils import Vector, Matrix
 YAW_DEG = 18.0                     # the figure turned towards his left (the closure is right of centre in the portrait)
 SPINE_TWIST = (3.0, 4.0, 4.0)      # spine_01..03 about Z: the shoulders turned further than the hips (contrapposto)
 SPINE_LEAN = (0.0, 0.0, 0.0)       # ... and tilted about Y: his left shoulder a little lower (the weight on the right leg)
-HEAD_YAW = (-12.0, -17.0)         # neck_01, head about Z: the face turned back square to the camera (YAW_DEG + twist)
+HEAD_YAW = (-17.5, -25.5)         # neck_01, head about Z: the head as the portrait saw it - its eyes, painted from the
+                                   # portrait, look into the camera; the face then turned a little to his right, as there
 HEAD_PITCH = 3.0                   # head bent forward a little (degrees about X)
 # His left hand rests on the sword's hilt at the left hip; his right hand is behind his back at the belt.
 ARM = {

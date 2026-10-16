@@ -34,9 +34,12 @@ STRAP_X, STRAP_W = 0.085, 0.028  # strap from the field to this |x|, by the coll
 STRAP_T, STRAP_GAP = 0.0025, 0.004  # its thickness; off the cloth
 FRINGE_N, FRINGE_ARC = 30, 240.0  # strands per row over this arc of the rim, centred on the outer end
 FRINGE_LEN, FRINGE_R, FRINGE_OUT = 0.095, 0.0105, 0.024
+FRINGE_FLARE = 0.03               # a strand stands at most this much further out than its rest to clear the sleeve
+FRINGE_JITTER = 0.0015           # strand to strand: length and reach (a neat even fringe, as in the portrait)
 FRINGE_TOP = (0.68, 0.0115, 0.6, 0.007)  # the upper row over it: length, radius, outward reach (x FRINGE_*), lift
-# Bullion (canitel): a coiled gold wire - each strand a tight helix of BULLION_STARTS wires at BULLION_PITCH a turn.
-BULLION_PITCH, BULLION_STARTS, BULLION_UV_LEN = 0.007, 1, 0.147  # 21 turns over the region
+# Bullion (canitel): coiled gold wire twisted into a rope - each strand a helix of BULLION_STARTS plies, BULLION_PITCH
+# apart along it (the portrait's fringe shows slanted twists, not rings: one start made a stack of coins)
+BULLION_PITCH, BULLION_STARTS, BULLION_UV_LEN = 0.006, 6, 0.147
 # Sash: a band 'SASH_W' wide round the torso in the plane through the top of the right shoulder and the left hip.
 SASH_SHOULDER = Vector((-0.14, 0.0, 1.76))   # in the portrait it runs up close by the collar
 SASH_HIP = Vector((0.17, 0.0, 1.31))   # the lower edge on the belt's top at the side
@@ -52,12 +55,15 @@ NORMAL_STRENGTH = {'cord': 3.0, 'pole': 2.0, 'sash': 0.05, 'bullion': 1.0}
 # Aiguillettes: cords from under the right epaulette's front to the closure, hanging in loops; two loose cords with
 # gold tips ('pencils') hang from the closure end over the sash.
 AIG_FROM = (-0.215, 1.67)          # (x, z) on the front of the chest
-AIG_TO = (-0.07, 1.60)     # under the sash
+AIG_TO = (-0.03, 1.60)     # under the middle of the sash (the loose cord starts here)
 AIG_LOOPS = [(-0.175, 1.55), (-0.165, 1.49), (-0.155, 1.43)]  # lowest point of each loop
+AIG_ENDS = [(-0.05, 1.63), (-0.037, 1.61), (-0.024, 1.59)]  # ... and where it ends, under the middle of the sash: the
+# three go in under its edge one below the other, as in the portrait (meeting at one point they made a knot by it)
 # the loose cords run on under the sash and come out at its lower edge (emerge), a short way over it to the knot the
 # pencil hangs from (end): in the portrait one pencil shows, hanging over the sash's lower edge
 AIG_TAILS = [((0.068, 1.588), (0.078, 1.565))]  # (emerge, end), x z
-AIG_R, AIG_GAP = 0.007, 0.002
+AIG_R, AIG_GAP = 0.0095, 0.002  # the portrait's cords are thick twisted rope (~2 cm)
+AIG_STIFF = 12                   # rounds of straightening the cords over the cloth's folds
 PENCIL_L, PENCIL_R = 0.16, 0.0085
 PENCIL_BEADS = (0.06, 0.3, 0.55, 0.8)  # along it: the cast knobs of the portrait's pencil (radius x1.45)
 CORD_UV_LEN = 0.6                # metres of cord over the width of its atlas region (the twist repeats along it)
@@ -414,9 +420,23 @@ def tube(bm, path, r, sides, region, uv_len=CORD_UV_LEN, cap=True, taper=None):
     for r0, r1 in zip(rings, rings[1:]):
         for k in range(sides):
             bm.faces.new((r0[k], r0[k + 1], r1[k + 1], r1[k]))
-    if cap:  # rounded end: the last ring drawn to a point a radius further on
+    if cap:  # rounded end: a dome on the last ring (a cone to a point showed as dark teeth)
         t = (path[-1] - path[-2]).normalized()
-        tip = bm.verts.new(path[-1] + t * r * 0.8)
+        rr = r * (taper(1.0) if taper else 1.0)
+        u, w = (rings[-1][0].co - path[-1]).normalized(), None
+        w = t.cross(u)
+        for a in (30, 60):
+            ring = []
+            for k in range(sides + 1):
+                b = 2 * math.pi * k / sides
+                v = bm.verts.new(path[-1] + t * rr * 0.8 * math.sin(math.radians(a))
+                                 + rr * math.cos(math.radians(a)) * (math.cos(b) * u + math.sin(b) * w))
+                uvs[v] = uv_in('gold', 0.5, 0.5)
+                ring.append(v)
+            for k in range(sides):
+                bm.faces.new((rings[-1][k], rings[-1][k + 1], ring[k + 1], ring[k]))
+            rings.append(ring)
+        tip = bm.verts.new(path[-1] + t * rr * 0.8)
         uvs[tip] = uv_in('gold', 0.5, 0.5)
         for k in range(sides):
             bm.faces.new((rings[-1][k], rings[-1][k + 1], tip))
@@ -554,7 +574,7 @@ def build_sash():
 
 # ---------------------------------------------------------------- aiguillettes
 def build_aiguillettes(under, over, part):
-    """Cords lying on the chest (the front of 'surface' under them), loops from AIG_FROM to AIG_TO ('loops': built
+    """Cords lying on the chest (the front of 'surface' under them), loops from AIG_FROM to AIG_ENDS ('loops': built
     before the sash, which lies over them); loose cords from AIG_TO ending in pencils ('tails': over the sash)."""
     def on_chest(x, z, lift, surface=over):
         loc, nrm = front_at(surface, x, z)
@@ -563,9 +583,9 @@ def build_aiguillettes(under, over, part):
     bm = bmesh.new()
     uvs = {}
     paths = []
-    for lx, lz in (AIG_LOOPS if part == 'loops' else []):
+    for (lx, lz), to in (zip(AIG_LOOPS, AIG_ENDS) if part == 'loops' else []):
         ctrl = [AIG_FROM, ((AIG_FROM[0] + lx) / 2 - 0.01, (AIG_FROM[1] + lz) / 2 - 0.02), (lx, lz),
-                ((lx + AIG_TO[0]) / 2 + 0.01, (lz + AIG_TO[1]) / 2 - 0.02), AIG_TO]
+                ((lx + to[0]) / 2 + 0.01, (lz + to[1]) / 2 - 0.02), to]
         paths.append(ctrl)
     for emerge, end in AIG_TAILS:
         if part == 'loops':  # under the sash: built with the loops
@@ -576,8 +596,24 @@ def build_aiguillettes(under, over, part):
     for k, ctrl in enumerate(paths):
         pts2 = catmull([Vector((x, 0, z)) for x, z in ctrl], 0.008)
         surf = under if part == 'loops' else over
-        path = [on_chest(p.x, p.z, AIG_R + AIG_GAP + 0.0015 * k, surf) for p in pts2]  # each over the last
-        _, u = tube(bm, path, AIG_R, 6, 'cord', cap=False)
+        # under the sash (the loops' ends, the loose cord's start) the cord thins out: the band lies flat over it
+        if part != 'loops':
+            under_sash = lambda t: 1.0  # noqa: E731
+        elif k < len(AIG_LOOPS):  # a loop's end
+            under_sash = lambda t: 1.0 - 0.65 * smoothstep(t, 0.82, 0.95)  # noqa: E731
+        else:  # the loose cord from the loops' ends to the sash's lower edge
+            under_sash = lambda t: 0.35 + 0.65 * smoothstep(t, 0.3, 0.7)  # noqa: E731
+        n = len(pts2)
+        lift = [AIG_R * under_sash(j / (n - 1)) + AIG_GAP + 0.0015 * k for j in range(n)]  # each over the last
+        path = [on_chest(p.x, p.z, lift[j], surf) for j, p in enumerate(pts2)]
+        # a thick cord is stiff: it bridges the folds of the cloth in smooth arcs instead of following each one
+        for _ in range(AIG_STIFF):
+            path = [path[0]] + [(path[j - 1] + path[j] * 2 + path[j + 1]) / 4 for j in range(1, len(path) - 1)] + [path[-1]]
+            for j in range(1, len(path) - 1):
+                loc, nrm, _, _ = surf.find_nearest(path[j], 0.05)
+                if loc is not None and (path[j] - loc).dot(nrm) < lift[j]:
+                    path[j] = loc + nrm * lift[j]
+        _, u = tube(bm, path, AIG_R, 10, 'cord', cap=False, taper=under_sash)
         uvs.update(u)
     if part == 'loops':
         return new_part('Aiguillettes', bm, lambda v: uvs[v], lambda v: TORSO_W.at(v.co))
@@ -724,31 +760,65 @@ def build_epaulette(side):
         uvs[v] = uv_in('gold', 0.5, 0.5)
     field = new_part('Epaulette_' + side, bm, lambda v: uvs[v], lambda v: ws)
     # fringe: bullion strands from under the rim, out and down, fanning, in two rows (the upper shorter, thicker, over
-    # the gaps of the lower); each rides on the cloth under its top
+    # the gaps of the lower). Bullion is stiff: each strand a short bend under the rim, then straight; where the sleeve
+    # under it is in the way the whole strand stands further out (its outward reach evened out between neighbours, so
+    # the fringe flares as one), never bent round the cloth
     bm = bmesh.new(); uvs = {}; wmap = {}
     half = math.radians(FRINGE_ARC) / 2
+    down = Vector((0, 0, -1))
+
+    def strand(rim_p, radial, reach, out_end, length, rad):
+        p1 = rim_p + radial * reach * 0.6 + down * 0.008
+        loc, nrm, _, _ = CLOTH.find_nearest(p1, 0.05)  # the bend clear of the cloth by the strand's thickness
+        if loc is not None and (p1 - loc).dot(nrm) < rad + 0.003:
+            p1 = loc + nrm * (rad + 0.003)
+        end = rim_p + radial * out_end + down * length
+        return catmull([rim_p, p1, p1.lerp(end, 0.5), end], 0.012)
+
+    def deficit(path, rad):  # how far the straight part dips into the cloth (or under the clearance) at worst
+        worst = 0.0
+        for q in path:
+            if (q - path[0]).length < 0.025:
+                continue
+            loc, nrm, _, _ = CLOTH.find_nearest(q, 0.06)
+            if loc is not None:
+                worst = max(worst, rad + 0.003 - (q - loc).dot(nrm))
+        return worst
+
     for row, (k_len, rad, k_out, lift, shift) in enumerate(((1.0, FRINGE_R, 1.0, 0.0, 0.0), (*FRINGE_TOP, 0.5))):
+        specs = []
         for i in range(FRINGE_N):
             a = -half + 2 * half * (i + 0.5 + shift) / (FRINGE_N + shift)
             rim_p = L(EP_A * 0.97 * math.cos(a), EP_B * 0.97 * math.sin(a), -EP_THICK + lift)
             radial = (X * math.cos(a) * EP_B + Y * math.sin(a) * EP_A).normalized()
             radial = Vector((radial.x, radial.y, 0)).normalized()
-            jit = 0.004 * math.sin(i * 2.399 + row)
+            jit = FRINGE_JITTER * math.sin(i * 2.399 + row)
             length = (FRINGE_LEN * (0.92 + 0.08 * math.cos(a)) + jit) * k_len  # longest over the shoulder's end
             reach = FRINGE_OUT * k_out
-            down = Vector((0, 0, -1))
-            ctrl = [rim_p, rim_p + radial * reach * 0.6 + down * 0.008,
-                    rim_p + radial * (reach + jit) + down * length * 0.5,
-                    rim_p + radial * (reach * 1.3 + jit) + down * length]
-            path = catmull(ctrl, 0.012)
-            for _ in range(4):  # out of the sleeve (the arm's stance bunches the cloth up under the fringe), smoothly
-                path = [path[0]] + [(path[j - 1] + path[j] * 2 + path[min(j + 1, len(path) - 1)]) / 4
-                                    for j in range(1, len(path))]
-                for j in range(len(path)):  # its top as well: the strand is as thick as the rim it hangs from
+            out_end = reach * 1.3 + jit
+            for _ in range(20):
+                d = deficit(strand(rim_p, radial, reach, out_end, length, rad), rad)
+                if d <= 0 or out_end >= reach * 1.3 + FRINGE_FLARE:
+                    break
+                out_end = min(out_end + max(0.002, d), reach * 1.3 + FRINGE_FLARE)
+            specs.append([rim_p, radial, reach, out_end, length])
+        flare = [sp[3] for sp in specs]
+        for _ in range(3):  # neighbours stand out alike: never less than their own need, never far below the next
+            flare = [max(flare[i], 0.5 * flare[i] + 0.25 * (flare[max(i - 1, 0)] + flare[min(i + 1, len(flare) - 1)]))
+                     for i in range(len(flare))]
+        print('fringe %s row %d: reach %.3f..%.3f' % (side, row, min(flare), max(flare)))
+        for sp, f in zip(specs, flare):
+            rim_p = sp[0]
+            path = strand(sp[0], sp[1], sp[2], f, sp[4], rad)
+            for it in range(4):  # where it still meets the cloth (over the chest and back, by the neck) it lies on it
+                if it:
+                    path = [path[0]] + [(path[j - 1] + path[j] * 2 + path[min(j + 1, len(path) - 1)]) / 4
+                                        for j in range(1, len(path))]
+                for j in range(1, len(path)):
                     loc, nrm, _, _ = CLOTH.find_nearest(path[j], 0.05)
                     if loc is not None and (path[j] - loc).dot(nrm) < rad + 0.003:
                         path[j] = loc + nrm * (rad + 0.003)
-            vs, u = tube(bm, path, rad, 6, 'bullion', uv_len=BULLION_UV_LEN)
+            vs, u = tube(bm, path, rad, 8, 'bullion', uv_len=BULLION_UV_LEN)
             uvs.update(u)
             wt = on_shoulder(UNI_W.at(rim_p), side)
             for v in u:
@@ -758,7 +828,8 @@ def build_epaulette(side):
 
 
 # the loops first: the sash lies over them (in the portrait they go under it), the loose cords over the sash
-loops = build_aiguillettes(bvh_of([uni] + [bpy.data.objects[n] for n in ('Buttons',)]), None, 'loops')
+loops = build_aiguillettes(bvh_of([uni] + [bpy.data.objects[n] for n in ('Buttons',)], torso=True, tighten=SASH_TIGHTEN),
+                           None, 'loops')  # on the tightened cloth: over its folds, as the sash
 CLOTH = bvh_of([uni, loops] + [bpy.data.objects[n] for n in ('Belt', 'Buckle', 'Buttons')], torso=True,
                tighten=SASH_TIGHTEN)
 sash = build_sash()

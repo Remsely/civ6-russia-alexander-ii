@@ -13,8 +13,9 @@ from mathutils import Vector
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'alexander_leader.blend')
 # (stiffness, damping) of the springs, per second squared and per second: a hanging piece swings like a pendulum of its
-# length (stiffness ~ g / L), lightly damped; the bullion fringe and the wool skirt are stiffer and stop sooner
-SPRING = {'knot': (45.0, 2.0), 'loop': (65.0, 2.5), 'pencil': (58.0, 2.3), 'fringe': (120.0, 5.0),
+# length (stiffness ~ g / L), lightly damped; the thick twisted cords of the aiguillettes are heavier and stiffer than
+# a pendulum (they sway, never flap), the bullion fringe is stiff wire and the wool skirt stops soonest
+SPRING = {'knot': (45.0, 2.0), 'loop': (95.0, 5.0), 'pencil': (85.0, 4.5), 'fringe': (260.0, 12.0),
           'skirt': (150.0, 8.0)}
 SKIRT_BONES = 4                    # round the skirt: front left / right, back left / right
 SKIRT_SHARE = 0.6                  # at the hem the skirt bones carry this much (the thighs and pelvis the rest)

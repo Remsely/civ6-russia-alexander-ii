@@ -52,7 +52,8 @@ BOOT_TOP = 0.45                   # top of the boot shafts: the trousers are tuc
 SLEEVE_T = 0.95                   # sleeve end along the forearm (0 elbow, 1 wrist)
 TUNIC_OFF, TROUSERS_OFF = 0.028, 0.015
 SHOULDER_OFF = 0.012              # tunic offset over the shoulders (above the armpits)
-SLEEVE_EASE, CUFF_EASE = 0.006, 0.014  # sleeves: round tubes this much looser than the arm; cuff off the wrist
+SLEEVE_EASE, CUFF_EASE = 0.017, 0.014  # sleeves: round tubes this much looser than the arm; cuff off the wrist
+SLEEVE_CUFF_R = 0.047             # ... narrowing along the forearm to this radius at the cuff (the portrait's ~10 cm)
 SKIRT_EASE, SKIRT_FLARE = 0.008, 0.035  # skirt clearance over hips and thighs, extra radius at the hem
 TROUSER_EASE = 1.08                # trouser leg radius over the mid-thigh
 TROUSER_TAPER = 0.85              # straight trouser leg: radius at the ankle relative to the top of the thigh
@@ -502,11 +503,13 @@ def loosen_sleeves(bm):
         # straight tube: the upper-arm radius narrowing evenly to the cuff, never tighter than the arm under it
         upper = sorted(r for k in keys if 0.15 < (k + 0.5) / nb < 0.4 for r in bins[k])
         top = upper[len(upper) // 2] + SLEEVE_EASE  # median: the deltoid and armpit would make a balloon
+        end = max(cuff, min(top, SLEEVE_CUFF_R))
         prof = {}
         for k in keys:
             u = (k + 0.5) / nb
-            prof[k] = max(top, body[k] + 0.012)  # straight: one width from the shoulder to the cuff
-        print('sleeve', s, 'radius %.3f' % top)
+            # the portrait's full wool sleeve: one width down past the elbow, then narrowing into the cuff
+            prof[k] = max(top + (end - top) * smoothstep(u, 0.45, 0.95), body[k] + 0.012)
+        print('sleeve', s, 'radius %.3f, at the cuff %.3f' % (top, end))
         for v, p, u in vs:
             k = smoothstep(arm_weight(v, dl), 0.3, 0.7) * smoothstep(u, 0.0, 0.18)  # blend into the shoulder
             d = v.co - p

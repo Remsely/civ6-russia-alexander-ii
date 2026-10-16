@@ -46,7 +46,8 @@ EAR_GROW, EAR_FACING = 0.006, 0.2  # the ears' box grown by this (m); how far si
 NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 16  # top ring this far inside the cut's outline; segments, rings
 NECK_TWIST_ZS = (1.74, 1.84)       # the neck's turn spreads between these heights (head bone above, chest below)
-NECK_FIT = 0.85                   # the tube to the collar's ellipse (the tunic's stand collar lies on that)
+NECK_FIT = 0.97                   # the tube to the collar's ellipse (the tunic's stand collar lies on that): it fills
+                                  # the collar, no gap round a thin neck
 HAIR_KEEP = 0.15                  # ... of the hair's own colour variation (its red and orange blotches)
 HAIR_MAX_L = 1.15                 # hair no brighter than this times the portrait's (pale patches of the generation)
 DELIGHT_IT = 6                    # smoothing rounds over the mesh for the baked light (~4 mm per round)
