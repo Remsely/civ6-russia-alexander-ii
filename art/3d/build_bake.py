@@ -43,7 +43,7 @@ bpy.context.view_layer.objects.active = tgt
 bpy.ops.object.bake(type='AO')
 sc.render.engine = engine
 uni.hide_render = False
-img.filepath_raw = AO_OUT; img.file_format = 'PNG'; img.save()
+img.filepath_raw = AO_OUT; img.file_format = 'PNG'; mat_util.write(img)
 img.filepath = AO_OUT; img.source = 'FILE'; img.colorspace_settings.name = 'Non-Color'
 bpy.data.objects.remove(tgt); bpy.data.materials.remove(bake_mat)
 # one material slot again

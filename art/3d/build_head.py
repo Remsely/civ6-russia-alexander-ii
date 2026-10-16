@@ -25,8 +25,14 @@ from mathutils.interpolate import poly_3d_calc
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import head_shape  # noqa: E402
+import mat_util  # noqa: E402
 OUT = os.path.join(HERE, 'alexander_rest.blend')  # in the rest pose; build_pose.py poses it into alexander_leader.blend
 SKIN_TEX = os.path.join(HERE, 'textures', 'head_albedo.png')
+HEAD_NORMAL = os.path.join(HERE, 'textures', 'head_normal.png')
+HAIR_CROWN = (0.04, 2.08)          # (y, z) the hair grows away from: the crown, a little behind the top
+HAIR_STREAKS = ((60, 1.0), (150, 0.6), (380, 0.3))  # strands across the hair: (per metre, weight)
+HAIR_HUE = 0.85                    # ... all of it this much towards the hue of the portrait's hair
+HAIR_CONTRAST, HAIR_RELIEF = 0.25, 1.0  # strands lighter / darker by this; their ridges (px of height)
 PORTRAIT = os.path.join(HERE, 'head', 'head_input.png')  # what the head was generated from: its front view
 TEX = 2048
 HEAD_Z = 1.72                     # the neck starts here, inside the tunic's collar
@@ -747,7 +753,7 @@ def bake():
     bpy.context.view_layer.objects.active = head
     bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'})
     sc.render.engine = engine
-    img.filepath_raw = SKIN_TEX; img.file_format = 'PNG'; img.save()
+    img.filepath_raw = SKIN_TEX; img.file_format = 'PNG'; mat_util.write(img)
     img.filepath = SKIN_TEX; img.source = 'FILE'; img.reload()
     print('baked', SKIN_TEX)
 
@@ -808,6 +814,55 @@ def jaw_weight(v):
     return 0.0 if s <= 0.5 else 1 - smoothstep(s, JAW_FULL * 0.5, JAW_FULL)
 
 
+def hair_detail():
+    """Strands on the hair, whiskers and moustache (the generated texture is smoothed into a flat mass): per texel the
+    hair's direction - away from the crown along the surface (down and back over the head, down the whiskers) - and
+    across it streaks of a few widths (clumps, strands); into the albedo (lighter and darker strands) and a normal
+    map (each strand a ridge)."""
+    hair_v = np.array([1.0 if HCLS[v] == head_shape.HAIR else 0.0 for v in hb.verts])
+    for _ in range(2):  # soft edge round the hairline
+        nb = np.array([np.mean([hair_v[e.other_vert(v).index] for e in v.link_edges]) for v in hb.verts])
+        hair_v = 0.5 * hair_v + 0.5 * nb
+    me = head.data
+    data, cov = mat_util.raster(me, TEX, hair_v[:, None])
+    p, n, hw = data[..., :3], data[..., 3:6], data[..., 6]
+    n = n / np.maximum(np.linalg.norm(n, axis=-1, keepdims=True), 1e-6)
+    cx = float(np.mean([v.co.x for v in hb.verts]))
+    # combed from the crown down: strands run along the meridians round a vertical axis through the crown, so across
+    # them the coordinate is the angle round it (times a typical radius), waving a little down their length
+    phi = np.arctan2(p[..., 0] - cx, p[..., 1] - HAIR_CROWN[0])
+    a = HAIR_CROWN[1] - p[..., 2]
+    c = phi * 0.09 + 0.003 * np.sin(a * 70.0)
+    rng = np.random.default_rng(7)
+    s = np.zeros_like(c)
+    for freq, amp in HAIR_STREAKS:
+        ph = rng.uniform(0, 2 * np.pi)
+        s += amp * np.sin(2 * np.pi * c * freq + ph + 1.5 * np.sin(2 * np.pi * a * 9 + ph))
+    s /= sum(a_ for _, a_ in HAIR_STREAKS)
+    img = bpy.data.images['head_albedo']
+    w, hh = img.size
+    px = np.array(img.pixels[:], np.float32).reshape(hh, w, 4)
+    # not where the portrait itself is the texture (facing the view): its own curls are drawn there
+    facing = (n * np.array(FWD, np.float32)).sum(-1)
+    k = (hw * cov * (1 - np.clip((facing - PORTRAIT_FRONT[0]) / (PORTRAIT_FRONT[1] - PORTRAIT_FRONT[0]), 0, 1)))[..., None]
+    # one hue for all the hair: the portrait's (the front, facing the view it was painted from); the generated back
+    # came out red-brown
+    rgb = px[..., :3]
+    lum = np.maximum(rgb @ mat_util.LUM, 1e-4)
+    chroma = rgb / lum[..., None]
+    front = (hw > 0.9) & cov & (facing > 0.6)
+    target = np.median(chroma[front], 0)
+    chroma = chroma + (target - chroma) * (HAIR_HUE * k)
+    rgb = chroma * lum[..., None]
+    px[..., :3] = np.clip(rgb * (1 + HAIR_CONTRAST * s[..., None] * k), 0, 1)
+    img.pixels.foreach_set(px.ravel()); mat_util.write(img)
+    height = s * k[..., 0] * HAIR_RELIEF
+    nrm = mat_util.save('Head_Normal', mat_util.normals(height) * 0.5 + 0.5, HEAD_NORMAL, 'Non-Color')
+    mat_util.material('Head_Skin', img, None, nrm, rough=0.6)
+    print('hair strands: %d texels' % int((hw > 0.5).sum()))
+
+
+hair_detail()
 LIDS = {s: [lid_weight(v, s) for v in hb.verts] for s in EYE}
 JAW = [jaw_weight(v) for v in hb.verts]
 hb.free()

@@ -29,6 +29,19 @@ def relief(rgb, strength, r=1):
     return blur(rgb @ LUM, r) * strength
 
 
+def write(img, tries=20):
+    """img.save() that waits out a moment's lock on the file (a viewer or indexer reading it: 'Invalid argument')."""
+    import time
+    for k in range(tries):
+        try:
+            img.save()
+            return
+        except RuntimeError:
+            if k == tries - 1:
+                raise
+            time.sleep(0.5)
+
+
 def save(name, data, path, colorspace):
     """data (h, w, 3) -> image 'name' saved to path and kept linked to it."""
     hh, w = data.shape[:2]
@@ -36,7 +49,7 @@ def save(name, data, path, colorspace):
     img.scale(w, hh)
     img.pixels.foreach_set(np.concatenate([data, np.ones((hh, w, 1), np.float32)], 2).astype(np.float32).ravel())
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    img.filepath_raw = path; img.file_format = 'PNG'; img.save()
+    img.filepath_raw = path; img.file_format = 'PNG'; write(img)
     img.filepath = path; img.source = 'FILE'
     img.colorspace_settings.name = colorspace
     return img
@@ -78,3 +91,42 @@ def material(name, albedo, mr=None, normal=None, ao=None, ao_strength=0.85, shee
     bsdf.inputs['Sheen Roughness'].default_value = 0.6
     bsdf.inputs['Sheen Tint'].default_value = (*sheen_tint, 1)
     return mat
+
+
+def raster(me, res, values=None):
+    """Per texel of mesh me's active UV map (res x res): the surface point (3), its normal (3) and, if given, a
+    per-vertex value array (n, k) interpolated; plus the coverage mask. Texels outside every island are filled from
+    their neighbours (8 rounds) so filtering never reads the background."""
+    me.calc_loop_triangles()
+    uv = np.zeros(len(me.loops) * 2, np.float32); me.uv_layers.active.data.foreach_get('uv', uv)
+    uv = uv.reshape(-1, 2) * res
+    co = np.zeros(len(me.vertices) * 3, np.float32); me.vertices.foreach_get('co', co); co = co.reshape(-1, 3)
+    vn = np.zeros(len(me.vertices) * 3, np.float32); me.vertices.foreach_get('normal', vn); vn = vn.reshape(-1, 3)
+    cols = [co, vn] + ([np.asarray(values, np.float32).reshape(len(co), -1)] if values is not None else [])
+    k = sum(c.shape[1] for c in cols)
+    data = np.concatenate(cols, 1)
+    out = np.zeros((res, res, k), np.float32); cov = np.zeros((res, res), bool)
+    for tri in me.loop_triangles:
+        t_uv = uv[list(tri.loops)]; t_d = data[list(tri.vertices)]
+        x0, y0 = np.floor(t_uv.min(0)).astype(int); x1, y1 = np.ceil(t_uv.max(0)).astype(int)
+        xs, ys = np.meshgrid(np.arange(max(x0, 0), min(x1 + 1, res)), np.arange(max(y0, 0), min(y1 + 1, res)))
+        px = np.stack([xs.ravel() + 0.5, ys.ravel() + 0.5], 1)
+        (ax, ay), (bx, by), (cx, cy) = t_uv
+        den = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+        if abs(den) < 1e-9:
+            continue
+        l1 = ((by - cy) * (px[:, 0] - cx) + (cx - bx) * (px[:, 1] - cy)) / den
+        l2 = ((cy - ay) * (px[:, 0] - cx) + (ax - cx) * (px[:, 1] - cy)) / den
+        l3 = 1 - l1 - l2
+        ins = (l1 >= -0.02) & (l2 >= -0.02) & (l3 >= -0.02)
+        if not ins.any():
+            continue
+        bary = np.stack([l1, l2, l3], 1)[ins]
+        ix, iy = px[ins, 0].astype(int), px[ins, 1].astype(int)
+        out[iy, ix] = bary @ t_d; cov[iy, ix] = True
+    filled = cov.copy()
+    for _ in range(8):
+        for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0)):
+            src = np.roll(np.roll(filled, dy, 0), dx, 1); fill = src & ~filled
+            out[fill] = np.roll(np.roll(out, dy, 0), dx, 1)[fill]; filled |= fill
+    return out, cov

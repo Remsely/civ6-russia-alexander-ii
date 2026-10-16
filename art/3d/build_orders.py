@@ -8,11 +8,13 @@
 # Own material 'Orders' and atlas textures/orders_{albedo,mr,normal}.png: a palette row of flat colours, the ribbons,
 # drawn faces of the star, the cross and the medals (planar UVs). Every piece rides rigidly on the bone weights of the
 # cloth under it (the sabre on the pelvis).
-import bpy, bmesh, math, os
+import bpy, bmesh, math, os, sys
 import numpy as np
 from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import mat_util  # noqa: E402
 from mathutils.geometry import tessellate_polygon
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -229,7 +231,7 @@ def build_atlas():
         img = bpy.data.images.get(name) or bpy.data.images.new(name, TEX, TEX)
         img.scale(TEX, TEX)
         img.pixels.foreach_set(np.concatenate([data, np.ones((TEX, TEX, 1), np.float32)], 2).astype(np.float32).ravel())
-        img.filepath_raw = path; img.file_format = 'PNG'; img.save()
+        img.filepath_raw = path; img.file_format = 'PNG'; mat_util.write(img)
         img.filepath = path; img.source = 'FILE'; img.colorspace_settings.name = cs
         imgs.append(img)
     mat = bpy.data.materials.get('Orders') or bpy.data.materials.new('Orders')
