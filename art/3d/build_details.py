@@ -1,8 +1,8 @@
-# Uniform details fitted to the rest-pose uniform of alexander_leader.blend (run build_uniform.py first):
+# Uniform details fitted to the rest-pose uniform of alexander_rest.blend (run build_uniform.py first):
 # standing collar, buttons, belt with buckle, cuffs with flaps, riding boots. Shapes and textures follow
 # art/source/alexander_ii_full.png and alexander_ii_short.png; the embroidery, galloon, buckle and cuff flap are cut
 # from those pictures by extract_ref_textures.py (textures/ref_*.png).
-# blender -b art/3d/alexander_leader.blend --python art/3d/build_details.py   (rewrites the file in place)
+# blender -b art/3d/alexander_rest.blend --python art/3d/build_details.py   (rewrites the file in place)
 # Every detail is skinned to the same skeleton. Rigid parts (buttons, buckle, flaps) take the weights of one surface
 # point, so they ride the cloth without bending; soft parts blend the weights of the cloth or body under them.
 # All details share one material and one texture atlas (albedo + metal/roughness), laid out in ATLAS.
@@ -14,7 +14,7 @@ from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, 'alexander_leader.blend')
+OUT = os.path.join(HERE, 'alexander_rest.blend')  # in the rest pose; build_pose.py poses it into alexander_leader.blend
 TEXDIR = os.path.join(HERE, 'textures')
 TEX = 2048
 ALBEDO_OUT = os.path.join(TEXDIR, 'details_albedo.png')

@@ -1,6 +1,6 @@
-# Regalia over the uniform of alexander_leader.blend, as in art/source/alexander_ii_short.png: general's epaulettes
+# Regalia over the posed uniform of alexander_leader.blend (after build_pose.py), as in art/source/alexander_ii_short.png: general's epaulettes
 # with bullion fringe, the light-blue sash of St Andrew over the right shoulder to the left hip, gold aiguillettes on
-# the right breast. blender -b art/3d/alexander_leader.blend --python art/3d/build_regalia.py   (after build_details.py)
+# the right breast. blender -b art/3d/alexander_leader.blend --python art/3d/build_regalia.py   (after build_pose.py)
 # Rewrites the file in place; safe to re-run (removes what it made before).
 # One material 'Regalia' with its own atlas (albedo + metal/roughness, textures/regalia_*.png), every part skinned to
 # the skeleton: rigid parts take the cloth's weights at one point, the sash and cords the cloth's under each vertex.
@@ -12,7 +12,7 @@ from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, 'alexander_leader.blend')
+OUT = os.path.join(HERE, 'alexander_leader.blend')  # on the posed uniform (build_pose.py), in place
 TEXDIR = os.path.join(HERE, 'textures')
 TEX = 2048
 ALBEDO_OUT = os.path.join(TEXDIR, 'regalia_albedo.png')

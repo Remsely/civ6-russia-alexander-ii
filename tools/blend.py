@@ -88,9 +88,14 @@ def overlay(path):
     """The 'ref' view next to alexander_ii_full.png and over it (the model's outline in cyan): <stem>_refcmp.png."""
     from PIL import Image, ImageChops, ImageFilter
     ref = Image.open(os.path.join(ROOT, 'art', 'source', 'alexander_ii_full.png')).convert('RGB')
-    shot = Image.open(path).convert('RGB').resize(ref.size)
-    bg = shot.getpixel((2, 2))
-    mask = ImageChops.difference(shot, Image.new('RGB', shot.size, bg)).convert('L').point(lambda v: 255 if v > 6 else 0)
+    raw = Image.open(path).resize(ref.size)
+    if raw.mode == 'RGBA':  # rendered with --transparent: the alpha is the outline
+        mask = raw.getchannel('A').point(lambda v: 255 if v > 127 else 0)
+        shot = Image.new('RGB', ref.size, (40, 40, 46)); shot.paste(raw, (0, 0), raw)
+    else:
+        shot = raw.convert('RGB')
+        bg = shot.getpixel((2, 2))
+        mask = ImageChops.difference(shot, Image.new('RGB', shot.size, bg)).convert('L').point(lambda v: 255 if v > 6 else 0)
     edge = mask.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.MaxFilter(3))
     over = Image.blend(ref, shot, 0.5)
     over.paste(Image.new('RGB', ref.size, (0, 255, 255)), (0, 0), edge)

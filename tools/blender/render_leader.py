@@ -55,7 +55,9 @@ for o in meshes:
     ev.to_mesh_clear()
 z0, z1 = min(p.z for p in pts), max(p.z for p in pts)
 height = z1 - z0
-leader = Matrix.Rotation(math.radians(90), 4, 'Z') @ Matrix.Scale(args.target_cm / height, 4)
+# the figure is turned towards his left in front of the camera by the pose's yaw (art/3d/pose.py), as in the export
+YAW = float(sc.get('pose', {}).get('YAW_DEG', 0.0))
+leader = Matrix.Rotation(math.radians(90 + YAW), 4, 'Z') @ Matrix.Scale(args.target_cm / height, 4)
 to_model = leader.inverted()
 
 for name in ('_LeaderCam', '_Key', '_Fill', '_Rim'):
@@ -75,7 +77,7 @@ def aim(eye, target):
     """Camera at eye looking at target, both in leader space (cm)."""
     cam.location = to_model @ eye
     rot = (target - eye).to_track_quat('-Z', 'Y')
-    cam.rotation_quaternion = Matrix.Rotation(math.radians(-90), 4, 'Z').to_quaternion() @ rot
+    cam.rotation_quaternion = to_model.to_3x3().normalized().to_quaternion() @ rot
     bpy.context.view_layer.update()
 
 
@@ -138,6 +140,8 @@ if args.views:
     for view in args.views.split(','):
         name, _, pitch = view.partition('@')
         kind, yaw = name.rstrip('0123456789-'), math.radians(float(name.lstrip('fulheadbstr') or 0))
+        if kind != 'ref':
+            yaw += math.radians(YAW)  # turntable views go round the figure itself: 0 is square to its torso
         pitch = math.radians(float(pitch or 3))
         if kind == 'ref':
             px = args.target_cm / (REF_SOLES - REF_CROWN)  # cm per pixel

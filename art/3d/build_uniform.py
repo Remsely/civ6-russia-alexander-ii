@@ -1,6 +1,6 @@
 # Uniform without details (tunic with skirt, trousers) built from the MPFB body surface.
 # blender -b art/3d/alexander_assembly.blend --python art/3d/build_uniform.py
-# Writes art/3d/alexander_leader.blend: only the 'Human' scene (rig, body, uniform); the source file is left untouched.
+# Writes art/3d/alexander_rest.blend: only the 'Human' scene (rig, body, uniform); the source file is left untouched.
 # MPFB space: metres, Z up, the human faces -Y, A-pose rest. Clothes are made in the rest pose and skinned to the same
 # 53-bone game_engine skeleton, so every animation of the body drives them too.
 import bpy, bmesh, math, os, sys
@@ -11,7 +11,7 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, 'alexander_leader.blend')
+OUT = os.path.join(HERE, 'alexander_rest.blend')  # in the rest pose; build_pose.py poses it into alexander_leader.blend
 sys.path.insert(0, HERE)
 import head_shape  # noqa: E402
 
@@ -34,7 +34,7 @@ STAND_BELOW_CHIN, STAND_BACK_RISE = 0.022, 0.015
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
 STAND_OFF = 0.006                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top)
 NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
-WAIST_Z = 1.24                    # belt line: the torso part of the tunic ends just below, the skirt starts just above
+WAIST_Z = 1.325                   # belt line (its centre 3 cm below: 1.295 in the portrait): the torso part of the tunic ends just below, the skirt starts just above
 BELT_H, BELT_N = 0.058, 96        # belt over the waist seam (WAIST_Z - 0.03): height; directions of its profile
 HEM_Z = 0.86                      # tunic hem, mid-thigh
 ANKLE_Z = 0.12                    # trousers end, inside the boot
@@ -843,9 +843,8 @@ uni.data.materials.clear(); uni.data.materials.append(mat)
 for p in uni.data.polygons:
     p.use_smooth = True
 paint_uniform(uni, mat)  # on the single sheet: the inner layer added next reuses the same UVs
+# thickness stays a modifier: build_pose.py simulates the single sheet as cloth and applies it after
 sol = uni.modifiers.new('Thick', 'SOLIDIFY'); sol.thickness = CLOTH_THICK; sol.offset = -1; sol.use_rim = True
-bpy.context.view_layer.objects.active = uni
-bpy.ops.object.modifier_apply(modifier='Thick')
 
 # Body under the clothes: drop faces hidden by the uniform (keeps hands, feet, neck, head), so nothing pokes through.
 bm = bmesh.new(); bm.from_mesh(cut_me)
