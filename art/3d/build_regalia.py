@@ -26,14 +26,15 @@ SASH_SRGB = (46, 96, 196)        # the St Andrew blue moire of the portrait (bet
 # Epaulettes: an oval field on the shoulder top reaching past the shoulder's end (in the portrait they stand out
 # beyond the shoulders by about a quarter of a head), a twisted rim, a strap to the collar with a button, and heavy
 # bullion fringe hanging from the outer part of the rim.
-EP_OUT, EP_A, EP_B = 0.008, 0.09, 0.07  # centre this far out past the shoulder joint; semi-axes along and across
+EP_OUT, EP_A, EP_B = 0.008, 0.078, 0.062  # centre this far out past the shoulder joint; semi-axes along and across
 EP_LIFT, EP_DOME, EP_THICK = 0.006, 0.018, 0.007
 EP_TILT = 14.0                   # degrees from level: the field's outer end lower (it follows the shoulder's slope)
 EP_FORWARD = 18.0                # ... and its front edge lower (in the portrait the fields face the viewer a little)
-STRAP_X, STRAP_W = 0.115, 0.030  # strap from the field to this |x| near the collar
+STRAP_X, STRAP_W = 0.085, 0.028  # strap from the field to this |x|, by the collar (as in the portrait)
+STRAP_T, STRAP_GAP = 0.0025, 0.004  # its thickness; off the cloth
 FRINGE_N, FRINGE_ARC = 30, 240.0  # strands per row over this arc of the rim, centred on the outer end
-FRINGE_LEN, FRINGE_R, FRINGE_OUT = 0.11, 0.0115, 0.028
-FRINGE_TOP = (0.68, 0.0125, 0.6, 0.007)  # the upper row over it: length, radius, outward reach (x FRINGE_*), lift
+FRINGE_LEN, FRINGE_R, FRINGE_OUT = 0.095, 0.0105, 0.024
+FRINGE_TOP = (0.68, 0.0115, 0.6, 0.007)  # the upper row over it: length, radius, outward reach (x FRINGE_*), lift
 # Bullion (canitel): a coiled gold wire - each strand a tight helix of BULLION_STARTS wires at BULLION_PITCH a turn.
 BULLION_PITCH, BULLION_STARTS, BULLION_UV_LEN = 0.007, 1, 0.147  # 21 turns over the region
 # Sash: a band 'SASH_W' wide round the torso in the plane through the top of the right shoulder and the left hip.
@@ -41,6 +42,11 @@ SASH_SHOULDER = Vector((-0.14, 0.0, 1.76))   # in the portrait it runs up close 
 SASH_HIP = Vector((0.17, 0.0, 1.31))   # the lower edge on the belt's top at the side
 SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.095, 0.005, 0.002, 240
 SASH_RELAX = 40                  # rounds of smoothing the band and pushing it out of the cloth
+SASH_TIGHTEN = 25                # rounds of envelope() of the cloth the sash lies on
+SASH_SETTLE = 8                  # rounds of relax() after the lift over the belt
+SASH_EVEN = 30                   # rounds of evening out the width along the band
+BRIDGE_DZ, BRIDGE_SLOPE, BRIDGE_SPREAD, BRIDGE_SMOOTH = 0.07, 0.001, 10, 12  # over the belt: zone round its centre; lift lost per step to a neighbour; steps
+TORSO_ARM_Z = 1.5                # below this the upper arms' sleeves are not part of the torso surface
 GOLD_FLOOR = 0.55                # gold albedo: the pictures' shading only darkens it down to this (the relief does the rest)
 NORMAL_STRENGTH = {'cord': 3.0, 'pole': 2.0, 'sash': 0.05, 'bullion': 1.0}
 # Aiguillettes: cords from under the right epaulette's front to the closure, hanging in loops; two loose cords with
@@ -85,9 +91,30 @@ def smoothstep(x, a, b):
 
 
 # ---------------------------------------------------------------- surfaces and weights
-def bvh_of(obs, torso=False):
+def envelope(bm, rounds):
+    """bm smoothed from the outside: each round every vertex moves to its neighbours' mean, but never inside where it
+    was (along its normal) - the surface tightens over the folds like a band laid across them, the crests kept."""
+    bm.normal_update()
+    vs = list(bm.verts)
+    orig = [v.co.copy() for v in vs]
+    nrm = [v.normal.copy() for v in vs]
+    nbs = [[e.other_vert(v) for e in v.link_edges] for v in vs]
+    for _ in range(rounds):
+        new = []
+        for v, o, n, nb in zip(vs, orig, nrm, nbs):
+            if v.is_boundary or not nb:
+                new.append(v.co.copy()); continue
+            q = sum((x.co for x in nb), Vector()) / len(nb)
+            h = (q - o).dot(n)
+            new.append(q + n * -h if h < 0 else q)
+        for v, q in zip(vs, new):
+            v.co = q
+
+
+def bvh_of(obs, torso=False, tighten=0):
     """BVH of the objects; torso: the uniform without its sleeves (the sash and the cords lie on the torso - the hanging
-    left arm is right by the sash's end at the hip, which would wrap onto it)."""
+    left arm is right by the sash's end at the hip, which would wrap onto it); tighten: rounds of envelope() on the
+    uniform (a band lies across its folds, not into them)."""
     bm = bmesh.new()
     for o in obs:
         me = o.data.copy(); me.transform(o.matrix_world)
@@ -99,9 +126,17 @@ def bvh_of(obs, torso=False):
             b2 = bmesh.new(); b2.from_mesh(me)
             dl = b2.verts.layers.deform.active
             names = [g.name for g in uni.vertex_groups]
-            arm = {i for i, n in enumerate(names) if n.startswith(('upperarm', 'lowerarm', 'hand'))}
-            bmesh.ops.delete(b2, geom=[v for v in b2.verts if sum(w for g, w in v[dl].items() if g in arm) > 0.5],
+            fore = {i for i, n in enumerate(names) if n.startswith(('lowerarm', 'hand'))}
+            upper = {i for i, n in enumerate(names) if n.startswith('upperarm')}
+            # the sleeves by the hips go; not the cloth behind the shoulders (the arms taken back pull it onto the back)
+            bmesh.ops.delete(b2, geom=[v for v in b2.verts
+                                       if sum(w for g, w in v[dl].items() if g in fore) > 0.3
+                                       or (v.co.z < TORSO_ARM_Z and sum(w for g, w in v[dl].items() if g in upper) > 0.5)],
                              context='VERTS')
+            b2.to_mesh(me); b2.free()
+        if o == uni and tighten:
+            b2 = bmesh.new(); b2.from_mesh(me)
+            envelope(b2, tighten)
             b2.to_mesh(me); b2.free()
         bm.from_mesh(me); bpy.data.meshes.remove(me)
     t = BVHTree.FromBMesh(bm); bm.free()
@@ -433,22 +468,73 @@ def build_sash():
             row.append(v)
         row.append(row[0])
         grid.append(row)
-    for _ in range(SASH_RELAX):  # a smooth band (the projection snaps to the belt's and buttons' edges), and nothing
-        # of the cloth through it: every vertex at least SASH_GAP outside the surface nearest to it
-        new = {}
-        for i, row in enumerate(grid):
+    def relax(rounds):
+        for _ in range(rounds):  # a smooth band (the projection snaps to the belt's and buttons' edges), and nothing
+            # of the cloth through it: every vertex at least SASH_GAP outside the surface nearest to it
+            new = {}
+            for i, row in enumerate(grid):
+                for j in range(SASH_N):
+                    ns = [row[j - 1].co, row[(j + 1) % SASH_N].co]
+                    if 0 < i < rows - 1:
+                        ns += [grid[i - 1][j].co, grid[i + 1][j].co]
+                    new[row[j]] = row[j].co * 0.5 + sum(ns, Vector()) / len(ns) * 0.5
+            for v, co in new.items():
+                v.co = co
+            for row in grid:
+                for v in row[:-1]:
+                    loc, nrm, _, _ = CLOTH.find_nearest(v.co, 0.05)
+                    if loc is not None and (v.co - loc).dot(nrm) < SASH_GAP:
+                        v.co = loc + nrm * SASH_GAP
+
+    relax(SASH_RELAX)
+    # an even width: each row's offset from the middle row smoothed along the band (an edge laid onto a fold of the
+    # cloth jumps in or out in a notch), then off the cloth again
+    midr = rows // 2
+    for _ in range(SASH_EVEN):
+        offs = [[grid[i][j].co - grid[midr][j].co for j in range(SASH_N)] for i in range(rows)]
+        for i in range(rows):
+            if i == midr:
+                continue
             for j in range(SASH_N):
-                ns = [row[j - 1].co, row[(j + 1) % SASH_N].co]
-                if 0 < i < rows - 1:
-                    ns += [grid[i - 1][j].co, grid[i + 1][j].co]
-                new[row[j]] = row[j].co * 0.5 + sum(ns, Vector()) / len(ns) * 0.5
-        for v, co in new.items():
-            v.co = co
-        for row in grid:
-            for v in row[:-1]:
+                o = (offs[i][j - 1] + offs[i][j] * 2 + offs[i][(j + 1) % SASH_N]) / 4
+                v = grid[i][j]
+                v.co = grid[midr][j].co + o
                 loc, nrm, _, _ = CLOTH.find_nearest(v.co, 0.05)
                 if loc is not None and (v.co - loc).dot(nrm) < SASH_GAP:
                     v.co = loc + nrm * SASH_GAP
+    # over the belt: the band bridges its raised edges (a band laid on each nearest surface dips in behind them and
+    # the edge cuts through): how far out each vertex must be (the outermost surface along the ray from the torso's
+    # axis), spread to its neighbours with a gentle slope, the band lifted to it
+    zc = P['BELT_ZC']
+    need = [[0.0] * SASH_N for _ in range(rows)]
+    for i, row in enumerate(grid):
+        for j in range(SASH_N):
+            p = row[j].co
+            if abs(p.z - zc) < BRIDGE_DZ:
+                ax = Vector((0.0, 0.0, p.z))
+                d = Vector((p.x, p.y, 0.0)).normalized()
+                loc = outer(CLOTH, ax, d)[0]
+                if loc is not None:
+                    need[i][j] = (loc - ax).length + SASH_GAP + 0.001
+    for _ in range(BRIDGE_SPREAD):
+        need = [[max([need[i][j]] + [need[a][b] - BRIDGE_SLOPE for a, b in
+                                     ((i - 1, j), (i + 1, j), (i, j - 1), (i, (j + 1) % SASH_N)) if 0 <= a < rows])
+                 for j in range(SASH_N)] for i in range(rows)]
+    raw = [r[:] for r in need]
+    for _ in range(BRIDGE_SMOOTH):  # no steps in the lift: its mean over the neighbours, never below what is needed
+        need = [[max(raw[i][j], sum(need[a][b] for a, b in ((i - 1, j), (i + 1, j), (i, j - 1), (i, (j + 1) % SASH_N))
+                                    if 0 <= a < rows) / (4 - (i in (0, rows - 1))))
+                 for j in range(SASH_N)] for i in range(rows)]
+    lifted = 0
+    for i, row in enumerate(grid):
+        for j in range(SASH_N):
+            v = row[j]
+            r = Vector((v.co.x, v.co.y, 0.0))
+            if need[i][j] > r.length:
+                v.co = Vector((0.0, 0.0, v.co.z)) + r.normalized() * need[i][j]
+                lifted += 1
+    print('sash: %d vertices lifted over the belt' % lifted)
+    relax(SASH_SETTLE)  # the lifted part folds nowhere
     seam = {}
     for i, (r0, r1) in enumerate(zip(grid, grid[1:])):
         for j in range(SASH_N):
@@ -593,23 +679,36 @@ def build_epaulette(side):
            for a in [2 * math.pi * k / 72 for k in range(73)]]
     _, u = tube(bm, rim, 0.0075, 6, 'cord', uv_len=0.35, cap=False); uvs.update(u)
     # strap to the collar, its end on the cloth, a button on it
+    # every point of it on the cloth (the shoulder rises towards the neck: a straight strap would sink into it), under
+    # the field at the field's own height; top and bottom faces, STRAP_T thick
     x_end = sign * STRAP_X - C.x
     strap_len = abs(x_end / X.x) if abs(X.x) > 1e-3 else 0.1
-    srows = []
-    for i in range(7):
-        f = i / 6
-        x = -EP_A * 0.7 - (strap_len - EP_A * 0.7) * f
-        p0 = L(x, 0, 0)
-        hit = CLOTH.ray_cast(p0 + Vector((0, 0, 0.1)), Vector((0, 0, -1)), 0.3)[0]
-        z_on = (hit.z + 0.004 - p0.z) if hit is not None else 0.0
-        row = []
+    top_rows, bot_rows = [], []
+    n_rows = 16
+    for i in range(n_rows + 1):
+        f = i / n_rows
+        x = -EP_A * 0.6 - (strap_len - EP_A * 0.6) * f
+        under = 1 - smoothstep(-x, EP_A * 0.6, EP_A * 0.95)  # 1 while under the field
+        trow, brow = [], []
         for y in (-STRAP_W / 2, STRAP_W / 2):
-            v = bm.verts.new(L(x, y * (1 - 0.15 * f), 0) + Vector((0, 0, z_on * f)))
-            uvs[v] = uv_in('cord', f * 0.2, 0.5 + y / STRAP_W * 0.9)
-            row.append(v)
-        srows.append(row)
-    for r0, r1 in zip(srows, srows[1:]):
+            p0 = L(x, y * (1 - 0.15 * f), -EP_THICK)
+            hit, hn = CLOTH.ray_cast(p0 + Z * 0.15, -Z, 0.4)[:2]
+            lift = ((hit - p0).dot(Z) + STRAP_GAP) if hit is not None else 0.0
+            p = p0 + Z * (max(lift, 0.0) * under + lift * (1 - under))
+            b = bm.verts.new(p); t = bm.verts.new(p + Z * STRAP_T)
+            uvs[b] = uvs[t] = uv_in('cord', f * 0.2, 0.5 + y / STRAP_W * 0.9)
+            brow.append(b); trow.append(t)
+        top_rows.append(trow); bot_rows.append(brow)
+    for r0, r1 in zip(top_rows, top_rows[1:]):
         bm.faces.new((r0[0], r0[1], r1[1], r1[0]))
+    for r0, r1 in zip(bot_rows, bot_rows[1:]):
+        bm.faces.new((r1[0], r1[1], r0[1], r0[0]))
+    for k in (0, 1):  # the long sides
+        for i in range(n_rows):
+            q = (bot_rows[i][k], bot_rows[i + 1][k], top_rows[i + 1][k], top_rows[i][k])
+            bm.faces.new(q if k == 0 else q[::-1])
+    bm.faces.new((top_rows[-1][1], top_rows[-1][0], bot_rows[-1][0], bot_rows[-1][1]))
+    srows = top_rows
     btn_at = (srows[-2][0].co + srows[-2][1].co) / 2
     b2 = bmesh.new()
     bmesh.ops.create_uvsphere(b2, u_segments=12, v_segments=6, radius=0.008)
@@ -642,13 +741,13 @@ def build_epaulette(side):
                     rim_p + radial * (reach + jit) + down * length * 0.5,
                     rim_p + radial * (reach * 1.3 + jit) + down * length]
             path = catmull(ctrl, 0.012)
-            for _ in range(3):  # out of the sleeve (the arm's stance bunches the cloth up under the fringe)
-                for j in range(1, len(path)):
+            for _ in range(4):  # out of the sleeve (the arm's stance bunches the cloth up under the fringe), smoothly
+                path = [path[0]] + [(path[j - 1] + path[j] * 2 + path[min(j + 1, len(path) - 1)]) / 4
+                                    for j in range(1, len(path))]
+                for j in range(len(path)):  # its top as well: the strand is as thick as the rim it hangs from
                     loc, nrm, _, _ = CLOTH.find_nearest(path[j], 0.05)
                     if loc is not None and (path[j] - loc).dot(nrm) < rad + 0.003:
                         path[j] = loc + nrm * (rad + 0.003)
-                path = [path[0]] + [(path[j - 1] + path[j] * 2 + path[min(j + 1, len(path) - 1)]) / 4
-                                    for j in range(1, len(path))]
             vs, u = tube(bm, path, rad, 6, 'bullion', uv_len=BULLION_UV_LEN)
             uvs.update(u)
             wt = on_shoulder(UNI_W.at(rim_p), side)
@@ -660,11 +759,12 @@ def build_epaulette(side):
 
 # the loops first: the sash lies over them (in the portrait they go under it), the loose cords over the sash
 loops = build_aiguillettes(bvh_of([uni] + [bpy.data.objects[n] for n in ('Buttons',)]), None, 'loops')
-CLOTH = bvh_of([uni, loops] + [bpy.data.objects[n] for n in ('Belt', 'Buckle', 'Buttons')], torso=True)
+CLOTH = bvh_of([uni, loops] + [bpy.data.objects[n] for n in ('Belt', 'Buckle', 'Buttons')], torso=True,
+               tighten=SASH_TIGHTEN)
 sash = build_sash()
 aig = build_aiguillettes(None, bvh_of([uni, sash] + [bpy.data.objects[n] for n in ('Belt', 'Buckle', 'Buttons')]),
                          'tails')
-CLOTH = bvh_of([uni, sash] + [bpy.data.objects[n] for n in ('Belt', 'Buckle', 'Buttons', 'Collar')])
+CLOTH = bvh_of([uni, sash, loops] + [bpy.data.objects[n] for n in ('Belt', 'Buckle', 'Buttons', 'Collar')])
 eps = [build_epaulette(s) for s in 'lr']
 
 rig.data.pose_position = 'POSE'

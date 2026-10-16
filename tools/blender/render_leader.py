@@ -18,6 +18,8 @@ from bpy_extras.object_utils import world_to_camera_view
 EYE = Vector((320.0, 0.0, 137.741))
 TARGET = Vector((0.0, 0.0, 110.39))
 VFOV_DEG = 19.2
+# close views (fraction of the height: centre, span): the shoulders and epaulettes, the chest, the elbows and the waist
+ZOOMS = {'shoulder': (0.82, 0.2), 'chest': (0.76, 0.22), 'waist': (0.62, 0.26)}
 REF_SIZE, REF_CROWN, REF_SOLES, REF_X = (1024, 1536), 12, 1510, 515  # alexander_ii_full.png: px of the crown, soles, midline
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
@@ -29,7 +31,7 @@ ap.add_argument('--target-cm', type=float, default=150.0, help='model height in 
 ap.add_argument('--res', default='1280x720')
 ap.add_argument('--samples', type=int, default=32)
 ap.add_argument('--transparent', action='store_true')
-ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>, bust<yaw>, head<yaw> (yaw in degrees round the '
+ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>, bust<yaw>, head<yaw>, shoulder|chest|waist<yaw> (yaw in degrees round the '
                 'model, 0 = front, 90 = his left side, 180 = back; @deg - camera elevation, default 3), e.g. full0,full45,full90,full180,head0,head45,head90; '
                 'ref - orthographic front framed like art/source/alexander_ii_full.png (1024x1536, crown at REF_CROWN px, soles '
                 'at REF_SOLES px) for an overlay on it; each goes to <out stem>_<view>.png')
@@ -162,7 +164,8 @@ for frame in frames if args.views else []:
     half = math.tan(math.radians(VFOV_DEG) / 2)
     for view in args.views.split(','):
         name, _, pitch = view.partition('@')
-        kind, yaw = name.rstrip('0123456789-'), math.radians(float(name.lstrip('fulheadbstr') or 0))
+        kind = name.rstrip('0123456789-')
+        yaw = math.radians(float(name[len(kind):] or 0))
         if kind != 'ref':
             yaw += math.radians(YAW)  # turntable views go round the figure itself: 0 is square to its torso
         pitch = math.radians(float(pitch or 3))
@@ -177,6 +180,8 @@ for frame in frames if args.views else []:
             continue
         if kind == 'full':
             target, span, size = Vector((0, 0, args.target_cm * 0.5)), args.target_cm * 1.1, (600, 900)
+        elif kind in ZOOMS:
+            target, span, size = Vector((0, 0, args.target_cm * ZOOMS[kind][0])), args.target_cm * ZOOMS[kind][1], (700, 700)
         elif kind == 'bust':
             target, span, size = Vector((0, 0, args.target_cm * 0.72)), args.target_cm * 0.42, (700, 700)
         else:

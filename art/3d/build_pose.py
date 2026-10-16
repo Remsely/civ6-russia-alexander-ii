@@ -22,10 +22,15 @@ BONES_ONLY = ('Boot', 'Sole', 'Spur')   # details that follow the bones, not the
 RIGID = ('Buttons', 'Buckle', 'CuffButtons')  # each piece of these moves as a whole with the cloth under it
 SUBDIVIDE = 1                           # cuts per edge of the uniform's sheet before the simulation
 SLEEVE_PIN = 0.5                        # sleeves held this much to the arm (less: they slide down and balloon)
+CLOSURE_PIN = 0.7                       # the strip along the front closure held this much (its step and piping straight)
 # cloth: heavy broadcloth
 CLOTH = dict(quality=8, mass=0.35, air_damping=1.0, tension_stiffness=40, compression_stiffness=40,
              shear_stiffness=20, bending_stiffness=6.0, tension_damping=8, compression_damping=8, shear_damping=8,
              pin_stiffness=4.0)
+ELBOW_R = (0.05, 0.13)                  # sleeve smoothed fully within this of the elbow joint, fading out by the second
+SHOULDER_R = (0.06, 0.16)               # ... and the cloth round the shoulder joint
+JOINT_ROUNDS, JOINT_CLEAR = 12, 0.006   # Taubin rounds; the cloth at least this off the skin there
+UNTANGLE_TRIES, UNTANGLE_RINGS = 6, 4      # rounds of smoothing round the sheet's self-crossings; rings of neighbours
 COLLIDE = dict(distance_min=0.004, self_distance_min=0.003, collision_quality=4)
 
 sc = bpy.context.scene
@@ -159,7 +164,9 @@ def pin_weights():
         belt = 1 - smoothstep(abs(c.z - zc), P['BELT_H'] / 2 + 0.01, P['BELT_H'] / 2 + 0.06)
         upper = smoothstep(c.z, 1.50, 1.64)  # collar, shoulders, upper back
         chest = 0.35 if c.z > zc else 0.04   # torso / skirt
-        w[v.index] = max(chest, belt, upper)
+        # the closure: the flap's step and its piping stay straight (free, the step crumples into a zigzag)
+        closure = CLOSURE_PIN * (1 - smoothstep(abs(c.x - P['FLAP_X']), 0.015, 0.04)) if c.y < -0.03 else 0.0
+        w[v.index] = max(chest, belt, upper, closure)
     g = uni.vertex_groups.get('pin') or uni.vertex_groups.new(name='pin')
     for i, x in enumerate(w):
         g.add([i], float(x), 'REPLACE')
@@ -234,11 +241,89 @@ def bake(ob):
             ob.modifiers.remove(m)
 
 
+def arm_w(ob):
+    """Per vertex of ob: its weight on the upper arms and forearms."""
+    arm = {g.index for g in ob.vertex_groups if g.name.startswith(('upperarm', 'lowerarm'))}
+    return np.array([sum(x.weight for x in v.groups if x.group in arm) for v in ob.data.vertices])
+
+
+def smooth_joints():
+    """The bent elbow pinches the skinned arm, and the half-pinned sleeve over it creases into a knot of folds; the arm
+    taken back bunches the cloth up behind the shoulder: round each elbow (the sleeve) and each shoulder joint (sleeve
+    and back) the cloth is smoothed (Taubin: no shrinking), then kept JOINT_CLEAR off the skin."""
+    from mathutils import Vector
+    from mathutils.bvhtree import BVHTree
+    me = uni.data
+    co = np.array([v.co[:] for v in me.vertices])
+    nb = [[] for _ in range(len(co))]
+    for e in me.edges:
+        a, b = e.vertices
+        nb[a].append(b); nb[b].append(a)
+    sleeve = arm_w(uni) > 0.5  # at the elbow: not the torso the left elbow hangs by
+    k = np.zeros(len(co))
+    for bone, (r0, r1), only in (('lowerarm_', ELBOW_R, sleeve), ('upperarm_', SHOULDER_R, None)):
+        for s in 'lr':
+            d = np.linalg.norm(co - np.array(rig.pose.bones[bone + s].head), axis=1)
+            w = 1 - np.clip((d - r0) / (r1 - r0), 0, 1)
+            k = np.maximum(k, w * w * (3 - 2 * w) * (only if only is not None else 1))
+    zone = np.where(k > 0)[0]
+    for _ in range(JOINT_ROUNDS):
+        for f in (0.6, -0.63):
+            lap = np.array([co[nb[i]].mean(0) - co[i] if nb[i] else np.zeros(3) for i in zone])
+            co[zone] += lap * (f * k[zone])[:, None]
+    tree = BVHTree.FromPolygons([v.co.copy() for v in h.data.vertices], [tuple(p.vertices) for p in h.data.polygons])
+    pushed = 0
+    for i in zone:
+        p = Vector(co[i])
+        loc, nrm, _, _ = tree.find_nearest(p, 0.05)
+        if loc is not None and (p - loc).dot(nrm) < JOINT_CLEAR:
+            co[i] = loc + nrm * JOINT_CLEAR
+            pushed += 1
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel())
+    me.update()
+    print('joints: %d cloth vertices smoothed, %d kept off the skin' % (len(zone), pushed))
+
+
+def untangle():
+    """Where the sheet has run through itself (a fold pressed flat where the arm is taken back, behind the shoulder),
+    the lining's thickness would come out through it in spikes: around every crossing the sheet is smoothed until no
+    two faces that share no vertex cross."""
+    from mathutils.bvhtree import BVHTree
+    me = uni.data
+    co = np.array([v.co[:] for v in me.vertices])
+    faces = [tuple(p.vertices) for p in me.polygons]
+    nb = [[] for _ in range(len(co))]
+    for e in me.edges:
+        a, b = e.vertices
+        nb[a].append(b); nb[b].append(a)
+    for rnd in range(UNTANGLE_TRIES):
+        t = BVHTree.FromPolygons([tuple(c) for c in co], faces)
+        bad = set()
+        for i, j in t.overlap(t):
+            if i < j and not set(faces[i]) & set(faces[j]):
+                bad.update(faces[i]); bad.update(faces[j])
+        print('untangle: %d vertices in crossing faces' % len(bad))
+        if not bad:
+            break
+        zone = set(bad)
+        for _ in range(UNTANGLE_RINGS):
+            zone |= {n for i in zone for n in nb[i]}
+        zone = np.array(sorted(zone))
+        for _ in range(10):
+            for f in (0.6, -0.63):
+                lap = np.array([co[nb[i]].mean(0) - co[i] for i in zone])
+                co[zone] += lap * f
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel())
+    me.update()
+
+
 skinned = [o for o in sc.objects if o.type == 'MESH' and any(m.type == 'ARMATURE' for m in o.modifiers)]
 for o in skinned:
     bake(o)
     if o.name in REST_CO:
         make_rigid(o)
+untangle()
+smooth_joints()
 activate(rig)
 bpy.ops.object.mode_set(mode='POSE')
 bpy.ops.pose.select_all(action='SELECT')
