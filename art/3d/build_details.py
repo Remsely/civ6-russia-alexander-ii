@@ -33,14 +33,17 @@ WHITE = (0.80, 0.78, 0.72)
 CLOTH = (0.0065, 0.007, 0.0105)    # the tunic's wool (build_uniform.CLOTH_RGB)
 
 # Red collar over the tunic's standing collar: down from its top edge to where the cloth turns out into the shoulders
-# (by COLLAR_TURN, at most COLLAR_MAX_H); halves apart at the front, the tunic's dark collar between them.
+# (by COLLAR_TURN, at most COLLAR_MAX_H); as in the portrait the halves stand apart at the front, their edges nearly
+# parallel, the tunic's dark collar between them up to the top (the white shirt collar's edge over it); the neck
+# stays behind it (build_pose.neck_in_collar).
 COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.075
 COLLAR_FLARE = 0.003              # the band widens downwards by at most this
 COLLAR_MIN_H = 0.07               # ... but at the front at least this tall (the portrait's collar: one pupil distance)
-COLLAR_FRONT_GAP = 0.005          # half-width of the opening at the front, at the top ...
-COLLAR_FRONT_GAP_BOTTOM = 0.016   # ... and at the bottom edge (the halves part downwards, the dark stand between)
+COLLAR_FRONT_GAP = 0.018          # the opening at the front, at the top (x the radius / 0.08 m: ~1.6 cm half-width) ...
+COLLAR_FRONT_GAP_BOTTOM = 0.014   # ... and at the bottom edge (wider round: ~1.75 cm - the edges nearly parallel)
 COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
 COLLAR_THICK = 0.004
+STAND_ROWS, STAND_COLS = 7, 13    # the dark stand between the halves: rows up it, columns across
 SHIRT_IN = 0.0045                 # the white shirt collar this far inside the tunic collar's outside (further in it ran into
                                   # the neck and showed in white flecks round it)
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
@@ -484,27 +487,33 @@ def build_collar(nu=64, nv=7):
             wts[v] = UNI_W.at(v.co)
     collar = new_detail('Collar', bm, uvs, wts, -COLLAR_THICK)
     # the tunic's dark stand filling the opening between the halves (no neck shows through)
+    # (rows like the halves', widening downwards with them: two rows only, the cloth crumpled it into a twisted strip)
     rs = []
-    for k in range(2):
-        z = bots[0] + (tops[0] - bots[0]) * k
-        rr = (r_top[0] + r_top[-1]) / 2 + COLLAR_LIFT - 0.002
-        g = (gap_b + (gap - gap_b) * k) * 1.4
+    for k in range(STAND_ROWS):
+        f = k / (STAND_ROWS - 1)
+        z = bots[0] + (tops[0] - bots[0]) * f
+        rr = (r_top[0] + r_top[-1]) / 2 + COLLAR_LIFT - 0.0015 + COLLAR_FLARE * (1 - f) ** 2
+        g = (gap_b + (gap - gap_b) * f) * 1.5
         rs.append([ctr + Vector((0, 0, z)) + Vector((math.sin(t), -math.cos(t), 0)) * rr
-                   for t in [-g + 2 * g * q / 6 for q in range(7)]])
+                   for t in [-g + 2 * g * q / (STAND_COLS - 1) for q in range(STAND_COLS)]])
     bm, grid = loft(rs, closed=False)
     outward_normals(bm, lambda p: Vector((c0.x, c0.y, p.z)))
     stand = new_detail('CollarStand', bm, {v: uv_in('cloth', 0.5, 0.5) for row in grid for v in row},
                        lambda v: UNI_W.at(v.co), 0.002)
-    # white shirt collar showing above the top edge, between the neck and the tunic's collar
+    # white shirt collar showing above the top edge, between the neck and the tunic's collar: a closed ring (its ends
+    # at the halves' meeting poked out through the slit in white flecks)
     rings = []
+    full = [2 * math.pi * j / nu for j in range(nu)]
     for k in range(2):
         ring = []
-        for zt, d in zip(tops, dirs):
+        for t in full:
+            d = Vector((math.sin(t), -math.cos(t), 0.0))
+            zt = top_at(t) + 0.001
             z = zt - 0.008 + 0.0135 * k
             rn = cloth(zt - 0.006, d) or 0.07
             ring.append(c0.to_3d() + Vector((0, 0, z)) + d * (rn - SHIRT_IN))
         rings.append(ring)
-    bm, grid = loft(rings, closed=False)
+    bm, grid = loft(rings, closed=True)
     outward_normals(bm, lambda p: Vector((c0.x, c0.y, p.z)))
     shirt = new_detail('ShirtCollar', bm, {v: uv_in('white', 0.5, 0.5) for row in grid for v in row},
                        lambda v: BODY_W.at(v.co), 0.0012)

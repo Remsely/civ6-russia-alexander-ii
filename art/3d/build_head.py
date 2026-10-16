@@ -12,14 +12,14 @@
 #    bottom and the lumpy back of the hair smoothed, decimated, unwrapped; the sources' colour baked into its UVs
 #    (textures/head_albedo.png).
 # Face bones (children of 'head'): jaw, eye_l/r, lid_upper_l/r, lid_lower_l/r, lip_corner_l/r (MPFB 'default' rig
-# joints; the lid and eye bones moved to the generated eyes). The eyes are eyeballs ('Eyes', on eye_l / eye_r) in the
-# openings, the painted eyes pressed back behind them; build_pose.py turns them to the leader camera. A blink turns the
+# joints; the lid and eye bones moved to the generated eyes). The eyes are eyeballs ('Eyes', on eye_l / eye_r) fitted
+# to the openings, the lids wrapping them (fit_eyes); build_pose.py turns them to the leader camera. A blink turns the
 # upper lid down about the eyeball centre by sc['head']['BLINK_DEG'], the weights grading from the upper rim to the
-# lower one. Talking: jaw about X. The whiskers and moustache are made symmetric (his left half mirrored), the ears
-# one skin colour, the skin under the eyes evened out.
+# lower one. Talking: jaw about X. The whiskers and moustache are made symmetric (each side as full as the other,
+# his right side in his left's colour), the ears one skin colour, the skin under the eyes evened out.
 import bpy, bmesh, math, os, sys, json, colorsys
 import numpy as np
-from mathutils import Vector
+from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 from mathutils.interpolate import poly_3d_calc
@@ -49,16 +49,22 @@ EAR_NEAR = 0.004                  # ... and this close to an ear vertex of MPFB'
 EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin times this
 NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 16  # top ring this far inside the cut's outline; segments, rings
-NAPE_BACK = (0.3, 0.7)            # -cos(direction from the front): the neck's back, where it rises to the hair
-NECK_TWIST_ZS = (1.74, 1.84)       # the neck's turn spreads between these heights (head bone above, chest below)
+NECK_TUBE_Z = 1.76                # the neck tube's girth measured here (inside the collar: higher up the jaw is in it)
+NECK_TWIST_ZS = (1.84, 1.90)       # the neck's turn spreads between these heights (head bone above, chest below): over
+                                  # the collar's front top - inside it the neck stays with the chest (the collar does
+                                  # not turn: the oval neck turned in it came out through it)
 BEARD_SYM_DROP, BEARD_SYM_FADE = 0.004, 0.045  # symmetric_beard: from this far under the nose tip down, fading in over
-BEARD_SYM_SIDEBURN = (0.045, 0.065)  # ... and behind the eyes by this much up the sideburn to the eyes' height
-BEARD_SYM_BACK = 0.075            # ... in front of this far behind the eyes (the ear stays its own)
+BEARD_SYM_BACK = 0.075            # ... in front of this far behind the eyes
+BEARD_SYM_EAR = (0.045, 0.065)    # ... and this far from an ear's middle (fading in): the ears and the sideburns by
+                                  # them stay their own (made symmetric too, the left ear was crushed and the left
+                                  # sideburn's pale patch came over to the right)
 BEARD_SYM_NECK = (0.062, 0.078)   # ... and this far out from the neck's axis (the neck itself is round the body's axis,
                                   # not the face's: mirrored in the face's plane it would shift sideways)
 NECK_FIT = 0.97                   # the tube to the collar's ellipse (the tunic's stand collar lies on that): it fills
                                   # the collar, no gap round a thin neck
-HAIR_BEHIND = 0.075               # behind the eyes by this much the side of the head is all hair (but the ears)
+EAR_RING = (0.002, 0.005)         # ear_surroundings: within the first of an ear its skin colour, fading by the second
+EAR_AT = [((0.085, -0.028, 1.924), (0.024, 0.024, 0.034)),   # the generated ears (rest pose): middle, radii (m)
+          ((-0.105, -0.022, 1.919), (0.024, 0.024, 0.034))]
 HAIR_KEEP = 0.15                  # ... of the hair's own colour variation (its red and orange blotches)
 HAIR_MAX_L = 1.15                 # hair no brighter than this times the portrait's (pale patches of the generation)
 DELIGHT_IT = 6                    # smoothing rounds over the mesh for the baked light (~4 mm per round)
@@ -82,10 +88,12 @@ UNDER_EYE = ((3, 9), (28, 46))    # px under the lower rim: the band clean_under
 UNDER_EYE_AMOUNT = 0.9
 LID_FADE = 22                     # px: the upper lid's skin above the rim follows less and less up to the brow
 EYE_DEPTH = 0.011                 # eyeball centre (the lids' pivot) this far behind the eye opening
-EYE_R, EYE_IRIS_R, EYE_PUPIL_R = 0.0112, 0.0056, 0.0023  # the eyeballs: radius (the lids' rims stand a little
-                                  # in front of it: they cover the iris's top, as in the portrait), the iris's, the pupil's
+EYE_R = (0.012, 0.016)            # the eyeballs' radius: the opening's half-width, within these (the model is ~2.1 m)
+EYE_IRIS, EYE_PUPIL = 0.56, 0.4   # iris radius / the opening's height (the lids touch it), pupil / iris
 EYE_IRIS_RGB = (0.42, 0.46, 0.52)  # sRGB: the portrait's cool grey irises
-EYE_RECESS, EYE_RECESS_EASE = 0.007, 5.0  # the painted eye pressed back this far behind the eyeball, eased in over px
+EYE_SUBDIV_R = 0.026              # the head's faces this near an opening split twice: its rim needs ~1 mm edges
+EYE_IN, EYE_OUT = 0.0008, 0.0005  # inside the opening the surface sinks this far into the eyeball, outside it (the
+                                  # lids) it stays this far out of it: the rim is where the eyeball shows, smooth
 EYE_ROUGH = 0.12                  # wet
 EYE_TEX = os.path.join(HERE, 'textures', 'eye_albedo.png')
 MOUTH_LINE = [(400, 618), (420, 615), (435, 617), (450, 618), (465, 617), (480, 616), (500, 617), (512, 620)]
@@ -252,10 +260,10 @@ def ears_are_skin():
             if inside and f.normal.x * side > EAR_FACING and kd.find(c)[2] < EAR_NEAR:
                 f[EAR] = 1
                 e += 1
-                if f[CLS] == head_shape.HAIR:
-                    f[CLS] = head_shape.SKIN
-                    n += 1
-    print('ears: %d faces, %d of them hair made skin' % (e, n))
+                n += f[CLS] == head_shape.HAIR
+    # their class stays: MPFB's right ear sits over the generated one, in the hair - made skin, the hair there came
+    # out as a pale patch; the ears get their colour on the head (ear_surroundings)
+    print('ears: %d faces (%d of them hair)' % (e, n))
 
 
 gbm.normal_update()
@@ -414,18 +422,23 @@ def mirror(p):
 NECK_XY = tuple(sc['uniform']['NECK_AXIS'])
 
 
-def sym_weights(P):
-    """How much points (n, 3) take the mirrored left half's shape and colour (symmetric_beard): his right side under
-    the nose and, behind the cheekbone, up the sideburn to the eyes' height; in front of the ear, outside the neck.
-    (The whole half mirrored brought the left side's flaws - pale patches in the hair - over to the right.)"""
+def sym_weights(P, both=False):
+    """How much points (n, 3) take the mirrored left half's colour (symmetric_colour), or with both, either half the
+    other's shape (symmetric_beard): his right side (both: either side) under the nose, in front of the ears and away
+    from them, outside the neck. (The whole half mirrored brought the left side's flaws - pale patches in the hair -
+    over to the right.)"""
     P = np.asarray(P, np.float64).reshape(-1, 3)
     m, nn, fw = np.array(SYM_M), np.array(SYM_N), np.array(FWD)
     sd = (P - m) @ nn
     front = (P - m) @ fw
     r = np.hypot(P[:, 0] - NECK_XY[0], P[:, 1] - NECK_XY[1])
-    z_top = SYM_Z0 + (SYM_M.z - SYM_Z0) * np_smooth(-front, *BEARD_SYM_SIDEBURN)
-    return ((1 - np_smooth(P[:, 2], z_top, z_top + BEARD_SYM_FADE)) * np_smooth(-sd, 0.0, 0.008)
-            * np_smooth(front, -BEARD_SYM_BACK - 0.02, -BEARD_SYM_BACK) * np_smooth(r, *BEARD_SYM_NECK))
+    z_top = SYM_Z0
+    ear = np.ones(len(P))
+    for c in EAR_C:
+        ear = ear * np_smooth(np.linalg.norm(P - np.array(c[:]), axis=1), *BEARD_SYM_EAR)
+    side = np.ones(len(P)) if both else np_smooth(-sd, 0.0, 0.008)
+    return ((1 - np_smooth(P[:, 2], z_top, z_top + BEARD_SYM_FADE)) * side
+            * np_smooth(front, -BEARD_SYM_BACK - 0.02, -BEARD_SYM_BACK) * np_smooth(r, *BEARD_SYM_NECK) * ear)
 
 
 def sym_weight(p):
@@ -600,12 +613,8 @@ def source_texture():
     nb = [[e.other_vert(v).index for e in v.link_edges] for v in gbm.verts]
     hv = np.array([np.mean([is_hair(f) for f in v.link_faces]) if v.link_faces else 0.0 for v in gbm.verts])
     eye_z = (at_img(EYE_RIMS['l']['upper'][2]).co.z + at_img(EYE_RIMS['r']['upper'][3]).co.z) / 2
-    ear_v = {v for f in gbm.faces if f[EAR] for v in f.verts}
-    # the sides behind the sideburns, round the ears, are hair too (the generation left skin-coloured patches there)
     back = np.array([float((v.normal.dot(FWD) < -0.1 and v.co.z > CHIN_Z + 0.03) or
-                           (v.normal.dot(FWD) < 0.2 and v.co.z > eye_z + 0.03) or
-                           (v not in ear_v and v.normal.dot(FWD) < 0.3 and (v.co - SYM_M).dot(FWD) < -HAIR_BEHIND
-                            and v.co.z > eye_z - 0.045)) for v in gbm.verts])
+                           (v.normal.dot(FWD) < 0.2 and v.co.z > eye_z + 0.03)) for v in gbm.verts])
     hv = np.maximum(hv, back)
     lv, cnt = np.zeros(n), np.zeros(n)
     for f in gbm.faces:
@@ -632,13 +641,10 @@ def source_texture():
     skin_l0, hair_l0 = float(np.median(lv[hard < 0.1])), float(np.median(lv[hard > 0.9]))
     f_skin = np.clip(skin_l0 / np.maximum(l_skin, 1e-3), *DELIGHT_CLAMP)
     f_hair = np.clip(1 + (hair_l0 / np.maximum(l_hair, 1e-3) - 1) * DELIGHT_HAIR, *DELIGHT_CLAMP)
-    # behind the sideburns the portrait sees the side of the head at a slant: its ear, painted a little elsewhere
-    # than the generated one, came out as skin-coloured patches in the hair - the generated texture there
-    side = np.array([smoothstep(-(v.co - SYM_M).dot(FWD), HAIR_BEHIND - 0.02, HAIR_BEHIND) for v in gbm.verts])
     vals = []
     for f in gbm.faces:
         vals.append([(l[puv].uv.x * 1024, (1 - l[puv].uv.y) * 1024, l[FACING].uv.x, hard[l.vert.index],
-                      f_skin[l.vert.index], f_hair[l.vert.index], float(f[EAR]), side[l.vert.index])
+                      f_skin[l.vert.index], f_hair[l.vert.index], float(f[EAR]))
                      for l in f.loops])
     acc, hit = raster(res, vals)
     hair_w = acc[..., 3:4]
@@ -655,14 +661,10 @@ def source_texture():
     hair_rgb = np.clip(hair_rgb * (np.minimum(hl, float(ph @ LUM) * HAIR_MAX_L) / np.maximum(hl, 1e-4))[..., None], 0, 1)
     out = skin_rgb * (1 - hair_w) + hair_rgb * hair_w
     pp, pw = portrait_at(ppx, acc[..., 0], acc[..., 1])
-    w = (np.clip((acc[..., 2] - PORTRAIT_FRONT[0]) / (PORTRAIT_FRONT[1] - PORTRAIT_FRONT[0]), 0, 1) * pw
-         * (1 - acc[..., 7]))[..., None]
+    w = (np.clip((acc[..., 2] - PORTRAIT_FRONT[0]) / (PORTRAIT_FRONT[1] - PORTRAIT_FRONT[0]), 0, 1) * pw)[..., None]
     w = w * w * (3 - 2 * w)
     out = np.where(hit[..., None], out * (1 - w) + pp * w, rgb)
-    # the ears one skin colour, a little redder (the light shows their shape): both pictures painted an ear onto them,
-    # not where the other's is - it came out as an ear drawn over an ear
-    ear = np.clip(blur(acc[..., 6], 3) * 1.5, 0, 1)[..., None] * hit[..., None]
-    out = out * (1 - ear) + np.clip(p * np.array(EAR_TINT), 0, 1) * ear
+    # (the ears get one skin colour on the head itself: ear_surroundings - painted here, it spread over the hair)
     img = bpy.data.images.new('head_src', res, res)
     img.colorspace_settings.name = 'sRGB'
     img.pixels.foreach_set(np.concatenate([out, np.ones_like(out[..., :1])], axis=2).astype(np.float32).ravel())
@@ -725,7 +727,7 @@ for s, rims in EYE_RIMS.items():
     U3, L3 = at_img((xc, interp(up, xc))).co, at_img((xc, interp(lo, xc))).co
     pivot = (U3 + L3) / 2 - FWD * EYE_DEPTH
     ang = lambda q: math.atan2((q - pivot).z, (q - pivot).dot(FWD))  # noqa: E731
-    EYE[s] = dict(x0=x0, x1=x1, omax=omax, pivot=pivot, deg=math.degrees(ang(U3) - ang(L3)))
+    EYE[s] = dict(x0=x0, x1=x1, omax=omax, pivot=pivot, deg=math.degrees(ang(U3) - ang(L3)), U3=U3.copy(), L3=L3.copy())
 BLINK_DEG = max(e['deg'] for e in EYE.values())
 print('eyes: blink %.1f deg (l %.1f, r %.1f)' % (BLINK_DEG, EYE['l']['deg'], EYE['r']['deg']))
 MOUTH_C = sum((at_img(q).co for q in MOUTH_LINE), Vector()) / len(MOUTH_LINE)
@@ -750,44 +752,30 @@ def neck_source():
     cut = CHIN_Z - NECK_CUT
     c1 = sum(RIM_PTS, Vector()) / len(RIM_PTS)
     n = NECK_SEGS
-    rim_r, rim_z = [0.0] * n, [9.0] * n
-    for p in RIM_PTS:  # the cut's outline per direction round its centre, and how high it is there
+    rim_r = [0.0] * n
+    for p in RIM_PTS:  # the cut's outline per direction round its centre
         d = p.xy - c1.xy
         k = int((math.atan2(d.x, -d.y) % (2 * math.pi)) / (2 * math.pi) * n) % n
         rim_r[k] = max(rim_r[k], d.length)
-        rim_z[k] = min(rim_z[k], p.z)
     for _ in range(n):
         if not all(rim_r):
             rim_r = [r or max(rim_r[k - 1], rim_r[(k + 1) % n]) for k, r in enumerate(rim_r)]
-        if max(rim_z) > 8:
-            rim_z = [z if z < 8 else min(rim_z[k - 1], rim_z[(k + 1) % n]) for k, z in enumerate(rim_z)]
     for _ in range(4):
         rim_r = [rim_r[k] * 0.5 + (rim_r[k - 1] + rim_r[(k + 1) % n]) * 0.25 for k in range(n)]
-        rim_z = [rim_z[k] * 0.5 + (rim_z[k - 1] + rim_z[(k + 1) % n]) * 0.25 for k in range(n)]
-    top_front, top_back = sc['uniform']['STAND_TOP_FRONT'], sc['uniform']['STAND_TOP_BACK']
     b = bmesh.new()
-    rings, nape = [], []
+    rings = []
     for i in range(NECK_RINGS + 1):
         t = i / NECK_RINGS
+        z = NECK_Z0 + (cut + NECK_INTO - NECK_Z0) * t
+        w = smoothstep(z, NECK_Z0 + 0.02, cut)  # collar ellipse below, the cut's outline above
+        c = c0.xy.lerp(c1.xy, w)
         ring = []
         for k in range(n):
             a = 2 * math.pi * (k + 0.5) / n
             d = Vector((math.sin(a), -math.cos(a)))
-            # up to the cut's rim where it is: at the back the hair ends high over the collar (a step and a bare
-            # band of neck under it showed) - there the tube rises to the hair and widens to it, the nape
-            back = smoothstep(-math.cos(a), *NAPE_BACK)
-            z_top = max(cut, rim_z[k]) * back + cut * (1 - back) + NECK_INTO
-            z = NECK_Z0 + (z_top - NECK_Z0) * t
-            w = smoothstep(z, NECK_Z0 + 0.02, cut)  # collar ellipse below, the cut's outline above
-            c = c0.xy.lerp(c1.xy, w)
             # the collar's ellipse all the way up (inside the jaw's cut): wider, it shows over the collar
-            r_e = head_shape.neck_radius(d.x, d.y) * NECK_FIT
-            r = min(r_e, rim_r[k] - NECK_INSET)
-            collar_top = top_front + (top_back - top_front) * (1 - math.cos(a)) / 2
-            up = smoothstep(z, collar_top, max(z_top - NECK_INTO, collar_top + 0.01)) * back
-            r = r + (max(r, rim_r[k] - NECK_INSET) - r) * up
+            r = min(head_shape.neck_radius(d.x, d.y) * NECK_FIT, rim_r[k] - NECK_INSET)
             ring.append(b.verts.new((c.x + d.x * r, c.y + d.y * r, z)))
-            nape.append(back * smoothstep(z, collar_top - 0.01, collar_top + 0.005))
         rings.append(ring)
     for r0, r1 in zip(rings, rings[1:]):
         for k in range(n):
@@ -795,10 +783,9 @@ def neck_source():
     b.faces.new(rings[0][::-1]); b.faces.new(rings[-1])
     bmesh.ops.recalc_face_normals(b, faces=b.faces[:])
     col = b.verts.layers.float_color.new('col')
-    b.verts.index_update()
-    for v in b.verts:  # the beard's colour carried down under the jaw, skin further from it; the nape the hair's
+    for v in b.verts:  # the beard's colour carried down under the jaw, skin further from it
         c, d = RIM_AT(v.co)
-        w = smoothstep(d, 0.008, 0.03) * (1 - nape[v.index])
+        w = smoothstep(d, 0.008, 0.03)
         v[col] = (*(c * (1 - w) + np.array(SKIN_LIN) * w), 1.0)
     ob = new_object('_SrcNeck', b, [material('_SrcSkin', None, 0.55, SKIN_LIN, 'col')], part=False)
     b.free()
@@ -875,6 +862,13 @@ def build_head():
     bpy.ops.object.modifier_apply(modifier='D')
     b = bmesh.new(); b.from_mesh(ob.data)
     bmesh.ops.triangulate(b, faces=b.faces[:])
+    # round the eye openings the faces split twice: the eyeball shows inside the rim, and the rim follows the edges
+    opening = [e['pivot'] + FWD * EYE_DEPTH for e in EYE.values()]
+    for _ in range(2):
+        near = {ed for f in b.faces if min((f.calc_center_median() - o).length for o in opening) < EYE_SUBDIV_R
+                for ed in f.edges}
+        bmesh.ops.subdivide_edges(b, edges=list(near), cuts=1, use_grid_fill=True)
+        bmesh.ops.triangulate(b, faces=b.faces[:])
     b.to_mesh(ob.data); b.free()
     for p in ob.data.polygons:
         p.use_smooth = True
@@ -895,27 +889,102 @@ def build_head():
 head = build_head()
 
 
-def symmetric_beard():
-    """The whiskers and moustache made symmetric: the portrait sees the face turned to his right, and the generation
-    made his right whisker short (it ended well above the collar, his left one reaches it). Under the nose his right
-    half takes the shape of his left half mirrored in the face's midplane (sym_weight: fading out up to the nose,
-    towards the ears and onto the neck); symmetric_colour() then gives it the left half's colour."""
+def head_ears():
+    """The ears on the head: what faces sideways inside EAR_AT's ellipsoids (measured on the generated head - MPFB's
+    ears, which the generated ones were found by, sit ~3 cm off: over the right ear they took in a patch of curls).
+    Returns their points and each ear's middle."""
+    me = head.data
+    pts = []
+    for c, r in EAR_AT:
+        c, r = Vector(c), Vector(r)
+        pts += [v.co.copy() for v in me.vertices
+                if sum(((v.co[i] - c[i]) / r[i]) ** 2 for i in range(3)) < 1 and abs(v.normal.x) > 0.2]
+    mids = [Vector(c) for c, _ in EAR_AT]
+    print('ears on the head: %d vertices' % len(pts))
+    return pts, mids
+
+
+HEAD_EAR_PTS, EAR_C = head_ears()
+
+
+def fit_plane():
+    """The face's midplane refined on the head itself: of the planes near face_plane()'s (turned about Z, moved
+    sideways) the one the upper face (brow, eyes, nose: no beard) is most symmetric about - the eyes' midpoint from
+    the generation is off by several mm, and the beard mirrored in a plane that far off came out lopsided."""
+    global SYM_M, SYM_N
     me = head.data
     tree = BVHTree.FromPolygons([v.co.copy() for v in me.vertices], [tuple(p.vertices) for p in me.polygons])
+    pts = [v.co.copy() for v in me.vertices
+           if NOSE.z - 0.01 < v.co.z < SYM_M.z + 0.04 and (v.co - SYM_M).dot(FWD) > -0.045
+           and abs((v.co - SYM_M).dot(SYM_N)) < 0.055 and v.normal.dot(FWD) > 0.2][::2]
+    m0, n0 = SYM_M.copy(), SYM_N.copy()
+
+    def cost(m, nn):
+        tot = 0.0
+        for q in pts:
+            r = q - nn * (2 * (q - m).dot(nn))
+            hit = tree.find_nearest(r, 0.03)[0]
+            tot += (hit - r).length if hit is not None else 0.03
+        return tot / len(pts)
+    best = (cost(m0, n0), 0.0, 0.0)
+    for step_o, step_a in ((0.003, 2.0), (0.001, 0.5)):
+        _, a0, o0 = best
+        for a in [a0 + step_a * k for k in range(-4, 5)]:
+            nn = Matrix.Rotation(math.radians(a), 3, 'Z') @ n0
+            for o in [o0 + step_o * k for k in range(-4, 5)]:
+                c = cost(m0 + n0 * o, nn)
+                if c < best[0]:
+                    best = (c, a, o)
+    c, a, o = best
+    SYM_M, SYM_N = m0 + n0 * o, Matrix.Rotation(math.radians(a), 3, 'Z') @ n0
+    print('face plane: turned %.1f deg, moved %.4f m (mirror gap %.4f -> %.4f m)' % (a, o, cost(m0, n0), c))
+
+
+def symmetric_beard():
+    """The whiskers and moustache made symmetric: the generation made them lopsided (his right whisker short, his
+    left one full, the right flaring out at the jaw). Each side takes the other's shape where that lies further out
+    (the union of the side and its mirror image in the face's midplane, sym_weights(both): fading out up to the nose,
+    towards the ears and onto the neck) - both whiskers as full as the fuller one; symmetric_colour() then gives his
+    right half the left one's colour."""
+    me = head.data
+    co0 = [v.co.copy() for v in me.vertices]
+    nrm = [v.normal.copy() for v in me.vertices]
+    tree = BVHTree.FromPolygons(co0, [tuple(p.vertices) for p in me.polygons])
+    W = sym_weights([c[:] for c in co0], both=True)
     moved = 0
-    for v in me.vertices:
-        w = sym_weight(v.co)
-        if w > 0:
-            loc = tree.find_nearest(mirror(v.co), 0.06)[0]
-            if loc is not None:
-                v.co = v.co.lerp(mirror(loc), w)
-                moved += 1
+    most = 0.0
+    for v, c, nn, w in zip(me.vertices, co0, nrm, W):
+        if w <= 0:
+            continue
+        loc = tree.find_nearest(mirror(c), 0.06)[0]
+        if loc is None:
+            continue
+        q = mirror(loc)
+        if (q - c).dot(nn) > 0:  # the other side stands further out here
+            v.co = c.lerp(q, float(w))
+            moved += 1
+            most = max(most, (q - c).length * float(w))
     me.update()
-    print('beard symmetric: %d verts moved (plane through %s, nose z %.3f)'
-          % (moved, tuple(round(c, 3) for c in SYM_M), NOSE.z))
+    print('beard symmetric: %d verts moved out to the other side (most %.4f m), plane through %s'
+          % (moved, most, tuple(round(x, 3) for x in SYM_M)))
 
 
+def asymmetry():
+    """Worst gap between the beard and its mirror image (for the log)."""
+    me = head.data
+    tree = BVHTree.FromPolygons([v.co.copy() for v in me.vertices], [tuple(p.vertices) for p in me.polygons])
+    W = sym_weights([v.co[:] for v in me.vertices], both=True)
+    gaps = [(tree.find_nearest(mirror(v.co), 0.06)[0] - mirror(v.co)).length for v, w in zip(me.vertices, W)
+            if w > 0.9 and tree.find_nearest(mirror(v.co), 0.06)[0] is not None]
+    return (max(gaps), float(np.mean(gaps))) if gaps else (0.0, 0.0)
+
+
+fit_plane()
+
+
+print('beard asymmetry before: max %.4f mean %.4f m' % asymmetry())
 symmetric_beard()
+print('beard asymmetry after: max %.4f mean %.4f m' % asymmetry())
 
 
 def bake():
@@ -1074,12 +1143,6 @@ def hair_detail():
     # one hue for all the hair: the portrait's (the front, facing the view it was painted from); the generated back
     # came out red-brown
     rgb = px[..., :3]
-    # flecks of the generated shirt collar's white left on the hair's underside at the nape: the hair's colour
-    mx, mn = rgb.max(-1), rgb.min(-1)
-    pale = (hw > 0.3) & cov & (facing < 0.4) & ((mx - mn) < 0.3 * mx) & (mx > 0.45)
-    if pale.any():
-        rgb[pale] = np.median(rgb[(hw > 0.9) & cov & ~pale], 0)
-    print('hair: %d pale texels recoloured' % int(pale.sum()))
     lum = np.maximum(rgb @ mat_util.LUM, 1e-4)
     chroma = rgb / lum[..., None]
     front = (hw > 0.9) & cov & (facing > 0.6)
@@ -1096,9 +1159,45 @@ def hair_detail():
     print('hair strands: %d texels' % int((hw > 0.5).sum()))
 
 
+def ear_surroundings():
+    """The ears cleaned in the baked texture: the generation's ear sits a little elsewhere than the portrait's and the
+    bake picked between the sources face by face - flakes of hair colour on the ear's rim. Within EAR_RING[0] of the
+    ear (head_ears) it is the portrait's skin a little redder (its fine light and dark kept a little), fading into
+    what is there by EAR_RING[1]; those vertices count as skin (where the generation coloured them hair-dark,
+    hair_detail() drew strands on the ear). The hair round the ears is left as it is."""
+    kd = KDTree(len(HEAD_EAR_PTS))
+    for i, q in enumerate(HEAD_EAR_PTS):
+        kd.insert(q, i)
+    kd.balance()
+    me = head.data
+    data, cov = mat_util.raster(me, TEX)
+    img = bpy.data.images['head_albedo']
+    w_, hh = img.size
+    px = np.array(img.pixels[:], np.float32).reshape(hh, w_, 4)
+    rgb = px[..., :3]
+    P = data[..., :3]
+    cand = np.zeros(cov.shape, bool)
+    for c in EAR_C:
+        cand |= cov & (np.linalg.norm(P - np.array(c[:]), axis=-1) < 0.06)
+    dist = np.full(cov.shape, 1.0, np.float32)
+    for y, x in zip(*np.nonzero(cand)):
+        dist[y, x] = kd.find(Vector(P[y, x].tolist()))[2]
+    lum = rgb @ LUM
+    detail = np.clip(lum / np.maximum(blur(lum, 4), 1e-4), 0.93, 1.07)[..., None]
+    ear_col = np.clip(np.array(SKIN_SRGB) * np.array(EAR_TINT), 0, 1)  # the bake there is half hair-dark
+    k = np.clip(1 - (dist - EAR_RING[0]) / (EAR_RING[1] - EAR_RING[0]), 0, 1)[..., None] * cov[..., None]
+    px[..., :3] = rgb * (1 - k) + np.clip(ear_col * detail, 0, 1) * k
+    img.pixels.foreach_set(px.ravel()); mat_util.write(img)
+    n = 0
+    for hv in hb.verts:
+        if kd.find(hv.co)[2] < EAR_RING[0]:
+            HCLS[hv] = head_shape.SKIN
+            n += 1
+    print('ears: %d texels, %d vertices skin' % (int((k[..., 0] > 0.5).sum()), n))
+
+
+ear_surroundings()
 hair_detail()
-LIDS = {s: [lid_weight(v, s) for v in hb.verts] for s in EYE}
-JAW = [jaw_weight(v) for v in hb.verts]
 
 
 def in_poly(pt, poly):
@@ -1124,25 +1223,71 @@ def edge_dist(pt, poly):
 EYE_POLY = {s: r['upper'] + r['lower'][::-1][1:-1] for s, r in EYE_RIMS.items()}
 
 
-def eye_sockets():
-    """The painted eyes pressed back into sockets (EYE_RECESS, eased in over a few px inside the rims): the eyeballs
-    (eyeballs()) sit in the openings in front of them - painted, the eyes looked where the portrait's camera stood,
-    from everywhere else past the viewer."""
+def fit_eyes():
+    """An eyeball per eye fitted to the opening: the rim (where the outline EYE_RIMS crosses the head's edges, in the
+    portrait's picture) lies on a sphere of the opening's half-width (EYE_R) round a centre behind it - the lids wrap
+    it as real ones do. Then the surface inside the opening sinks EYE_IN into the sphere and the lids round it stay
+    EYE_OUT outside: from any side the eyeball shows exactly inside the rim, the lids cover the rest of it (a ball
+    put behind the painted eye's middle poked out in front of the lids and left the painted eye showing beside it).
+    The centre is the lids' blink pivot and the eye bone's head."""
     me = head.data
-    n = 0
-    for v, hv in zip(me.vertices, hb.verts):
-        if hv.normal.dot(FWD) <= 0.3:
-            continue
-        for s, poly in EYE_POLY.items():
-            if in_poly(HIMG[hv], poly):
-                f = smoothstep(edge_dist(HIMG[hv], poly), 0.5, EYE_RECESS_EASE)
-                v.co = v.co - FWD * (EYE_RECESS * f)
-                n += 1
+    for s_, poly in EYE_POLY.items():
+        e = EYE[s_]
+        near = [hv for hv in hb.verts if (hv.co - e['pivot']).length < 0.035 and hv.normal.dot(FWD) > -0.2]
+        ins = {hv for hv in near if in_poly(HIMG[hv], poly)}
+        rim, edge_of = [], {}
+        for hv in ins:
+            for ed in hv.link_edges:
+                o = ed.other_vert(hv)
+                if o not in ins:
+                    da, db = edge_dist(HIMG[hv], poly), edge_dist(HIMG[o], poly)
+                    rim.append(hv.co.lerp(o.co, da / max(da + db, 1e-9)))
+                    edge_of.setdefault(hv, []).append(rim[-1])
+        P = np.array([q[:] for q in rim])
+        cen = P.mean(0)
+        fw = np.array(FWD[:])
+        lat = P - cen - np.outer((P - cen) @ fw, fw)
+        R = float(np.clip(np.linalg.norm(lat, axis=1).max(), *EYE_R))
+        c = cen - fw * math.sqrt(max(R * R - float((np.linalg.norm(lat, axis=1) ** 2).mean()), (0.5 * R) ** 2))
+        for _ in range(40):  # Gauss-Newton: the rim's distances from c as near R as they go
+            d = P - c
+            L = np.linalg.norm(d, axis=1)
+            J = -d / L[:, None]
+            dc = np.linalg.lstsq(J, -(L - R), rcond=None)[0]
+            c = c + dc
+            if np.linalg.norm(dc) < 1e-7:
+                break
+        L = np.linalg.norm(P - c, axis=1)
+        c = Vector(c.tolist())
+        sunk = lifted = 0
+        worst = 0.0
+        for hv in near:
+            v = me.vertices[hv.index]
+            d = v.co - c
+            r = d.length
+            if r < 1e-6:
+                continue
+            if hv in ins and r > R - EYE_IN:
+                v.co = c + d * ((R - EYE_IN) / r); sunk += 1
+            elif hv not in ins and r < R + EYE_OUT:
+                worst = max(worst, R + EYE_OUT - r)
+                v.co = c + d * ((R + EYE_OUT) / r); lifted += 1
+        for hv, pts in edge_of.items():  # the inside vertices by the rim onto it, on the ball: the lid's edge runs
+            q = min(pts, key=lambda t: (t - hv.co).length)  # along the outline, not zigzagging round its vertices
+            me.vertices[hv.index].co = c + (q - c).normalized() * R
+        U3, L3 = e['U3'], e['L3']
+        ang = lambda q: math.atan2((q - c).z, (q - c).dot(FWD))  # noqa: E731
+        e.update(pivot=c, R=R, h=(U3 - L3).length, deg=math.degrees(ang(U3) - ang(L3)))
+        print('eye %s: r %.4f at %s, rim %d pts off the sphere %.4f..%.4f; %d sunk, %d lids lifted (most %.4f)'
+              % (s_, R, tuple(round(x, 3) for x in c), len(rim), L.min() - R, L.max() - R, sunk, lifted, worst))
     me.update()
-    print('eye sockets: %d vertices pressed in' % n)
 
 
-eye_sockets()
+fit_eyes()
+BLINK_DEG = max(e['deg'] for e in EYE.values())
+print('eyes: blink %.1f deg (l %.1f, r %.1f)' % (BLINK_DEG, EYE['l']['deg'], EYE['r']['deg']))
+LIDS = {s: [lid_weight(v, s) for v in hb.verts] for s in EYE}
+JAW = [jaw_weight(v) for v in hb.verts]
 hb.free()
 
 add_face_bones({s: e['pivot'] for s, e in EYE.items()}, FWD)
@@ -1210,13 +1355,13 @@ def neck_weights():
     names = [g.name for g in vg]
     ax = Vector(sc['uniform']['NECK_AXIS'])
     co = [v.co for v in head.data.vertices]
-    sl = [c for c in co if NECK_TWIST_ZS[0] - 0.01 < c.z < NECK_TWIST_ZS[0] + 0.01]
+    sl = [c for c in co if NECK_TUBE_Z - 0.01 < c.z < NECK_TUBE_Z + 0.01]
     rx = max(abs(c.x - ax.x) for c in sl); ry = max(abs(c.y - ax.y) for c in sl)
     for v in head.data.vertices:
         c = v.co
         d = math.hypot((c.x - ax.x) / rx, (c.y - ax.y) / ry)  # 1 on the neck tube
         up = max(smoothstep(c.z, *NECK_TWIST_ZS), smoothstep(d, 1.08, 1.35))
-        chest = 1 - smoothstep(c.z, NECK_Z0 + 0.005, NECK_TWIST_ZS[0])
+        chest = 1 - smoothstep(c.z, NECK_TWIST_ZS[0] - 0.02, NECK_TWIST_ZS[0])
         w = {names[g.group]: g.weight for g in v.groups if g.weight > 0}
         face = {k: x for k, x in w.items() if k not in ('head', 'neck_01', 'spine_03', 'spine_02', 'clavicle_l',
                                                          'clavicle_r')}
@@ -1250,13 +1395,13 @@ ub.to_mesh(under.data); ub.free()
 # what shows of the body (the hands) in the face's skin colour
 under.data.materials[0] = material('Body_Skin', None, 0.5, SKIN_LIN)
 
-def eye_texture(iris):
+def eye_texture(iris, R, iris_r):
     """The eyeball's albedo, polar about its front: rows the angle from the front (0..180 deg), columns round it -
     pupil, the portrait's iris with fibres and a darker rim, the white going pink-grey towards the back."""
     res = 512
     v, u = np.meshgrid(np.linspace(0, 180, res), np.linspace(0, 2 * np.pi, res), indexing='ij')
-    th_i = math.degrees(math.asin(EYE_IRIS_R / EYE_R))
-    th_p = math.degrees(math.asin(EYE_PUPIL_R / EYE_R))
+    th_i = math.degrees(math.asin(min(iris_r / R, 0.95)))
+    th_p = math.degrees(math.asin(min(iris_r * EYE_PUPIL / R, 0.9)))
     sclera = np.array(to_linear((0.86, 0.83, 0.79)), np.float32)
     back = np.array(to_linear((0.8, 0.66, 0.62)), np.float32)
     rgb = sclera + (back - sclera) * np_smooth(v, 45, 90)[..., None]
@@ -1279,7 +1424,9 @@ def eyeballs():
     """Real eyeballs in the openings: spheres EYE_R round the lids' pivots (EYE_DEPTH behind the openings), their
     fronts along the portrait's view; skinned to eye_l / eye_r, so they can turn - build_pose.py turns them to the
     leader camera once the stance is set."""
-    img = eye_texture(EYE_IRIS_RGB)
+    R = sum(e['R'] for e in EYE.values()) / len(EYE)
+    iris_r = EYE_IRIS * sum(e['h'] for e in EYE.values()) / len(EYE)
+    img = eye_texture(EYE_IRIS_RGB, R, iris_r)
     mat = mat_util.material('Eyes', img, None, None, rough=EYE_ROUGH)
     u_ax = FWD.cross(Vector((0, 0, 1))).normalized()
     w_ax = FWD.cross(u_ax)
@@ -1293,7 +1440,7 @@ def eyeballs():
             for k in range(lon + 1):
                 ph = 2 * math.pi * k / lon
                 d = FWD * math.cos(th) + (u_ax * math.cos(ph) + w_ax * math.sin(ph)) * math.sin(th)
-                co.append(c + d * EYE_R)
+                co.append(c + d * e['R'])
                 uvs.append((k / lon, 1 - i / lat))
                 grp.append('eye_' + s)
         for i in range(lat):
@@ -1314,8 +1461,7 @@ def eyeballs():
         g = ob.vertex_groups.new(name=n)
         g.add([i for i, x in enumerate(grp) if x == n], 1.0, 'REPLACE')
     ob.modifiers.new('Armature', 'ARMATURE').object = rig
-    print('eyeballs: r %.4f at %s' % (EYE_R, ', '.join(str(tuple(round(x, 3) for x in e['pivot']))
-                                                       for e in EYE.values())))
+    print('eyeballs: r %s, iris %.4f' % (', '.join('%.4f' % e['R'] for e in EYE.values()), iris_r))
 
 
 eyeballs()

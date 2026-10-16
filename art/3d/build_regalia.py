@@ -28,7 +28,7 @@ SASH_SRGB = (46, 96, 196)        # the St Andrew blue moire of the portrait (bet
 # bullion fringe hanging from the outer part of the rim.
 EP_OUT, EP_A, EP_B = 0.008, 0.078, 0.062  # centre this far out past the shoulder joint; semi-axes along and across
 EP_LIFT, EP_DOME, EP_THICK = 0.006, 0.018, 0.007
-EP_TILT = 14.0                   # degrees from level: the field's outer end lower (it follows the shoulder's slope)
+EP_TILT = 26.0                   # degrees from level: the field's outer end lower (it follows the shoulder's slope)
 EP_FORWARD = 18.0                # ... and its front edge lower (in the portrait the fields face the viewer a little)
 STRAP_X, STRAP_W = 0.085, 0.05   # strap from the field to this |x|, by the collar: the epaulette's own broad shoulder
                                  # strap, gold galloon edged in red, as in the portrait
@@ -54,7 +54,7 @@ SASH_EVEN = 30                   # rounds of evening out the width along the ban
 BRIDGE_DZ, BRIDGE_SLOPE, BRIDGE_SPREAD, BRIDGE_SMOOTH = 0.07, 0.001, 10, 12  # over the belt: zone round its centre; lift lost per step to a neighbour; steps
 TORSO_ARM_Z = 1.5                # below this the upper arms' sleeves are not part of the torso surface
 GOLD_FLOOR = 0.55                # gold albedo: the pictures' shading only darkens it down to this (the relief does the rest)
-NORMAL_STRENGTH = {'pole': 2.0, 'sash': 0.05}  # the pictures' light and dark as relief (the cords' and fringe's own)
+NORMAL_STRENGTH = {'cord': 3.0, 'pole': 2.0, 'sash': 0.05}  # the pictures' light and dark as relief (the fringe's own)
 # Aiguillettes: cords from under the right epaulette's front to the closure, hanging in loops; two loose cords with
 # gold tips ('pencils') hang from the closure end over the sash.
 AIG_FROM = (-0.215, 1.67)          # (x, z) on the front of the chest
@@ -87,14 +87,15 @@ ATLAS = {
     'pole': (0.0, 0.25, 0.5, 0.75),
     'gold': (0.5, 0.25, 0.5625, 0.3125),
     'strap': (0.5, 0.375, 1.0, 0.5),
+    'chased': (0.5, 0.5, 1.0, 0.75),
 }
-# Gold thread (cords, fringe, galloon, the field's embroidery) is not solid metal: a little metallic shine on yellow
-# fibres, rough between them (as metal it read as cast gold); the cast pieces (buttons, pencils) are gilt metal.
-THREAD_METAL, THREAD_ROUGH = (0.25, 0.6), (0.62, 0.38)  # in the gaps, on the crests
-CAST_METAL, CAST_ROUGH = 0.9, 0.33
-# The aiguillettes' braid: a round plait - two families of strands slanting either way, crossing over and under
-# (chevrons along the cord, as in the portrait), each strand a bundle of fine threads.
-BRAID_PITCH, BRAID_H = 0.017, 0.0016  # one chevron's length along the cord; the strands' relief (m)
+# Gold thread (cords, fringe, galloon, the field's embroidery, the tassels) is yellow fibre, not metal: a faint sheen
+# on the crests, matt between them (even at 0.25..0.6 metallic it read as polished cast gold in a lit viewport); the cast
+# pieces (buttons, pencils) are gilt metal, chased all over (the 'chased' region).
+THREAD_METAL, THREAD_ROUGH = (0.0, 0.12), (0.85, 0.6)  # in the gaps, on the crests
+CAST_METAL, CAST_ROUGH = 0.9, 0.36
+CORD_REPEATS = 8                 # the generated twisted cord picture along its region (seamless: 8 plies)
+CHASED_TILES = (6, 14)           # the pencil's chased ornament: tiles round it, along it
 # The generated material pictures (textures/gen, see art/prompts.md) and how often they repeat in their regions.
 SASH_CONTRAST = 2.5               # the damask's light and dark, stronger than generated (it is faint on the model)
 SASH_REPEATS = 12                # mirrored, even: the band's ends meet on the same column
@@ -253,20 +254,24 @@ def sash_tex(w, hh):
     return np.clip(srgb(SASH_SRGB) * (1 + (rgb / med - 1) * SASH_CONTRAST), 0, 1)  # the damask shows a little more
 
 
-def braid_tex(w, hh):
-    """The aiguillettes' round plait, its length along u (CORD_UV_LEN m), round the tube along v: two families of
-    strands slanting either way (two of each round the cord), crossing over and under in turn - chevrons along it;
-    each strand a ridge of fine threads. Returns the height (m) and how high each texel is (0 gaps .. 1 crests)."""
+def cord_tex(w, hh, repeats):
+    """The generated twisted cord, its length along u (seamless repeats), its width round the tube."""
     u, v = grid(w, hh)
-    s = u * CORD_UV_LEN / BRAID_PITCH
-    p1, p2 = s + 2 * v, s - 2 * v
-    over = (np.floor(p1) + np.floor(p2)) % 2 == 0  # which family is on top here
-    f = np.where(over, p1 % 1.0, p2 % 1.0)          # across the strand on top
-    g = np.where(over, p2 % 1.0, p1 % 1.0)          # along it (where it dives under the other family)
-    ridge = np.sin(np.pi * f) ** 0.7 * (0.55 + 0.45 * np.sin(np.pi * g) ** 0.5)
-    threads = 0.88 + 0.12 * np.cos(2 * np.pi * f * 5)
-    h = ridge * threads
-    return h * BRAID_H, h / max(float(h.max()), 1e-6)
+    return sample(gen_picture('gold_cord'), (u * repeats) % 1.0, v)
+
+
+def chased_tex(w, hh):
+    """Chased gilt ornament for the cast pieces (the pencils), round them along u, along them along v: tiles of
+    scrolls (a spiral leaf, turning the other way in the next tile) between bead rows. Returns the height 0..1."""
+    u, v = grid(w, hh)
+    tu, tv = u * CHASED_TILES[0], v * CHASED_TILES[1]
+    lx, ly = (tu % 1.0) * 2 - 1, (tv % 1.0) * 2 - 1
+    flip = np.where((np.floor(tu) + np.floor(tv)) % 2 == 0, 1.0, -1.0)
+    r, th = np.hypot(lx, ly), np.arctan2(ly, lx) * flip
+    leaf = 0.5 + 0.5 * np.sin(2 * th + 8 * r)
+    leaf = np.clip(leaf * 1.4 - 0.2, 0, 1) * (1 - np.clip((r - 0.9) * 6, 0, 1))
+    bead = (np.abs(ly) > 0.86) * (0.5 + 0.5 * np.cos(u * 2 * np.pi * CHASED_TILES[0] * 6))
+    return blur1(np.maximum(leaf * 0.85, bead))
 
 
 def strap_tex(w, hh):
@@ -343,10 +348,7 @@ def build_atlas():
         relief(region, c, NORMAL_STRENGTH[region])
 
     x0, y0, x1, y1 = px('cord')
-    hgt, crest = braid_tex(x1 - x0, y1 - y0)
-    rgb[y0:y1, x0:x1] = srgb(GOLD_SRGB) * (0.42 + 0.58 * crest)[..., None]
-    thread('cord', crest)
-    nrm[y0:y1, x0:x1] = normals(hgt, CORD_UV_LEN / (x1 - x0), 2 * math.pi * AIG_R / (y1 - y0))
+    gold('cord', cord_tex(x1 - x0, y1 - y0, CORD_REPEATS))
     x0, y0, x1, y1 = px('bullion')
     c, r, hgt = bullion_tex(x1 - x0, y1 - y0)
     rgb[y0:y1, x0:x1] = c
@@ -364,6 +366,11 @@ def build_atlas():
     relief('strap', c, 1.0)
     x0, y0, x1, y1 = px('gold')
     rgb[y0:y1, x0:x1] = srgb(GOLD_SRGB); metal[y0:y1, x0:x1] = CAST_METAL; rough[y0:y1, x0:x1] = CAST_ROUGH
+    x0, y0, x1, y1 = px('chased')
+    h = chased_tex(x1 - x0, y1 - y0)
+    rgb[y0:y1, x0:x1] = srgb(GOLD_SRGB) * (0.5 + 0.5 * h)[..., None]  # dark in the recesses (worn bright on top)
+    metal[y0:y1, x0:x1] = CAST_METAL; rough[y0:y1, x0:x1] = CAST_ROUGH + 0.2 * (1 - h)
+    nrm[y0:y1, x0:x1] = normals(h * 0.00035, PENCIL_L / (y1 - y0), 2 * math.pi * 0.007 / (x1 - x0))
     imgs = []
     for name, data, path, cs in (('Regalia_Albedo', rgb, ALBEDO_OUT, 'sRGB'),
                                  ('Regalia_MR', np.stack([metal, rough, np.zeros_like(metal)], 2), MR_OUT, 'Non-Color'),
@@ -674,7 +681,7 @@ def build_aiguillettes(under, over, part, cloth=None):
     for k, ctrl in enumerate(paths):
         pts2 = catmull([Vector((x, 0, z)) for x, z in ctrl], 0.008)
         if part == 'loops':  # the end thins out under the sash's edge: the band lies flat over it
-            taper = lambda t: 1.0 - 0.8 * smoothstep(t, 0.84, 1.0)  # noqa: E731
+            taper = lambda t: 1.0 - 0.65 * smoothstep(t, 0.82, 0.97)  # noqa: E731
         else:  # comes out from under the band
             taper = lambda t: 0.45 + 0.55 * smoothstep(t, 0.0, 0.35)  # noqa: E731
         n = len(pts2)
@@ -711,13 +718,14 @@ def build_aiguillettes(under, over, part, cloth=None):
             n_ = (on_chest(b.x, b.z, 0.01) - on_chest(b.x, b.z, 0.0)).normalized()
             b = b + n_ * lift
         pencil(bm, uvs, a, (b - a).normalized(), PENCIL_L)
-    pencils = new_part('AiguilletteTips', bm, lambda v: uvs[v], lambda v: TORSO_W.at(v.co))
+    pencils = new_part('AiguilletteTips', bm, None, lambda v: TORSO_W.at(v.co))
     return cords, pencils
 
 
 def pencil(bm, uvs, top, axis, length, sides=20):
     """The aiguillette's pencil as a turned piece along axis from top: PENCIL_PROFILE's radii, the fluted stretches
-    with PENCIL_FLUTES grooves round them; one closed surface, 'gold'."""
+    with PENCIL_FLUTES grooves round them; one closed surface, chased all over (loop UVs in bm's 'UVMap': round it
+    along u, along it along v of the 'chased' region)."""
     prof = []
     for k in PENCIL_PROFILE:  # resample: the flutes need rings between the knots
         prof.append(k)
@@ -737,12 +745,14 @@ def pencil(bm, uvs, top, axis, length, sides=20):
             ang = 2 * math.pi * k / sides
             rr = r - (PENCIL_FLUTE_D * (0.5 + 0.5 * math.cos(ang * PENCIL_FLUTES)) if fl else 0.0)
             v = bm.verts.new(top + axis * (t * length) + (u * math.cos(ang) + w * math.sin(ang)) * max(rr, 0.0))
-            uvs[v] = uv_in('gold', 0.5, 0.5)
             ring.append(v)
         rings.append(ring)
-    for r0, r1 in zip(rings, rings[1:]):
+    lay = bm.loops.layers.uv.get('UVMap') or bm.loops.layers.uv.new('UVMap')
+    for i, (r0, r1) in enumerate(zip(rings, rings[1:])):
         for k in range(sides):
-            bm.faces.new((r0[k], r0[(k + 1) % sides], r1[(k + 1) % sides], r1[k]))
+            f = bm.faces.new((r0[k], r0[(k + 1) % sides], r1[(k + 1) % sides], r1[k]))
+            for l, (a, b) in zip(f.loops, ((k, i), (k + 1, i), (k + 1, i + 1), (k, i + 1))):
+                l[lay].uv = uv_in('chased', a / sides, rows[b][0])
     bmesh.ops.remove_doubles(bm, verts=rings[0] + rings[-1], dist=1e-6)  # the two ends close in a point
 
 

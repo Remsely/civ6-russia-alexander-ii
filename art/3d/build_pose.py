@@ -34,6 +34,10 @@ SLEEVE_MIN_R, ELBOW_PASSES = 0.05, 4    # the sleeve this far at least from the 
 UNTANGLE_TRIES, UNTANGLE_RINGS = 6, 4      # rounds of smoothing round the sheet's self-crossings; rings of neighbours
 COLLIDE = dict(distance_min=0.004, self_distance_min=0.003, collision_quality=4)
 LEADER_CM, LEADER_CAMERA = 150.0, (320.0, 0.0, 137.741)  # the export's height and the leader camera (leader space, cm)
+NECK_IN, NECK_EASE, NECK_ROUNDS = 0.008, 0.03, 12
+NECK_OVER = 0.004                       # ... or this far up over its top edge
+NECK_UP_DEPTH = (0.012, 0.025)          # from under the edge: up only down to the first, in only from the second  # the head inside the collar's inner side by this (the shirt collar
+                                        # lies between); eased out over this much above its top edge; smoothing rounds
 
 sc = bpy.context.scene
 rig, h, uni = bpy.data.objects['HumanRig'], bpy.data.objects['Human'], bpy.data.objects['Uniform']
@@ -59,16 +63,19 @@ def activate(ob):
 
 
 def neck_to_chest(ob):
-    """The collar sits on the shoulders: what the neck bone carried of ob goes to spine_03 (the neck turns inside it)."""
-    ng, cg = ob.vertex_groups.get('neck_01'), ob.vertex_groups.get('spine_03')
-    if ng is None:
-        return
-    cg = cg or ob.vertex_groups.new(name='spine_03')
-    for v in ob.data.vertices:
-        w = next((g.weight for g in v.groups if g.group == ng.index), 0.0)
-        if w > 0:
-            cg.add([v.index], w, 'ADD')
-    ob.vertex_groups.remove(ng)
+    """The collar sits on the shoulders: what the neck and head bones carried of ob goes to spine_03 (the neck and
+    head turn inside it - the stand collar reaches up to the jaw, and with the head's weight its top turned with the
+    head, the opening at the front running slantwise)."""
+    cg = ob.vertex_groups.get('spine_03') or ob.vertex_groups.new(name='spine_03')
+    for n in ('neck_01', 'head'):
+        ng = ob.vertex_groups.get(n)
+        if ng is None:
+            continue
+        for v in ob.data.vertices:
+            w = next((g.weight for g in v.groups if g.group == ng.index), 0.0)
+            if w > 0:
+                cg.add([v.index], w, 'ADD')
+        ob.vertex_groups.remove(ng)
 
 
 for o in sc.objects:
@@ -393,6 +400,76 @@ def aim_eyes():
 
 
 aim_eyes()
+
+
+def neck_in_collar():
+    """Nothing of the head (neck, throat, chin, the whiskers' ends) outside the collar under its top edge: in the
+    stance the head turns in the collar and the neck and the right whisker came out through it. Each head vertex under
+    the collar's top (per direction round it) further out than the collar's inner side less NECK_IN goes in to there,
+    or up to NECK_OVER over the edge if that is nearer (the chin and whiskers rest on the collar); the move is spread
+    smoothly over NECK_EASE round it (no crease)."""
+    import bmesh
+    from mathutils import Vector
+    from mathutils.bvhtree import BVHTree
+    head = bpy.data.objects.get('Head')
+    if head is None:
+        return
+    cb = bmesh.new()
+    for n in ('Collar', 'CollarStand'):
+        o = bpy.data.objects.get(n)
+        if o:
+            me = o.data.copy(); me.transform(o.matrix_world); cb.from_mesh(me); bpy.data.meshes.remove(me)
+    tree = BVHTree.FromBMesh(cb)
+    ax = sum((v.co for v in cb.verts), Vector()) / len(cb.verts)
+    zbot = min(v.co.z for v in cb.verts)
+    tops = {}
+    for v in cb.verts:
+        k = int(math.degrees(math.atan2(v.co.x - ax.x, -(v.co.y - ax.y))) // 5)
+        tops[k] = max(tops.get(k, 0.0), v.co.z)
+    cb.free()
+    me = head.data
+    co = np.array([v.co[:] for v in me.vertices])
+    ed = np.array([e.vertices[:] for e in me.edges])
+    disp = np.zeros_like(co)
+    fixed = np.zeros(len(co), bool)
+    zone = np.zeros(len(co), bool)
+    for i, c in enumerate(co):
+        if c[2] < zbot:
+            continue
+        d = Vector((c[0] - ax.x, c[1] - ax.y, 0.0))
+        if d.length < 1e-4:
+            continue
+        top = tops.get(int(math.degrees(math.atan2(d.x, -d.y)) // 5), 0.0)
+        if c[2] > top + NECK_EASE:
+            continue
+        zone[i] = True
+        o = Vector((ax.x, ax.y, min(c[2], top - 0.003)))
+        hit = tree.ray_cast(o, d.normalized(), 0.3)
+        if hit[0] is None:
+            continue
+        allowed = (hit[0] - o).length - NECK_IN
+        if c[2] <= top + NECK_OVER and d.length > allowed:
+            inward, upward = d.length - allowed, top + NECK_OVER - c[2]
+            # just under the edge (the chin, the whiskers' ends) up over it - pulled in, the chin came out a cone;
+            # deeper (the neck) in; between them blended by the depth (picked either way, they left a ragged edge)
+            k = smoothstep(upward, *NECK_UP_DEPTH)
+            disp[i] = (np.array([0.0, 0.0, upward]) * (1 - k) - np.array(d.normalized()[:]) * inward * k)
+            fixed[i] = True
+    need = disp.copy()
+    deg = np.bincount(ed.ravel(), minlength=len(co)).astype(float)
+    for _ in range(NECK_ROUNDS):  # spread the move over the eased band, the vertices that must go in held to it
+        acc = np.zeros_like(disp)
+        np.add.at(acc, ed[:, 0], disp[ed[:, 1]]); np.add.at(acc, ed[:, 1], disp[ed[:, 0]])
+        avg = acc / np.maximum(deg, 1)[:, None]
+        disp = np.where(zone[:, None], avg, 0.0)
+        disp[fixed] = need[fixed]
+    co = co + disp
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel()); me.update()
+    print('neck in the collar: %d vertices went in (most %.4f m), %d eased' % (
+        int(fixed.sum()), float(np.linalg.norm(need, axis=1).max()), int((np.linalg.norm(disp, axis=1) > 1e-4).sum())))
+
+
+neck_in_collar()
 for o in skinned:
     o.modifiers.new('Armature', 'ARMATURE').object = rig
 uni.vertex_groups.remove(uni.vertex_groups['pin'])

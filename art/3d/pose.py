@@ -13,16 +13,18 @@ SPINE_TWIST = (3.0, 4.0, 4.0)      # spine_01..03 about Z: the shoulders turned 
 SPINE_LEAN = (0.0, 0.0, 0.0)       # ... and tilted about Y: his left shoulder a little lower (the weight on the right leg)
 HEAD_YAW = (-17.5, -25.5)         # neck_01, head about Z: the head as the portrait saw it - its eyes, painted from the
                                    # portrait, look into the camera; the face then turned a little to his right, as there
-HEAD_PITCH = 3.0                   # head bent forward a little (degrees about X)
-CLAVICLE_DROP = 11.0               # degrees: the shoulders let down (the portrait's epaulettes sit ~3 cm under the
-                                   # body's own shoulder line; raised, the figure looks hunched into its collar)
-# His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand on it
-# (raised to the side, as before, it stood out like a wing); his right arm hangs nearly straight from the shoulder, the
-# elbow out a little, the forearm taken behind the back, the hand on the belt there (hidden, as in the portrait).
-# elbow: where the upper arm points (else a two-bone IK with the pole decides it).
+HEAD_PITCH = 0.0                   # head bent forward (degrees about X): none - bent, the chin went down into the collar
+CLAVICLE_DROP = 15.0               # degrees: the shoulders let down and sloping (the portrait's epaulettes sit ~4 cm
+                                   # under the body's own shoulder line; level, the shoulders looked square)
+# His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand over
+# the hilt's top in line with the forearm, back of the hand forward, fingers closed round the grip (as in the portrait;
+# bent down at the wrist it looked broken); his right arm hangs close by his side, the elbow a little back, the forearm
+# across the small of the back on the belt, the back of the hand against it (hidden, as in the portrait - held out
+# behind him it stood off the back and twisted the shoulder).
+# elbow: where the upper arm points (else a two-bone IK with the pole decides it); palm: the side the palm turns to.
 ARM = {
-    'l': dict(wrist=(0.215, -0.11, 1.19), elbow=(0.33, 0.04, 1.40), hand_to=(0.22, -0.155, 1.09), twist=0.0),
-    'r': dict(wrist=(-0.06, 0.19, 1.25), elbow=(-0.28, 0.04, 1.36), hand_to=(0.03, 0.205, 1.235), twist=0.0),
+    'l': dict(wrist=(0.215, -0.11, 1.19), elbow=(0.33, 0.04, 1.40), hand_to=(0.195, -0.19, 1.15), palm=(-0.3, 0.3, -1.0)),
+    'r': dict(wrist=(-0.035, 0.14, 1.265), elbow=(-0.25, 0.075, 1.36), hand_to=(0.05, 0.125, 1.255), palm=(0, 1, 0)),
 }
 # Right leg in front, carrying the weight; the left a step behind, its toe turned further out.
 LEG = {
@@ -31,7 +33,7 @@ LEG = {
 }
 # Fingers: curl about each bone's own X (degrees per joint 1, 2, 3); thumb separately.
 CURL = {
-    'l': dict(index=(70, 75, 45), middle=(75, 80, 45), ring=(80, 80, 45), pinky=(85, 75, 45), thumb=(15, 30, 25)),
+    'l': dict(index=(55, 70, 45), middle=(60, 75, 45), ring=(65, 75, 45), pinky=(70, 70, 45), thumb=(15, 30, 25)),
     'r': dict(index=(45, 55, 30), middle=(50, 60, 35), ring=(55, 60, 35), pinky=(60, 60, 35), thumb=(10, 25, 15)),
 }
 
@@ -123,8 +125,20 @@ def set_pose(rig):
             _aim(pbs['lowerarm_' + s], arm['wrist'])
         else:
             _ik(pbs['upperarm_' + s], pbs['lowerarm_' + s], arm['wrist'], arm['pole'])
-        _aim(pbs['hand_' + s], arm['hand_to'], arm['twist'])
+        _aim(pbs['hand_' + s], arm['hand_to'])
         _curl(rig, s)
+        if 'palm' in arm:  # turned about its own axis till the palm faces that way
+            hand = pbs['hand_' + s]
+            ax = (hand.tail - hand.head).normalized()
+            tips = sum((pbs['%s_03_%s' % (f, s)].tail for f in ('index', 'middle', 'ring')), Vector()) / 3
+            cur = tips - pbs['middle_01_' + s].head
+            cur = (cur - ax * cur.dot(ax)).normalized()
+            want = Vector(arm['palm'])
+            want = (want - ax * want.dot(ax)).normalized()
+            ang = math.degrees(cur.angle(want))
+            if cur.cross(want).dot(ax) < 0:
+                ang = -ang
+            _aim(hand, arm['hand_to'], ang)
     _turn_z(pbs['neck_01'], HEAD_YAW[0])
     _turn_z(pbs['head'], HEAD_YAW[1], HEAD_PITCH)
 

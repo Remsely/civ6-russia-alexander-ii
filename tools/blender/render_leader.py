@@ -39,6 +39,8 @@ ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>,
 ap.add_argument('--motion', help='a motion from tools/blender/motion.py (idle, test) keyed on the rig, the loose pieces '
                 'simulated over it; with --frames')
 ap.add_argument('--frames', help='comma list of frames: the views shot at each (<out stem>_f<frame>_<view>.png)')
+ap.add_argument('--spot', action='append', default=[], help='name=x,y,z,span: a close view of a point in the scene (metres, '
+                'model space) span wide, shot as view <name><yaw>[@elev], e.g. --spot eye=0.03,-0.1,1.66,0.06 --views eye0,eye30@10')
 ap.add_argument('--hide', help='comma list of objects (name prefixes) left out of the render, e.g. Collar,Uniform')
 args = ap.parse_args(argv)
 
@@ -154,6 +156,11 @@ def shoot(path, rw, rh):
     return path
 
 
+spots = {}
+for sp in args.spot:
+    n, _, v = sp.partition('=')
+    x, y, z, w_ = (float(t) for t in v.split(','))
+    spots[n] = (Vector((x, y, z)), w_)
 print('RENDER_BEGIN')
 frames = [int(f) for f in args.frames.split(',')] if args.frames else [None]
 for frame in frames if args.views else []:
@@ -179,7 +186,10 @@ for frame in frames if args.views else []:
             print(shoot('%s_ref.png' % stem, *REF_SIZE))
             cam_data.type = 'PERSP'
             continue
-        if kind == 'full':
+        if kind in spots:
+            p, sp = spots[kind]
+            target, span, size = leader @ p, sp * args.target_cm / height, (700, 700)
+        elif kind == 'full':
             target, span, size = Vector((0, 0, args.target_cm * 0.5)), args.target_cm * 1.1, (600, 900)
         elif kind in ZOOMS:
             target, span, size = Vector((0, 0, args.target_cm * ZOOMS[kind][0])), args.target_cm * ZOOMS[kind][1], (700, 700)
