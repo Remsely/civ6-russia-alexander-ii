@@ -26,10 +26,10 @@ SASH_SRGB = (46, 96, 196)        # the St Andrew blue moire of the portrait (bet
 # Epaulettes: an oval field on the shoulder top reaching past the shoulder's end (in the portrait they stand out
 # beyond the shoulders by about a quarter of a head), a twisted rim, a strap to the collar with a button, and heavy
 # bullion fringe hanging from the outer part of the rim.
-EP_X, EP_A, EP_B = 0.25, 0.09, 0.07  # centre |x|; semi-axes along the shoulder and across it
-EP_LIFT, EP_DOME, EP_THICK = 0.014, 0.018, 0.007
-EP_TILT = 18.0 
-EP_FORWARD = 15.0               # ... and towards the front (in the portrait the fields face the viewer a little)                  # degrees: the field turns down outwards more than the shoulder top under it
+EP_OUT, EP_A, EP_B = 0.008, 0.09, 0.07  # centre this far out past the shoulder joint; semi-axes along and across
+EP_LIFT, EP_DOME, EP_THICK = 0.006, 0.018, 0.007
+EP_TILT = 14.0                   # degrees from level: the field's outer end lower (it follows the shoulder's slope)
+EP_FORWARD = 18.0                # ... and its front edge lower (in the portrait the fields face the viewer a little)
 STRAP_X, STRAP_W = 0.115, 0.030  # strap from the field to this |x| near the collar
 FRINGE_N, FRINGE_ARC = 30, 240.0  # strands per row over this arc of the rim, centred on the outer end
 FRINGE_LEN, FRINGE_R, FRINGE_OUT = 0.11, 0.0115, 0.028
@@ -37,7 +37,7 @@ FRINGE_TOP = (0.68, 0.0125, 0.6, 0.007)  # the upper row over it: length, radius
 # Bullion (canitel): a coiled gold wire - each strand a tight helix of BULLION_STARTS wires at BULLION_PITCH a turn.
 BULLION_PITCH, BULLION_STARTS, BULLION_UV_LEN = 0.007, 1, 0.147  # 21 turns over the region
 # Sash: a band 'SASH_W' wide round the torso in the plane through the top of the right shoulder and the left hip.
-SASH_SHOULDER = Vector((-0.175, 0.0, 1.76))
+SASH_SHOULDER = Vector((-0.14, 0.0, 1.76))   # in the portrait it runs up close by the collar
 SASH_HIP = Vector((0.17, 0.0, 1.31))   # the lower edge on the belt's top at the side
 SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.095, 0.005, 0.002, 240
 SASH_RELAX = 40                  # rounds of smoothing the band and pushing it out of the cloth
@@ -49,10 +49,11 @@ AIG_FROM = (-0.215, 1.67)          # (x, z) on the front of the chest
 AIG_TO = (-0.07, 1.60)     # under the sash
 AIG_LOOPS = [(-0.175, 1.55), (-0.165, 1.49), (-0.155, 1.43)]  # lowest point of each loop
 # the loose cords run on under the sash and come out at its lower edge (emerge), a short way over it to the knot the
-# pencil hangs from (end): in the portrait the pencils hang over the sash's lower part
-AIG_TAILS = [((0.068, 1.588), (0.078, 1.565)), ((0.06, 1.572), (0.092, 1.55))]  # (emerge, end), x z
+# pencil hangs from (end): in the portrait one pencil shows, hanging over the sash's lower edge
+AIG_TAILS = [((0.068, 1.588), (0.078, 1.565))]  # (emerge, end), x z
 AIG_R, AIG_GAP = 0.007, 0.002
-PENCIL_L, PENCIL_R = 0.14, 0.0085
+PENCIL_L, PENCIL_R = 0.16, 0.0085
+PENCIL_BEADS = (0.06, 0.3, 0.55, 0.8)  # along it: the cast knobs of the portrait's pencil (radius x1.45)
 CORD_UV_LEN = 0.6                # metres of cord over the width of its atlas region (the twist repeats along it)
 
 ATLAS = {
@@ -500,17 +501,19 @@ def build_aiguillettes(under, over, part):
     for via, end in AIG_TAILS:
         a = on_chest(*end, AIG_R + AIG_GAP)
         b = on_chest(end[0] + (end[0] - via[0]) * 0.5, end[1] - PENCIL_L, PENCIL_R + AIG_GAP)
-        prof = lambda t: 0.75 + 0.25 * math.sin(min(t * 1.25, 1.0) * math.pi) if t < 0.85 else 0.9 * (1 - t) / 0.15 + 0.1
+        def prof(t):
+            r = 0.8 if t < 0.9 else 0.8 * (1 - t) / 0.1 + 0.15
+            return r + 0.65 * max([math.exp(-((t - b) / 0.025) ** 2) for b in PENCIL_BEADS])
         # every point lifted off the sash and cloth under it by its radius (a straight line would cut into the chest)
         # straight, lifted as a whole off the sash and cloth under it by its radius where it comes closest
-        path = [a.lerp(b, t / 10) for t in range(11)]
+        path = [a.lerp(b, t / 40) for t in range(41)]  # fine enough for the knobs
         lift = 0.0
         for p in path[1:]:
-            q = on_chest(p.x, p.z, PENCIL_R * 1.1 + AIG_GAP + 0.002)
+            q = on_chest(p.x, p.z, PENCIL_R * 1.5 + AIG_GAP + 0.002)
             n_ = (q - on_chest(p.x, p.z, 0.0)).normalized()
             lift = max(lift, (q - p).dot(n_))
         n_ = (on_chest(b.x, b.z, 0.01) - on_chest(b.x, b.z, 0.0)).normalized()
-        path = [path[0]] + [p + n_ * lift * (t / 10) ** 0.5 for t, p in enumerate(path) if t]
+        path = [path[0]] + [p + n_ * lift * (t / 40) ** 0.5 for t, p in enumerate(path) if t]
         _, u = tube(bm, path, PENCIL_R, 8, 'gold', cap=True, taper=prof)
         uvs.update(u)
     pencils = new_part('AiguilletteTips', bm, lambda v: uvs[v], lambda v: TORSO_W.at(v.co))
@@ -532,14 +535,32 @@ def on_shoulder(ws, side):
 
 
 def build_epaulette(side):
+    """The field over the shoulder joint, in the shoulder's own frame (the stance turns the shoulders: his left one
+    back, the right forward), its outer and front edges lower; lifted until no part of it is in the cloth."""
     sign = 1 if side == 'l' else -1
-    top, nrm = CLOTH.ray_cast(Vector((sign * EP_X, 0.0, 2.2)), Vector((0, 0, -1)), 1.0)[:2]
-    out = Vector((sign, 0, 0))
-    Z = Matrix.Rotation(math.radians(-EP_TILT * sign), 3, 'Y') @ nrm  # tilted further down outwards
-    Z = Matrix.Rotation(math.radians(EP_FORWARD), 3, 'X') @ Z           # and to the front (-Y)
+    cb, ub = rig.data.bones['clavicle_' + side], rig.data.bones['upperarm_' + side]
+    out = cb.tail_local - cb.head_local
+    out = Vector((out.x, out.y, 0)).normalized()
+    fwd = Vector((out.y, -out.x, 0))
+    fwd = fwd if fwd.y < 0 else -fwd
+    at = ub.head_local + out * EP_OUT
+    top = CLOTH.ray_cast(Vector((at.x, at.y, 2.2)), Vector((0, 0, -1)), 1.0)[0]
+    Z = (Vector((0, 0, 1)) + out * math.tan(math.radians(EP_TILT)) + fwd * math.tan(math.radians(EP_FORWARD)))
+    Z.normalize()
     X = (out - Z * out.dot(Z)).normalized()
     Y = Z.cross(X)
     C = top + Z * EP_LIFT
+    for _ in range(3):  # the underside clear of the cloth (the shoulder rounds off under the field's outer end)
+        need = 0.0
+        for k in range(24):
+            a = 2 * math.pi * k / 24
+            for f in (0.5, 1.0):
+                p = C + X * EP_A * f * math.cos(a) + Y * EP_B * f * math.sin(a) - Z * EP_THICK
+                hit = CLOTH.ray_cast(p + Z * 0.2, -Z, 0.4)[0]
+                if hit is not None:
+                    need = max(need, (hit - p).dot(Z) + 0.002)
+        C += Z * need
+    print('epaulette %s: centre %s, normal %s' % (side, tuple(round(c, 3) for c in C), tuple(round(c, 2) for c in Z)))
     L = lambda x, y, z: C + X * x + Y * y + Z * z  # noqa: E731
     ws = on_shoulder(UNI_W.at(top), side)
     bm = bmesh.new(); uvs = {}
@@ -621,6 +642,13 @@ def build_epaulette(side):
                     rim_p + radial * (reach + jit) + down * length * 0.5,
                     rim_p + radial * (reach * 1.3 + jit) + down * length]
             path = catmull(ctrl, 0.012)
+            for _ in range(3):  # out of the sleeve (the arm's stance bunches the cloth up under the fringe)
+                for j in range(1, len(path)):
+                    loc, nrm, _, _ = CLOTH.find_nearest(path[j], 0.05)
+                    if loc is not None and (path[j] - loc).dot(nrm) < rad + 0.003:
+                        path[j] = loc + nrm * (rad + 0.003)
+                path = [path[0]] + [(path[j - 1] + path[j] * 2 + path[min(j + 1, len(path) - 1)]) / 4
+                                    for j in range(1, len(path))]
             vs, u = tube(bm, path, rad, 6, 'bullion', uv_len=BULLION_UV_LEN)
             uvs.update(u)
             wt = on_shoulder(UNI_W.at(rim_p), side)

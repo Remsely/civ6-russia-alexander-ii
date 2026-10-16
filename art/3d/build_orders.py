@@ -40,12 +40,12 @@ RIBBONS = [[('O', 1), ('K', 1), ('O', 1), ('K', 1), ('O', 1)], [('R', 1)], [('B'
 MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal', 'smedal']
 # Measured on alexander_ii_full.png (1 px ~ 1.4 mm of the model): the bar ~105 mm wide, its ribbons ~50 mm long, the
 # medals ~28 mm across, the St George cross ~40 mm; the neck cross ~62 mm; the stars ~80 mm across.
-BAR_X, BAR_Z, RIB_W, RIB_H = -0.005, 1.69, 0.0152, 0.05  # left end of the bar (by the closure), its top; one ribbon
+BAR_X, BAR_Z, RIB_W, RIB_H = 0.025, 1.69, 0.0152, 0.05  # left end of the bar (by the closure), its top; one ribbon
 MEDAL_R, WCROSS_S = 0.015, 0.021
-NECK_CROSS = (0.008, 1.712, 0.031)   # x, z of its centre, half-size (a Maltese cross under the collar)
+NECK_CROSS = (0.008, 1.712, 0.037)   # x, z of its centre, half-size (a Maltese cross under the collar)
 BADGE = (0.128, 1.575, 0.013, 0.019)  # x, z, half-width, half-height of the gold badge under the bar
 STARS = [(0.15, 1.555, 0.045), (0.155, 1.455, 0.045)]  # x, z, radius; moved out past the sash's edge if it is there
-STAR_OVER_SASH = 0.25                # how much of a star's radius may lie over the sash's edge
+STAR_OVER_SASH = 0.45                # how much of a star's radius may lie over the sash's edge
 LIFT = 0.003
 # Sabre: pommel under the left palm, the blade hanging down and a little back along the left hip and leg.
 POMMEL = Vector((0.24, -0.15, 1.125))   # where the left palm is not found (no rig): fallback

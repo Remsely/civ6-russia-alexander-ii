@@ -15,8 +15,8 @@ HEAD_YAW = (-8.0, -12.0)          # neck_01, head about Z: the face turned back 
 HEAD_PITCH = 3.0                   # head bent forward a little (degrees about X)
 # His left hand rests on the sword's hilt at the left hip; his right hand is behind his back at the belt.
 ARM = {
-    'l': dict(wrist=(0.232, -0.105, 1.205), pole=(0.6, 0.35, 1.45), hand_to=(0.235, -0.15, 1.10), twist=0.0),
-    'r': dict(wrist=(-0.135, 0.135, 1.255), pole=(-0.6, 0.25, 1.35), hand_to=(-0.03, 0.155, 1.23), twist=0.0),
+    'l': dict(wrist=(0.232, -0.105, 1.205), pole=(0.9, 0.15, 1.4), hand_to=(0.235, -0.15, 1.10), twist=0.0),
+    'r': dict(wrist=(-0.11, 0.155, 1.265), pole=(-0.6, 0.4, 1.35), hand_to=(-0.01, 0.17, 1.24), twist=0.0),
 }
 # Right leg in front, carrying the weight; the left a step behind, its toe turned further out.
 LEG = {
@@ -26,7 +26,7 @@ LEG = {
 # Fingers: curl about each bone's own X (degrees per joint 1, 2, 3); thumb separately.
 CURL = {
     'l': dict(index=(70, 75, 45), middle=(75, 80, 45), ring=(80, 80, 45), pinky=(85, 75, 45), thumb=(15, 30, 25)),
-    'r': dict(index=(25, 35, 20), middle=(30, 40, 25), ring=(35, 40, 25), pinky=(40, 40, 25), thumb=(5, 15, 10)),
+    'r': dict(index=(45, 55, 30), middle=(50, 60, 35), ring=(55, 60, 35), pinky=(60, 60, 35), thumb=(10, 25, 15)),
 }
 
 

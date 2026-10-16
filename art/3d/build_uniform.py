@@ -28,7 +28,13 @@ BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dis
                 'head/head-scale-vert-incr': HEAD_SCALE, 'head/head-scale-horiz-incr': HEAD_SCALE,
                 'head/head-scale-depth-incr': HEAD_SCALE,
                 # a longer neck: the portrait's chin is ~8 cm over the shoulders at the collar, room for its tall collar
-                'neck/measure-neck-height-incr': NECK_LONGER}
+                'neck/measure-neck-height-incr': NECK_LONGER,
+                # the macros' muscle and weight swell the arms past the portrait's (its sleeves ~10 cm across at the
+                # biceps): slimmer upper arms and forearms
+                'arms/measure-upperarm-circ-decr': 1.0,
+                'arms/l-upperarm-muscle-decr': 0.6, 'arms/r-upperarm-muscle-decr': 0.6,
+                'arms/l-upperarm-fat-decr': 0.6, 'arms/r-upperarm-fat-decr': 0.6,
+                'arms/l-lowerarm-fat-decr': 0.5, 'arms/r-lowerarm-fat-decr': 0.5}
 
 # Heights from alexander_ii_full.png scaled to the 2.07 m MPFB figure (feet 0, crown 2.07).
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
