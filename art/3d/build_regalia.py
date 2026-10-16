@@ -20,7 +20,7 @@ MR_OUT = os.path.join(TEXDIR, 'regalia_mr.png')  # R metal, G roughness
 NORMAL_OUT = os.path.join(TEXDIR, 'regalia_normal.png')  # tangent space, OpenGL (Y up)
 
 GOLD_SRGB = (214, 162, 70)
-SASH_SRGB = (62, 114, 206)       # light-blue moire, measured on the sash in the portrait (lit side)
+SASH_SRGB = (46, 96, 196)        # the St Andrew blue moire of the portrait (between its lit and shaded side)
 # Epaulettes: an oval field on the shoulder top reaching past the shoulder's end (in the portrait they stand out
 # beyond the shoulders by about a quarter of a head), a twisted rim, a strap to the collar with a button, and heavy
 # bullion fringe hanging from the outer part of the rim.
@@ -37,7 +37,8 @@ BULLION_PITCH, BULLION_STARTS, BULLION_UV_LEN = 0.007, 1, 0.147  # 21 turns over
 # Sash: a band 'SASH_W' wide round the torso in the plane through the top of the right shoulder and the left hip.
 SASH_SHOULDER = Vector((-0.175, 0.0, 1.76))
 SASH_HIP = Vector((0.17, 0.0, 1.31))   # the lower edge on the belt's top at the side
-SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.085, 0.005, 0.002, 160
+SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.095, 0.005, 0.002, 160
+SASH_RELAX = 10                  # rounds of smoothing the band and pushing it out of the cloth
 GOLD_FLOOR = 0.55                # gold albedo: the pictures' shading only darkens it down to this (the relief does the rest)
 NORMAL_STRENGTH = {'cord': 3.0, 'pole': 2.0, 'sash': 0.05, 'bullion': 1.0}
 # Aiguillettes: cords from under the right epaulette's front to the closure, hanging in loops; two loose cords with
@@ -79,27 +80,43 @@ def smoothstep(x, a, b):
 
 
 # ---------------------------------------------------------------- surfaces and weights
-def bvh_of(obs):
+def bvh_of(obs, torso=False):
+    """BVH of the objects; torso: the uniform without its sleeves (the sash and the cords lie on the torso - the hanging
+    left arm is right by the sash's end at the hip, which would wrap onto it)."""
     bm = bmesh.new()
     for o in obs:
-        me = o.data.copy(); me.transform(o.matrix_world); bm.from_mesh(me); bpy.data.meshes.remove(me)
+        me = o.data.copy(); me.transform(o.matrix_world)
+        if o == uni and torso:
+            b2 = bmesh.new(); b2.from_mesh(me)
+            dl = b2.verts.layers.deform.active
+            names = [g.name for g in uni.vertex_groups]
+            arm = {i for i, n in enumerate(names) if n.startswith(('upperarm', 'lowerarm', 'hand'))}
+            bmesh.ops.delete(b2, geom=[v for v in b2.verts if sum(w for g, w in v[dl].items() if g in arm) > 0.5],
+                             context='VERTS')
+            b2.to_mesh(me); b2.free()
+        bm.from_mesh(me); bpy.data.meshes.remove(me)
     t = BVHTree.FromBMesh(bm); bm.free()
     return t
 
 
-CLOTH = bvh_of([uni] + [bpy.data.objects[n] for n in ('Belt', 'Buckle', 'Buttons')])  # the sash lies on these
+CLOTH = bvh_of([uni] + [bpy.data.objects[n] for n in ('Belt', 'Buckle', 'Buttons')], torso=True)  # the sash lies on these
 
 
 class Weights:
     """Bone weights of a skinned mesh, looked up at any point (inverse-distance blend of the nearest vertices)."""
 
-    def __init__(self, ob):
+    def __init__(self, ob, torso=False):
+        """torso: only the vertices the arms do not move (things on the chest and hips lie by the sleeves - the sash's
+        end by the left cuff - and must not follow them)."""
         names = [g.name for g in ob.vertex_groups]
         me = ob.data
-        self.kd = KDTree(len(me.vertices))
+        arm = lambda n: n.startswith(('upperarm', 'lowerarm', 'hand', 'index', 'middle', 'ring', 'pinky', 'thumb'))  # noqa
+        keep = [v for v in me.vertices
+                if not torso or sum(g.weight for g in v.groups if arm(names[g.group])) < 0.05]
+        self.kd = KDTree(len(keep))
         self.w = []
-        for v in me.vertices:
-            self.kd.insert(v.co, v.index)
+        for i, v in enumerate(keep):
+            self.kd.insert(v.co, i)
             self.w.append({names[g.group]: g.weight for g in v.groups if names[g.group] in bones and g.weight > 0})
         self.kd.balance()
 
@@ -114,6 +131,7 @@ class Weights:
 
 
 UNI_W = Weights(uni)
+TORSO_W = Weights(uni, torso=True)
 
 
 def outer(bvh, o, d, maxd=0.5):
@@ -406,7 +424,17 @@ def build_sash():
             row.append(v)
         row.append(row[0])
         grid.append(row)
-    for _ in range(3):  # nothing of the cloth through it: every vertex at least SASH_GAP outside it
+    for _ in range(SASH_RELAX):  # a smooth band (the projection snaps to the belt's and buttons' edges), and nothing
+        # of the cloth through it: every vertex at least SASH_GAP outside the surface nearest to it
+        new = {}
+        for i, row in enumerate(grid):
+            for j in range(SASH_N):
+                ns = [row[j - 1].co, row[(j + 1) % SASH_N].co]
+                if 0 < i < rows - 1:
+                    ns += [grid[i - 1][j].co, grid[i + 1][j].co]
+                new[row[j]] = row[j].co * 0.5 + sum(ns, Vector()) / len(ns) * 0.5
+        for v, co in new.items():
+            v.co = co
         for row in grid:
             for v in row[:-1]:
                 loc, nrm, _, _ = CLOTH.find_nearest(v.co, 0.05)
@@ -426,7 +454,7 @@ def build_sash():
     f = bm.faces[0]
     if f.normal.dot(f.calc_center_median() - c) < 0:
         bmesh.ops.reverse_faces(bm, faces=bm.faces[:])
-    return new_part('Sash', bm, None, lambda v: UNI_W.at(v.co), SASH_THICK)
+    return new_part('Sash', bm, None, lambda v: TORSO_W.at(v.co), SASH_THICK)
 
 
 # ---------------------------------------------------------------- aiguillettes
@@ -452,7 +480,7 @@ def build_aiguillettes(under, over):
         path = [on_chest(p.x, p.z, AIG_R + AIG_GAP + 0.0015 * k, surf) for p in pts2]  # each over the last
         _, u = tube(bm, path, AIG_R, 6, 'cord', cap=False)
         uvs.update(u)
-    cords = new_part('Aiguillettes', bm, lambda v: uvs[v], lambda v: UNI_W.at(v.co))
+    cords = new_part('Aiguillettes', bm, lambda v: uvs[v], lambda v: TORSO_W.at(v.co))
     # pencils: a gold tip at the end of each loose cord, along the cord's last direction
     bm = bmesh.new(); uvs = {}
     for via, end in AIG_TAILS:
@@ -462,7 +490,7 @@ def build_aiguillettes(under, over):
         path = [a.lerp(b, t / 10) for t in range(11)]
         _, u = tube(bm, path, PENCIL_R, 8, 'gold', cap=True, taper=prof)
         uvs.update(u)
-    pencils = new_part('AiguilletteTips', bm, lambda v: uvs[v], lambda v: UNI_W.at(v.co))
+    pencils = new_part('AiguilletteTips', bm, lambda v: uvs[v], lambda v: TORSO_W.at(v.co))
     return cords, pencils
 
 

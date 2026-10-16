@@ -48,6 +48,7 @@ SCABBARD_L, SCABBARD_W, SCABBARD_D = 0.86, 0.04, 0.024
 SWORD_CLEAR = 0.012                 # off the skirt, trousers and boot
 SWORD_DROP = Vector((0.035, 0.03, -1.0))  # the scabbard hangs nearly straight down, a little out and back
 KNOT_TASSEL = Vector((0.205, -0.15, 0.86))
+TASSEL_K = 1.8                      # the tassel's size (the portrait's is as long as a hand)
 
 sc = bpy.context.scene
 rig = bpy.data.objects['HumanRig']
@@ -80,13 +81,18 @@ LOWER = bvh_of([o for o in (uni, obj('Belt'), obj('Boot_l'), obj('Boot_r'), obj(
 
 
 class Weights:
-    def __init__(self, ob):
+    def __init__(self, ob, torso=False):
+        """torso: only the vertices the arms do not move (things on the chest and hips lie by the sleeves - the sash's
+        end by the left cuff - and must not follow them)."""
         names = [g.name for g in ob.vertex_groups]
         me = ob.data
-        self.kd = KDTree(len(me.vertices))
+        arm = lambda n: n.startswith(('upperarm', 'lowerarm', 'hand', 'index', 'middle', 'ring', 'pinky', 'thumb'))  # noqa
+        keep = [v for v in me.vertices
+                if not torso or sum(g.weight for g in v.groups if arm(names[g.group])) < 0.05]
+        self.kd = KDTree(len(keep))
         self.w = []
-        for v in me.vertices:
-            self.kd.insert(v.co, v.index)
+        for i, v in enumerate(keep):
+            self.kd.insert(v.co, i)
             self.w.append({names[g.group]: g.weight for g in v.groups if names[g.group] in bones and g.weight > 0})
         self.kd.balance()
 
@@ -100,7 +106,7 @@ class Weights:
         return {n: w / s for n, w in top}
 
 
-UNI_W = Weights(uni)
+TORSO_W = Weights(uni, torso=True)
 
 
 # ---------------------------------------------------------------- atlas
@@ -416,7 +422,7 @@ def build_orders():
     # neck cross: on a short ribbon from the collar, a gold crown over it
     x, z, s = NECK_CROSS
     o, X, Y, N = chest_frame(x, z)
-    w = UNI_W.at(o)
+    w = TORSO_W.at(o)
     plaque(part, CROSS_OUTLINE, (o + N * LIFT, X, Y, N), s, 0.003, 'cross', dome=0.002, w=w)
     crown = o + N * (LIFT + 0.004) + Y * (s * 1.25)
     lathe(part, crown, N, [(0.0, 0.0), (0.0, 0.007), (0.004, 0.008), (0.008, 0.005), (0.010, 0.0)],
@@ -429,7 +435,7 @@ def build_orders():
     for k in range(n):
         cx = BAR_X + RIB_W * (k + 0.5)
         o, X, Y, N = chest_frame(cx, BAR_Z - RIB_H / 2)
-        w = UNI_W.at(o)
+        w = TORSO_W.at(o)
         u0 = k / n
         pts = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
         top = plaque(part, pts, (o + N * LIFT, X * (RIB_W / 2) / (RIB_H / 2), Y, N), RIB_H / 2, 0.003, 'ribbons', w=w)
@@ -444,11 +450,11 @@ def build_orders():
     # small badge
     x, z, s = BADGE
     o, X, Y, N = chest_frame(x, z)
-    plaque(part, CROSS_OUTLINE, (o + N * LIFT, X, Y, N), s, 0.003, 'cross', dome=0.002, w=UNI_W.at(o))
+    plaque(part, CROSS_OUTLINE, (o + N * LIFT, X, Y, N), s, 0.003, 'cross', dome=0.002, w=TORSO_W.at(o))
     # stars
     for x, z, r in STARS:
         o, X, Y, N = chest_frame(x, z)
-        star_piece(part, (o + N * LIFT, X, Y, N), r, UNI_W.at(o))
+        star_piece(part, (o + N * LIFT, X, Y, N), r, TORSO_W.at(o))
     return part.build('Orders')
 
 
@@ -473,7 +479,7 @@ def clear_path(path, r, rounds=6, out=Vector((0.35, -1.0, 0.0))):
 
 def build_sabre():
     part = Part()
-    w = UNI_W.at(Vector((0.2, 0.0, 1.2)))  # the pelvis and the left hip, like the belt it hangs from
+    w = TORSO_W.at(Vector((0.2, 0.0, 1.2)))  # the pelvis and the left hip, like the belt it hangs from
     axis = (GUARD - POMMEL).normalized()
     tip = GUARD + SWORD_DROP.normalized() * SCABBARD_L
     n = 40
@@ -528,8 +534,9 @@ def build_sabre():
     kp = clear_path(kp, 0.004)
     tube(part, kp, 0.0035, lambda i, k: pal_uv('gold'), w, sides=6)
     lathe(part, KNOT_TASSEL, Vector((0, 0, -1)),
-          [(-0.035, 0.0), (-0.035, 0.006), (-0.025, 0.012), (-0.012, 0.010), (-0.006, 0.013), (0.0, 0.016),
-           (0.045, 0.02), (0.05, 0.012), (0.052, 0.0)], lambda i, k: pal_uv('gold'), w, 14)
+          [(t * TASSEL_K, r * TASSEL_K) for t, r in ((-0.035, 0.0), (-0.035, 0.006), (-0.025, 0.012), (-0.012, 0.010),
+                                                     (-0.006, 0.013), (0.0, 0.016), (0.045, 0.02), (0.05, 0.012),
+                                                     (0.052, 0.0))], lambda i, k: pal_uv('gold'), w, 14)
     return part.build('Sabre')
 
 
