@@ -20,7 +20,7 @@ OUT = os.path.join(HERE, 'alexander_leader.blend')
 POSE_FRAMES, SETTLE_FRAMES = 24, 24
 BONES_ONLY = ('Boot', 'Sole', 'Spur')   # details that follow the bones, not the cloth
 RIGID = ('Buttons', 'Buckle', 'CuffButtons')  # each piece of these moves as a whole with the cloth under it
-SLEEVE_PIN = 0.35                       # sleeves held this much to the arm (less: they slide down and balloon)
+SLEEVE_PIN = 0.5                        # sleeves held this much to the arm (less: they slide down and balloon)
 # cloth: heavy broadcloth
 CLOTH = dict(quality=8, mass=0.35, air_damping=1.0, tension_stiffness=40, compression_stiffness=40,
              shear_stiffness=20, bending_stiffness=6.0, tension_damping=8, compression_damping=8, shear_damping=8,
@@ -52,6 +52,9 @@ thick = uni.modifiers['Thick']
 thick.show_viewport = thick.show_render = False
 activate(uni)  # Surface Deform binds only to convex faces
 bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
+bpy.ops.mesh.remove_doubles(threshold=0.0005)  # zero-length edges make the cloth solver explode
+bpy.ops.mesh.dissolve_degenerate(threshold=0.0005)
+bpy.ops.mesh.select_all(action='SELECT')
 bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
 bpy.ops.object.mode_set(mode='OBJECT')
 followers = [o for o in sc.objects if o.type == 'MESH' and (o.get('detail') or o.get('regalia'))
@@ -225,6 +228,8 @@ for o in skinned:
     o.modifiers.new('Armature', 'ARMATURE').object = rig
 uni.vertex_groups.remove(uni.vertex_groups['pin'])
 thick.show_viewport = thick.show_render = True
+uni.data.materials.append(uni.data.materials[0])  # the lining and edges get slot 1 (build_bake.py bakes the outside)
+thick.material_offset = thick.material_offset_rim = 1
 activate(uni)
 bpy.ops.object.modifier_move_to_index(modifier='Thick', index=0)
 bpy.ops.object.modifier_apply(modifier='Thick')

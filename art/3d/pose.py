@@ -9,7 +9,7 @@ import bpy, math
 from mathutils import Vector, Matrix
 
 YAW_DEG = 15.0                     # the figure turned towards his left (the closure is right of centre in the portrait)
-HEAD_YAW = (-7.0, -9.0)            # neck_01, head about Z: the face turned back towards the camera
+HEAD_YAW = (-4.0, -5.0)            # neck_01, head about Z: the face turned back towards the camera
 HEAD_PITCH = 3.0                   # head bent forward a little (degrees about X)
 # His left hand rests on the sword's hilt at the left hip; his right hand is behind his back at the belt.
 ARM = {

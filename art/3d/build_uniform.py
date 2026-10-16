@@ -14,17 +14,21 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'alexander_rest.blend')  # in the rest pose; build_pose.py poses it into alexander_leader.blend
 sys.path.insert(0, HERE)
 import head_shape  # noqa: E402
+import mat_util  # noqa: E402
 
 # Alexander's build (alexander_ii_full.png): a big chest and broad shoulders over a waist the belt can take in, a
 # V rather than a barrel. MPFB macros and extra targets from MPFB's library, applied to the 'Human' basemesh before
 # anything is measured; then his head (head_shape.py) and a neck for the collar; the rig is refitted to the new shape.
 HEAD_SCALE = 1.0
+NECK_LONGER = 0.6
 BODY_MACROS = {'weight': 0.85, 'muscle': 0.7}
 BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dist-incr': 0.6,
                 'torso/torso-scale-horiz-incr': 0.35, 'torso/measure-bust-circ-incr': 0.3,
                 # the portrait's head is 1/7.7 of his height, MPFB's 1/8.6: a bigger head (the generated one follows it)
                 'head/head-scale-vert-incr': HEAD_SCALE, 'head/head-scale-horiz-incr': HEAD_SCALE,
-                'head/head-scale-depth-incr': HEAD_SCALE}
+                'head/head-scale-depth-incr': HEAD_SCALE,
+                # a longer neck: the portrait's chin is ~8 cm over the shoulders at the collar, room for its tall collar
+                'neck/measure-neck-height-incr': NECK_LONGER}
 
 # Heights from alexander_ii_full.png scaled to the 2.07 m MPFB figure (feet 0, crown 2.07).
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
@@ -42,7 +46,7 @@ BOOT_TOP = 0.45                   # top of the boot shafts: the trousers are tuc
 SLEEVE_T = 0.95                   # sleeve end along the forearm (0 elbow, 1 wrist)
 TUNIC_OFF, TROUSERS_OFF = 0.028, 0.015
 SHOULDER_OFF = 0.012              # tunic offset over the shoulders (above the armpits)
-SLEEVE_EASE, CUFF_EASE = 0.012, 0.014  # sleeves: round tubes this much looser than the arm; cuff off the wrist
+SLEEVE_EASE, CUFF_EASE = 0.006, 0.014  # sleeves: round tubes this much looser than the arm; cuff off the wrist
 SKIRT_EASE, SKIRT_FLARE = 0.008, 0.035  # skirt clearance over hips and thighs, extra radius at the hem
 TROUSER_EASE = 1.08                # trouser leg radius over the mid-thigh
 TROUSER_TAPER = 0.85              # straight trouser leg: radius at the ankle relative to the top of the thigh
@@ -59,6 +63,9 @@ CLOTH_RGB = (0.010, 0.011, 0.016)
 PIPING_RGB = (0.50, 0.012, 0.010)
 PIPING_W, STRIPE_W, CUFF_T = 0.007, 0.012, 0.30
 WOOL_REPEATS, WOOL_CONTRAST = 10, 0.45  # textures/gen/wool.png over the UVs (~15 cm a tile), its weave's strength
+NORMAL_OUT = os.path.join(HERE, 'textures', 'uniform_normal.png')
+WOOL_H, PIPING_H = 0.5, 2.5         # px of relief: the weave; the piping, a cord sewn into the seams
+WOOL_SHEEN, SHEEN_TINT = 0.6, (0.09, 0.10, 0.14)  # broadcloth's fuzz at grazing angles: a dark blue-grey
 PLEAT_ANGLE = 90                  # degrees from the front centre to the piped pleats of the skirt (at the sides)
 
 sc = bpy.data.scenes['Human']
@@ -765,20 +772,14 @@ def paint_uniform(ob, mat):
             acc[fill] = np.roll(np.roll(acc, dy, 0), dx, 1)[fill]; cov |= fill
     acc[~cov] = CLOTH_RGB
     img_px = acc.reshape(TEX, 2, TEX, 2, 3).mean((1, 3))
-    img_px *= wool_detail()[..., None]
+    wool = wool_detail()
+    img_px *= wool[..., None]
+    piping = (img_px[..., 0] > 0.1).astype(np.float32)  # the red (linear) of the piping and stripes
+    height = mat_util.blur(piping, 2) * PIPING_H + (wool - 1) / WOOL_CONTRAST * WOOL_H
     img_px = np.where(img_px <= 0.0031308, img_px * 12.92, 1.055 * np.power(img_px, 1 / 2.4) - 0.055)  # to sRGB
-    img = bpy.data.images.get('Uniform_Albedo') or bpy.data.images.new('Uniform_Albedo', TEX, TEX)
-    img.scale(TEX, TEX)
-    img.pixels.foreach_set(np.concatenate([img_px, np.ones((TEX, TEX, 1), np.float32)], 2).ravel())
-    os.makedirs(os.path.dirname(TEX_OUT), exist_ok=True)
-    img.filepath_raw = TEX_OUT; img.file_format = 'PNG'; img.save()
-    mat.use_nodes = True
-    nt = mat.node_tree
-    bsdf = next(nd for nd in nt.nodes if nd.type == 'BSDF_PRINCIPLED')
-    tex = next((nd for nd in nt.nodes if nd.type == 'TEX_IMAGE'), None) or nt.nodes.new('ShaderNodeTexImage')
-    tex.image = img
-    nt.links.new(tex.outputs['Color'], bsdf.inputs['Base Color'])
-    bsdf.inputs['Roughness'].default_value = 0.95  # wool: no sheen
+    albedo = mat_util.save('Uniform_Albedo', img_px, TEX_OUT, 'sRGB')
+    nrm = mat_util.save('Uniform_Normal', mat_util.normals(height) * 0.5 + 0.5, NORMAL_OUT, 'Non-Color')
+    mat_util.material(mat.name, albedo, None, nrm, rough=0.95, sheen=WOOL_SHEEN, sheen_tint=SHEEN_TINT)
     print('painted', TEX_OUT)
 
 

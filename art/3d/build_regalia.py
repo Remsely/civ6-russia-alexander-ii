@@ -17,6 +17,7 @@ TEXDIR = os.path.join(HERE, 'textures')
 TEX = 2048
 ALBEDO_OUT = os.path.join(TEXDIR, 'regalia_albedo.png')
 MR_OUT = os.path.join(TEXDIR, 'regalia_mr.png')  # R metal, G roughness
+NORMAL_OUT = os.path.join(TEXDIR, 'regalia_normal.png')  # tangent space, OpenGL (Y up)
 
 GOLD_SRGB = (214, 162, 70)
 SASH_SRGB = (62, 114, 206)       # light-blue moire, measured on the sash in the portrait (lit side)
@@ -28,20 +29,25 @@ EP_LIFT, EP_DOME, EP_THICK = 0.014, 0.018, 0.007
 EP_TILT = 18.0 
 EP_FORWARD = 15.0               # ... and towards the front (in the portrait the fields face the viewer a little)                  # degrees: the field turns down outwards more than the shoulder top under it
 STRAP_X, STRAP_W = 0.115, 0.030  # strap from the field to this |x| near the collar
-FRINGE_N, FRINGE_ARC = 28, 240.0  # strands over this arc of the rim, centred on the outer end
-FRINGE_LEN, FRINGE_R, FRINGE_OUT = 0.11, 0.0105, 0.028
+FRINGE_N, FRINGE_ARC = 30, 240.0  # strands per row over this arc of the rim, centred on the outer end
+FRINGE_LEN, FRINGE_R, FRINGE_OUT = 0.11, 0.0115, 0.028
+FRINGE_TOP = (0.68, 0.0125, 0.6, 0.007)  # the upper row over it: length, radius, outward reach (x FRINGE_*), lift
+# Bullion (canitel): a coiled gold wire - each strand a tight helix of BULLION_STARTS wires at BULLION_PITCH a turn.
+BULLION_PITCH, BULLION_STARTS, BULLION_UV_LEN = 0.007, 1, 0.147  # 21 turns over the region
 # Sash: a band 'SASH_W' wide round the torso in the plane through the top of the right shoulder and the left hip.
 SASH_SHOULDER = Vector((-0.175, 0.0, 1.76))
 SASH_HIP = Vector((0.17, 0.0, 1.31))   # the lower edge on the belt's top at the side
 SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.085, 0.005, 0.002, 160
+GOLD_FLOOR = 0.55                # gold albedo: the pictures' shading only darkens it down to this (the relief does the rest)
+NORMAL_STRENGTH = {'cord': 3.0, 'pole': 2.0, 'sash': 0.05, 'bullion': 1.0}
 # Aiguillettes: cords from under the right epaulette's front to the closure, hanging in loops; two loose cords with
 # gold tips ('pencils') hang from the closure end over the sash.
 AIG_FROM = (-0.215, 1.67)          # (x, z) on the front of the chest
 AIG_TO = (-0.07, 1.60)     # under the sash
 AIG_LOOPS = [(-0.175, 1.55), (-0.165, 1.49), (-0.155, 1.43)]  # lowest point of each loop
-AIG_TAILS = [((-0.03, 1.50), (0.02, 1.42)), ((-0.01, 1.53), (0.045, 1.45))]  # (via, end) of the loose cords
-AIG_R, AIG_GAP = 0.0062, 0.002
-PENCIL_L, PENCIL_R = 0.08, 0.0078
+AIG_TAILS = [((0.02, 1.575), (0.105, 1.50)), ((0.035, 1.585), (0.13, 1.52))]  # (via, end) of the loose cords: over the sash on his left breast, as in the portrait
+AIG_R, AIG_GAP = 0.007, 0.002
+PENCIL_L, PENCIL_R = 0.11, 0.0078
 CORD_UV_LEN = 0.6                # metres of cord over the width of its atlas region (the twist repeats along it)
 
 ATLAS = {
@@ -171,37 +177,76 @@ def pole_tex(w, hh):
     return sample(gen_picture('epaulette_field'), *grid(w, hh))
 
 
+def bullion_tex(w, hh):
+    """A bullion strand, its length along u (BULLION_UV_LEN metres), round it along v: a helix of coiled wire. Returns
+    albedo, roughness and the height in metres per pixel (for the normal map)."""
+    u, v = grid(w, hh)
+    phase = u * BULLION_UV_LEN / BULLION_PITCH + v * BULLION_STARTS
+    c = 0.5 + 0.5 * np.cos(2 * np.pi * phase)
+    h = c ** 0.6  # round coil tops, narrow dark gaps between the turns
+    rgb = srgb(GOLD_SRGB) * (0.4 + 0.6 * h)[..., None]
+    return rgb, 0.28 + 0.25 * (1 - h), h * BULLION_PITCH * 0.25
+
+
+def normals(height, mx, my):
+    """Tangent-space normals (OpenGL) of a height field in metres, mx / my metres per pixel along u / v."""
+    gy, gx = np.gradient(height)
+    n = np.stack([-gx / mx, -gy / my, np.ones_like(height)], -1)
+    return n / np.linalg.norm(n, axis=-1, keepdims=True)
+
+
+def blur1(a):
+    return (a + np.roll(a, 1, 0) + np.roll(a, -1, 0) + np.roll(a, 1, 1) + np.roll(a, -1, 1)) / 5
+
+
 def build_atlas():
     rgb = np.zeros((TEX, TEX, 3), np.float32)
     metal = np.zeros((TEX, TEX), np.float32); rough = np.full((TEX, TEX), 0.8, np.float32)
+    nrm = np.zeros((TEX, TEX, 3), np.float32); nrm[..., 2] = 1.0
 
     def px(region):
         u0, v0, u1, v1 = ATLAS[region]
         return int(u0 * TEX), int(v0 * TEX), int(u1 * TEX), int(v1 * TEX)
 
-    x0, y0, x1, y1 = px('sash')
-    rgb[y0:y1, x0:x1] = sash_tex(x1 - x0, y1 - y0); rough[y0:y1, x0:x1] = 0.6
+    def relief(region, c, strength):  # the picture's own light and dark as its relief (raised where bright)
+        x0, y0, x1, y1 = px(region)
+        lum = blur1(c @ np.array([0.2126, 0.7152, 0.0722], np.float32))
+        nrm[y0:y1, x0:x1] = normals(lum * strength, 0.1, 0.1)  # strength x 10: slope per unit of brightness a pixel
 
-    def gold(region, c):  # the pictures carry their own shading: bright thread shines, the gaps between are dull
+    x0, y0, x1, y1 = px('sash')
+    pic = sash_tex(x1 - x0, y1 - y0)
+    rgb[y0:y1, x0:x1] = pic; rough[y0:y1, x0:x1] = 0.42  # silk moire: a soft sheen
+    relief('sash', pic, NORMAL_STRENGTH['sash'])
+
+    def gold(region, c, recolour=True):
+        """Gold from a generated picture: its shading only darkens bright gold down to GOLD_FLOOR (dark pictures made
+        dull brown metal); bright thread shines, the gaps between are rougher."""
         x0, y0, x1, y1 = px(region)
         lum = c @ np.array([0.2126, 0.7152, 0.0722], np.float32)
-        rgb[y0:y1, x0:x1] = c
-        metal[y0:y1, x0:x1] = np.clip(lum * 2.5, 0.3, 1.0)
-        rough[y0:y1, x0:x1] = np.clip(0.6 - lum * 0.5, 0.25, 0.6)
+        shade = np.clip(lum / max(float(np.percentile(lum, 95)), 1e-3), 0, 1)
+        rgb[y0:y1, x0:x1] = (srgb(GOLD_SRGB) * (GOLD_FLOOR + (1 - GOLD_FLOOR) * shade)[..., None] if recolour
+                             else np.clip(c * 1.25, 0, 1))
+        metal[y0:y1, x0:x1] = np.clip(shade * 2.0, 0.4, 1.0)
+        rough[y0:y1, x0:x1] = np.clip(0.55 - shade * 0.3, 0.25, 0.55)
+        relief(region, c, NORMAL_STRENGTH[region])
 
-    for name, n in (('cord', CORD_REPEATS), ('bullion', BULLION_REPEATS)):
-        x0, y0, x1, y1 = px(name)
-        gold(name, cord_tex(x1 - x0, y1 - y0, n))
+    x0, y0, x1, y1 = px('cord')
+    gold('cord', cord_tex(x1 - x0, y1 - y0, CORD_REPEATS))
+    x0, y0, x1, y1 = px('bullion')
+    c, r, hgt = bullion_tex(x1 - x0, y1 - y0)
+    rgb[y0:y1, x0:x1] = c; metal[y0:y1, x0:x1] = 1.0; rough[y0:y1, x0:x1] = r
+    nrm[y0:y1, x0:x1] = normals(hgt, BULLION_UV_LEN / (x1 - x0), 2 * math.pi * FRINGE_R / (y1 - y0))
     x0, y0, x1, y1 = px('pole')
-    gold('pole', pole_tex(x1 - x0, y1 - y0))
+    gold('pole', pole_tex(x1 - x0, y1 - y0), recolour=False)
     x0, y0, x1, y1 = px('gold')
     rgb[y0:y1, x0:x1] = srgb(GOLD_SRGB); metal[y0:y1, x0:x1] = 1.0; rough[y0:y1, x0:x1] = 0.3
     imgs = []
     for name, data, path, cs in (('Regalia_Albedo', rgb, ALBEDO_OUT, 'sRGB'),
-                                 ('Regalia_MR', np.stack([metal, rough, np.zeros_like(metal)], 2), MR_OUT, 'Non-Color')):
+                                 ('Regalia_MR', np.stack([metal, rough, np.zeros_like(metal)], 2), MR_OUT, 'Non-Color'),
+                                 ('Regalia_Normal', nrm * 0.5 + 0.5, NORMAL_OUT, 'Non-Color')):
         img = bpy.data.images.get(name) or bpy.data.images.new(name, TEX, TEX)
         img.scale(TEX, TEX)
-        img.pixels.foreach_set(np.concatenate([data, np.ones((TEX, TEX, 1), np.float32)], 2).ravel())
+        img.pixels.foreach_set(np.concatenate([data, np.ones((TEX, TEX, 1), np.float32)], 2).astype(np.float32).ravel())
         img.filepath_raw = path; img.file_format = 'PNG'; img.save()
         img.filepath = path; img.source = 'FILE'
         img.colorspace_settings.name = cs
@@ -209,16 +254,19 @@ def build_atlas():
     mat = bpy.data.materials.get('Regalia') or bpy.data.materials.new('Regalia')
     mat.use_nodes = True
     nt = mat.node_tree
-    for nd in [nd for nd in nt.nodes if nd.type in ('TEX_IMAGE', 'SEPARATE_COLOR')]:
+    for nd in [nd for nd in nt.nodes if nd.type in ('TEX_IMAGE', 'SEPARATE_COLOR', 'NORMAL_MAP')]:
         nt.nodes.remove(nd)
     bsdf = next(nd for nd in nt.nodes if nd.type == 'BSDF_PRINCIPLED')
-    ta, tm = nt.nodes.new('ShaderNodeTexImage'), nt.nodes.new('ShaderNodeTexImage')
-    ta.image, tm.image = imgs
+    ta, tm, tn = (nt.nodes.new('ShaderNodeTexImage') for _ in range(3))
+    ta.image, tm.image, tn.image = imgs
     sep = nt.nodes.new('ShaderNodeSeparateColor')
+    nmap = nt.nodes.new('ShaderNodeNormalMap')
     nt.links.new(ta.outputs['Color'], bsdf.inputs['Base Color'])
     nt.links.new(tm.outputs['Color'], sep.inputs['Color'])
     nt.links.new(sep.outputs[0], bsdf.inputs['Metallic'])
     nt.links.new(sep.outputs[1], bsdf.inputs['Roughness'])
+    nt.links.new(tn.outputs['Color'], nmap.inputs['Color'])
+    nt.links.new(nmap.outputs['Normal'], bsdf.inputs['Normal'])
     print('atlas', ALBEDO_OUT)
     return mat
 
@@ -235,12 +283,13 @@ def uv_in(region, u, v):
 # ---------------------------------------------------------------- mesh helpers
 def new_part(name, bm, uvs, weights, solidify=0.0):
     """bm with per-vertex UVs and weights (functions of the vertex) -> skinned object 'name'."""
-    for lay in list(bm.loops.layers.uv.values()):
-        bm.loops.layers.uv.remove(lay)
-    lay = bm.loops.layers.uv.new('UVMap')
-    for f in bm.faces:
-        for l in f.loops:
-            l[lay].uv = uvs(l.vert)
+    if uvs is not None:  # None: bm brings its own 'UVMap'
+        for lay in list(bm.loops.layers.uv.values()):
+            bm.loops.layers.uv.remove(lay)
+        lay = bm.loops.layers.uv.new('UVMap')
+        for f in bm.faces:
+            for l in f.loops:
+                l[lay].uv = uvs(l.vert)
     vw = [weights(v) for v in bm.verts]
     me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
     ob = bpy.data.objects.new(name, me); sc.collection.objects.link(ob)
@@ -314,50 +363,70 @@ def tube(bm, path, r, sides, region, uv_len=CORD_UV_LEN, cap=True, taper=None):
 
 # ---------------------------------------------------------------- sash
 def build_sash():
-    """A band round the torso in the plane through SASH_SHOULDER and SASH_HIP that holds the front-back axis: each
-    row of the band cast from inside onto the outermost cloth (tunic, belt, collar), SASH_GAP off it."""
+    """A band SASH_W wide round the torso. Its middle line: the outermost cloth (tunic, belt, collar) round the plane
+    through SASH_SHOULDER and SASH_HIP that holds the front-back axis, smoothed. Across it, at every point, the band
+    runs along the cloth square to the line (the cloth's normal x the line's direction), so it keeps its width where
+    the torso turns away from that plane; SASH_GAP off the cloth."""
     U = (SASH_SHOULDER - SASH_HIP).normalized()
     Y = Vector((0, 1, 0))
     N = U.cross(Y).normalized()
     c = (SASH_SHOULDER + SASH_HIP) / 2
     rows = 7
+
+    def on_cloth(p):
+        loc, nrm, _, _ = CLOTH.find_nearest(p, 0.1)
+        return (loc + nrm * SASH_GAP, nrm) if loc is not None else (p, N)
+
+    mid = []
+    for j in range(SASH_N):
+        th = 2 * math.pi * j / SASH_N  # 0: front, pi/2: up the shoulder
+        d = -Y * math.cos(th) + U * math.sin(th)
+        loc, nrm = outer(CLOTH, c, d)
+        mid.append((loc + nrm * SASH_GAP) if loc is not None else c + d * 0.2)
+    for _ in range(12):  # the cloth's buttons and seams would show through
+        mid = [mid[j] * 0.5 + (mid[j - 1] + mid[(j + 1) % SASH_N]) * 0.25 for j in range(SASH_N)]
+        mid = [on_cloth(p)[0] for p in mid]
+    sides = []
+    for j in range(SASH_N):
+        t = (mid[(j + 1) % SASH_N] - mid[j - 1]).normalized()
+        side = on_cloth(mid[j])[1].cross(t).normalized()
+        sides.append(side if side.dot(N) > 0 else -side)
+    for _ in range(4):  # no twisting where the cloth's normal turns quickly (the shoulder)
+        sides = [(sides[j] * 2 + sides[j - 1] + sides[(j + 1) % SASH_N]).normalized() for j in range(SASH_N)]
     bm = bmesh.new()
     grid, uvs = [], {}
     for i in range(rows):
-        s = (i / (rows - 1) - 0.5) * SASH_W
+        s_ = (i / (rows - 1) - 0.5) * SASH_W
         row = []
-        for j in range(SASH_N + 1):
-            th = 2 * math.pi * j / SASH_N  # 0: front, pi/2: up the shoulder
-            d = -Y * math.cos(th) + U * math.sin(th)
-            loc, nrm = outer(CLOTH, c + N * s, d)
-            p = (loc + nrm * SASH_GAP) if loc is not None else c + N * s + d * 0.2
+        for j in range(SASH_N):
+            # the band's width is laid out along the cloth in two steps (it bends round the torso)
+            p = on_cloth(mid[j] + sides[j] * s_ * 0.5)[0]
+            p = on_cloth(p + sides[j] * s_ * 0.5)[0]
             v = bm.verts.new(p)
-            uvs[v] = uv_in('sash', j / SASH_N, i / (rows - 1))
             row.append(v)
+        row.append(row[0])
         grid.append(row)
-    # smooth along the band: the cloth's buttons and seams would show through
-    for _ in range(8):
+    for _ in range(3):  # nothing of the cloth through it: every vertex at least SASH_GAP outside it
         for row in grid:
-            new = [row[j].co * 0.5 + (row[j - 1].co + row[(j + 1) % SASH_N].co) * 0.25 for j in range(SASH_N)]
-            for j in range(SASH_N):
-                row[j].co = new[j]
-            row[SASH_N].co = row[0].co
-    # nothing of the cloth through it: every vertex at least SASH_GAP outside the surface nearest to it
-    for _ in range(3):
-        for row in grid:
-            for v in row:
+            for v in row[:-1]:
                 loc, nrm, _, _ = CLOTH.find_nearest(v.co, 0.05)
                 if loc is not None and (v.co - loc).dot(nrm) < SASH_GAP:
                     v.co = loc + nrm * SASH_GAP
-    for r0, r1 in zip(grid, grid[1:]):
+    seam = {}
+    for i, (r0, r1) in enumerate(zip(grid, grid[1:])):
         for j in range(SASH_N):
-            bm.faces.new((r0[j], r0[j + 1], r1[j + 1], r1[j]))
+            f = bm.faces.new((r0[j], r0[j + 1], r1[j + 1], r1[j]))
+            seam[f] = (i, j)
+    uvl = bm.loops.layers.uv.new('UVMap')
+    for f, (i, j) in seam.items():  # the closing column gets u = 1, not 0
+        for l, (di, dj) in zip(f.loops, ((0, 0), (0, 1), (1, 1), (1, 0))):
+            l[uvl].uv = uv_in('sash', (j + dj) / SASH_N, (i + di) / (rows - 1))
     bm.normal_update()
     bm.faces.ensure_lookup_table()
     f = bm.faces[0]
     if f.normal.dot(f.calc_center_median() - c) < 0:
         bmesh.ops.reverse_faces(bm, faces=bm.faces[:])
-    return new_part('Sash', bm, lambda v: uvs[v], lambda v: UNI_W.at(v.co), SASH_THICK)
+    return new_part('Sash', bm, None, lambda v: UNI_W.at(v.co), SASH_THICK)
 
 
 # ---------------------------------------------------------------- aiguillettes
@@ -470,29 +539,29 @@ def build_epaulette(side):
     for v in set(bm.verts) - before:
         uvs[v] = uv_in('gold', 0.5, 0.5)
     field = new_part('Epaulette_' + side, bm, lambda v: uvs[v], lambda v: ws)
-    # fringe: bullion strands from under the rim, out and down, fanning; each rides on the cloth under its top
+    # fringe: bullion strands from under the rim, out and down, fanning, in two rows (the upper shorter, thicker, over
+    # the gaps of the lower); each rides on the cloth under its top
     bm = bmesh.new(); uvs = {}; wmap = {}
     half = math.radians(FRINGE_ARC) / 2
-    for i in range(FRINGE_N):
-        a = -half + 2 * half * (i + 0.5) / FRINGE_N
-        rim_p = L(EP_A * 0.97 * math.cos(a), EP_B * 0.97 * math.sin(a), -EP_THICK)
-        radial = (X * math.cos(a) * EP_B + Y * math.sin(a) * EP_A).normalized()
-        radial = Vector((radial.x, radial.y, 0)).normalized()
-        jit = 0.004 * math.sin(i * 2.399)
-        length = FRINGE_LEN * (0.92 + 0.08 * math.cos(a)) + jit  # longest over the shoulder's end
-        down = Vector((0, 0, -1))
-        ctrl = [rim_p, rim_p + radial * FRINGE_OUT * 0.6 + down * 0.008,
-                rim_p + radial * (FRINGE_OUT + jit) + down * length * 0.5,
-                rim_p + radial * (FRINGE_OUT * 1.3 + jit) + down * length]
-        path = catmull(ctrl, 0.01)
-        vs, u = tube(bm, path, FRINGE_R, 7, 'bullion', uv_len=0.1)
-        uvs.update(u)
-        wt = UNI_W.at(rim_p)
-        for v in vs:
-            wmap[v] = wt
-        tip = [v for v in u if v not in vs]
-        for v in tip:
-            wmap[v] = wt
+    for row, (k_len, rad, k_out, lift, shift) in enumerate(((1.0, FRINGE_R, 1.0, 0.0, 0.0), (*FRINGE_TOP, 0.5))):
+        for i in range(FRINGE_N):
+            a = -half + 2 * half * (i + 0.5 + shift) / (FRINGE_N + shift)
+            rim_p = L(EP_A * 0.97 * math.cos(a), EP_B * 0.97 * math.sin(a), -EP_THICK + lift)
+            radial = (X * math.cos(a) * EP_B + Y * math.sin(a) * EP_A).normalized()
+            radial = Vector((radial.x, radial.y, 0)).normalized()
+            jit = 0.004 * math.sin(i * 2.399 + row)
+            length = (FRINGE_LEN * (0.92 + 0.08 * math.cos(a)) + jit) * k_len  # longest over the shoulder's end
+            reach = FRINGE_OUT * k_out
+            down = Vector((0, 0, -1))
+            ctrl = [rim_p, rim_p + radial * reach * 0.6 + down * 0.008,
+                    rim_p + radial * (reach + jit) + down * length * 0.5,
+                    rim_p + radial * (reach * 1.3 + jit) + down * length]
+            path = catmull(ctrl, 0.012)
+            vs, u = tube(bm, path, rad, 6, 'bullion', uv_len=BULLION_UV_LEN)
+            uvs.update(u)
+            wt = UNI_W.at(rim_p)
+            for v in u:
+                wmap[v] = wt
     fringe = new_part('EpauletteFringe_' + side, bm, lambda v: uvs[v], lambda v: wmap[v])
     return field, fringe
 

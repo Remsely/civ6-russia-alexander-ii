@@ -6,12 +6,14 @@
 # Every detail is skinned to the same skeleton. Rigid parts (buttons, buckle, flaps) take the weights of one surface
 # point, so they ride the cloth without bending; soft parts blend the weights of the cloth or body under them.
 # All details share one material and one texture atlas (albedo + metal/roughness), laid out in ATLAS.
-import bpy, bmesh, math, os
+import bpy, bmesh, math, os, sys
 import numpy as np
 import mathutils.geometry as mg
 from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import mat_util  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'alexander_rest.blend')  # in the rest pose; build_pose.py poses it into alexander_leader.blend
@@ -19,6 +21,8 @@ TEXDIR = os.path.join(HERE, 'textures')
 TEX = 2048
 ALBEDO_OUT = os.path.join(TEXDIR, 'details_albedo.png')
 MR_OUT = os.path.join(TEXDIR, 'details_mr.png')  # R metal, G roughness
+NORMAL_OUT = os.path.join(TEXDIR, 'details_normal.png')
+EMBROIDERY_H, THREAD_H = 3.0, 4.0  # px: the gold embroidery raised off the cloth; its threads' relief per unit of light
 
 # Flat colours (linear RGB).
 RED = (0.55, 0.014, 0.010)
@@ -30,16 +34,17 @@ CLOTH = (0.010, 0.011, 0.016)     # the tunic's wool (build_uniform.CLOTH_RGB)
 
 # Red collar over the tunic's standing collar: down from its top edge to where the cloth turns out into the shoulders
 # (by COLLAR_TURN, at most COLLAR_MAX_H); halves apart at the front, the tunic's dark collar between them.
-COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.05
+COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.075
 COLLAR_FLARE = 0.003              # the band widens downwards by at most this
-COLLAR_MIN_H = 0.045             # ... but at the front at least this tall (the chest turns out right under it)
-COLLAR_FRONT_GAP = 0.017
-COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)          # half-width of the opening at the front
+COLLAR_MIN_H = 0.07               # ... but at the front at least this tall (the portrait's collar: one pupil distance)
+COLLAR_FRONT_GAP = 0.017          # half-width of the opening at the front, at the top ...
+COLLAR_FRONT_GAP_BOTTOM = 0.04    # ... and at the bottom edge (the halves part downwards, the dark stand between)
+COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
 COLLAR_THICK = 0.004
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
 BUTTON_R, BUTTON_H = 0.0085, 0.0055
-BUTTON_ZS = (1.66, 1.60, 1.54, 1.48, 1.42, 1.36, 1.30)
-BUTTON_DX = -0.014                # from the flap edge
+BUTTON_ZS = (1.66, 1.60, 1.54, 1.48, 1.42, 1.36)  # above the belt
+BUTTON_DXS = (-0.024, 0.031)      # from the flap edge: a row either side of the piped closure, as in the portrait
 # Belt over the waist seam of the tunic; buckle plate taller than the belt, top corners cut off.
 BELT_THICK, BELT_EASE = 0.004, 0.001   # height and profile come from build_uniform.py (it takes the tunic in)
 BUCKLE_W, BUCKLE_H, BUCKLE_RAISE = 0.125, 0.088, 0.004
@@ -267,6 +272,7 @@ def vivid(rgb):
 def build_atlas():
     rgb = np.zeros((TEX, TEX, 3), np.float32)
     metal = np.zeros((TEX, TEX), np.float32); rough = np.full((TEX, TEX), 0.8, np.float32)
+    height = np.zeros((TEX, TEX), np.float32)
 
     def px(region):
         u0, v0, u1, v1 = ATLAS[region]
@@ -280,6 +286,8 @@ def build_atlas():
         rgb[y0:y1, x0:x1] = c
         metal[y0:y1, x0:x1] = 0.5 * g  # the pictures already carry the shading of the gold: some shine on top
         rough[y0:y1, x0:x1] = 0.75 - 0.45 * g
+        # relief: the gold embroidery stands up from the cloth, its threads by their light and dark
+        height[y0:y1, x0:x1] = mat_util.blur(g.astype(np.float32), 2) * EMBROIDERY_H + mat_util.relief(c, THREAD_H)
 
     def flat(region, col, m, r):
         x0, y0, x1, y1 = px(region)
@@ -302,28 +310,10 @@ def build_atlas():
     flat('red', RED, 0.0, 0.85)
     flat('white', WHITE, 0.0, 0.7)
     flat('cloth', CLOTH, 0.0, 0.85)
-    imgs = []
-    for name, data, path, cs in (('Details_Albedo', rgb, ALBEDO_OUT, 'sRGB'),
-                                 ('Details_MR', np.stack([metal, rough, np.zeros_like(metal)], 2), MR_OUT, 'Non-Color')):
-        img = bpy.data.images.get(name) or bpy.data.images.new(name, TEX, TEX)
-        img.scale(TEX, TEX)
-        img.pixels.foreach_set(np.concatenate([data, np.ones((TEX, TEX, 1), np.float32)], 2).ravel())
-        img.filepath_raw = path; img.file_format = 'PNG'; img.save()
-        img.colorspace_settings.name = cs
-        imgs.append(img)
-    mat = bpy.data.materials.get('Details') or bpy.data.materials.new('Details')
-    mat.use_nodes = True
-    nt = mat.node_tree
-    for nd in [nd for nd in nt.nodes if nd.type in ('TEX_IMAGE', 'SEPARATE_COLOR')]:
-        nt.nodes.remove(nd)
-    bsdf = next(nd for nd in nt.nodes if nd.type == 'BSDF_PRINCIPLED')
-    ta, tm = nt.nodes.new('ShaderNodeTexImage'), nt.nodes.new('ShaderNodeTexImage')
-    ta.image, tm.image = imgs
-    sep = nt.nodes.new('ShaderNodeSeparateColor')
-    nt.links.new(ta.outputs['Color'], bsdf.inputs['Base Color'])
-    nt.links.new(tm.outputs['Color'], sep.inputs['Color'])
-    nt.links.new(sep.outputs[0], bsdf.inputs['Metallic'])
-    nt.links.new(sep.outputs[1], bsdf.inputs['Roughness'])
+    albedo = mat_util.save('Details_Albedo', rgb, ALBEDO_OUT, 'sRGB')
+    mr = mat_util.save('Details_MR', np.stack([metal, rough, np.zeros_like(metal)], 2), MR_OUT, 'Non-Color')
+    nrm = mat_util.save('Details_Normal', mat_util.normals(height) * 0.5 + 0.5, NORMAL_OUT, 'Non-Color')
+    mat = mat_util.material('Details', albedo, mr, nrm)
     print('atlas', ALBEDO_OUT)
     return mat
 
@@ -450,10 +440,14 @@ def build_collar(nu=64, nv=7):
         tops.append(zt); bots.append(min(z, zt - COLLAR_MIN_H * front - (zt - z) * (1 - front)))
     bots = circ_smooth(bots, 3)
     rings = []
+    gap_b = COLLAR_FRONT_GAP_BOTTOM / 0.08
     for i in range(nv):
         f = i / (nv - 1)
         ring = []
-        for j, (d, zb, zt, zturn) in enumerate(zip(dirs, bots, tops, turns)):
+        g = gap_b + (gap - gap_b) * f
+        ring_dirs = [Vector((math.sin(t), -math.cos(t), 0.0)) for t in
+                     (g + (2 * math.pi - 2 * g) * j / (nu - 1) for j in range(nu))]
+        for j, (d, zb, zt, zturn) in enumerate(zip(ring_dirs, bots, tops, turns)):
             z = zb + (zt - zb) * f
             r_top = cloth(zt - 0.004, d) or 0.08
             # a straight band down to where the cloth turns out (no flare onto the shoulders); below that (the front,
@@ -501,9 +495,10 @@ def build_collar(nu=64, nv=7):
 # ---------------------------------------------------------------- buttons
 def build_buttons():
     spots = []
-    for z in BUTTON_ZS:
-        loc, nrm, _, _ = UNI_BVH.ray_cast(Vector((P['FLAP_X'] + BUTTON_DX, -0.6, z)), Vector((0, 1, 0)), 1.0)
-        spots.append((loc, nrm, UNI_W.at(loc)))
+    for dx in BUTTON_DXS:
+        for z in BUTTON_ZS:
+            loc, nrm, _, _ = UNI_BVH.ray_cast(Vector((P['FLAP_X'] + dx, -0.6, z)), Vector((0, 1, 0)), 1.0)
+            spots.append((loc, nrm, UNI_W.at(loc)))
     return buttons_detail('Buttons', spots)
 
 

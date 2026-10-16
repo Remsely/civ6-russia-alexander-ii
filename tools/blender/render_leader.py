@@ -114,13 +114,23 @@ sc.render.resolution_percentage = 100
 sc.render.film_transparent = args.transparent
 sc.render.image_settings.file_format = 'PNG'
 sc.render.image_settings.color_mode = 'RGBA' if args.transparent else 'RGB'
-if not args.transparent:
-    world = sc.world or bpy.data.worlds.new('_World')
-    sc.world = world
-    world.use_nodes = True
-    bg = next(n for n in world.node_tree.nodes if n.type == 'BACKGROUND')
-    bg.inputs['Color'].default_value = (0.05, 0.05, 0.06, 1)
-    bg.inputs['Strength'].default_value = 1.0
+# The world: what metal and cloth reflect - a soft warm room light (the game's leader scenes are lit by an environment
+# too); the camera sees a plain dark background instead.
+world = sc.world or bpy.data.worlds.new('_World')
+sc.world = world
+world.use_nodes = True
+wnt = world.node_tree
+for nd in list(wnt.nodes):
+    wnt.nodes.remove(nd)
+out = wnt.nodes.new('ShaderNodeOutputWorld')
+env = wnt.nodes.new('ShaderNodeBackground'); env.inputs['Color'].default_value = (0.42, 0.36, 0.30, 1)
+env.inputs['Strength'].default_value = 0.6
+seen = wnt.nodes.new('ShaderNodeBackground'); seen.inputs['Color'].default_value = (0.05, 0.05, 0.06, 1)
+lp = wnt.nodes.new('ShaderNodeLightPath')
+mix = wnt.nodes.new('ShaderNodeMixShader')
+wnt.links.new(lp.outputs['Is Camera Ray'], mix.inputs['Fac'])
+wnt.links.new(env.outputs[0], mix.inputs[1]); wnt.links.new(seen.outputs[0], mix.inputs[2])
+wnt.links.new(mix.outputs[0], out.inputs['Surface'])
 
 
 def shoot(path, rw, rh):
