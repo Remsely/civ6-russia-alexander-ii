@@ -46,7 +46,8 @@ BUTTON_R, BUTTON_H = 0.0085, 0.0055
 BUTTON_ZS = (1.66, 1.60, 1.54, 1.48, 1.42, 1.36)  # above the belt
 BUTTON_DXS = (-0.024, 0.031)      # from the flap edge: a row either side of the piped closure, as in the portrait
 # Belt over the waist seam of the tunic; buckle plate taller than the belt, top corners cut off.
-BELT_THICK, BELT_EASE = 0.004, 0.001   # height and profile come from build_uniform.py (it takes the tunic in)
+BELT_THICK, BELT_EASE = 0.004, 0.001
+BELT_RED, BELT_EDGE = 0.24, 0.05  # across the belt: red borders to this, a gold edge outside them   # height and profile come from build_uniform.py (it takes the tunic in)
 BUCKLE_W, BUCKLE_H, BUCKLE_RAISE = 0.125, 0.088, 0.004
 BUCKLE_CUT_X, BUCKLE_CUT_Z = 0.020, 0.032  # cut-off top corners, measured on the plate in the picture
 BUCKLE_CLOSURE = 0.8               # the closure runs through the buckle this far across it (from the picture's left)
@@ -242,10 +243,17 @@ def cuff_tex(w, hh):
 
 
 def belt_tex(w, hh):
-    """The generated galloon (red edges, woven gold), mirrored repeats round the waist."""
+    """The portrait's belt: a gold galloon (the generated one, mirrored repeats round the waist) between wide red
+    borders, a thin gold edge outside them."""
     ref = load_gen('belt_galloon')
     u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
-    return sample(ref, mirrored(u, BELT_REPEATS), v)
+    c = sample(ref, mirrored(u, BELT_REPEATS), (v - BELT_RED) / (1 - 2 * BELT_RED))
+    red = ((v > BELT_EDGE) & (v < BELT_RED)) | ((v > 1 - BELT_RED) & (v < 1 - BELT_EDGE))
+    rib = 0.9 + 0.1 * np.sin(u * w * 0.8)[..., None]  # the red silk's weave across the belt
+    c[red] = (np.array(to_srgb(RED), np.float32) * 1.15 * rib)[red]
+    edge = (v <= BELT_EDGE) | (v >= 1 - BELT_EDGE)
+    c[edge] = np.array([0.78, 0.6, 0.27], np.float32)
+    return c
 
 
 def buckle_tex(w, hh):
