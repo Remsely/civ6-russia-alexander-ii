@@ -88,7 +88,8 @@ UNDER_EYE_AMOUNT = 0.9
 LID_FADE = 22                     # px: the upper lid's skin above the rim follows less and less up to the brow
 EYE_DEPTH = 0.011                 # eyeball centre (the lids' pivot) this far behind the eye opening
 EYE_R = (0.012, 0.016)            # the eyeballs' radius: the opening's half-width, within these (the model is ~2.1 m)
-EYE_IRIS, EYE_PUPIL = 0.56, 0.4   # iris radius / the opening's height (the lids touch it), pupil / iris
+EYE_IRIS, EYE_PUPIL = 0.66, 0.4   # iris radius / the opening's height (the lids cover its top and bottom, as in the
+                                  # portrait; touching it, the eyes stared), pupil / iris
 EYE_IRIS_RGB = (0.42, 0.46, 0.52)  # sRGB: the portrait's cool grey irises
 EYE_SUBDIV_R = 0.026              # the head's faces this near an opening split twice: its rim needs ~1 mm edges
 EYE_IN, EYE_OUT = 0.0008, 0.0005  # inside the opening the surface sinks this far into the eyeball, outside it (the
@@ -1080,22 +1081,40 @@ for v in hb.verts:
         HIMG[v] = (-1e4, -1e4)
 
 
+# The opening each eye takes: his left one, as the portrait painted it, for both - on his right side mirrored in the
+# face's midplane (the portrait's right eye is narrowed: from its own outline the openings came out a third apart in
+# height, one ball smaller and 5 mm lower than the other).
+EYE_FROM = {'l': 'l', 'r': 'l'}
+_EIMG = {}
+
+
+def eye_img(v, s):
+    """Where in head_input.png vertex v lies for eye s's outline: its own place, or its mirror image's for an eye
+    that takes the other's opening."""
+    if EYE_FROM[s] == s:
+        return HIMG[v]
+    if v not in _EIMG:
+        q = from_generated(mirror(v.co))[1]
+        _EIMG[v] = q if q is not None else (-1e4, -1e4)
+    return _EIMG[v]
+
+
 def lid_weight(v, s):
     """Upper lid weight for a blink of BLINK_DEG: rim to rim it grades so every point lands on the lower rim."""
-    e = EYE[s]
+    e, src = EYE[s], EYE[EYE_FROM[s]]
     if v.normal.dot(FWD) <= 0.3:
         return 0.0
-    x, y = HIMG[v]
-    up, lo = EYE_RIMS[s]['upper'], EYE_RIMS[s]['lower']
-    if not e['x0'] <= x <= e['x1']:
+    x, y = eye_img(v, s)
+    up, lo = EYE_RIMS[EYE_FROM[s]]['upper'], EYE_RIMS[EYE_FROM[s]]['lower']
+    if not src['x0'] <= x <= src['x1']:
         return 0.0
     yu, yl = interp(up, x), interp(lo, x)
     scale = e['deg'] / BLINK_DEG  # the narrower eye turns less
     if y > yl:
         return 0.0
     if y >= yu:
-        return (yl - y) / e['omax'] * scale
-    return (yl - yu) / e['omax'] * scale * (1 - smoothstep(yu - y, 0, LID_FADE))
+        return (yl - y) / src['omax'] * scale
+    return (yl - yu) / src['omax'] * scale * (1 - smoothstep(yu - y, 0, LID_FADE))
 
 
 def jaw_weight(v):
@@ -1231,16 +1250,17 @@ def fit_eyes():
     put behind the painted eye's middle poked out in front of the lids and left the painted eye showing beside it).
     The centre is the lids' blink pivot and the eye bone's head."""
     me = head.data
-    for s_, poly in EYE_POLY.items():
+    for s_ in EYE_POLY:
         e = EYE[s_]
+        poly = EYE_POLY[EYE_FROM[s_]]
         near = [hv for hv in hb.verts if (hv.co - e['pivot']).length < 0.035 and hv.normal.dot(FWD) > -0.2]
-        ins = {hv for hv in near if in_poly(HIMG[hv], poly)}
+        ins = {hv for hv in near if in_poly(eye_img(hv, s_), poly)}
         rim, edge_of = [], {}
         for hv in ins:
             for ed in hv.link_edges:
                 o = ed.other_vert(hv)
                 if o not in ins:
-                    da, db = edge_dist(HIMG[hv], poly), edge_dist(HIMG[o], poly)
+                    da, db = edge_dist(eye_img(hv, s_), poly), edge_dist(eye_img(o, s_), poly)
                     rim.append(hv.co.lerp(o.co, da / max(da + db, 1e-9)))
                     edge_of.setdefault(hv, []).append(rim[-1])
         P = np.array([q[:] for q in rim])
@@ -1275,7 +1295,7 @@ def fit_eyes():
         for hv, pts in edge_of.items():  # the inside vertices by the rim onto it, on the ball: the lid's edge runs
             q = min(pts, key=lambda t: (t - hv.co).length)  # along the outline, not zigzagging round its vertices
             me.vertices[hv.index].co = c + (q - c).normalized() * R
-        U3, L3 = e['U3'], e['L3']
+        U3, L3 = (e['U3'], e['L3']) if EYE_FROM[s_] == s_ else (mirror(EYE[EYE_FROM[s_]]['U3']), mirror(EYE[EYE_FROM[s_]]['L3']))
         ang = lambda q: math.atan2((q - c).z, (q - c).dot(FWD))  # noqa: E731
         e.update(pivot=c, R=R, h=(U3 - L3).length, deg=math.degrees(ang(U3) - ang(L3)), open=Vector(cen.tolist()))
         print('eye %s: r %.4f at %s, rim %d pts off the sphere %.4f..%.4f; %d sunk, %d lids lifted (most %.4f)'

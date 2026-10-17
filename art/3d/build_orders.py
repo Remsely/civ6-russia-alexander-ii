@@ -30,6 +30,7 @@ PALETTE = {
     'gold': (mat_util.GOLD_SRGB, 1.0, 0.3), 'silver': ((222, 224, 230), 0.55, 0.22), 'red': ((165, 18, 24), 0.0, 0.15),
     'blue': ((38, 82, 172), 0.0, 0.15), 'white': ((236, 234, 228), 0.0, 0.2), 'leather': ((14, 14, 16), 0.0, 0.35),
     'navy': ((20, 30, 78), 0.0, 0.15), 'dark_gold': ((150, 95, 38), 1.0, 0.45),
+    'pale_blue': ((112, 138, 192), 0.0, 0.15),
 }
 # the palette's cells are big (128 px): small ones bleed into the ribbons in the mipmaps
 ATLAS = {'pal': (0.0, 0.0, 1.0, 0.125), 'ribbons': (0.0, 0.125, 0.25, 0.25), 'scrown': (0.25, 0.125, 0.5, 0.25),
@@ -49,7 +50,7 @@ MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal', 'smedal']
 # The portrait's bar: seven ribbons side by side, edge to edge (overlapping, the stripes of one ran into the next),
 # straight strips with their tops in a line, the medals hanging from them and overlapping.
 BAR_X, BAR_Z = 0.06, 1.69          # left end of the bar (just right of the closure's piping), its top
-RIB_W, RIB_H = 0.015, 0.042        # a ribbon on the bar: width (also the step to the next), height
+RIB_W, RIB_H = 0.015, 0.048        # a ribbon on the bar: width (also the step to the next), height
 MEDAL_R, WCROSS_S = 0.0145, 0.021  # medals no wider than two ribbons: one over the other only at its neighbours
 RIB_T, MEDAL_T, MEDAL_DOME = 0.0006, 0.0014, 0.0008  # thicknesses: a ribbon on its mount, a medal (and its dome)
 # The bar tilts as the chest does under it as a whole (one slope: tops in a line, all parallel), each ribbon turned
@@ -66,10 +67,13 @@ NECK_CROSS_RAYS = 0.8                # the silver rays between its arms reach th
 BADGE = (0.128, 1.582, 0.012, 0.017)  # x, z, half-width, half-height of the gold badge under the bar: a crowned
                                      # openwork cartouche with a monogram (the portrait's), its crown above that
 SEAT_N = 5                           # seat(): rays across a piece's footprint each way
-STARS = [(0.15, 1.555, 0.045), (0.15, 1.475, 0.045)]  # x, z, radius; one above the other, as in the portrait - both
-                                     # moved out past the sash's edge as far as the one that needs it most
-STAR_OVER_SASH = 0.45                # how much of a star's radius may lie over the sash's edge
+STARS = [(670, 400, 0.021), (671, 460, 0.021)]  # px of the portrait (cast onto the cloth), radius: one above the
+                                     # other beside the sash, as there (~4.2 cm across; at 9 cm they stood out like
+                                     # shuriken)
+STAR_LIFT = 0.0015                   # off the cloth at the nearest
+STAR_FACING = 50.0                   # degrees: the cloth under a star faces the viewer at least this squarely
 LIFT = 0.003
+MEDAL_LIFT = 0.001                   # a medal off the cloth at the nearest
 # Sabre: pommel under the left palm, the blade hanging down and a little back along the left hip and leg.
 POMMEL = Vector((0.24, -0.15, 1.125))   # where the left palm is not found (no rig): fallback
 GRIP_L = 0.105                      # pommel to guard
@@ -330,15 +334,16 @@ def build_atlas():
 
     enamel_cross('wcross', 'white')
 
-    # the neck cross: Maltese (eight points), as in the portrait - silver, its arms filled with dark blue enamel inside
-    # a silver edge, a white ring round a dark blue medallion
+    # the neck cross: Maltese (eight points), as in the portrait - silver, its arms filled with pale blue-grey enamel
+    # inside a broad silver edge (dark navy, it read heavy and dark against the portrait's), a white ring round a dark
+    # blue medallion
     r, th, x, y = polar('cross')
     inside = in_poly(x, y, MALTESE)
-    inner = erode(inside, 9)
+    inner = erode(inside, 14)
     c = np.tile(srgb(PALETTE['silver'][0]), r.shape + (1,)); m = np.full_like(r, PALETTE['silver'][1])
     ro = np.full_like(r, 0.25)
     hg = np.where(inside, 0.6, 0.0)
-    c[inner] = srgb(PALETTE['navy'][0]); m[inner] = 0.0; ro[inner] = 0.12; hg[inner] = 0.5
+    c[inner] = srgb(PALETTE['pale_blue'][0]); m[inner] = 0.0; ro[inner] = 0.12; hg[inner] = 0.5
     for rr, col, met, h in ((0.27, 'silver', 0.55, 0.85), (0.23, 'white', 0.0, 0.9), (0.18, 'navy', 0.0, 0.95),
                             (0.05, 'silver', 0.55, 1.0)):
         d = r < rr
@@ -480,6 +485,22 @@ class Part:
         return ob
 
 
+REF_W, REF_CROWN, REF_SOLES, REF_X = 1024, 12, 1510, 515  # as build_regalia.py: the portrait as the 'ref' view
+YAW = float(sc.get('pose', {}).get('YAW_DEG', 0.0))
+_shown = [(o.matrix_world @ v.co).z for o in sc.objects if o.type == 'MESH' and not o.hide_render
+          and o.name != 'Orders' for v in o.data.vertices]
+HEIGHT = max(_shown) - min(_shown)
+
+
+def ref_hit(bvh, px, py):
+    """Where the portrait's pixel (px, py) lies on bvh's surface along the line of sight: point, normal."""
+    k = HEIGHT / (REF_SOLES - REF_CROWN)
+    a = math.radians(YAW)
+    right, d = Vector((math.cos(a), -math.sin(a), 0.0)), Vector((math.sin(a), math.cos(a), 0.0))
+    o = right * ((px - (REF_W - REF_X)) * k) + Vector((0.0, 0.0, (REF_SOLES - py) * k)) - d
+    return bvh.ray_cast(o, d, 2.0)[:2]
+
+
 def chest_frame(x, z, bvh=CHEST):
     """Point on the front of the chest at (x, z) and its frame: X along the cloth to his left, Y up it, N out."""
     loc, nrm = bvh.ray_cast(Vector((x, -1.0, z)), Vector((0, 1, 0)), 2.0)[:2]
@@ -557,7 +578,7 @@ def star_piece(part, frame, radius, w):
     (flat shaded, so the silver catches the light facet by facet); a raised enamel centre."""
     o, X, Y, N = frame
     P = lambda x, y, h: o + X * (x * radius) + Y * (y * radius) + N * h  # noqa: E731
-    centre = part.vert(P(0, 0, radius * 0.2), w)
+    centre = part.vert(P(0, 0, radius * 0.13), w)
     ring = []
     for k in range(32):
         a = math.pi / 2 + 2 * math.pi * k / 32
@@ -567,7 +588,7 @@ def star_piece(part, frame, radius, w):
     mid = []
     for k in range(32):
         x, y, _ = ring[k]
-        mid.append((x * 0.55, y * 0.55, radius * (0.12 if k % 2 == 0 else 0.08)))
+        mid.append((x * 0.55, y * 0.55, radius * (0.08 if k % 2 == 0 else 0.055)))
     rv = [part.vert(P(x, y, h), w) for x, y, h in ring]
     mv = [part.vert(P(x, y, h), w) for x, y, h in mid]
     uv = lambda q: uv_in('star', q[0] * 0.5 + 0.5, q[1] * 0.5 + 0.5)  # noqa: E731
@@ -577,10 +598,10 @@ def star_piece(part, frame, radius, w):
         part.face([mv[k], rv[k], rv[k2], mv[k2]], [uv(mid[k]), uv(ring[k]), uv(ring[k2]), uv(mid[k2])], smooth=False)
     # the enamel centre: a low dome over the ridges
     medal = []
-    cen = part.vert(P(0, 0, radius * 0.26), w)
+    cen = part.vert(P(0, 0, radius * 0.17), w)
     for k in range(24):
         a = 2 * math.pi * k / 24
-        medal.append(part.vert(P(math.cos(a) * 0.38, math.sin(a) * 0.38, radius * 0.18), w))
+        medal.append(part.vert(P(math.cos(a) * 0.38, math.sin(a) * 0.38, radius * 0.12), w))
     uvc = uv_in('star', 0.5, 0.5)
     for k in range(24):
         a1, a2 = 2 * math.pi * k / 24, 2 * math.pi * (k + 1) / 24
@@ -644,16 +665,7 @@ CROSS_OUTLINE = [(0.18, 0.18), (0.5, 1), (-0.5, 1), (-0.18, 0.18), (-1, 0.5), (-
 DISC = [(math.cos(2 * math.pi * k / 24), math.sin(2 * math.pi * k / 24)) for k in range(24)]
 
 
-def sash_edge(z, r):
-    """The sash's outer edge (largest x) on the front of his left breast between z - r and z + r, or None."""
-    sash = obj('Sash')
-    if sash is None:
-        return None
-    xs = [v.co.x for v in sash.data.vertices if abs(v.co.z - z) < r and v.co.y < -0.05 and v.co.x > 0]
-    return max(xs) if xs else None
-
-
-def rays(n_arms=4, width=0.16, inner=0.22, outer=NECK_CROSS_RAYS, off=math.pi / 4):
+def rays(n_arms=4, width=0.3, inner=0.22, outer=NECK_CROSS_RAYS, off=math.pi / 4):
     """Outline of bundles of rays between a cross's arms: per gap a fan of three points, in [-1, 1]."""
     pts = []
     for k in range(n_arms):
@@ -683,7 +695,8 @@ def build_orders():
     o, X, Y, N = seat(x, zc, s * 0.9, s * 0.9, NO_SASH, LIFT + 0.0015)
     print('neck cross at x %.3f z %.3f y %.3f (collar edge z %.3f)' % (x, zc, o.y, z_open))
     w = TORSO_W.at(o)
-    plaque(part, rays(), (o - N * 0.001, X, Y, N), s, 0.0015, 'star', w=w, flat=True)
+    plaque(part, rays(), (o - N * 0.0022, X, Y, N), s, 0.0015, 'ornate', w=w, flat=True)  # gold, as in the portrait;
+    # wholly under the cross (1 mm under it, the rays' fans came up through its enamel as needles)
     plaque(part, MALTESE, (o, X, Y, N), s, 0.003, 'cross', dome=0.003, w=w)
     collar = bvh_of([col, uni])
     notch_at = o + Y * (s * notch)
@@ -716,20 +729,22 @@ def build_orders():
         for v, (px_, py_) in zip(ptop, rect):  # the ribbon's own stripes: its share of the region
             for l in v.link_loops:
                 l[part.uv].uv = uv_in('ribbons', k / n + (px_ * 0.5 + 0.5) / n, py_ * 0.5 + 0.5)
-    off = 0.0  # all the medals as far off their ribbons' planes: as far as the one the cloth pushes out most
-    meds = []
+    # each medal hangs from its ribbon's end against the cloth under it (lifted only as far as its own place needs:
+    # all as far off as the one the cloth pushed out most, they hung a centimetre off the chest), overlapping its
+    # neighbours alternately in front and behind
+    offs = []
     for k, (o, X, Y, N) in enumerate(frames):
-        size = WCROSS_S if MEDALS[k] == 'wcross' else MEDAL_R
-        mc = o - Y * (RIB_H / 2 + size * 0.8)
-        meds.append((mc, size))
-        off = max(off, (lifted(mc, X, Y, N, size, size, LIFT) - mc).dot(N))
-    for k, ((mc, size), (o, X, Y, N)) in enumerate(zip(meds, frames)):
         kind = MEDALS[k]
+        size = WCROSS_S if kind == 'wcross' else MEDAL_R
+        mc = o - Y * (RIB_H / 2 + size * 0.8)
+        off = max((lifted(mc, X, Y, N, size * 0.75, size * 0.75, MEDAL_LIFT) - mc).dot(N), RIB_T + 0.0003)
         layer = 2 if kind == 'wcross' else k % 2
-        mc = mc + N * (max(off, RIB_T + 0.0004) + (MEDAL_T + MEDAL_DOME + 0.0006) * layer)
+        mc = mc + N * (off + (MEDAL_T + 0.0004) * layer)
+        offs.append(off)
         plaque(part, CROSS_OUTLINE if kind == 'wcross' else DISC, (mc, X, Y, N), size, MEDAL_T, kind,
                dome=MEDAL_DOME, w=w)
-    print('ribbon bar: %d ribbons from x %.3f, tops at z %.3f, medals %.4f off' % (n, BAR_X, BAR_Z, off))
+    print('ribbon bar: %d ribbons from x %.3f, tops at z %.3f, medals %.4f..%.4f off' % (
+        n, BAR_X, BAR_Z, min(offs), max(offs)))
     # the gold badge under the bar: the cartouche, scalloped round, its crown standing on it, both on the cloth's plane
     x, z, bw, bh = BADGE
     cs = bw * 0.8
@@ -741,12 +756,25 @@ def build_orders():
     plaque(part, cart, (o, X * (bw / bh), Y, N), bh, 0.0025, 'badge', dome=0.002, w=w)
     plaque(part, CROWN_OUTLINE, (o + N * 0.0008 + Y * (bh + cs * 0.75), X, Y, N), cs, 0.0025, 'ornate',
            dome=0.001, w=w)
-    # stars: on the cloth beside the sash, not on it; one above the other
-    x_all = max(max(x, (sash_edge(z, r * 0.8) or -1) + r * (1 - STAR_OVER_SASH)) for x, z, r in STARS)
-    for _, z, r in STARS:  # on the cloth's plane (over the sash's edge if that is under it): on the tangent at one
-        o, X, Y, N = seat(x_all, z, r * 0.8, r * 0.8, CHEST)  # point a star sank into the cloth at one side
+    # stars: where the portrait shows them, on the cloth's plane under each (on the tangent at one point a star
+    # sank into the cloth at one side)
+    a = math.radians(YAW)
+    view = Vector((math.sin(a), math.cos(a), 0.0))
+    cols = []
+    for px, py, r in STARS:
+        for _ in range(60):  # the model's chest is narrower than the painted one: in from its side to where the cloth
+            p, nrm = ref_hit(NO_SASH, px, py)  # still faces the viewer (past it, under the arm, a star stood edgeways)
+            if p is not None and nrm.dot(-view) > math.cos(math.radians(STAR_FACING)):
+                break
+            px -= 2
+        cols.append(px)
+    for _, py, r in STARS:  # one above the other, as in the portrait
+        px = min(cols)
+        p = ref_hit(NO_SASH, px, py)[0]
+        o, X, Y, N = seat(p.x, p.z, r * 0.8, r * 0.8, NO_SASH, STAR_LIFT)
         star_piece(part, (o, X, Y, N), r, TORSO_W.at(o))
-        print('star at x %.3f z %.3f' % (x_all, z))
+        print('star at px %d: x %.3f z %.3f, %.4f off the cloth at its middle' % (
+            px, o.x, o.z, (o - NO_SASH.ray_cast(o + N * 0.05, -N, 0.1)[0]).dot(N)))
     return part.build('Orders')
 
 

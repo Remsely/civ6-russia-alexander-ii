@@ -36,9 +36,9 @@ CLOTH = (0.0065, 0.007, 0.0105)    # the tunic's wool (build_uniform.CLOTH_RGB)
 # (by COLLAR_TURN, at most COLLAR_MAX_H); as in the portrait the halves stand apart at the front, their edges nearly
 # parallel, the tunic's dark collar between them up to the top (the white shirt collar's edge over it); the neck
 # stays behind it (build_pose.neck_in_collar).
-COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.075
+COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.068
 COLLAR_FLARE = 0.003              # the band widens downwards by at most this
-COLLAR_MIN_H = 0.07               # ... but at the front at least this tall (the portrait's collar: one pupil distance)
+COLLAR_MIN_H = 0.062              # ... but at the front at least this tall (the portrait's collar: ~6.5 cm at the front)
 COLLAR_FRONT_GAP = 0.018          # the opening at the front, at the top (x the radius / 0.08 m: ~1.6 cm half-width) ...
 COLLAR_FRONT_GAP_BOTTOM = 0.014   # ... and at the bottom edge (wider round: ~1.75 cm - the edges nearly parallel)
 COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)

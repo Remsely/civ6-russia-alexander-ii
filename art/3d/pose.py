@@ -8,24 +8,28 @@
 import bpy, math
 from mathutils import Vector, Matrix
 
-YAW_DEG = 18.0                     # the figure turned towards his left (the closure is right of centre in the portrait)
-SPINE_TWIST = (3.0, 4.0, 4.0)      # spine_01..03 about Z: the shoulders turned further than the hips (contrapposto)
+YAW_DEG = 15.0                     # the figure turned towards his left (the closure is right of centre in the portrait)
+SPINE_TWIST = (0.0, 1.0, 1.0)      # spine_01..03 about Z: the shoulders turned a little further than the hips
 SPINE_LEAN = (0.0, 0.0, 0.0)       # ... and tilted about Y: his left shoulder a little lower (the weight on the right leg)
-HEAD_YAW = (-17.5, -25.5)         # neck_01, head about Z: the head as the portrait saw it - its eyes, painted from the
-                                   # portrait, look into the camera; the face then turned a little to his right, as there
+HEAD_TURN = 0.0                    # degrees the face is turned from the shoulders towards his left: none - the head
+                                   # straight on them (straighten_head: by the eyes, not by set bone angles - the
+                                   # generated head sits on its bone a little turned and tilted, and turned by angles
+                                   # it stood askew); the eyes look into the camera
+HEAD_NECK_SHARE = 0.4              # of that turn the neck takes this much, the head the rest
 HEAD_PITCH = 0.0                   # head bent forward (degrees about X): none - bent, the chin went down into the collar
-CLAVICLE_DROP = 15.0               # degrees: the shoulders let down and sloping (the portrait's epaulettes sit ~4 cm
-                                   # under the body's own shoulder line; level, the shoulders looked square)
+CLAVICLE_DROP = 0.0                # degrees: the shoulders as the body has them (let down 15 deg to bring them to the
+                                   # portrait's epaulettes they slumped like an old man's: the epaulettes are fitted to
+                                   # the shoulders instead)
 # His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand over
 # the hilt's top in line with the forearm, back of the hand forward, fingers closed round the grip (as in the portrait;
-# bent down at the wrist it looked broken); his right arm hangs straight down by his side, the elbow at his side, the
-# forearm round the hip to the small of the back on the belt, the wrist just right of the spine, the hand over the
-# middle of the back, its back against it (hidden, as in the portrait - held out behind him it stood off the back and
-# twisted the shoulder; the elbow taken back and the hand reaching past the spine, the arm looked wrenched).
+# bent down at the wrist it looked broken); his right arm hangs down by his side, the elbow at his side and a little
+# back, the forearm round the hip to the small of the back, the hand on the belt's middle over the spine, its back
+# against the belt (hidden, as in the portrait). The wrist is reached by IK (aimed only, the forearm's own length put
+# the hand 5 cm past the spine, under the belt and off the back).
 # elbow: where the upper arm points (else a two-bone IK with the pole decides it); palm: the side the palm turns to.
 ARM = {
     'l': dict(wrist=(0.215, -0.11, 1.19), elbow=(0.33, 0.04, 1.40), hand_to=(0.195, -0.19, 1.15), palm=(-0.3, 0.3, -1.0)),
-    'r': dict(wrist=(-0.06, 0.15, 1.27), elbow=(-0.255, 0.03, 1.395), hand_to=(0.035, 0.155, 1.26), palm=(0, 1, 0)),
+    'r': dict(wrist=(-0.062, 0.135, 1.298), pole=(-0.42, 0.12, 1.40), hand_to=(0.07, 0.112, 1.298), palm=(0, 1, 0)),
 }
 # Right leg in front, carrying the weight; the left a step behind, its toe turned further out.
 LEG = {
@@ -35,7 +39,7 @@ LEG = {
 # Fingers: curl about each bone's own X (degrees per joint 1, 2, 3); thumb separately.
 CURL = {
     'l': dict(index=(55, 70, 45), middle=(60, 75, 45), ring=(65, 75, 45), pinky=(70, 70, 45), thumb=(15, 30, 25)),
-    'r': dict(index=(45, 55, 30), middle=(50, 60, 35), ring=(55, 60, 35), pinky=(60, 60, 35), thumb=(10, 25, 15)),
+    'r': dict(index=(65, 80, 45), middle=(70, 85, 45), ring=(75, 85, 45), pinky=(80, 80, 45), thumb=(15, 35, 25)),  # a loose fist on the belt
 }
 
 
@@ -140,8 +144,31 @@ def set_pose(rig):
             if cur.cross(want).dot(ax) < 0:
                 ang = -ang
             _aim(hand, arm['hand_to'], ang)
-    _turn_z(pbs['neck_01'], HEAD_YAW[0])
-    _turn_z(pbs['head'], HEAD_YAW[1], HEAD_PITCH)
+    straighten_head(pbs)
+
+
+def straighten_head(pbs):
+    """The face square to the shoulders (turned HEAD_TURN from them) and level: neck and head turned about Z till the
+    line between the eyes (eye_l, eye_r: build_head.py puts them at the eyeballs' middles) runs as the shoulders' line
+    (the spine's twist), then the head rolled about its own forward line till the eyes are at one height; bent forward
+    HEAD_PITCH."""
+    el, er = pbs.get('eye_l'), pbs.get('eye_r')
+    if el is None or er is None:
+        return
+    want = sum(SPINE_TWIST) + HEAD_TURN
+    line = el.head - er.head
+    yaw = want - math.degrees(math.atan2(line.y, line.x))
+    _turn_z(pbs['neck_01'], yaw * HEAD_NECK_SHARE)
+    _turn_z(pbs['head'], yaw * (1 - HEAD_NECK_SHARE), HEAD_PITCH)
+    line = el.head - er.head
+    q = line.rotation_difference(Vector((line.x, line.y, 0.0)))  # about the face's forward line
+    hb = pbs['head']
+    p = hb.head.copy()
+    hb.matrix = Matrix.Translation(p) @ q.to_matrix().to_4x4() @ Matrix.Translation(-p) @ hb.matrix
+    _upd()
+    line = el.head - er.head
+    print('head: turned %.1f deg, rolled %.1f deg; eyes %.4f m apart in height, their line %.1f deg from the '
+          'shoulders\'' % (yaw, math.degrees(q.angle), line.z, math.degrees(math.atan2(line.y, line.x)) - want))
 
 
 def bake(rig, h):

@@ -3,7 +3,7 @@ rest pose, into alexander_rest.blend), build_pose.py (the portrait's stance, clo
 build_regalia.py (epaulettes, sash, aiguillettes on the posed uniform, hanging as they would), build_orders.py
 (orders, medals, the sabre), build_dangles.py (bones for what swings loose), build_bake.py (the uniform's ambient occlusion) in background Blender (env BLENDER or
 the default 4.5 install), each one's last lines printed; stops on the first error.
-    python art/3d/build_all.py [--from uniform|details|head|pose|regalia|orders|dangles|bake]
+    python art/3d/build_all.py [--from uniform|details|head|pose|regalia|orders|dangles|bake] [--to <step>]
 """
 import os, subprocess, sys
 
@@ -13,7 +13,9 @@ STEPS = [('uniform', 'alexander_assembly.blend'), ('details', 'alexander_rest.bl
          ('pose', 'alexander_rest.blend'), ('regalia', 'alexander_leader.blend'), ('orders', 'alexander_leader.blend'),
          ('dangles', 'alexander_leader.blend'), ('bake', 'alexander_leader.blend')]
 start = sys.argv[sys.argv.index('--from') + 1] if '--from' in sys.argv else 'uniform'
-for name, blend in STEPS[[s for s, _ in STEPS].index(start):]:
+stop = sys.argv[sys.argv.index('--to') + 1] if '--to' in sys.argv else 'bake'
+order = [s for s, _ in STEPS]
+for name, blend in STEPS[order.index(start):order.index(stop) + 1]:
     p = subprocess.run([BLENDER, '-b', os.path.join(HERE, blend), '--python-exit-code', '1', '--python',
                         os.path.join(HERE, 'build_%s.py' % name)], capture_output=True, text=True, encoding='utf-8',
                        errors='replace')

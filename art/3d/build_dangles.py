@@ -104,15 +104,13 @@ if aig:
         top = pts[np.argmax(pts[:, 2])]
         head = Vector(((pts[:, 0].max() + pts[:, 0].min()) / 2, top[1], top[2] - 0.01))
         chain(aig, idx, 'dangle_loop_%d' % k, 'spine_03', head, low, 'loop', 0.0)
-# pencils: each hangs from its knot at the end of a loose cord
+# the pencil: one piece with its crook and knob (three islands), hanging from the knob at the end of its cord
 tips = bpy.data.objects.get('AiguilletteTips')
 if tips:
     tc = coords(tips)
-    for k, idx in enumerate(sorted(islands(tips.data), key=lambda ix: tc[ix, 0].mean())):
-        pts = tc[idx]
-        top = Vector(pts[np.argmax(pts[:, 2])]); low = Vector(pts[np.argmin(pts[:, 2])])
-        head = top + Vector((0, 0, 0.015))
-        chain(tips, idx, 'dangle_pencil_%d' % k, 'spine_03', head, low, 'pencil', 0.0)
+    idx = np.arange(len(tc))
+    top = Vector(tc[np.argmax(tc[:, 2])]); low = Vector(tc[np.argmin(tc[:, 2])])
+    chain(tips, idx, 'dangle_pencil_0', 'spine_03', top + Vector((0, 0, 0.005)), low, 'pencil', 0.0)
 
 # ---------------------------------------------------------------- epaulette fringe: swings from the rim
 for s in 'lr':

@@ -40,8 +40,9 @@ BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dis
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
 # on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.018, 0.03  # in the portrait the jaw and whiskers rest on the collar; it is
-                                  # higher at the back (round the turned head the neck showed under the jaw)
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.022, 0.018  # in the portrait the jaw and whiskers rest on the collar; it is
+                                  # a little higher at the back (round the turned head the neck showed under the jaw;
+                                  # 3 cm higher, the collar stood up like a tube round the neck)
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
 STAND_OFF = 0.006                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top)
 NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
