@@ -11,6 +11,7 @@
 # 3. Every mesh is baked as it is at the last frame, the pose applied as the rig's rest, the armature put back.
 import bpy, math, os, sys
 import numpy as np
+from mathutils import Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -32,10 +33,15 @@ SHOULDER_R = (0.06, 0.16)               # ... and the cloth round the shoulder j
 JOINT_ROUNDS, JOINT_CLEAR = 12, 0.006   # Taubin rounds; the cloth at least this off the skin there
 SLEEVE_MIN_R, ELBOW_PASSES = 0.05, 4    # the sleeve this far at least from the arm bones round the elbow; rounds
 UNTANGLE_TRIES, UNTANGLE_RINGS = 6, 4      # rounds of smoothing round the sheet's self-crossings; rings of neighbours
+TORSO_ROUNDS = 40                       # smooth_torso: Taubin rounds over the tunic's body above the belt
+TORSO_KEEP = (0.012, 0.03)              # ... none within the first of a button or the closure's edge, fully past the second
+UNI_IN, UNI_IN_BELOW, UNI_IN_SHIRT = 0.003, 0.004, 0.003  # uniform_in_collar: inside the collar by; from under
+                                        # its foot; up to over the shirt collar's lower edge
 COLLIDE = dict(distance_min=0.004, self_distance_min=0.003, collision_quality=4)
 LEADER_CM, LEADER_CAMERA = 150.0, (320.0, 0.0, 137.741)  # the export's height and the leader camera (leader space, cm)
 NECK_IN, NECK_EASE, NECK_ROUNDS = 0.008, 0.03, 12
 NECK_OVER = 0.004                       # ... or this far up over its top edge
+NECK_OUT = 0.003                        # ... or (the beard and whiskers, nearer its outside) this far out of it
 NECK_UP_DEPTH = (0.012, 0.025)          # from under the edge: up only down to the first, in only from the second  # the head inside the collar's inner side by this (the shirt collar
                                         # lies between); eased out over this much above its top edge; smoothing rounds
 
@@ -46,6 +52,9 @@ for o in list(bpy.data.objects):  # regalia are built on the posed uniform after
     if o.get('regalia'):
         bpy.data.objects.remove(o)
 names = [g.name for g in uni.vertex_groups]
+# the eye openings' middles in their eye bones' frames (the bones' rest changes when the stance is applied)
+EYE_OPEN = {s: rig.data.bones['eye_' + s].matrix_local.inverted() @ Vector(p)
+            for s, p in sc['head'].get('EYE_OPEN', {}).items()}
 
 
 def smoothstep(x, a, b):
@@ -364,6 +373,118 @@ for o in skinned:
         make_rigid(o)
 untangle()
 smooth_joints()
+
+
+def smooth_torso():
+    """A tailored tunic's body lies smooth over the chest and back: the simulated sheet crumpled there (the arms
+    taken back and down pull at it), and the orders, the stars and the aiguillettes, built on it afterwards, stood in
+    the dents askew. Above the belt and under the collar, away from the sleeves, the sheet is smoothed (Taubin), the
+    closure's step and the buttons' places left as they are; then kept JOINT_CLEAR off the body."""
+    from mathutils.bvhtree import BVHTree
+    from mathutils.kdtree import KDTree
+    me = uni.data
+    co = np.array([v.co[:] for v in me.vertices])
+    nb = [[] for _ in range(len(co))]
+    for e in me.edges:
+        a, b = e.vertices
+        nb[a].append(b); nb[b].append(a)
+    btn = bpy.data.objects.get('Buttons')
+    kd = KDTree(len(btn.data.vertices) if btn else 0)
+    if btn:
+        for i, v in enumerate(btn.data.vertices):
+            kd.insert(btn.matrix_world @ v.co, i)
+    kd.balance()
+    top = P['STAND_TOP_FRONT'] - 0.06
+    low = P['BELT_ZC'] + P['BELT_H'] / 2 + 0.01
+    arm = arm_w(uni)
+    k = np.zeros(len(co))
+    for i, c in enumerate(co):
+        if not low < c[2] < top + 0.03:
+            continue
+        w = smoothstep(c[2], low, low + 0.03) * (1 - smoothstep(c[2], top, top + 0.03))
+        w *= 1 - smoothstep(arm[i], 0.15, 0.5)
+        near = kd.find(c)[2] if btn else 1.0
+        edge = abs(c[0] - P['FLAP_X']) if c[1] < -0.03 else 1.0
+        w *= smoothstep(min(near, edge), *TORSO_KEEP)
+        k[i] = w
+    zone = np.where(k > 0)[0]
+    for _ in range(TORSO_ROUNDS):
+        for f in (0.6, -0.63):
+            lap = np.array([co[nb[i]].mean(0) - co[i] if nb[i] else np.zeros(3) for i in zone])
+            co[zone] += lap * (f * k[zone])[:, None]
+    tree = BVHTree.FromPolygons([v.co.copy() for v in h.data.vertices], [tuple(p.vertices) for p in h.data.polygons])
+    pushed = 0
+    for i in zone:
+        q = Vector(co[i])
+        loc, nrm, _, _ = tree.find_nearest(q, 0.05)
+        if loc is not None and (q - loc).dot(nrm) < JOINT_CLEAR:
+            co[i] = loc + nrm * JOINT_CLEAR
+            pushed += 1
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel())
+    me.update()
+    print('torso: %d cloth vertices smoothed, %d kept off the body' % (len(zone), pushed))
+
+
+smooth_torso()
+
+
+def uniform_in_collar():
+    """The tunic's own stand collar stays inside what is sewn over it: UNI_IN inside the gold collar's (and, in its
+    front opening, the dark stand's) inner side, measured at each height (the collar flares out lower down), from a
+    little under the collar's foot up; and no higher than just over the shirt collar's lower edge (the two lay on one
+    radius). Simulated, its front edge and piping came out through the dark stand in the opening, its ragged top edge
+    over the white shirt collar, and a fold through the collar's foot at the back."""
+    import bmesh
+    from mathutils.bvhtree import BVHTree
+    outer = [bpy.data.objects[n] for n in ('Collar', 'CollarStand') if n in bpy.data.objects]
+    shirt = bpy.data.objects.get('ShirtCollar')
+    if not outer or shirt is None:
+        return
+    cb = bmesh.new()
+    for o in outer:
+        me = o.data.copy(); me.transform(o.matrix_world); cb.from_mesh(me); bpy.data.meshes.remove(me)
+    tree = BVHTree.FromBMesh(cb)
+    O = np.array([v.co[:] for v in cb.verts])
+    cb.free()
+    S_ = np.array([(shirt.matrix_world @ v.co)[:] for v in shirt.data.vertices])
+    ax = O[:, :2].mean(0)
+    nb = 72
+
+    def bins(A):
+        d = A[:, :2] - ax
+        return np.floor((np.arctan2(d[:, 0], -d[:, 1]) + np.pi) / (2 * np.pi) * nb).astype(int) % nb
+    ob, sb = bins(O), bins(S_)
+    bot = np.array([O[ob == k, 2].min() if (ob == k).any() else np.nan for k in range(nb)])
+    s_bot = np.array([S_[sb == k, 2].min() if (sb == k).any() else np.nan for k in range(nb)])
+    me = uni.data
+    co = np.array([v.co[:] for v in me.vertices])
+    ub = bins(co)
+    moved = 0
+    for i in range(len(co)):
+        k = ub[i]
+        if np.isnan(bot[k]) or co[i, 2] < bot[k] - UNI_IN_BELOW:
+            continue
+        d = Vector((co[i, 0] - ax[0], co[i, 1] - ax[1], 0.0))
+        r = d.length
+        if r < 1e-4 or r > 0.15:
+            continue
+        z = min(co[i, 2], s_bot[k] + UNI_IN_SHIRT) if not np.isnan(s_bot[k]) else co[i, 2]
+        hit = tree.ray_cast(Vector((ax[0], ax[1], z)), d.normalized(), 0.2)[0]
+        if hit is None:
+            continue
+        lim = (hit.xy - Vector(ax)).length - UNI_IN
+        w = smoothstep(co[i, 2], bot[k] - UNI_IN_BELOW, bot[k] + 0.004)
+        r_new = r + (min(r, lim) - r) * w
+        if abs(r_new - r) > 1e-6 or z != co[i, 2]:
+            co[i, :2] = ax + np.array(d.normalized().xy[:]) * r_new
+            co[i, 2] = z
+            moved += 1
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel())
+    me.update()
+    print('tunic stand collar: %d vertices taken in under the collar' % moved)
+
+
+uniform_in_collar()
 activate(rig)
 bpy.ops.object.mode_set(mode='POSE')
 bpy.ops.pose.select_all(action='SELECT')
@@ -377,7 +498,9 @@ for pb in rig.pose.bones:
 def aim_eyes():
     """The eyeballs (build_head.py) turned in the stance to look into the leader camera - where the diplomacy screen's
     camera stands in front of the figure (as tools/blender/render_leader.py places it: the export turns the model by
-    90 + YAW_DEG and scales it to 150 cm). The eye bones keep their rest; the eyeballs' mesh turns about them."""
+    90 + YAW_DEG and scales it to 150 cm). Each iris goes where the camera sees its opening's middle (the generated
+    openings are not alike: both balls turned straight at the camera, one iris sat by the nose - a squint). The eye
+    bones keep their rest; the eyeballs' mesh turns about them."""
     from mathutils import Matrix, Vector
     eyes = bpy.data.objects.get('Eyes')
     if eyes is None:
@@ -390,7 +513,16 @@ def aim_eyes():
     for s in 'lr':
         b = rig.data.bones['eye_' + s]
         c = b.head_local
-        q = (b.tail_local - c).normalized().rotation_difference((cam - c).normalized())
+        aim = cam
+        if s in EYE_OPEN:  # the ray from the camera through the opening's middle, where it meets the ball
+            o = b.matrix_local @ EYE_OPEN[s]
+            R = sc['head']['EYE_R'][s]
+            u = (o - cam).normalized()
+            t = u.dot(c - cam)
+            disc = R * R - ((cam + u * t) - c).length_squared
+            if disc > 0:
+                aim = c + ((cam + u * (t - math.sqrt(disc))) - c) * 10.0
+        q = (b.tail_local - c).normalized().rotation_difference((aim - c).normalized())
         gi = names.index('eye_' + s)
         for v in eyes.data.vertices:
             if any(g.group == gi and g.weight > 0.5 for g in v.groups):
@@ -403,10 +535,11 @@ aim_eyes()
 
 
 def neck_in_collar():
-    """Nothing of the head (neck, throat, chin, the whiskers' ends) outside the collar under its top edge: in the
-    stance the head turns in the collar and the neck and the right whisker came out through it. Each head vertex under
-    the collar's top (per direction round it) further out than the collar's inner side less NECK_IN goes in to there,
-    or up to NECK_OVER over the edge if that is nearer (the chin and whiskers rest on the collar); the move is spread
+    """Nothing of the head in the collar's wall under its top edge: in the stance the head turns in the collar and the
+    neck and the right whisker came out through it. Each head vertex under the collar's top (per direction round it)
+    in its wall: nearer its outside, out to NECK_OUT over it (the beard and the whiskers' ends hang over the collar, as
+    in the portrait - lifted over its edge, the beard's underside was a flat shelf with shards round it); nearer its
+    inside, in to its inner side less NECK_IN, or up to NECK_OVER over the edge if just under it; the move spread
     smoothly over NECK_EASE round it (no crease)."""
     import bmesh
     from mathutils import Vector
@@ -422,10 +555,14 @@ def neck_in_collar():
     tree = BVHTree.FromBMesh(cb)
     ax = sum((v.co for v in cb.verts), Vector()) / len(cb.verts)
     zbot = min(v.co.z for v in cb.verts)
-    tops = {}
+    tops, outer = {}, {}
     for v in cb.verts:
         k = int(math.degrees(math.atan2(v.co.x - ax.x, -(v.co.y - ax.y))) // 5)
         tops[k] = max(tops.get(k, 0.0), v.co.z)
+    for v in cb.verts:  # its outside up by the top (it flares out lower down)
+        k = int(math.degrees(math.atan2(v.co.x - ax.x, -(v.co.y - ax.y))) // 5)
+        if v.co.z > tops[k] - 0.015:
+            outer[k] = max(outer.get(k, 0.0), (v.co - ax).xy.length)
     cb.free()
     me = head.data
     co = np.array([v.co[:] for v in me.vertices])
@@ -439,7 +576,8 @@ def neck_in_collar():
         d = Vector((c[0] - ax.x, c[1] - ax.y, 0.0))
         if d.length < 1e-4:
             continue
-        top = tops.get(int(math.degrees(math.atan2(d.x, -d.y)) // 5), 0.0)
+        kb = int(math.degrees(math.atan2(d.x, -d.y)) // 5)
+        top = tops.get(kb, 0.0)
         if c[2] > top + NECK_EASE:
             continue
         zone[i] = True
@@ -448,7 +586,11 @@ def neck_in_collar():
         if hit[0] is None:
             continue
         allowed = (hit[0] - o).length - NECK_IN
-        if c[2] <= top + NECK_OVER and d.length > allowed:
+        out_r = outer.get(kb, 0.0) + NECK_OUT
+        if c[2] <= top and d.length > (allowed + NECK_IN + out_r) / 2:  # nearer the outside: out over it
+            disp[i] = np.array(d.normalized()[:]) * max(out_r - d.length, 0.0)
+            fixed[i] = True
+        elif c[2] <= top + NECK_OVER and d.length > allowed:
             inward, upward = d.length - allowed, top + NECK_OVER - c[2]
             # just under the edge (the chin, the whiskers' ends) up over it - pulled in, the chin came out a cone;
             # deeper (the neck) in; between them blended by the depth (picked either way, they left a ragged edge)

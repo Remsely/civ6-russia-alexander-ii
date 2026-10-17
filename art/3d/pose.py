@@ -18,13 +18,14 @@ CLAVICLE_DROP = 15.0               # degrees: the shoulders let down and sloping
                                    # under the body's own shoulder line; level, the shoulders looked square)
 # His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand over
 # the hilt's top in line with the forearm, back of the hand forward, fingers closed round the grip (as in the portrait;
-# bent down at the wrist it looked broken); his right arm hangs close by his side, the elbow a little back, the forearm
-# across the small of the back on the belt, the back of the hand against it (hidden, as in the portrait - held out
-# behind him it stood off the back and twisted the shoulder).
+# bent down at the wrist it looked broken); his right arm hangs straight down by his side, the elbow at his side, the
+# forearm round the hip to the small of the back on the belt, the wrist just right of the spine, the hand over the
+# middle of the back, its back against it (hidden, as in the portrait - held out behind him it stood off the back and
+# twisted the shoulder; the elbow taken back and the hand reaching past the spine, the arm looked wrenched).
 # elbow: where the upper arm points (else a two-bone IK with the pole decides it); palm: the side the palm turns to.
 ARM = {
     'l': dict(wrist=(0.215, -0.11, 1.19), elbow=(0.33, 0.04, 1.40), hand_to=(0.195, -0.19, 1.15), palm=(-0.3, 0.3, -1.0)),
-    'r': dict(wrist=(-0.035, 0.14, 1.265), elbow=(-0.25, 0.075, 1.36), hand_to=(0.05, 0.125, 1.255), palm=(0, 1, 0)),
+    'r': dict(wrist=(-0.06, 0.15, 1.27), elbow=(-0.255, 0.03, 1.395), hand_to=(0.035, 0.155, 1.26), palm=(0, 1, 0)),
 }
 # Right leg in front, carrying the weight; the left a step behind, its toe turned further out.
 LEG = {

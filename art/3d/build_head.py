@@ -49,7 +49,6 @@ EAR_NEAR = 0.004                  # ... and this close to an ear vertex of MPFB'
 EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin times this
 NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 16  # top ring this far inside the cut's outline; segments, rings
-NECK_TUBE_Z = 1.76                # the neck tube's girth measured here (inside the collar: higher up the jaw is in it)
 NECK_TWIST_ZS = (1.84, 1.90)       # the neck's turn spreads between these heights (head bone above, chest below): over
                                   # the collar's front top - inside it the neck stays with the chest (the collar does
                                   # not turn: the oval neck turned in it came out through it)
@@ -744,17 +743,17 @@ gbm.free()
 
 def neck_source():
     """The neck: a plain smooth tube from inside the tunic's collar (NECK_Z0) up into the head (NECK_INTO above the
-    cut), no anatomy - MPFB's neck, squeezed into the collar, made bumps where it ran into the jaw. Its rings are the
-    collar's ellipse (head_shape.NECK_*, never outside the cut's outline less NECK_INSET), the centre moving from the
-    collar's to the cut's; both ends capped."""
+    cut), no anatomy - MPFB's neck, squeezed into the collar, made bumps where it ran into the jaw. Straight up the
+    collar's axis, its rings the collar's ellipse (head_shape.NECK_*), only the top ones kept inside the cut's outline
+    less NECK_INSET (measured round the same axis: round the cut's own middle, far forward under the jaw, the tube
+    leant forward and its back was cut away - a thin crooked neck with a gap behind it in the collar); ends capped."""
     ax = sc['uniform']['NECK_AXIS']
     c0 = Vector((ax[0], ax[1] + head_shape.NECK_C_DY, NECK_Z0))
     cut = CHIN_Z - NECK_CUT
-    c1 = sum(RIM_PTS, Vector()) / len(RIM_PTS)
     n = NECK_SEGS
     rim_r = [0.0] * n
-    for p in RIM_PTS:  # the cut's outline per direction round its centre
-        d = p.xy - c1.xy
+    for p in RIM_PTS:  # the cut's outline per direction round the collar's axis
+        d = p.xy - c0.xy
         k = int((math.atan2(d.x, -d.y) % (2 * math.pi)) / (2 * math.pi) * n) % n
         rim_r[k] = max(rim_r[k], d.length)
     for _ in range(n):
@@ -767,14 +766,15 @@ def neck_source():
     for i in range(NECK_RINGS + 1):
         t = i / NECK_RINGS
         z = NECK_Z0 + (cut + NECK_INTO - NECK_Z0) * t
-        w = smoothstep(z, NECK_Z0 + 0.02, cut)  # collar ellipse below, the cut's outline above
-        c = c0.xy.lerp(c1.xy, w)
+        w = smoothstep(z, cut - 0.01, cut)  # the collar's ellipse, at the top inside the cut's outline
+        c = c0.xy
         ring = []
         for k in range(n):
             a = 2 * math.pi * (k + 0.5) / n
             d = Vector((math.sin(a), -math.cos(a)))
             # the collar's ellipse all the way up (inside the jaw's cut): wider, it shows over the collar
-            r = min(head_shape.neck_radius(d.x, d.y) * NECK_FIT, rim_r[k] - NECK_INSET)
+            r = head_shape.neck_radius(d.x, d.y) * NECK_FIT
+            r = r + (min(r, rim_r[k] - NECK_INSET) - r) * w
             ring.append(b.verts.new((c.x + d.x * r, c.y + d.y * r, z)))
         rings.append(ring)
     for r0, r1 in zip(rings, rings[1:]):
@@ -1277,7 +1277,7 @@ def fit_eyes():
             me.vertices[hv.index].co = c + (q - c).normalized() * R
         U3, L3 = e['U3'], e['L3']
         ang = lambda q: math.atan2((q - c).z, (q - c).dot(FWD))  # noqa: E731
-        e.update(pivot=c, R=R, h=(U3 - L3).length, deg=math.degrees(ang(U3) - ang(L3)))
+        e.update(pivot=c, R=R, h=(U3 - L3).length, deg=math.degrees(ang(U3) - ang(L3)), open=Vector(cen.tolist()))
         print('eye %s: r %.4f at %s, rim %d pts off the sphere %.4f..%.4f; %d sunk, %d lids lifted (most %.4f)'
               % (s_, R, tuple(round(x, 3) for x in c), len(rim), L.min() - R, L.max() - R, sunk, lifted, worst))
     me.update()
@@ -1354,8 +1354,10 @@ def neck_weights():
     vg = head.vertex_groups
     names = [g.name for g in vg]
     ax = Vector(sc['uniform']['NECK_AXIS'])
+    ax.y += head_shape.NECK_C_DY  # the tube's own axis (neck_source)
     co = [v.co for v in head.data.vertices]
-    sl = [c for c in co if NECK_TUBE_Z - 0.01 < c.z < NECK_TUBE_Z + 0.01]
+    # its girth over the straight stretch (decimated, a straight tube has few vertices: a thin slice missed most)
+    sl = [c for c in co if NECK_Z0 + 0.003 < c.z < CHIN_Z - NECK_CUT - 0.012]
     rx = max(abs(c.x - ax.x) for c in sl); ry = max(abs(c.y - ax.y) for c in sl)
     for v in head.data.vertices:
         c = v.co
@@ -1465,7 +1467,11 @@ def eyeballs():
 
 
 eyeballs()
-hd = dict(sc['head']); hd['BLINK_DEG'] = BLINK_DEG; sc['head'] = hd
+hd = dict(sc['head']); hd['BLINK_DEG'] = BLINK_DEG
+# for build_pose.py's aim_eyes: each opening's middle (its rim's) and the eyeball's radius, rest pose
+hd['EYE_OPEN'] = {s: list(e['open']) for s, e in EYE.items()}
+hd['EYE_R'] = {s: e['R'] for s, e in EYE.items()}
+sc['head'] = hd
 print('head: %d verts, %d faces' % (len(head.data.vertices), len(head.data.polygons)))
 bpy.ops.outliner.orphans_purge(do_recursive=True)
 bpy.ops.wm.save_as_mainfile(filepath=OUT, compress=True)
