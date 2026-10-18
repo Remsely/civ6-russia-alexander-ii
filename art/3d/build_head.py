@@ -35,6 +35,8 @@ HAIR_CROWN = (0.04, 2.08)          # (y, z) the hair grows away from: the crown,
 HAIR_STREAKS = ((60, 1.0), (150, 0.6), (380, 0.3))  # strands across the hair: (per metre, weight)
 HAIR_HUE = 0.85                    # ... all of it this much towards the hue of the portrait's hair
 HAIR_CONTRAST, HAIR_RELIEF = 0.25, 1.0  # strands lighter / darker by this; their ridges (px of height)
+HAIR_TONE = 0.75                  # hair, whiskers and moustache this much as bright as head_input.png's: in
+                                  # alexander_ii_full.png they are a deeper brown (the generated head's read pale)
 PORTRAIT = os.path.join(HERE, 'head', 'head_input.png')  # what the head was generated from: its front view
 TEX = 2048
 HEAD_Z = 1.72                     # the neck starts here, inside the tunic's collar
@@ -1167,7 +1169,7 @@ def hair_detail():
     front = (hw > 0.9) & cov & (facing > 0.6)
     target = np.median(chroma[front], 0)
     chroma = chroma + (target - chroma) * (HAIR_HUE * k)
-    rgb = chroma * lum[..., None]
+    rgb = chroma * lum[..., None] * (1 - (1 - HAIR_TONE) * (hw * cov))[..., None]
     px[..., :3] = np.clip(rgb * (1 + HAIR_CONTRAST * s[..., None] * k), 0, 1)
     # the baked islands (and the bake's own margin) padded out over the background: no dark rims on the small ones
     px[..., :3] = mat_util.pad(px[..., :3], px[..., :3].max(-1) > 0.004)

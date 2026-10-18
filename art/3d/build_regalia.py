@@ -80,8 +80,8 @@ THREAD_SRGB = (228, 156, 38)     # gold thread: the portrait's saturated yellow 
                                  # peach on matt thread)
 THREAD_SHEEN = (0.6, 0.35)       # thread's sheen (Principled sheen weight, roughness): soft fibre, not metal
 # Sash: a band 'SASH_W' wide round the torso in the plane through the top of the right shoulder and the left hip.
-SASH_SHOULDER = Vector((-0.14, 0.0, 1.76))   # in the portrait it runs up close by the collar
-SASH_HIP = Vector((0.17, 0.0, 1.31))   # the lower edge on the belt's top at the side
+SASH_SHOULDER = Vector((-0.165, 0.0, 1.77))  # in the portrait it runs up close by the collar
+SASH_HIP = Vector((0.20, 0.0, 1.27))   # the lower edge on the belt's top at the side
 SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.12, 0.005, 0.002, 320  # the portrait's band: ~12.5 cm wide
 SASH_RELAX = 40                  # rounds of smoothing the band and pushing it out of the cloth
 SASH_TIGHTEN = 25                # rounds of envelope() of the cloth the sash lies on
@@ -131,6 +131,7 @@ PENCIL_PROFILE = [(0.0, 0.0), (0.004, 0.0062), (0.012, 0.0082), (0.045, 0.0088),
                   (0.66, 0.0058, True), (0.86, 0.0046, True), (0.87, 0.0064), (0.89, 0.0064), (0.90, 0.0045),
                   (0.97, 0.0016), (0.985, 0.0024), (1.0, 0.0)]
 PENCIL_FLUTES, PENCIL_FLUTE_D = 10, 0.0009  # flutes round the shafts and their depth
+PENCIL_K = 1.35                  # every radius of the profile times this: the portrait's pencil is ~2.2 cm thick
 CORD_UV_LEN = 0.6                # metres of cord over the width of its atlas region (the twist repeats along it)
 
 ATLAS = {
@@ -1000,7 +1001,7 @@ def pencil_r(t):
     """The pencil's radius at t along it (PENCIL_PROFILE)."""
     for (t0, r0, *_), (t1, r1, *_) in zip(PENCIL_PROFILE, PENCIL_PROFILE[1:]):
         if t0 <= t <= t1:
-            return r0 + (r1 - r0) * (t - t0) / max(t1 - t0, 1e-9)
+            return (r0 + (r1 - r0) * (t - t0) / max(t1 - t0, 1e-9)) * PENCIL_K
     return 0.0
 
 
@@ -1009,8 +1010,8 @@ def pencil(bm, uvs, top, axis, length, sides=20):
     with PENCIL_FLUTES grooves round them; one closed surface, chased all over (loop UVs in bm's 'UVMap': round it
     along u, along it along v of the 'chased' region)."""
     prof = []
-    for k in PENCIL_PROFILE:  # resample: the flutes need rings between the knots
-        prof.append(k)
+    for t_, r_, *f_ in PENCIL_PROFILE:  # resample: the flutes need rings between the knots
+        prof.append((t_, r_ * PENCIL_K, *f_))
     rows = []
     for (t0, r0, *f0), (t1, r1, *f1) in zip(prof, prof[1:]):
         n = max(1, int((t1 - t0) * length / 0.004))

@@ -67,17 +67,23 @@ NECK_CROSS_RAYS = 0.8                # the silver rays between its arms reach th
 BADGE = (0.128, 1.582, 0.012, 0.017)  # x, z, half-width, half-height of the gold badge under the bar: a crowned
                                      # openwork cartouche with a monogram (the portrait's), its crown above that
 SEAT_N = 5                           # seat(): rays across a piece's footprint each way
-STARS = [(670, 400, 0.021), (671, 460, 0.021)]  # px of the portrait (cast onto the cloth), radius: one above the
-                                     # other beside the sash, as there (~4.2 cm across; at 9 cm they stood out like
+STARS = [(668, 403, 0.026), (668, 463, 0.026)]  # px of the portrait (cast onto the cloth), radius: one above the
+                                     # other beside the sash, as there (~5 cm across; at 9 cm they stood out like
                                      # shuriken)
 STAR_LIFT = 0.0015                   # off the cloth at the nearest
-STAR_FACING = 50.0                   # degrees: the cloth under a star faces the viewer at least this squarely
+STAR_FACING = 62.0                   # degrees: the cloth under a star faces the viewer at least this squarely
 LIFT = 0.003
 MEDAL_LIFT = 0.001                   # a medal off the cloth at the nearest
 # Sabre: pommel under the left palm, the blade hanging down and a little back along the left hip and leg.
 POMMEL = Vector((0.24, -0.15, 1.125))   # where the left palm is not found (no rig): fallback
 GRIP_L = 0.105                      # pommel to guard
 GRIP_IN_PALM = 0.022                # the pommel this far from the hand's axis towards the palm (the fingers close round)
+HILT_K = 1.3                        # the hilt's thickness (grip, pommel, guard) times its first build's: the portrait's
+                                    # hilt is a big gilt one, the grip filling the fist
+BOW_R, BOW_BULGE = 0.0045, 0.028    # the knuckle bow's radius, how far it bows out (a thin wire close to the grip did not
+                                    # show under the hand)
+BOW_SIDE = Vector((-0.6, -0.8, 0.0))  # ... towards the front and his middle: in the portrait it curves to the left of the
+                                    # grip down to the guard
 SCABBARD_L, SCABBARD_W, SCABBARD_D = 0.86, 0.048, 0.028
 SWORD_CLEAR = 0.012                 # off the skirt, trousers and boot
 SWORD_DROP = Vector((0.035, 0.03, -1.0))  # the scabbard hangs nearly straight down, a little out and back
@@ -857,7 +863,7 @@ def build_sabre():
     part = Part()
     w = TORSO_W.at(Vector((0.2, 0.0, 1.2)))  # the pelvis and the left hip, like the belt it hangs from
     axis = (GUARD - POMMEL).normalized()
-    fwd = Vector((0, -1, 0)); fwd = (fwd - axis * fwd.dot(axis)).normalized()
+    fwd = BOW_SIDE.normalized(); fwd = (fwd - axis * fwd.dot(axis)).normalized()
     side = axis.cross(fwd).normalized()
     tip = GUARD + AXIS * SCABBARD_L
     n = 60
@@ -916,18 +922,21 @@ def build_sabre():
     for i, p in enumerate(grip):
         swell = 1 + 0.12 * math.sin(math.pi * i / grip_n)
         g_rings.append([part.vert(p + (fwd * math.cos(2 * math.pi * k / gs) * 0.0105
-                                       + side * math.sin(2 * math.pi * k / gs) * 0.0088) * swell, w)
+                                       + side * math.sin(2 * math.pi * k / gs) * 0.0088) * swell * HILT_K, w)
                         for k in range(gs)])
     loft(part, g_rings, lambda i, k: [pal_uv('gold' if (k - i) % 3 else 'dark_gold')] * 4)
-    lathe(part, POMMEL, -axis, [(-0.004, 0.0105), (0.004, 0.012), (0.011, 0.0115), (0.016, 0.008), (0.019, 0.0)],
+    lathe(part, POMMEL, -axis, [(a * HILT_K, r * HILT_K) for a, r in
+                                ((-0.004, 0.0105), (0.004, 0.012), (0.011, 0.0115), (0.016, 0.008), (0.019, 0.0))],
           lambda i, k: uv_in('ornate', i / 4, abs(k / 12 * 2 - 1)), w, 12)
     # guard: an oval plate, a bar across it front to back ending in a roundel either end
-    lathe(part, GUARD, axis, [(-0.004, 0.0), (-0.004, 0.016), (0.003, 0.017), (0.005, 0.013), (0.005, 0.0)],
+    lathe(part, GUARD, axis, [(a * HILT_K, r * HILT_K) for a, r in
+                              ((-0.004, 0.0), (-0.004, 0.016), (0.003, 0.017), (0.005, 0.013), (0.005, 0.0))],
           lambda i, k: pal_uv('gold'), w, 16, ref=fwd)
-    bar = [GUARD - fwd * 0.03 + fwd * (0.066 * j / 6) - axis * 0.001 for j in range(7)]
-    tube(part, bar, 0.0042, lambda i, k: pal_uv('gold'), w, sides=10)
+    bar = [GUARD - fwd * 0.03 * HILT_K + fwd * (0.066 * HILT_K * j / 6) - axis * 0.001 for j in range(7)]
+    tube(part, bar, 0.0042 * HILT_K, lambda i, k: pal_uv('gold'), w, sides=10)
     for end in (bar[0], bar[-1]):
-        lathe(part, end - side * 0.0035, side, [(0.0, 0.0), (0.0, 0.0085), (0.007, 0.0085), (0.007, 0.0)],
+        lathe(part, end - side * 0.0035 * HILT_K, side, [(a * HILT_K, r * HILT_K) for a, r in
+                                                       ((0.0, 0.0), (0.0, 0.0085), (0.007, 0.0085), (0.007, 0.0))],
               lambda i, k: uv_in('ornate', 0.5 + 0.5 * math.cos(2 * math.pi * k / 14), 0.5), w, 14, ref=fwd)
     # langets: shield-shaped plates down over the scabbard's mouth either side
     shield = [(-0.6, 1.0), (0.6, 1.0), (0.6, -0.15), (0.0, -1.0), (-0.6, -0.15)]
@@ -935,9 +944,9 @@ def build_sabre():
         o = GUARD + axis * 0.022 + side * sg * (SCABBARD_D / 2 * MOUNT_PROUD + 0.0005)
         plaque(part, shield, (o, fwd, -axis, side * sg), 0.019, 0.0018, 'ornate', w=w)
     # knuckle bow: from the bar's front end up to the pommel, bowed forward
-    a0, a1 = bar[-1], POMMEL + fwd * 0.012 + axis * 0.004
-    bow = [a0.lerp(a1, j / 16) + fwd * 0.012 * math.sin(math.pi * j / 16) for j in range(17)]
-    tube(part, bow, 0.0026, lambda i, k: pal_uv('gold'), w, sides=8)
+    a0, a1 = bar[-1], POMMEL + fwd * 0.012 * HILT_K + axis * 0.004
+    bow = [a0.lerp(a1, j / 16) + fwd * BOW_BULGE * math.sin(math.pi * j / 16) for j in range(17)]
+    tube(part, bow, BOW_R, lambda i, k: pal_uv('gold'), w, sides=10)
     sabre = part.build('Sabre')
     # sword knot (its own object, build_dangles.py lets it swing): a braided cord from the bow's foot down along the
     # scabbard to its ball and tassel
