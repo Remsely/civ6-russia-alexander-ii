@@ -11,15 +11,19 @@ from mathutils import Vector, Matrix
 YAW_DEG = 15.0                     # the figure turned towards his left (the closure is right of centre in the portrait)
 SPINE_TWIST = (0.0, 1.0, 1.0)      # spine_01..03 about Z: the shoulders turned a little further than the hips
 SPINE_LEAN = (0.0, 0.0, 0.0)       # ... and tilted about Y: his left shoulder a little lower (the weight on the right leg)
-HEAD_TURN = 0.0                    # degrees the face is turned from the shoulders towards his left: none - the head
-                                   # straight on them (straighten_head: by the eyes, not by set bone angles - the
-                                   # generated head sits on its bone a little turned and tilted, and turned by angles
-                                   # it stood askew); the eyes look into the camera
+HEAD_TURN = -19.0                  # degrees the face is turned from the shoulders towards his left: to his right, nearly
+                                   # square to the camera, as in the portrait (fitted to its eyes' middle, nose, eye line
+                                   # and left ear in the 'ref' view). The head is symmetric about the body's midplane
+                                   # (head_shape.symmetrize) and squared by its eyes first (straighten_head), so it sits
+                                   # straight on the neck however far it turns.
 HEAD_NECK_SHARE = 0.4              # of that turn the neck takes this much, the head the rest
 HEAD_PITCH = 0.0                   # head bent forward (degrees about X): none - bent, the chin went down into the collar
-CLAVICLE_DROP = 0.0                # degrees: the shoulders as the body has them (let down 15 deg to bring them to the
-                                   # portrait's epaulettes they slumped like an old man's: the epaulettes are fitted to
-                                   # the shoulders instead)
+HEAD_ROLL = -1.75                  # ... and tilted about its forward line (towards his left shoulder +): a little to his
+                                   # right, as in the portrait
+LID_DROP = 16.0                    # degrees the upper lids are let down from the generated head's (of a ~59 deg
+                                   # blink): in the portrait they cover the irises' tops; wide open, the eyes stared
+CLAVICLE_DROP = 8.0                # degrees the shoulders are let down: the portrait's epaulettes and elbows are ~3 cm
+                                   # lower than the body's own shoulders put them (15 deg slumped him like an old man)
 # His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand over
 # the hilt's top in line with the forearm, back of the hand forward, fingers closed round the grip (as in the portrait;
 # bent down at the wrist it looked broken); his right arm hangs down by his side, the elbow at his side and a little
@@ -28,13 +32,15 @@ CLAVICLE_DROP = 0.0                # degrees: the shoulders as the body has them
 # the hand 5 cm past the spine, under the belt and off the back).
 # elbow: where the upper arm points (else a two-bone IK with the pole decides it); palm: the side the palm turns to.
 ARM = {
-    'l': dict(wrist=(0.215, -0.11, 1.19), elbow=(0.33, 0.04, 1.40), hand_to=(0.195, -0.19, 1.15), palm=(-0.3, 0.3, -1.0)),
-    'r': dict(wrist=(-0.062, 0.135, 1.298), pole=(-0.42, 0.12, 1.40), hand_to=(0.07, 0.112, 1.298), palm=(0, 1, 0)),
+    'l': dict(wrist=(0.255, -0.10, 1.205), elbow=(0.37, 0.04, 1.30), hand_to=(0.19, -0.17, 1.16), palm=(-0.3, 0.3, -1.0)),
+    'r': dict(wrist=(-0.07, 0.15, 1.21), elbow=(-0.33, 0.11, 1.24), hand_to=(0.06, 0.13, 1.21), palm=(0, 1, 0)),
 }
-# Right leg in front, carrying the weight; the left a step behind, its toe turned further out.
+# Right leg in front, carrying the weight; the left a step behind, its toe turned further out. twist: degrees the leg
+# is turned out about its own axis (towards his left +) - the right one shows its trouser stripe to the viewer as in
+# the portrait (the legs are nearly straight: the knee pole alone bowed them instead of turning them).
 LEG = {
-    'r': dict(ankle=(-0.165, -0.035), pole=(-0.2, -0.8), turn=-22.0),
-    'l': dict(ankle=(0.125, 0.065), pole=(0.2, -0.8), turn=38.0),
+    'r': dict(ankle=(-0.162, -0.035), pole=(-0.02, -0.8), turn=-30.0, twist=-30.0),
+    'l': dict(ankle=(0.088, 0.065), pole=(0.02, -0.8), turn=26.0, twist=15.0),
 }
 # Fingers: curl about each bone's own X (degrees per joint 1, 2, 3); thumb separately.
 CURL = {
@@ -108,6 +114,12 @@ def set_pose(rig):
         hip = thigh.head
         _ik(thigh, calf, (leg['ankle'][0], leg['ankle'][1], ankle_z),
             (hip.x + leg['pole'][0], hip.y + leg['pole'][1], 0.6))
+        if leg.get('twist'):  # about the hip-to-ankle line: the knee stays on it, the leg turns
+            ax = (calf.tail - thigh.head).normalized()
+            p = thigh.head.copy()
+            thigh.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(leg['twist']), 4, ax)
+                            @ Matrix.Translation(-p) @ thigh.matrix)
+            _upd()
         # the foot keeps its rest attitude (flat sole) turned about Z, at the new ankle
         rest = foot.bone.matrix_local
         ankle = calf.tail.copy()
@@ -145,6 +157,23 @@ def set_pose(rig):
                 ang = -ang
             _aim(hand, arm['hand_to'], ang)
     straighten_head(pbs)
+    lower_lids(pbs)
+
+
+def lower_lids(pbs):
+    """The upper lids turned down LID_DROP about the eyeballs' centres (their bones' heads), about the line between
+    the eyes - as a blink turns them."""
+    el, er = pbs.get('eye_l'), pbs.get('eye_r')
+    if el is None or er is None or not LID_DROP:
+        return
+    ax = (el.head - er.head).normalized()
+    for s in 'lr':
+        pb = pbs.get('lid_upper_' + s)
+        if pb:
+            p = pb.head.copy()
+            pb.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(LID_DROP), 4, ax)
+                         @ Matrix.Translation(-p) @ pb.matrix)
+    _upd()
 
 
 def straighten_head(pbs):
@@ -166,6 +195,13 @@ def straighten_head(pbs):
     p = hb.head.copy()
     hb.matrix = Matrix.Translation(p) @ q.to_matrix().to_4x4() @ Matrix.Translation(-p) @ hb.matrix
     _upd()
+    if HEAD_ROLL:  # about the face's forward line (square to the eye line, level) through the head's pivot
+        line = el.head - er.head
+        fw = Vector((line.y, -line.x, 0.0)).normalized()
+        p = hb.head.copy()
+        hb.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(HEAD_ROLL), 4, fw) @ Matrix.Translation(-p)
+                     @ hb.matrix)
+        _upd()
     line = el.head - er.head
     print('head: turned %.1f deg, rolled %.1f deg; eyes %.4f m apart in height, their line %.1f deg from the '
           'shoulders\'' % (yaw, math.degrees(q.angle), line.z, math.degrees(math.atan2(line.y, line.x)) - want))

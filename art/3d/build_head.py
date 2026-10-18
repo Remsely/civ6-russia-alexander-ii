@@ -62,8 +62,8 @@ BEARD_SYM_NECK = (0.062, 0.078)   # ... and this far out from the neck's axis (t
 NECK_FIT = 0.97                   # the tube to the collar's ellipse (the tunic's stand collar lies on that): it fills
                                   # the collar, no gap round a thin neck
 EAR_RING = (0.002, 0.005)         # ear_surroundings: within the first of an ear its skin colour, fading by the second
-EAR_AT = [((0.085, -0.028, 1.924), (0.024, 0.024, 0.034)),   # the generated ears (rest pose): middle, radii (m)
-          ((-0.105, -0.022, 1.919), (0.024, 0.024, 0.034))]
+EAR_AT = [((0.099, -0.012, 1.926), (0.024, 0.026, 0.034)),   # the generated ears (rest pose): middle, radii (m) -
+          ((-0.099, -0.012, 1.926), (0.024, 0.026, 0.034))]  # symmetric, as the head is (head_shape.symmetrize, broaden)
 HAIR_KEEP = 0.15                  # ... of the hair's own colour variation (its red and orange blotches)
 HAIR_MAX_L = 1.15                 # hair no brighter than this times the portrait's (pale patches of the generation)
 DELIGHT_IT = 6                    # smoothing rounds over the mesh for the baked light (~4 mm per round)

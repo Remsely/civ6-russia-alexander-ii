@@ -114,6 +114,8 @@ for o in followers:
     activate(o)
     with bpy.context.temp_override(object=o, active_object=o):
         bpy.ops.object.surfacedeform_bind(modifier='Follow')
+    if not sd.is_bound:  # unbound, it would stay in the rest pose (the cuffs hanging where the A-pose had the wrists)
+        raise RuntimeError('%s could not be bound to the uniform' % o.name)
 print('bound to the uniform:', ', '.join(o.name for o in followers))
 REST_CO = {o.name: np.array([v.co[:] for v in o.data.vertices]) for o in followers if o.name.startswith(RIGID)}
 
@@ -626,6 +628,8 @@ h.modifiers.remove(h.modifiers['ColliderMask'])
 h.vertex_groups.remove(h.vertex_groups['collider'])
 sc.frame_set(1)
 sc['pose'] = dict(YAW_DEG=pose.YAW_DEG)
+if 'BLINK_DEG' in sc['head'] and not sc['head'].get('LIDS_LOWERED'):  # the stance's lids are part closed
+    hd = dict(sc['head']); hd['BLINK_DEG'] = hd['BLINK_DEG'] - pose.LID_DROP; hd['LIDS_LOWERED'] = True; sc['head'] = hd
 bpy.ops.outliner.orphans_purge(do_recursive=True)
 bpy.ops.wm.save_as_mainfile(filepath=OUT, compress=True)
 print('saved', OUT, os.path.getsize(OUT))

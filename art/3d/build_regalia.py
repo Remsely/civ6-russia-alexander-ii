@@ -22,7 +22,7 @@ MR_OUT = os.path.join(TEXDIR, 'regalia_mr.png')  # R metal, G roughness
 NORMAL_OUT = os.path.join(TEXDIR, 'regalia_normal.png')  # tangent space, OpenGL (Y up)
 
 GOLD_SRGB = mat_util.GOLD_SRGB
-SASH_SRGB = (46, 96, 196)        # the St Andrew blue moire of the portrait (between its lit and shaded side)
+SASH_SRGB = (57, 109, 179)       # the St Andrew blue moire of the portrait (between its lit and shaded side)
 # The portrait as a view of the model: tools/blender/render_leader.py's 'ref' (orthographic, the figure turned the
 # pose's YAW_DEG towards his left, the crown and the soles on these rows of alexander_ii_full.png). The cords, the
 # pencil and the epaulettes' reach are read off the portrait in pixels and cast onto the model along the line of sight.
@@ -31,30 +31,37 @@ REF_W, REF_CROWN, REF_SOLES, REF_X = 1024, 12, 1510, 515
 # folds) lying on top of the shoulder, centred on it front to back, its outer end a little past the shoulder's end; a
 # thick twisted rim; a strap to the collar with a button; bullion fringe hanging from under the rim round its outer
 # three quarters, fanning out over the arm (as in the portrait).
-EP_A, EP_B = 0.078, 0.062        # semi-axes along the shoulder and across it (the portrait's field: ~16 cm wide
+EP_A, EP_B = 0.090, 0.070        # semi-axes along the shoulder and across it (the portrait's field: ~16 cm wide
                                  # with its rim, ~24 cm with the fringe fanning out round it)
-EP_INSET = 0.035                 # the field's middle this far in from the shoulder's end (on its line front to back)
+EP_REF_X = {'r': 356, 'l': 680}  # the fields' middles where the portrait has them (px across alexander_ii_full.png, as
+                                 # the 'ref' view frames the figure): on the shoulder's line front to back, out to there
 EP_GAP, EP_DOME, EP_THICK = 0.003, 0.012, 0.006  # the field's underside off the cloth at the nearest, its dome, edge
 EP_CURVE = (0.30, 0.09)          # radii of the field's curve along and across the shoulder (a plate bent to it)
-EP_TILT, EP_FORWARD = 18.0, 12.0  # degrees: the field's outer end lower, its front edge lower - in the portrait the
-                                 # fields face the viewer (their faces show as ovals ~0.4 as high as wide); fitted to
+EP_TILT = {'r': 28.0, 'l': 24.0}  # degrees the field's outer end is lower: in the portrait both fields face the viewer -
+                                 # the camera stands to his right, so his left one is tilted out less (as much, it
+                                 # showed its edge); the inner end rises over the slope to the collar (tilted 18 deg,
+                                 # it rested there and stood 4-5 cm over the shoulder)
+EP_FORWARD = {'r': 26.0, 'l': 34.0}  # degrees its front edge is lower (his left one more, turned to the camera) - in the portrait the
+                                 # fields face the viewer (their faces show as ovals ~0.45 as high as wide); fitted to
                                  # the shoulder's slope (~25 deg out) the field was edge-on and the fringe stood out
                                  # like wings
 EP_RIM_R = 0.011                 # the rim's radius: a thick padded roll of bullion, as in the portrait
-EP_PRESS = (0.004, 0.007)        # the rim pressed this far into the padded shoulder, its outer and inner (towards the
+EP_PRESS = (0.004, 0.012)        # the rim pressed this far into the padded shoulder, its outer and inner (towards the
                                  # neck) half (resting on it, the field stood 5 cm over the portrait's)
+EP_PRESS_FRONT = 0.014           # ... and the quarter towards the neck and the chest this much more: tilted forward to
+                                 # the viewer, the field's front edge rested on the chest and held it 4-5 cm up
 STRAP_X, STRAP_W = 0.085, 0.05   # strap from the field to this |x|, by the collar: the epaulette's own broad shoulder
                                  # strap, gold galloon edged in red, as in the portrait
 STRAP_T, STRAP_GAP = 0.006, 0.002  # its thickness (a stiff padded galloon, not a ribbon); off the cloth
 STRAP_REPEATS = 3                # the galloon picture along the strap
-FRINGE_N, FRINGE_ARC = 50, 260.0  # strands over this arc of the rim, centred on the outer end (none by the collar)
-FRINGE_LEN, FRINGE_R = 0.095, 0.0085  # a strand's length and radius (the portrait's: about the field's half-width
+FRINGE_N, FRINGE_ARC = 60, 260.0  # strands over this arc of the rim, centred on the outer end (none by the collar)
+FRINGE_LEN, FRINGE_R = 0.082, 0.0095  # a strand's length and radius (the portrait's: about the field's half-width
                                  # long, ~1.7 cm thick, side by side)
 FRINGE_ROOT = 0.8                # ... at its root under the rim this share of the radius (they crowd there)
-FRINGE_DROOP = (84.0, 48.0)      # degrees below level a strand points at the front and back, and at the outer end
-                                 # (straight and stiff, radiating from the rim: the portrait's hang down in front and
-                                 # fan out over the arm; pointed along the field's plane, the front ones came at the
-                                 # viewer and looked stubby)
+FRINGE_DROOP = (88.0, 80.0)      # degrees below level a strand points at the front and back, and at the outer end
+                                 # (straight and stiff, hanging from the rim in a bell round the shoulder as in the
+                                 # portrait; fanned out at 48 deg over the arm they stood out like wings; pointed along
+                                 # the field's plane, the front ones came at the viewer and looked stubby)
                                  # where the arm, the chest or the cords are in the way a strand bends out over
                                  # them, lying on them (turned up to clear them, the outer ones stuck out level like
                                  # a dish's rim and the front ones came short)
@@ -1073,15 +1080,22 @@ def build_epaulette(side):
         q = Vector((q.x, q.y, zt - 0.03))
         f_, b_ = outermost(q, fwd), outermost(q, -fwd)
         return q + fwd * (((f_ + b_) / 2 - q).dot(fwd)) if f_ is not None and b_ is not None else q
-    # the field's middle EP_INSET in from the shoulder's end: its outer part over the top of the arm, the fringe
-    # hanging on the arm, as in the portrait (placed by the portrait's pixels, the model's narrower shoulders put
-    # the right one on the neck side of the joint)
-    c = on_line(0.0)
+    # the field's middle where the portrait shows it across the picture: bisection on the distance out from the joint
+    k = HEIGHT / (REF_SOLES - REF_CROWN)
+    right = Vector((math.cos(math.radians(YAW)), -math.sin(math.radians(YAW)), 0.0))
+    px = lambda q: (REF_W - REF_X) + q.dot(right) / k  # noqa: E731
+    lo_, hi_ = -0.06, 0.10
+    for _ in range(30):
+        mid = (lo_ + hi_) / 2
+        if (px(on_line(mid)) - EP_REF_X[side]) * sign > 0:
+            hi_ = mid
+        else:
+            lo_ = mid
+    c = on_line((lo_ + hi_) / 2)
     e = outermost(Vector((c.x, c.y, c.z)), out)
-    c = on_line(((e - joint).dot(out) if e is not None else 0.06) - EP_INSET)
     print('epaulette %s: middle %.3f out from the shoulder joint, the shoulder ends %.3f out' % (
         side, (c - joint).dot(out), (e - joint).dot(out) if e is not None else float('nan')))
-    Z = (Vector((0, 0, 1)) + out * math.tan(math.radians(EP_TILT)) + fwd * math.tan(math.radians(EP_FORWARD)))
+    Z = (Vector((0, 0, 1)) + out * math.tan(math.radians(EP_TILT[side])) + fwd * math.tan(math.radians(EP_FORWARD[side])))
     Z.normalize()
     X = (out - Z * out.dot(Z)).normalized()
     Y = Z.cross(X)
@@ -1103,7 +1117,8 @@ def build_epaulette(side):
             a = 2 * math.pi * k / segs
             x, y = EP_A * f * math.cos(a), EP_B * f * math.sin(a)
             if f >= 0.85:  # (the inner half of the rim, towards the neck, presses into the padded cloth)
-                need = (EP_GAP if f <= 1.0 else EP_RIM_R - EP_THICK * 0.5 + EP_GAP) - EP_PRESS[math.cos(a) < 0]
+                need = ((EP_GAP if f <= 1.0 else EP_RIM_R - EP_THICK * 0.5 + EP_GAP) - EP_PRESS[math.cos(a) < 0]
+                        - (EP_PRESS_FRONT if (Y * math.sin(a)).dot(fwd) > 0 else 0.0))
             else:
                 need = 0.003 - EP_THICK - EP_DOME * (1 - f * f)
             hh = cloth_h(x, y) - shell(x, y) + need

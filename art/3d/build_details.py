@@ -62,10 +62,13 @@ CUFF_RAISE, CUFF_THICK, CUFF_LIP, CUFF_BEAD = 0.002, 0.003, 0.012, 0.003
 FLAP_ACROSS, FLAP_ALONG, FLAP_RAISE = 0.068, 0.074, 0.003
 # Riding boots up to BOOT_TOP, wider than the tucked-in trousers; sole with a welt, heel, accordion folds over the
 # ankle, a spur at the heel.
-BOOT_EASE, BOOT_FOOT_OFF, BOOT_THICK = 0.018, 0.006, 0.003
+BOOT_EASE, BOOT_FOOT_OFF, BOOT_THICK = 0.010, 0.006, 0.003  # (the portrait's shafts are slim: ~11.5 cm across
+                                  # at the top, narrowing to the ankle)
 BOOT_ROUGH = 0.42                 # polished calf, not patent: the portrait's boots shine in soft broad highlights
 SOLE_H, WELT, HEEL_H = 0.012, 0.004, 0.032
-FOLD_Z0, FOLD_Z1, FOLD_PITCH, FOLD_AMP = 0.12, 0.27, 0.032, 0.005
+FOLD_Z0, FOLD_Z1, FOLD_PITCH, FOLD_AMP = 0.12, 0.30, 0.036, 0.0035
+FOLD_SLANT, FOLD_WAVE = 2.4, 0.9    # the creases run slanting round the ankle and wander (level rings of even depth
+                                  # read as an accordion; the portrait's leather creases soft and unevenly)
 
 # Atlas regions (u0, v0, u1, v1).
 ATLAS = {
@@ -724,10 +727,12 @@ def build_boots(nu=48):
                 if z > top - 0.1:  # clear of the tucked-in trousers (cut 2 cm into the boot)
                     rt = ray_dist(UNI_BVH, Vector((c.x, c.y, float(z))), d.to_3d(), 0.2)
                     r = max(r, (rt or 0.0) + BOOT_THICK + 0.004)
-                if FOLD_Z0 < z < FOLD_Z1:  # accordion folds, strongest at the front and sides
+                if FOLD_Z0 < z < FOLD_Z1:  # creases over the ankle, strongest at the front and sides
                     fade = math.sin(math.pi * (z - FOLD_Z0) / (FOLD_Z1 - FOLD_Z0))
-                    r += FOLD_AMP * fade * (0.6 + 0.4 * -d.y) * math.sin(2 * math.pi * (z - FOLD_Z0) / FOLD_PITCH
-                                                                         + 1.3 * d.x * sign)
+                    ang = math.atan2(d.x, -d.y)
+                    depth = (0.5 + 0.5 * -d.y) * (0.7 + 0.3 * math.sin(3.0 * ang + 68.0 * z))
+                    r += FOLD_AMP * fade * depth * math.sin(2 * math.pi * (z - FOLD_Z0) / FOLD_PITCH
+                                                            + FOLD_SLANT * d.x * sign + FOLD_WAVE * math.sin(2 * ang + sign))
                 p = c + d * r
                 ring.append(Vector((p.x, p.y, float(z))))
             rings.append(ring)

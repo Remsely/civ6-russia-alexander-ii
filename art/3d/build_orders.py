@@ -81,6 +81,8 @@ GRIP_IN_PALM = 0.022                # the pommel this far from the hand's axis t
 SCABBARD_L, SCABBARD_W, SCABBARD_D = 0.86, 0.048, 0.028
 SWORD_CLEAR = 0.012                 # off the skirt, trousers and boot
 SWORD_DROP = Vector((0.035, 0.03, -1.0))  # the scabbard hangs nearly straight down, a little out and back
+SWORD_TIP_PX = (684, 1388)          # ... its tip where the portrait has it (alexander_ii_full.png, the 'ref' view): the
+                                    # sabre slants a little down to the right of the picture
 # Its gilt mounts (s along the scabbard from the throat, m): the long locket, two bands carrying the suspension rings,
 # the long chape at the tip - chased (the 'ornate' region), standing a little proud of the black leather.
 MOUNTS = [(0.0, 0.10), (0.25, 0.285), (0.50, 0.535), (SCABBARD_L - 0.17, SCABBARD_L + 0.05)]
@@ -184,10 +186,15 @@ def sword_axis():
     directions round SWORD_DROP the nearest one along which nothing of it runs into the skirt or the leg (pushed out
     point by point, it bent into an S over the skirt)."""
     base = SWORD_DROP.normalized()
-    # in the portrait the scabbard runs straight down the picture: across the leader camera's view as little as can be
-    yaw = math.radians(90 + float(sc.get('pose', {}).get('YAW_DEG', 0.0)))
-    view = Vector((-math.cos(yaw), math.sin(yaw), 0.0))  # from the camera towards the figure, in model space
-    across = view.cross(Vector((0, 0, 1))).normalized()
+    # the tip where the portrait has it, seen as the 'ref' view frames the figure
+    shown = [(o.matrix_world @ v.co).z for o in sc.objects if o.type == 'MESH' and not o.hide_render
+             and not o.get('orders') for v in o.data.vertices]
+    k = (max(shown) - min(shown)) / (1510 - 12)
+    a = math.radians(float(sc.get('pose', {}).get('YAW_DEG', 0.0)))
+    right = Vector((math.cos(a), -math.sin(a), 0.0))
+
+    def px_of(p):
+        return Vector(((1024 - 515) + p.dot(right) / k, 1510 - (p.z - min(shown)) / k))
     best = None
     for dx in np.linspace(-0.1, 0.45, 12):
         for dy in np.linspace(-0.32, 0.16, 13):  # held in front of the thigh: the tip a little forward
@@ -195,10 +202,12 @@ def sword_axis():
             g = POMMEL + d * GRIP_L
             hits = sum(blocked(g + d * (SCABBARD_L * i / 30), SCABBARD_W / 2) for i in range(4, 31))  # the throat
             # may touch the skirt: the hand holds the hilt against the hip
-            cost = hits * 10 + 3 * abs(d.dot(across)) + abs(d.y) + (d - base).length
+            cost = hits * 10 + (px_of(g + d * SCABBARD_L) - Vector(SWORD_TIP_PX)).length / 10 + abs(d.y)
             if best is None or cost < best[0]:
                 best = (cost, d, hits)
-    print('sword: axis %s, %d points still in the cloth' % (tuple(round(c, 3) for c in best[1]), best[2]))
+    print('sword: axis %s, %d points still in the cloth, tip at px %s (portrait %s)' % (
+        tuple(round(c, 3) for c in best[1]), best[2],
+        tuple(round(c) for c in px_of(POMMEL + best[1] * (GRIP_L + SCABBARD_L))), SWORD_TIP_PX))
     return best[1]
 
 

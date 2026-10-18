@@ -34,7 +34,10 @@ BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dis
                 'arms/measure-upperarm-circ-decr': 1.0,
                 'arms/l-upperarm-muscle-decr': 0.6, 'arms/r-upperarm-muscle-decr': 0.6,
                 'arms/l-upperarm-fat-decr': 0.6, 'arms/r-upperarm-fat-decr': 0.6,
-                'arms/l-lowerarm-fat-decr': 0.5, 'arms/r-lowerarm-fat-decr': 0.5}
+                'arms/l-lowerarm-fat-decr': 0.5, 'arms/r-lowerarm-fat-decr': 0.5,
+                # the portrait's elbows hang ~35 cm under the shoulder joints (MPFB's upper arm: 31 cm), its legs come
+                # down closer together under a narrower skirt
+                'arms/measure-upperarm-length-incr': 0.5, 'hip/hip-scale-horiz-decr': 1.0}
 
 # Heights from alexander_ii_full.png scaled to the 2.07 m MPFB figure (feet 0, crown 2.07).
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
@@ -54,11 +57,12 @@ BOOT_TOP = 0.45                   # top of the boot shafts: the trousers are tuc
 SLEEVE_T = 0.95                   # sleeve end along the forearm (0 elbow, 1 wrist)
 TUNIC_OFF, TROUSERS_OFF = 0.028, 0.015
 SHOULDER_OFF = 0.012              # tunic offset over the shoulders (above the armpits)
-SLEEVE_EASE, CUFF_EASE = 0.017, 0.014  # sleeves: round tubes this much looser than the arm; cuff off the wrist
+SLEEVE_EASE, CUFF_EASE = 0.026, 0.014  # sleeves: round tubes this much looser than the arm (the portrait's are full: ~15 cm
+                                  # across at the elbow); cuff off the wrist
 SLEEVE_CUFF_R = 0.047             # ... narrowing along the forearm to this radius at the cuff (the portrait's ~10 cm)
-SKIRT_EASE, SKIRT_FLARE = 0.008, 0.035  # skirt clearance over hips and thighs, extra radius at the hem
+SKIRT_EASE, SKIRT_FLARE = 0.008, 0.025  # skirt clearance over hips and thighs, extra radius at the hem
 TROUSER_EASE = 1.08                # trouser leg radius over the mid-thigh
-TROUSER_TAPER = 0.85              # straight trouser leg: radius at the ankle relative to the top of the thigh
+TROUSER_TAPER = 0.75              # straight trouser leg: radius at the ankle relative to the top of the thigh
 CLOTH_THICK = 0.006
 WELD = 0.007                      # body vertices closer than this are merged in the clothes
 WAIST_GAP, WAIST_TAPER = 0.012, 0.015 # front pulled in from the chest to the belt by up to WAIST_TAPER
@@ -886,6 +890,25 @@ for ob in (uni, under):  # every vertex's weights sum to 1 (the importer does no
         o.select_set(o == ob)
     bpy.ops.object.vertex_group_normalize_all(lock_active=False)
 
+def two_faced(ob):
+    """No edge of ob with more than two faces (welding near the neck can make one): the smallest extra faces go.
+    build_pose.py binds the collar, belt and cuffs to the uniform's surface, and Surface Deform refuses such a target
+    (they stayed in the rest pose, the cuffs hanging in the air)."""
+    bm = bmesh.new(); bm.from_mesh(ob.data)
+    gone = set()
+    for e in bm.edges:
+        fs = [f for f in e.link_faces if f not in gone]
+        if len(fs) > 2:
+            gone.update(sorted(fs, key=lambda f: f.calc_area())[:len(fs) - 2])
+    if gone:
+        bmesh.ops.delete(bm, geom=list(gone), context='FACES')
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+        bm.to_mesh(ob.data)
+        print('%s: %d faces off edges shared by three' % (ob.name, len(gone)))
+    bm.free()
+
+
+two_faced(uni)
 print('uniform verts', len(uni.data.vertices), 'faces', len(uni.data.polygons))
 # Measurements the details (build_details.py) are fitted to.
 sc['uniform'] = dict(WAIST_Z=WAIST_Z, HEM_Z=HEM_Z, SLEEVE_T=SLEEVE_T, CUFF_T=CUFF_T, FLAP_X=FLAP_X, BOOT_TOP=BOOT_TOP,

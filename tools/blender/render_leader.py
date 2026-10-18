@@ -128,6 +128,11 @@ sc.render.resolution_percentage = 100
 sc.render.film_transparent = args.transparent
 sc.render.image_settings.file_format = 'PNG'
 sc.render.image_settings.color_mode = 'RGBA' if args.transparent else 'RGB'
+# Plain sRGB output: Blender's default AgX washes saturated colours (skin, gold) out towards grey, and the shots are
+# compared with the portrait's colours
+sc.view_settings.view_transform = 'Standard'
+sc.view_settings.look = 'None'
+sc.view_settings.exposure = -1.0  # the lights below were set for AgX's compressed highlights
 # The world: what metal and cloth reflect - a soft warm room light (the game's leader scenes are lit by an environment
 # too); the camera sees a plain dark background instead.
 world = sc.world or bpy.data.worlds.new('_World')

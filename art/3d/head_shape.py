@@ -135,6 +135,128 @@ def similarity(H, M, w):
 
 
 LAST = {}
+# The generated head is not symmetric: made from a three-quarter view, its jaw and chin sit ~1.5 cm towards his left of
+# the upper face, and squared by the eye line it stood crooked on the neck however the head was turned. Its own best
+# mirror plane is found, put on the body's midplane (x = 0), and the two halves averaged: the head is symmetric about
+# the body's midline (the texture moves with the surface: 'proj' is per vertex).
+SYM_SAMPLES = 900                 # surface points the mirror plane is fitted on (above the chin)
+SYM_GRID = ((10.0, 2.0), (8.0, 2.0), (0.016, 0.004))  # search: yaw, roll (deg), x offset (m) - half range, step
+SYM_ROUNDS, SYM_REACH = 12, 0.025  # rounds of averaging a vertex with the mirror image of the surface; how far to look
+SYM_CLIP = 0.01                   # a mirrored point's miss counts at most this much (hair parting, ears)
+
+
+def _mirror_cost(bvh, pts, yaw, roll, c):
+    a, r = math.radians(yaw), math.radians(roll)
+    n = np.array([math.cos(a) * math.cos(r), math.sin(a) * math.cos(r), -math.sin(r)])
+    p0 = np.array([c, pts[:, 1].mean(), pts[:, 2].mean()])
+    m = pts - 2 * ((pts - p0) @ n)[:, None] * n
+    tot = 0.0
+    for q in m:
+        d = bvh.find_nearest(Vector(q), SYM_CLIP)[3]
+        tot += SYM_CLIP if d is None else d
+    return tot / len(m)
+
+
+def to_midline(gbm, chin_z):
+    """The rigid turn (about Z and the forward axis) and shift that bring the placed head's best mirror plane onto
+    x = 0; a 4x4."""
+    bvh = BVHTree.FromBMesh(gbm)
+    pts = np.array([v.co[:] for v in gbm.verts if v.co.z > chin_z])
+    pts = pts[::max(1, len(pts) // SYM_SAMPLES)]
+    best = (_mirror_cost(bvh, pts, 0.0, 0.0, 0.0), 0.0, 0.0, 0.0)
+    centre = best[1:]
+    for div in (1.0, 4.0, 16.0):  # coarse to fine round the best so far
+        (ya, ys), (ra, rs), (ca, cs) = ((a / div, s / div) for a, s in SYM_GRID)
+        for yaw in np.arange(centre[0] - ya, centre[0] + ya + 1e-9, ys):
+            for roll in np.arange(centre[1] - ra, centre[1] + ra + 1e-9, rs):
+                for c in np.arange(centre[2] - ca, centre[2] + ca + 1e-9, cs):
+                    e = _mirror_cost(bvh, pts, yaw, roll, c)
+                    if e < best[0]:
+                        best = (e, yaw, roll, c)
+        centre = best[1:]
+    e0 = _mirror_cost(bvh, pts, 0.0, 0.0, 0.0)
+    _, yaw, roll, c = best
+    a, r = math.radians(yaw), math.radians(roll)
+    n = Vector((math.cos(a) * math.cos(r), math.sin(a) * math.cos(r), -math.sin(r)))
+    p0 = Vector((c, pts[:, 1].mean(), pts[:, 2].mean()))
+    q = n.rotation_difference(Vector((1, 0, 0)))
+    print('head midplane: yaw %.2f, roll %.2f deg, %.1f mm off; mirror error %.2f -> %.2f mm' % (
+        yaw, roll, 1000 * c, 1000 * e0, 1000 * best[0]))
+    return Matrix.Translation(Vector((0.0, p0.y, p0.z))) @ q.to_matrix().to_4x4() @ Matrix.Translation(-p0)
+
+
+def symmetrize(gbm):
+    """gbm (its midplane on x = 0) made mirror-symmetric: each vertex moved halfway to the mirror image of the surface
+    point nearest its own mirror image (one facing the same way), SYM_ROUNDS times."""
+    X = Vector((-1, 1, 1))
+    for _ in range(SYM_ROUNDS):
+        gbm.normal_update()
+        bvh = BVHTree.FromBMesh(gbm)
+        moves = []
+        for v in gbm.verts:
+            loc, nrm, _, _ = bvh.find_nearest(v.co * X, SYM_REACH)
+            if loc is not None and (nrm * X).dot(v.normal) > 0.3:
+                moves.append((v, (v.co + loc * X) / 2))
+        for v, c in moves:
+            v.co = c
+    gbm.normal_update()
+    bvh = BVHTree.FromBMesh(gbm)
+    err = [bvh.find_nearest(v.co * X, SYM_REACH)[3] or SYM_REACH for v in list(gbm.verts)[::20]]
+    print('head symmetrized: mirror error %.2f mm mean, %.1f mm at most' % (1000 * np.mean(err), 1000 * max(err)))
+
+
+# The eyes: in alexander_ii_full.png the openings are ~1.45 times as wide as the generated head's (its irises filled
+# them - a stare), their middles ~13 px further apart, the outer corners near the face's edge. The band of the face at
+# the eyes is stretched sideways by a monotonic map of |x| (no folds), fading out above, below and behind the eyes.
+EYE_MAP = ((0.0, 0.0), (0.010, 0.0105), (0.019, 0.0215), (0.033, 0.041), (0.047, 0.0590), (0.068, 0.0740),
+           (0.095, 0.0960), (0.2, 0.2))   # |x| -> |x'| at the eyes' height (m), the generated eye's middle at 0.033
+EYE_BAND_Z = (0.012, 0.034)       # full within the first of the eyes' height, none past the second
+EYE_BAND_Y = (0.025, 0.065)       # ... and in front of the eyes' surface: full to the first behind it, none past the second
+
+
+# Breadth: the portrait's head is as tall as the generated one but broader - ~5% at the temples, its whiskers bushier
+# (~15% across at the mouth and jaw).
+HEAD_BROADEN = 1.05               # x about the midplane, the whole head
+WHISKER_BROADEN = (1.09, 0.025, 0.075)  # ... and more under the eyes: this much, fading in from this far under the
+                                  # eyes' height to full at the second
+
+
+def broaden(gbm, E):
+    """gbm wider by HEAD_BROADEN, its whiskers by WHISKER_BROADEN more (E: the left eye's pupil, before)."""
+    for v in gbm.verts:
+        v.co.x *= HEAD_BROADEN * (1 + (WHISKER_BROADEN[0] - 1) * smoothstep(E.z - v.co.z, *WHISKER_BROADEN[1:]))
+    gbm.normal_update()
+
+
+def eye_centre(gbm_raw, T):
+    """The left eye's pupil on the placed head (x > 0; the right one mirrored onto it and averaged)."""
+    lo = [min(v.co[i] for v in gbm_raw.verts) for i in range(3)]; hi = [max(v.co[i] for v in gbm_raw.verts) for i in range(3)]
+    bvh = BVHTree.FromBMesh(gbm_raw)
+    pts = []
+    for k in ('eye_l', 'eye_r'):
+        px, py = IMG_LANDMARKS[k]
+        x = lo[0] + (px - INPUT_BBOX[0]) / (INPUT_BBOX[2] - INPUT_BBOX[0]) * (hi[0] - lo[0])
+        z = hi[2] - (py - INPUT_BBOX[1]) / (INPUT_BBOX[3] - INPUT_BBOX[1]) * (hi[2] - lo[2])
+        pts.append(Matrix(T) @ bvh.ray_cast(Vector((x, lo[1] - 1, z)), Vector((0, 1, 0)))[0])
+    l, r = pts
+    return (l + Vector((-r.x, r.y, r.z))) / 2
+
+
+def widen_eyes(gbm, E):
+    """The face's band at the eyes stretched sideways by EYE_MAP (E: the left eye's pupil)."""
+    xs = np.array([p[0] for p in EYE_MAP]); ys = np.array([p[1] for p in EYE_MAP])
+    s = E.x / 0.033  # EYE_MAP is for an eye 3.3 cm out
+    most = 0.0
+    for v in gbm.verts:
+        w = (1 - smoothstep(abs(v.co.z - E.z), *EYE_BAND_Z)) * (1 - smoothstep(v.co.y - E.y, *EYE_BAND_Y))
+        if w <= 0:
+            continue
+        ax = abs(v.co.x)
+        d = (float(np.interp(ax / s, xs, ys)) * s - ax) * w
+        v.co.x += d if v.co.x >= 0 else -d
+        most = max(most, d)
+    gbm.normal_update()
+    print('eyes widened: up to %.1f mm sideways' % (1000 * most))
 
 
 def fit(h):
@@ -194,6 +316,13 @@ def fit(h):
     t = C @ (t - mid) + goal
     T = Matrix([list(s * R[i]) + [t[i]] for i in range(3)] + [[0, 0, 0, 1]])
     gbm.transform(T)
+    C2 = to_midline(gbm, P['chin'][2])
+    gbm.transform(C2)
+    T = C2 @ T
+    symmetrize(gbm)
+    eye = eye_centre(load_generated()[0], T)
+    broaden(gbm, eye)
+    widen_eyes(gbm, Vector((eye.x * HEAD_BROADEN, eye.y, eye.z)))
     print('head fit: scale %.4f, yaw %.1f, landmark error %.1f mm' % (
         s, math.degrees(math.atan2(R[1, 0], R[0, 0])),
         1000 * np.abs((s * (R @ np.array(H).T)).T + t - M).max()))
@@ -548,6 +677,7 @@ def face_weights(h):
 def generated_placed(T, chin_z):
     """The generated head in MPFB space with its texture and face classes (for build_head.py)."""
     gbm, img = load_generated()
+    eye = eye_centre(gbm, T)
     # before placing it: the front view is head_input.png - UV 'proj' into it, and how much each face looks forward
     lo = [min(v.co[i] for v in gbm.verts) for i in range(3)]; hi = [max(v.co[i] for v in gbm.verts) for i in range(3)]
     uv = gbm.loops.layers.uv.new('proj')
@@ -560,5 +690,8 @@ def generated_placed(T, chin_z):
             py = INPUT_BBOX[1] + (hi[2] - c.z) / (hi[2] - lo[2]) * (INPUT_BBOX[3] - INPUT_BBOX[1])
             l[uv].uv = (px / 1024, 1 - py / 1024)
     gbm.transform(Matrix(T))
+    symmetrize(gbm)  # as fit() did (T puts its midplane on x = 0)
+    broaden(gbm, eye)
+    widen_eyes(gbm, Vector((eye.x * HEAD_BROADEN, eye.y, eye.z)))
     gbm.faces.ensure_lookup_table()
     return gbm, img, classify(gbm, face_colours(gbm, img), chin_z)
