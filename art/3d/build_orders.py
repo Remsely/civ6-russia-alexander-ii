@@ -49,8 +49,9 @@ MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal', 'smedal']
 # medals ~28 mm across, the St George cross ~40 mm; the neck cross ~62 mm; the stars ~80 mm across.
 # The portrait's bar: seven ribbons side by side, edge to edge (overlapping, the stripes of one ran into the next),
 # straight strips with their tops in a line, the medals hanging from them and overlapping.
-BAR_X, BAR_Z = 0.06, 1.69          # left end of the bar (just right of the closure's piping), its top
-RIB_W, RIB_H = 0.015, 0.048        # a ribbon on the bar: width (also the step to the next), height
+BAR_X, BAR_Z = -0.010, 1.69        # left end of the bar (right at the closure's piping, as in the portrait), its top
+RIB_W, RIB_H = 0.018, 0.060        # a ribbon on the bar: width (also the step to the next), height (the portrait's bar
+                                   # ~13 cm wide, its ribbons ~6 cm long)
 MEDAL_R, WCROSS_S = 0.0145, 0.021  # medals no wider than two ribbons: one over the other only at its neighbours
 RIB_T, MEDAL_T, MEDAL_DOME = 0.0006, 0.0014, 0.0008  # thicknesses: a ribbon on its mount, a medal (and its dome)
 # The bar tilts as the chest does under it as a whole (one slope: tops in a line, all parallel), each ribbon turned
@@ -60,16 +61,16 @@ RIB_T, MEDAL_T, MEDAL_DOME = 0.0006, 0.0014, 0.0008  # thicknesses: a ribbon on 
 CROWN_OUTLINE = [(-0.8, -1.0), (0.8, -1.0), (0.9, -0.55), (1.0, 0.25), (0.7, 0.05), (0.45, 0.6), (0.2, 0.2),
                  (0.08, 0.75), (0.08, 1.0), (-0.08, 1.0), (-0.08, 0.75), (-0.2, 0.2), (-0.45, 0.6), (-0.7, 0.05),
                  (-1.0, 0.25), (-0.9, -0.55)]  # the badge's crown, flat (band, three arches, a cross)
-NECK_CROSS_S = 0.031                 # half-size of the neck cross; its crown lies over the collar's lower edge, the
+NECK_CROSS_S = 0.036                 # half-size of the neck cross; its crown lies over the collar's lower edge, the
 NECK_CROWN_S = 0.015                 # ring on the collar (as in the portrait); the crown's half-size
 NECK_RING_R = 0.0032                 # the ring it hangs by
 NECK_CROSS_RAYS = 0.8                # the silver rays between its arms reach this far (of the half-size)
 BADGE = (0.128, 1.582, 0.012, 0.017)  # x, z, half-width, half-height of the gold badge under the bar: a crowned
                                      # openwork cartouche with a monogram (the portrait's), its crown above that
 SEAT_N = 5                           # seat(): rays across a piece's footprint each way
-STARS = [(668, 403, 0.026), (668, 463, 0.026)]  # px of the portrait (cast onto the cloth), radius: one above the
-                                     # other beside the sash, as there (~5 cm across; at 9 cm they stood out like
-                                     # shuriken)
+STARS = [(667, 397, 0.036), (667, 457, 0.036)]  # px of the portrait (cast onto the cloth), radius: one above the
+                                     # other beside the sash, as there (~8 cm tall, seen at a slant on the turning
+                                     # chest; at 5 cm they were specks)
 STAR_LIFT = 0.0015                   # off the cloth at the nearest
 STAR_FACING = 62.0                   # degrees: the cloth under a star faces the viewer at least this squarely
 LIFT = 0.003
@@ -93,6 +94,11 @@ SWORD_TIP_PX = (684, 1388)          # ... its tip where the portrait has it (ale
 # the long chape at the tip - chased (the 'ornate' region), standing a little proud of the black leather.
 MOUNTS = [(0.0, 0.10), (0.25, 0.285), (0.50, 0.535), (SCABBARD_L - 0.17, SCABBARD_L + 0.05)]
 MOUNT_PROUD = 1.08
+# Slings: the scabbard hangs by its two rings from the sword belt under the tunic - two narrow straps of black lacquered
+# leather out from under the belt at the left hip (without them it hung in the air, held only by the hand)
+SLING_W, SLING_T = 0.016, 0.0025     # width, thickness
+SLING_TOP_Z = 0.035                  # their tops this far under the belt's lower edge, on the skirt
+SLING_SAG = 0.012                    # how far a strap sags out of the straight line
 # Sword knot (temlyak) and the hanger's cord from the belt (both in the portrait): braided gold cord to a knotted ball
 # and a tassel of fine bullion (the Regalia material: build_regalia.py's braid and bullion). Heights of the balls.
 KNOT_BALL_Z, KNOT_CORD_R = 0.70, 0.0042
@@ -907,7 +913,8 @@ def build_sabre():
     loft(part, rings, scab_uv)
     cap(part, rings[-1], path[-1] + (path[-1] - path[-2]).normalized() * 0.008, pal_uv('gold'))
     cap(part, list(reversed(rings[0])), path[0], pal_uv('gold'))
-    # suspension rings on the bands, at the back edge
+    # suspension rings on the bands, at the back edge, and the slings from the belt to them
+    belt_lo = min(v.co.z for v in obj('Belt').data.vertices if v.co.x > 0.1)
     for m0, m1 in MOUNTS[1:3]:
         i = min(range(len(acc)), key=lambda j: abs(acc[j] - (m0 + m1) / 2))
         t, u, v = fr[i]
@@ -915,6 +922,14 @@ def build_sabre():
         loop = [c + (u * math.cos(2 * math.pi * j / 16) + t * math.sin(2 * math.pi * j / 16)) * 0.008
                 for j in range(17)]
         tube(part, loop, 0.0017, lambda ii, kk: pal_uv('gold'), w, sides=6)
+        ring_top = c - u * 0.008
+        q = Vector((ring_top.x, ring_top.y, belt_lo - SLING_TOP_Z))
+        loc, nrm, _, _ = LOWER.find_nearest(q, 0.3)
+        top = loc + nrm * (SLING_T + 0.002) if loc is not None else q
+        out = Vector((nrm.x, nrm.y, 0.0)).normalized() if loc is not None else -u
+        sp = [top.lerp(ring_top, j / 14) + out * SLING_SAG * math.sin(math.pi * j / 14) for j in range(15)]
+        sp = clear_path(sp, SLING_T + 0.002)
+        tube(part, sp, SLING_T / 2, lambda ii, kk: pal_uv('leather'), w, sides=8, rx=SLING_W / 2, ref=out.cross(Vector((0, 0, 1))))
     # hilt: the grip, oval, bound with gold wire in a spiral (dark between the turns), swelling a little
     grip_n, gs = 14, 12
     grip = [POMMEL.lerp(GUARD, i / grip_n) for i in range(grip_n + 1)]

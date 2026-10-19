@@ -8,20 +8,21 @@
 import bpy, math
 from mathutils import Vector, Matrix
 
-YAW_DEG = 15.0                     # the figure turned towards his left (the closure is right of centre in the portrait)
+YAW_DEG = 25.0                     # the figure turned towards his left: the closure's piping where the portrait has it
+                                   # (x 560 of 1024, chest to hem; at 15 deg it was 23 px left of it)
 SPINE_TWIST = (0.0, 1.0, 1.0)      # spine_01..03 about Z: the shoulders turned a little further than the hips
 SPINE_LEAN = (0.0, 0.0, 0.0)       # ... and tilted about Y: his left shoulder a little lower (the weight on the right leg)
-HEAD_TURN = -19.0                  # degrees the face is turned from the shoulders towards his left: to his right, nearly
-                                   # square to the camera, as in the portrait (fitted to its eyes' middle, nose, eye line
-                                   # and left ear in the 'ref' view). The head is symmetric about the body's midplane
-                                   # (head_shape.symmetrize) and squared by its eyes first (straighten_head), so it sits
-                                   # straight on the neck however far it turns.
+HEAD_TURN = -27.0                  # degrees the face is turned from the shoulders towards his left: to his right, nearly
+                                   # square to the camera, as in the portrait (eyes and nose over the portrait's). A plain turn of the neck and head bones
+                                   # (turn_head): the head is placed with its own midplane on the body's (head_shape.py),
+                                   # so the bones' axis runs up the middle of the neck and the head turns on it.
 HEAD_NECK_SHARE = 0.4              # of that turn the neck takes this much, the head the rest
 HEAD_PITCH = 0.0                   # head bent forward (degrees about X): none - bent, the chin went down into the collar
 HEAD_ROLL = -1.75                  # ... and tilted about its forward line (towards his left shoulder +): a little to his
                                    # right, as in the portrait
-LID_DROP = 16.0                    # degrees the upper lids are let down from the generated head's (of a ~59 deg
+LID_DROP = 7.0                     # degrees the upper lids are let down from the generated head's (of a ~59 deg
                                    # blink): in the portrait they cover the irises' tops; wide open, the eyes stared
+                                   # (16 deg hid half the iris: sleepy)
 CLAVICLE_DROP = 8.0                # degrees the shoulders are let down: the portrait's epaulettes and elbows are ~3 cm
                                    # lower than the body's own shoulders put them (15 deg slumped him like an old man)
 # His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand over
@@ -39,8 +40,8 @@ ARM = {
 # is turned out about its own axis (towards his left +) - the right one shows its trouser stripe to the viewer as in
 # the portrait (the legs are nearly straight: the knee pole alone bowed them instead of turning them).
 LEG = {
-    'r': dict(ankle=(-0.162, -0.035), pole=(-0.02, -0.8), turn=-30.0, twist=-30.0),
-    'l': dict(ankle=(0.088, 0.065), pole=(0.02, -0.8), turn=26.0, twist=15.0),
+    'r': dict(ankle=(-0.166, -0.006), pole=(-0.159, -0.784), turn=-40.0, twist=-30.0),
+    'l': dict(ankle=(0.098, 0.049), pole=(-0.119, -0.791), turn=16.0, twist=15.0),
 }
 # Fingers: curl about each bone's own X (degrees per joint 1, 2, 3); thumb separately.
 CURL = {
@@ -156,7 +157,7 @@ def set_pose(rig):
             if cur.cross(want).dot(ax) < 0:
                 ang = -ang
             _aim(hand, arm['hand_to'], ang)
-    straighten_head(pbs)
+    turn_head(pbs)
     lower_lids(pbs)
 
 
@@ -176,35 +177,20 @@ def lower_lids(pbs):
     _upd()
 
 
-def straighten_head(pbs):
-    """The face square to the shoulders (turned HEAD_TURN from them) and level: neck and head turned about Z till the
-    line between the eyes (eye_l, eye_r: build_head.py puts them at the eyeballs' middles) runs as the shoulders' line
-    (the spine's twist), then the head rolled about its own forward line till the eyes are at one height; bent forward
-    HEAD_PITCH."""
-    el, er = pbs.get('eye_l'), pbs.get('eye_r')
-    if el is None or er is None:
-        return
-    want = sum(SPINE_TWIST) + HEAD_TURN
-    line = el.head - er.head
-    yaw = want - math.degrees(math.atan2(line.y, line.x))
-    _turn_z(pbs['neck_01'], yaw * HEAD_NECK_SHARE)
-    _turn_z(pbs['head'], yaw * (1 - HEAD_NECK_SHARE), HEAD_PITCH)
-    line = el.head - er.head
-    q = line.rotation_difference(Vector((line.x, line.y, 0.0)))  # about the face's forward line
-    hb = pbs['head']
-    p = hb.head.copy()
-    hb.matrix = Matrix.Translation(p) @ q.to_matrix().to_4x4() @ Matrix.Translation(-p) @ hb.matrix
-    _upd()
-    if HEAD_ROLL:  # about the face's forward line (square to the eye line, level) through the head's pivot
-        line = el.head - er.head
-        fw = Vector((line.y, -line.x, 0.0)).normalized()
+def turn_head(pbs):
+    """Neck and head turned HEAD_TURN about Z (the neck taking HEAD_NECK_SHARE), the head bent HEAD_PITCH and rolled
+    HEAD_ROLL - by angles about the bones' own pivots, nothing fitted to the face."""
+    _turn_z(pbs['neck_01'], HEAD_TURN * HEAD_NECK_SHARE)
+    _turn_z(pbs['head'], HEAD_TURN * (1 - HEAD_NECK_SHARE), HEAD_PITCH)
+    if HEAD_ROLL:  # about the head's forward line through its pivot
+        hb = pbs['head']
+        fw = hb.matrix.to_3x3() @ hb.bone.matrix_local.to_3x3().inverted() @ Vector((0.0, -1.0, 0.0))  # rest front
+        fw = Vector((fw.x, fw.y, 0.0)).normalized()
         p = hb.head.copy()
         hb.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(HEAD_ROLL), 4, fw) @ Matrix.Translation(-p)
                      @ hb.matrix)
         _upd()
-    line = el.head - er.head
-    print('head: turned %.1f deg, rolled %.1f deg; eyes %.4f m apart in height, their line %.1f deg from the '
-          'shoulders\'' % (yaw, math.degrees(q.angle), line.z, math.degrees(math.atan2(line.y, line.x)) - want))
+    print('head: turned %.1f deg, rolled %.1f deg, bent %.1f deg' % (HEAD_TURN, HEAD_ROLL, HEAD_PITCH))
 
 
 def bake(rig, h):

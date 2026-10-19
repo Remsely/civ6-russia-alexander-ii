@@ -36,16 +36,18 @@ CLOTH = (0.0065, 0.007, 0.0105)    # the tunic's wool (build_uniform.CLOTH_RGB)
 # (by COLLAR_TURN, at most COLLAR_MAX_H); as in the portrait the halves stand apart at the front, their edges nearly
 # parallel, the tunic's dark collar between them up to the top (the white shirt collar's edge over it); the neck
 # stays behind it (build_pose.neck_in_collar).
-COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.068
-COLLAR_FLARE = 0.003              # the band widens downwards by at most this
-COLLAR_MIN_H = 0.062              # ... but at the front at least this tall (the portrait's collar: ~6.5 cm at the front)
+COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.056
+COLLAR_FLARE = 0.03               # the band widens downwards by at most this: its walls lean out onto the shoulders, as
+                                  # in the portrait (~17 cm across at the top, ~22 cm at the foot)
+COLLAR_MIN_H = 0.052              # ... but at the front at least this tall (the portrait's red band: ~5.5 cm at the front)
 COLLAR_FRONT_GAP = 0.018          # the opening at the front, at the top (x the radius / 0.08 m: ~1.6 cm half-width) ...
 COLLAR_FRONT_GAP_BOTTOM = 0.014   # ... and at the bottom edge (wider round: ~1.75 cm - the edges nearly parallel)
 COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
 COLLAR_THICK = 0.004
 STAND_ROWS, STAND_COLS = 7, 13    # the dark stand between the halves: rows up it, columns across
 SHIRT_IN = 0.0045                 # the white shirt collar this far inside the tunic collar's outside (further in it ran into
-                                  # the neck and showed in white flecks round it)
+                                  # the neck and showed in white flecks round it): its edge a white line along the
+                                  # collar's top, as in the portrait
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
 BUTTON_R, BUTTON_H = 0.0085, 0.0055
 BUTTON_ZS = (1.66, 1.60, 1.54, 1.48, 1.42, 1.36)  # above the belt
@@ -64,9 +66,17 @@ FLAP_ACROSS, FLAP_ALONG, FLAP_RAISE = 0.068, 0.074, 0.003
 # ankle, a spur at the heel.
 BOOT_EASE, BOOT_FOOT_OFF, BOOT_THICK = 0.010, 0.006, 0.003  # (the portrait's shafts are slim: ~11.5 cm across
                                   # at the top, narrowing to the ankle)
-BOOT_ROUGH = 0.42                 # polished calf, not patent: the portrait's boots shine in soft broad highlights
-SOLE_H, WELT, HEEL_H = 0.012, 0.004, 0.032
-FOLD_Z0, FOLD_Z1, FOLD_PITCH, FOLD_AMP = 0.12, 0.30, 0.036, 0.0035
+BOOT_ROUGH = 0.24                 # polished calf: the portrait's boots shine in bright highlights along the shaft and toe
+# The foot of the boot: a last lofted along the foot (cross-sections round on top, flat underneath), as wide as the body's
+# foot plus BOOT_FOOT_OFF at every point along it; its top line (z over the sole, by the share of the length from the
+# toe tip) - a low rounded toe box rising over the instep into the shaft; the bottom on the sole in front, on the heel
+# behind, the arch between. The body's foot inflated (and decimated) came out a crumpled sock on a flat plate.
+LAST_TOP = ((0.0, 0.008), (0.03, 0.030), (0.08, 0.047), (0.2, 0.058), (0.4, 0.075), (0.6, 0.115), (0.78, 0.14), (1.0, 0.13))
+LAST_ROOM = 0.012                 # the toe this far past the body's toes
+LAST_ARCH = (0.45, 0.68)          # the bottom rises from the sole to the heel's top between these shares
+SOLE_H, WELT, HEEL_H = 0.010, 0.0015, 0.032
+ANKLE_SEAM = (0.06, 0.19, 24)       # the last's join with the shaft: smoothed between these heights, rounds
+FOLD_Z0, FOLD_Z1, FOLD_PITCH, FOLD_AMP = 0.16, 0.32, 0.036, 0.005  # (over the ankle, as in the portrait)
 FOLD_SLANT, FOLD_WAVE = 2.4, 0.9    # the creases run slanting round the ankle and wander (level rings of even depth
                                   # read as an accordion; the portrait's leather creases soft and unevenly)
 
@@ -512,7 +522,7 @@ def build_collar(nu=64, nv=7):
         for t in full:
             d = Vector((math.sin(t), -math.cos(t), 0.0))
             zt = top_at(t) + 0.001
-            z = zt - 0.008 + 0.0135 * k
+            z = zt - 0.008 + 0.0115 * k  # its edge ~3 mm over the collar's top, as in the portrait
             rn = cloth(zt - 0.006, d) or 0.07
             ring.append(c0.to_3d() + Vector((0, 0, z)) + d * (rn - SHIRT_IN))
         rings.append(ring)
@@ -690,9 +700,59 @@ def prism(poly, z0, z1):
     return b
 
 
+def boot_last(foot, n=36, m=24):
+    """The boot's foot round the body's foot points (rest pose, toes to -Y): see LAST_*."""
+    ys = [p.y for p in foot]
+    y_toe, y_heel = min(ys) - LAST_ROOM, max(ys) + BOOT_FOOT_OFF
+    length = y_heel - y_toe
+    rings = []
+    xcs, ws = [], []
+    for i in range(n + 1):
+        y = y_toe + length * i / n
+        band = [p for p in foot if abs(p.y - y) < 0.012] or [min(foot, key=lambda p: abs(p.y - y))]
+        x0, x1 = min(p.x for p in band), max(p.x for p in band)
+        xcs.append((x0 + x1) / 2); ws.append((x1 - x0) / 2 + BOOT_FOOT_OFF)
+    for _ in range(4):  # an even outline (the toes made it lumpy and lopsided)
+        xcs = [xcs[0]] + [(xcs[i - 1] + 2 * xcs[i] + xcs[i + 1]) / 4 for i in range(1, n)] + [xcs[-1]]
+        ws = [ws[0]] + [(ws[i - 1] + 2 * ws[i] + ws[i + 1]) / 4 for i in range(1, n)] + [ws[-1]]
+    for i in range(n + 1):
+        t = i / n
+        y = y_toe + length * t
+        xc, w = xcs[i], ws[i]
+        # rounded in plan at the toe and the heel's back
+        w *= math.sqrt(max(0.02, min(1.0, (y - y_toe) / 0.075))) * math.sqrt(max(0.02, min(1.0, (y_heel - y) / 0.03)))
+        w *= 0.88 + 0.12 * smoothstep(t, 0.0, 0.35)  # a slimmer toe (the portrait's is narrow, a little pointed)
+        top = SOLE_H + float(np.interp(t, [a for a, _ in LAST_TOP], [b for _, b in LAST_TOP]))
+        bot = SOLE_H + (HEEL_H - SOLE_H) * smoothstep(t, *LAST_ARCH)
+        top = max(top, bot + 0.006)
+        mid, hh = (top + bot) / 2, (top - bot) / 2
+        ring = []
+        for k in range(m):
+            a = 2 * math.pi * k / m
+            ca, sa = math.cos(a), math.sin(a)
+            ex = 1.0 if sa > 0 else 2 / 8  # round on top, flat underneath
+            x = xc + w * math.copysign(abs(ca) ** (0.8 if sa > 0 else 0.5), ca)
+            z = mid + hh * math.copysign(abs(sa) ** ex, sa)
+            ring.append(Vector((x, y, z)))
+        rings.append(ring)
+    bm, grid = loft(rings)
+    bm.faces.new(grid[0][::-1]); bm.faces.new(grid[-1])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    return bm
+
+
+BOOT_TWIST_Z = (0.08, 0.22)       # the boot goes over from the foot's bone to the calf's between these heights: the foot
+                                  # turned out from the calf (the stance) twists the leather over the ankle gently (with
+                                  # the body's weights it crumpled in a knot over the instep)
+
+
+def boot_weights(co, s):
+    wf = 1 - smoothstep(co.z, *BOOT_TWIST_Z)
+    return {k: w for k, w in (('foot_' + s, wf), ('calf_' + s, 1 - wf)) if w > 1e-4}
+
+
 def build_boots(nu=48):
-    """Riding boots. The foot is the body's foot inflated by the leather and voxel-remeshed together with the shaft, so
-    the toes melt into one rounded toe box; the shaft is lofted through slices of the leg (convex hull + ease over the
+    """Riding boots. The foot is a last round the body's foot (boot_last) voxel-remeshed together with the shaft; the shaft is lofted through slices of the leg (convex hull + ease over the
     tucked-in trousers) with accordion folds over the ankle. A sole with a welt and a heel block go underneath."""
     top = P['BOOT_TOP']
     dirs = [Vector((math.sin(2 * math.pi * j / nu), -math.cos(2 * math.pi * j / nu))) for j in range(nu)]
@@ -711,10 +771,9 @@ def build_boots(nu=48):
                                    or min(sum(v[dl].get(g, 0) for g in leg) for v in f.verts) < 0.5], context='FACES')
         bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
         keep_largest(bm)
-        bm.normal_update()
-        for v in bm.verts:
-            v.co += v.normal * BOOT_FOOT_OFF
-        bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary], sides=0)
+        foot = [v.co.copy() for v in bm.verts if v.co.z < 0.12]
+        bm.free()
+        bm = boot_last(foot)
         # shaft
         rings = []
         for z in list(np.arange(0.10, FOLD_Z1, FOLD_PITCH / 4)) + list(np.linspace(FOLD_Z1 + 0.02, top, 7)):
@@ -742,30 +801,25 @@ def build_boots(nu=48):
         me = bpy.data.meshes.new('BootTmp'); bm.to_mesh(me); bm.free()
         ob = bpy.data.objects.new('BootTmp', me); sc.collection.objects.link(ob)
         apply_mods(ob, [('REMESH', dict(mode='VOXEL', voxel_size=0.004)),
-                        ('SMOOTH', dict(factor=0.6, iterations=8))])
+                        ('SMOOTH', dict(factor=0.6, iterations=16))])
         bm = bmesh.new(); bm.from_mesh(ob.data)
         bpy.data.objects.remove(ob)
-        low = [v.co.xy.copy() for v in bm.verts if v.co.z < SOLE_H + 0.01]
+        seam = [v for v in bm.verts if ANKLE_SEAM[0] < v.co.z < ANKLE_SEAM[1]]  # the last into the shaft, no crease
+        for _ in range(ANKLE_SEAM[2]):
+            bmesh.ops.smooth_vert(bm, verts=seam, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+        low = [v.co.xy.copy() for v in bm.verts if v.co.z < HEEL_H + 0.006]
         y_toe, y_heel = min(p.y for p in low), max(p.y for p in low)
-        y_breast = y_heel - (y_heel - y_toe) * 0.27  # front face of the heel
-        # the toes melt away: the forefoot smoothed hard (the upper surface only, the sole outline stays)
-        fore = [v for v in bm.verts if v.co.y < y_breast - 0.04 and SOLE_H + 0.008 < v.co.z < 0.09]
-        for _ in range(25):
-            bmesh.ops.smooth_vert(bm, verts=fore, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+        y_breast = y_heel - (y_heel - y_toe) * (1 - LAST_ARCH[1])  # front face of the heel
         # open the top with a straight cut
         bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, top), plane_no=(0, 0, 1),
                                clear_outer=True)
         bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
         me = bpy.data.meshes.new('BootTmp'); bm.to_mesh(me); bm.free()
         ob = bpy.data.objects.new('BootTmp', me); sc.collection.objects.link(ob)
-        apply_mods(ob, [('DECIMATE', dict(ratio=0.1))])
+        apply_mods(ob, [('DECIMATE', dict(ratio=0.5))])
         bm = bmesh.new(); bm.from_mesh(ob.data)
         bpy.data.objects.remove(ob)
-        for v in bm.verts:
-            floor = HEEL_H if v.co.y > y_breast else SOLE_H
-            if v.co.z < floor:
-                v.co.z = floor
-        out.append(new_detail('Boot_' + s, bm, lambda v: uv_in('leather', 0.5, 0.5), lambda v: BODY_W.at(v.co),
+        out.append(new_detail('Boot_' + s, bm, lambda v: uv_in('leather', 0.5, 0.5), lambda v, s=s: boot_weights(v.co, s),
                               BOOT_THICK))
         # sole with a welt, and the heel block, from the outline of the boot's bottom
         hull = [low[i] for i in mg.convex_hull_2d(low)]
@@ -775,7 +829,7 @@ def build_boots(nu=48):
         heel_poly.sort(key=lambda p: math.atan2(p.x - cxy.x, p.y - cxy.y))
         sole = merge_bms([prism(welt, 0.0, SOLE_H), prism(heel_poly, 0.0, HEEL_H)])
         sole.verts.ensure_lookup_table()
-        out.append(new_detail('Sole_' + s, sole, lambda v: uv_in('sole', 0.5, 0.5), lambda v: BODY_W.at(v.co)))
+        out.append(new_detail('Sole_' + s, sole, lambda v: uv_in('sole', 0.5, 0.5), lambda v, s=s: {'foot_' + s: 1.0}))
         # spur: a gold boss at the back of the heel, on the outer side
         boot = out[-2]
         bvh = bvh_of(boot.data)

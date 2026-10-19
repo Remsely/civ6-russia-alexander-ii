@@ -24,6 +24,7 @@ RIGID = ('Buttons', 'Buckle', 'CuffButtons')  # each piece of these moves as a w
 SUBDIVIDE = 1                           # cuts per edge of the uniform's sheet before the simulation
 SLEEVE_PIN = 0.5                        # sleeves held this much to the arm (less: they slide down and balloon)
 CLOSURE_PIN = 0.7                       # the strip along the front closure held this much (its step and piping straight)
+SKIRT_PIN = (0.14, 0.32)                # the skirt held this much at the hem, at the belt
 # cloth: heavy broadcloth
 CLOTH = dict(quality=8, mass=0.35, air_damping=1.0, tension_stiffness=40, compression_stiffness=40,
              shear_stiffness=20, bending_stiffness=6.0, tension_damping=8, compression_damping=8, shear_damping=8,
@@ -183,7 +184,9 @@ def pin_weights():
             continue
         belt = 1 - smoothstep(abs(c.z - zc), P['BELT_H'] / 2 + 0.01, P['BELT_H'] / 2 + 0.06)
         upper = smoothstep(c.z, 1.50, 1.64)  # collar, shoulders, upper back
-        chest = 0.35 if c.z > zc else 0.04   # torso / skirt
+        # torso / skirt: the skirt held a little, more towards the belt (at 0.04 the stepping legs folded its back
+        # over itself in a crumpled flap)
+        chest = 0.35 if c.z > zc else SKIRT_PIN[0] + (SKIRT_PIN[1] - SKIRT_PIN[0]) * smoothstep(c.z, P['HEM_Z'], zc)
         # the closure: the flap's step and its piping stay straight (free, the step crumples into a zigzag)
         closure = CLOSURE_PIN * (1 - smoothstep(abs(c.x - P['FLAP_X']), 0.015, 0.04)) if c.y < -0.03 else 0.0
         w[v.index] = max(chest, belt, upper, closure)

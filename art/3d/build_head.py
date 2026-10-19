@@ -5,18 +5,17 @@
 # Rewrites art/3d/alexander_rest.blend; safe to re-run (removes what it made before).
 #
 # 1. Sources: the generated head down to just under the chin (below it, its uniform's collar is cut off and the
-#    opening capped), the closed mouth; MPFB's neck from inside the tunic's collar up into the head.
+#    opening capped), its shape as generated (curls, moustache, lips); MPFB's neck from inside the tunic's collar up into the head.
 # 2. Colour of the sources: at the front the portrait itself (head_input.png, which the head was generated from, is its
 #    front view), on the sides and back the generated texture coloured like the portrait, the hair one brown.
 # 3. 'Head': both sources voxel-remeshed into one surface (the neck grows into the jaw, no seam), the ragged beard
-#    bottom and the lumpy back of the hair smoothed, decimated, unwrapped; the sources' colour baked into its UVs
+#    bottom smoothed, decimated, unwrapped; the sources' colour baked into its UVs
 #    (textures/head_albedo.png).
 # Face bones (children of 'head'): jaw, eye_l/r, lid_upper_l/r, lid_lower_l/r, lip_corner_l/r (MPFB 'default' rig
 # joints; the lid and eye bones moved to the generated eyes). The eyes are eyeballs ('Eyes', on eye_l / eye_r) fitted
 # to the openings, the lids wrapping them (fit_eyes); build_pose.py turns them to the leader camera. A blink turns the
 # upper lid down about the eyeball centre by sc['head']['BLINK_DEG'], the weights grading from the upper rim to the
-# lower one. Talking: jaw about X. The whiskers and moustache are made symmetric (each side as full as the other,
-# his right side in his left's colour), the ears one skin colour, the skin under the eyes evened out.
+# lower one. Talking: jaw about X. His right whisker takes the left one's colour, the ears one skin colour, the skin under the eyes evened out.
 import bpy, bmesh, math, os, sys, json, colorsys
 import numpy as np
 from mathutils import Vector, Matrix
@@ -34,27 +33,31 @@ HEAD_NORMAL = os.path.join(HERE, 'textures', 'head_normal.png')
 HAIR_CROWN = (0.04, 2.08)          # (y, z) the hair grows away from: the crown, a little behind the top
 HAIR_STREAKS = ((60, 1.0), (150, 0.6), (380, 0.3))  # strands across the hair: (per metre, weight)
 HAIR_HUE = 0.85                    # ... all of it this much towards the hue of the portrait's hair
-HAIR_CONTRAST, HAIR_RELIEF = 0.25, 1.0  # strands lighter / darker by this; their ridges (px of height)
-HAIR_TONE = 0.75                  # hair, whiskers and moustache this much as bright as head_input.png's: in
-                                  # alexander_ii_full.png they are a deeper brown (the generated head's read pale)
+HAIR_CONTRAST, HAIR_RELIEF = 0.08, 0.35  # strands lighter / darker by this; their ridges (px of height) - faint: the
+                                  # generated curls are in the surface now (strong straight streaks over them read as
+                                  # wood grain)
+SKIN_GREEN = (0.9, 1.0)           # skin texels whose green is this share of their red and more (a greenish cast the
+                                  # generated sides have at the temples) take the portrait's skin hue
 PORTRAIT = os.path.join(HERE, 'head', 'head_input.png')  # what the head was generated from: its front view
 TEX = 2048
 HEAD_Z = 1.72                     # the neck starts here, inside the tunic's collar
 NECK_CUT = 0.016                  # the generated head ends this far under the chin (below: its uniform's collar)
 RIM_SPIKES = 6                    # rounds of taking spikes off the cut's rim (before it is capped)
 VOXEL = 0.002                     # remesh voxel (m)
-TRIS = 24000                      # the head after decimation
+TRIS = 40000                      # the head after decimation (the generation's curls, moustache and lips kept)
 BEARD_SMOOTH = (0.03, 12)         # the bottom this high over the cut smoothed, rounds (the ragged beard ends)
-HAIR_SMOOTH = 60                  # rounds of smoothing the hair, whiskers and moustache (lumps of the generation)
 EAR_GROW, EAR_FACING = 0.0, 0.35  # the ears' box grown by this (m); how far sideways a face of the ear faces (normal x)
 EAR_NEAR = 0.004                  # ... and this close to an ear vertex of MPFB's (fitted onto the generated ears)
 EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin times this
 NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
+NECK_FLARE = 0.04                  # the neck widens to the jaw's outline over this much under the cut
+NECK_SHADE = (0.62, 0.52)          # the neck's skin this bright at the collar and under the jaw: in the beard's and the
+                                  # chin's shadow, as in the portrait (lit full, it showed as a pale tube in the collar)
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 16  # top ring this far inside the cut's outline; segments, rings
 NECK_TWIST_ZS = (1.84, 1.90)       # the neck's turn spreads between these heights (head bone above, chest below): over
                                   # the collar's front top - inside it the neck stays with the chest (the collar does
                                   # not turn: the oval neck turned in it came out through it)
-BEARD_SYM_DROP, BEARD_SYM_FADE = 0.004, 0.045  # symmetric_beard: from this far under the nose tip down, fading in over
+BEARD_SYM_DROP, BEARD_SYM_FADE = 0.004, 0.045  # symmetric_colour: from this far under the nose tip down, fading in over
 BEARD_SYM_BACK = 0.075            # ... in front of this far behind the eyes
 BEARD_SYM_EAR = (0.045, 0.065)    # ... and this far from an ear's middle (fading in): the ears and the sideburns by
                                   # them stay their own (made symmetric too, the left ear was crushed and the left
@@ -64,8 +67,8 @@ BEARD_SYM_NECK = (0.062, 0.078)   # ... and this far out from the neck's axis (t
 NECK_FIT = 0.97                   # the tube to the collar's ellipse (the tunic's stand collar lies on that): it fills
                                   # the collar, no gap round a thin neck
 EAR_RING = (0.002, 0.005)         # ear_surroundings: within the first of an ear its skin colour, fading by the second
-EAR_AT = [((0.099, -0.012, 1.926), (0.024, 0.026, 0.034)),   # the generated ears (rest pose): middle, radii (m) -
-          ((-0.099, -0.012, 1.926), (0.024, 0.026, 0.034))]  # symmetric, as the head is (head_shape.symmetrize, broaden)
+EAR_AT = [((0.098, 0.003, 1.932), (0.024, 0.026, 0.034)),   # the generated ears (rest pose): middle, radii (m)
+          ((-0.096, -0.005, 1.926), (0.024, 0.026, 0.034))]
 HAIR_KEEP = 0.15                  # ... of the hair's own colour variation (its red and orange blotches)
 HAIR_MAX_L = 1.15                 # hair no brighter than this times the portrait's (pale patches of the generation)
 DELIGHT_IT = 6                    # smoothing rounds over the mesh for the baked light (~4 mm per round)
@@ -99,8 +102,6 @@ EYE_IN, EYE_OUT = 0.0008, 0.0005  # inside the opening the surface sinks this fa
 EYE_ROUGH = 0.12                  # wet
 EYE_TEX = os.path.join(HERE, 'textures', 'eye_albedo.png')
 MOUTH_LINE = [(400, 618), (420, 615), (435, 617), (450, 618), (465, 617), (480, 616), (500, 617), (512, 620)]
-MOUTH_CLOSE = 0.005               # the lower lip raised by this (the generated mouth is open, his lips are closed)
-CLOSE_FADE = (12, 60)             # px under the lip line: raised fully, not at all
 JAW_FULL = 30                     # px: the lower lip this close under the lip line follows the jaw fully
 FACE_RIG = {'jaw': 'jaw', 'eye_l': 'eye.L', 'eye_r': 'eye.R', 'lid_upper_l': 'orbicularis03.L',
             'lid_upper_r': 'orbicularis03.R', 'lid_lower_l': 'orbicularis04.L', 'lid_lower_r': 'orbicularis04.R',
@@ -376,21 +377,6 @@ def lip_s(v, img):
     return None if ly is None else y - ly
 
 
-def close_mouth():
-    """The generated mouth is a little open, his lips are closed: the lower lip raised up to the moustache, the skin
-    under it following less and less down to the chin (the remesh then closes the slit)."""
-    for v in gbm.verts:
-        if any(is_hair(f) for f in v.link_faces):
-            continue
-        s = lip_s(v, IMG)
-        if s is not None and s > 0:
-            v.co.z += MOUTH_CLOSE * (1 - smoothstep(s, CLOSE_FADE[0], CLOSE_FADE[1]))
-    gbm.normal_update()
-
-
-close_mouth()
-
-
 def bary(p, a, b, c):
     """Barycentric weights of p's projection onto the plane of a, b, c (unclamped: a point just outside extrapolates)."""
     v0, v1, v2 = b - a, c - a, p - a
@@ -425,8 +411,8 @@ NECK_XY = tuple(sc['uniform']['NECK_AXIS'])
 
 
 def sym_weights(P, both=False):
-    """How much points (n, 3) take the mirrored left half's colour (symmetric_colour), or with both, either half the
-    other's shape (symmetric_beard): his right side (both: either side) under the nose, in front of the ears and away
+    """How much points (n, 3) take the mirrored left half's colour (symmetric_colour; with both, either side's): his
+    right side under the nose, in front of the ears and away
     from them, outside the neck. (The whole half mirrored brought the left side's flaws - pale patches in the hair -
     over to the right.)"""
     P = np.asarray(P, np.float64).reshape(-1, 3)
@@ -777,7 +763,11 @@ def neck_source():
             d = Vector((math.sin(a), -math.cos(a)))
             # the collar's ellipse all the way up (inside the jaw's cut): wider, it shows over the collar
             r = head_shape.neck_radius(d.x, d.y) * NECK_FIT
-            r = r + (min(r, rim_r[k] - NECK_INSET) - r) * w
+            # widening up into the jaw: out to the cut's outline at the top (kept inside it, the beard's flat underside
+            # stood out over the neck like a shelf - a cap on a post)
+            f = smoothstep(z, cut - NECK_FLARE, cut + NECK_INTO) ** 2
+            r = r + (max(r, rim_r[k] - NECK_INSET) - r) * f
+            r = r + (min(r, rim_r[k] - NECK_INSET) - r) * w * (1 - f)
             ring.append(b.verts.new((c.x + d.x * r, c.y + d.y * r, z)))
         rings.append(ring)
     for r0, r1 in zip(rings, rings[1:]):
@@ -788,8 +778,9 @@ def neck_source():
     col = b.verts.layers.float_color.new('col')
     for v in b.verts:  # the beard's colour carried down under the jaw, skin further from it
         c, d = RIM_AT(v.co)
-        w = smoothstep(d, 0.008, 0.03)
-        v[col] = (*(c * (1 - w) + np.array(SKIN_LIN) * w), 1.0)
+        w = smoothstep(d, 0.003, 0.012)  # (further down, the rim's colours ran down the neck in stripes)
+        shade = NECK_SHADE[1] + (NECK_SHADE[0] - NECK_SHADE[1]) * smoothstep(v.co.z, cut - 0.005, NECK_Z0 + 0.02)
+        v[col] = (*((c * (1 - w) + np.array(SKIN_LIN) * w) * shade), 1.0)
     ob = new_object('_SrcNeck', b, [material('_SrcSkin', None, 0.55, SKIN_LIN, 'col')], part=False)
     b.free()
     return ob
@@ -812,7 +803,7 @@ def build_head():
         o.select_set(o == ob)
     bpy.ops.object.voxel_remesh()
     n_remesh = len(ob.data.polygons)
-    # the ragged beard bottom and the neck's join; the lumps of the generated hair, whiskers and moustache. Taubin
+    # the ragged beard bottom and the neck's join (nothing else: smoothed, the curls, moustache and lips melted). Taubin
     # smoothing (a shrink and an inflate step per round) keeps the volume; per vertex weight 0..1.
     me = ob.data
     co = np.array([v.co[:] for v in me.vertices])
@@ -822,14 +813,6 @@ def build_head():
     cut = CHIN_Z - NECK_CUT
     band = np.array([smoothstep(z, cut + BEARD_SMOOTH[0], cut) * smoothstep(z, HEAD_Z + 0.01, HEAD_Z + 0.03)
                      for z in co[:, 2]])
-    hair = np.zeros(nv)
-    for i, c in enumerate(co):
-        if c[2] > cut:
-            fi = GEN_BVH.find_nearest(Vector(c), 0.02)[2]
-            hair[i] = float(fi is not None and GEN_FACES[fi][0] == head_shape.HAIR)
-    for _ in range(3):  # soft edge between hair and skin
-        s_ = np.zeros(nv); np.add.at(s_, ed[:, 0], hair[ed[:, 1]]); np.add.at(s_, ed[:, 1], hair[ed[:, 0]])
-        hair = 0.5 * hair + 0.5 * s_ / np.maximum(deg, 1)
 
     def taubin(w, rounds):
         nonlocal co
@@ -840,26 +823,8 @@ def build_head():
                 avg = s_ / np.maximum(deg, 1)[:, None]
                 co = co + (avg - co) * (f * w)[:, None]
     taubin(band, BEARD_SMOOTH[1])
-
-    def lap(a, w, rounds):
-        """Plain smoothing of a per-vertex value (or position), each vertex weight w towards its neighbours."""
-        k = (0.5 * w)[:, None] if a.ndim > 1 else 0.5 * w
-        for _ in range(rounds):
-            s_ = np.zeros_like(a)
-            np.add.at(s_, ed[:, 0], a[ed[:, 1]]); np.add.at(s_, ed[:, 1], a[ed[:, 0]])
-            avg = s_ / (np.maximum(deg, 1)[:, None] if a.ndim > 1 else np.maximum(deg, 1))
-            a = a + (avg - a) * k
-        return a
-    # The hair's lumps (1-2 cm, the generation's) out, its mass kept: a strongly smoothed copy of the surface, pushed
-    # back out along its normals by the smoothed distance it shrank - the large form comes back, the lumps do not.
-    smooth_co = lap(co, hair, HAIR_SMOOTH)
-    me.vertices.foreach_set('co', smooth_co.astype(np.float32).ravel()); me.update()
-    nrm = np.array([v.normal[:] for v in me.vertices])
-    off = lap(((co - smooth_co) * nrm).sum(1), np.ones(nv), HAIR_SMOOTH // 2)
-    co = smooth_co + nrm * (off * hair)[:, None]
     me.vertices.foreach_set('co', co.astype(np.float32).ravel())
     me.update()
-    print('head smoothing: %d hair vertices' % int((hair > 0.5).sum()))
     dec = ob.modifiers.new('D', 'DECIMATE')
     dec.ratio = TRIS / (2 * len(ob.data.polygons))  # remesh quads -> two triangles each
     bpy.ops.object.modifier_apply(modifier='D')
@@ -941,53 +906,6 @@ def fit_plane():
     c, a, o = best
     SYM_M, SYM_N = m0 + n0 * o, Matrix.Rotation(math.radians(a), 3, 'Z') @ n0
     print('face plane: turned %.1f deg, moved %.4f m (mirror gap %.4f -> %.4f m)' % (a, o, cost(m0, n0), c))
-
-
-def symmetric_beard():
-    """The whiskers and moustache made symmetric: the generation made them lopsided (his right whisker short, his
-    left one full, the right flaring out at the jaw). Each side takes the other's shape where that lies further out
-    (the union of the side and its mirror image in the face's midplane, sym_weights(both): fading out up to the nose,
-    towards the ears and onto the neck) - both whiskers as full as the fuller one; symmetric_colour() then gives his
-    right half the left one's colour."""
-    me = head.data
-    co0 = [v.co.copy() for v in me.vertices]
-    nrm = [v.normal.copy() for v in me.vertices]
-    tree = BVHTree.FromPolygons(co0, [tuple(p.vertices) for p in me.polygons])
-    W = sym_weights([c[:] for c in co0], both=True)
-    moved = 0
-    most = 0.0
-    for v, c, nn, w in zip(me.vertices, co0, nrm, W):
-        if w <= 0:
-            continue
-        loc = tree.find_nearest(mirror(c), 0.06)[0]
-        if loc is None:
-            continue
-        q = mirror(loc)
-        if (q - c).dot(nn) > 0:  # the other side stands further out here
-            v.co = c.lerp(q, float(w))
-            moved += 1
-            most = max(most, (q - c).length * float(w))
-    me.update()
-    print('beard symmetric: %d verts moved out to the other side (most %.4f m), plane through %s'
-          % (moved, most, tuple(round(x, 3) for x in SYM_M)))
-
-
-def asymmetry():
-    """Worst gap between the beard and its mirror image (for the log)."""
-    me = head.data
-    tree = BVHTree.FromPolygons([v.co.copy() for v in me.vertices], [tuple(p.vertices) for p in me.polygons])
-    W = sym_weights([v.co[:] for v in me.vertices], both=True)
-    gaps = [(tree.find_nearest(mirror(v.co), 0.06)[0] - mirror(v.co)).length for v, w in zip(me.vertices, W)
-            if w > 0.9 and tree.find_nearest(mirror(v.co), 0.06)[0] is not None]
-    return (max(gaps), float(np.mean(gaps))) if gaps else (0.0, 0.0)
-
-
-fit_plane()
-
-
-print('beard asymmetry before: max %.4f mean %.4f m' % asymmetry())
-symmetric_beard()
-print('beard asymmetry after: max %.4f mean %.4f m' % asymmetry())
 
 
 def bake():
@@ -1169,7 +1087,23 @@ def hair_detail():
     front = (hw > 0.9) & cov & (facing > 0.6)
     target = np.median(chroma[front], 0)
     chroma = chroma + (target - chroma) * (HAIR_HUE * k)
-    rgb = chroma * lum[..., None] * (1 - (1 - HAIR_TONE) * (hw * cov))[..., None]
+    skin = (hw < 0.5) & cov  # (the hairline too: the greenish cast sits at the temples)
+    skin_hue = np.median(chroma[skin & (facing > 0.6)], 0)
+    g = skin[..., None] * np.clip((chroma[..., 1:2] / np.maximum(chroma[..., 0:1], 1e-4) - SKIN_GREEN[0])
+                                  / (SKIN_GREEN[1] - SKIN_GREEN[0]), 0, 1)
+    chroma = chroma + (skin_hue - chroma) * g
+    print('skin: %d greenish texels to the skin hue' % int((g[..., 0] > 0.5).sum()))
+    rgb = chroma * lum[..., None]
+    # the neck under the jaw: plain skin, darker up in the beard's shadow (projected and carried down, the picture's
+    # collar and the rim's colours ran down it in stripes)
+    cut = CHIN_Z - NECK_CUT
+    neck = cov & (p[..., 2] < cut + 0.004) & (hw < 0.5)
+    fade = np.clip((cut + 0.004 - p[..., 2]) / 0.012, 0, 1)
+    sh = NECK_SHADE[1] + (NECK_SHADE[0] - NECK_SHADE[1]) * np.clip((cut - p[..., 2]) / (cut - NECK_Z0), 0, 1)
+    skin_lum = float(np.median(lum[skin & (facing > 0.6)]))  # (in the picture's own encoding, like rgb)
+    skin_rgb = skin_hue[None, None, :] * (skin_lum * sh)[..., None]
+    rgb = np.where(neck[..., None], rgb + (skin_rgb - rgb) * fade[..., None], rgb)
+    print('neck: %d texels plain skin' % int(neck.sum()))
     px[..., :3] = np.clip(rgb * (1 + HAIR_CONTRAST * s[..., None] * k), 0, 1)
     # the baked islands (and the bake's own margin) padded out over the background: no dark rims on the small ones
     px[..., :3] = mat_util.pad(px[..., :3], px[..., :3].max(-1) > 0.004)

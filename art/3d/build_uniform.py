@@ -43,15 +43,18 @@ BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dis
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
 # on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.022, 0.018  # in the portrait the jaw and whiskers rest on the collar; it is
-                                  # a little higher at the back (round the turned head the neck showed under the jaw;
-                                  # 3 cm higher, the collar stood up like a tube round the neck)
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.046, 0.070  # in the portrait the collar's top is ~3.5 cm under the chin's front at
+                                  # the front, the throat and the shirt's white edge showing over it, and it rises
+                                  # towards the back (~2.5 cm higher at the sides): a low collar on a sloping neckline,
+                                  # not a tube round the neck up to the jaw
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
-STAND_OFF = 0.006                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top)
+STAND_OFF = 0.016                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top) -
+                                  # the portrait's collar stands off the neck, ~17 cm across at the top (6 mm: a tube
+                                  # round the neck, a third narrower than the portrait's)
 NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
 WAIST_Z = 1.325                   # belt line (its centre 3 cm below: 1.295 in the portrait): the torso part of the tunic ends just below, the skirt starts just above
 BELT_H, BELT_N = 0.058, 96        # belt over the waist seam (WAIST_Z - 0.03): height; directions of its profile
-HEM_Z = 0.86                      # tunic hem, mid-thigh
+HEM_Z = 0.905                     # tunic hem, mid-thigh (the portrait's, row 855 in the 'ref' view)
 ANKLE_Z = 0.12                    # trousers end, inside the boot
 BOOT_TOP = 0.45                   # top of the boot shafts: the trousers are tucked in below it
 SLEEVE_T = 0.95                   # sleeve end along the forearm (0 elbow, 1 wrist)
@@ -61,6 +64,8 @@ SLEEVE_EASE, CUFF_EASE = 0.026, 0.014  # sleeves: round tubes this much looser t
                                   # across at the elbow); cuff off the wrist
 SLEEVE_CUFF_R = 0.047             # ... narrowing along the forearm to this radius at the cuff (the portrait's ~10 cm)
 SKIRT_EASE, SKIRT_FLARE = 0.008, 0.025  # skirt clearance over hips and thighs, extra radius at the hem
+PLEAT_FLARE = 0.04                # ... and more at the sides and back, where the pleats are: in the portrait the skirt
+                                  # kicks out behind the piped pleat edge (~4 cm past a plain flare at the hem)
 TROUSER_EASE = 1.08                # trouser leg radius over the mid-thigh
 TROUSER_TAPER = 0.75              # straight trouser leg: radius at the ankle relative to the top of the thigh
 CLOTH_THICK = 0.006
@@ -80,7 +85,8 @@ WOOL_REPEATS, WOOL_CONTRAST = 10, 0.07  # textures/gen/wool.png over the UVs (~1
 NORMAL_OUT = os.path.join(HERE, 'textures', 'uniform_normal.png')
 WOOL_H, PIPING_H = 0.06, 2.5        # px of relief: the weave; the piping, a cord sewn into the seams
 WOOL_SHEEN, SHEEN_TINT = 0.25, (0.04, 0.045, 0.07)  # broadcloth's fuzz at grazing angles: a faint dark blue (the portrait's cloth is near black)
-PLEAT_ANGLE = 90                  # degrees from the front centre to the piped pleats of the skirt (at the sides)
+PLEAT_ANGLE = 100                 # degrees from the front centre to the piped pleats of the skirt (at the sides, a little
+                                  # behind: the portrait shows the piping on the skirt's outline)
 
 sc = bpy.data.scenes['Human']
 bpy.context.window.scene = sc
@@ -556,9 +562,10 @@ def extrude_skirt(bm, rings=20):
             col[1:-1] = [max(col[k], (col[k - 1] + col[k] + col[k + 1]) / 3) if k > 2 else (col[k - 1] + col[k] + col[k + 1]) / 3
                          for k in range(1, len(col) - 1)]
         col[-1] = max(col[-1], col[-2])
-    for col in prof:
+    for j, col in enumerate(prof):
+        side = smoothstep(math.degrees(math.atan2(abs(dirs[j].x), -dirs[j].y)), 55.0, 110.0)  # 0 front .. 1 sides, back
         for i in range(1, rings):
-            col[i] += SKIRT_FLARE * (i / (rings - 1)) ** 1.6
+            col[i] += (SKIRT_FLARE + PLEAT_FLARE * side) * (i / (rings - 1)) ** 1.6
     rows, out = [loop], []
     for i in range(1, rings):
         t = i / (rings - 1)
@@ -706,10 +713,11 @@ def extract(name, keep, offset, smooth):
 
 def uniform_colour(pos, part):
     """Albedo (linear RGB) per surface point of the uniform in the rest pose: dark wool with red piping, cuffs and
-    trouser stripes. Gold, collar and the rest are separate detail meshes, not painted."""
+    trouser stripes. Gold, collar and the rest are separate detail meshes, not painted. part: 0 the coat, 2 the
+    trousers, 3 the sleeves (the coat's faces the arms move)."""
     x, y, z = pos[:, 0], pos[:, 1], pos[:, 2]
     red = np.zeros(len(pos), bool)
-    coat = part < 2
+    coat = part != 2
     # piping down the front closure, from the collar to the hem
     red |= coat & (y < -0.03) & (x > FLAP_X - 0.002) & (x < FLAP_X + PIPING_W)  # along the flap edge
     # cuffs: the last CUFF_T of the forearm
@@ -718,7 +726,9 @@ def uniform_colour(pos, part):
         d = b - a
         t = (pos - a) @ d / (d @ d)
         radial = np.linalg.norm(pos - a - np.outer(t, d), axis=1)
-        red |= (part == 0) & (t > SLEEVE_T - CUFF_T) & (t <= SLEEVE_T + 0.05) & (radial < 0.09)
+        # (on the sleeves only: the coat is built round the portrait's stance, his right forearm lies across the small
+        # of the back, and the cloth there came out in red patches)
+        red |= (part == 3) & (t > SLEEVE_T - CUFF_T) & (t <= SLEEVE_T + 0.05) & (radial < 0.09)
     # lampas: a stripe down the outer seam of each trouser leg
     zs = [bones['thigh_l'][0].z, bones['calf_l'][0].z, bones['calf_l'][1].z][::-1]
     ys = [bones['thigh_l'][0].y, bones['calf_l'][0].y, bones['calf_l'][1].y][::-1]
@@ -762,6 +772,11 @@ def paint_uniform(ob, mat):
     uv = np.zeros(len(me.loops) * 2, np.float32); me.uv_layers.active.data.foreach_get('uv', uv); uv = uv.reshape(-1, 2) * n
     co = np.zeros(len(me.vertices) * 3, np.float32); me.vertices.foreach_get('co', co); co = co.reshape(-1, 3)
     part = np.zeros(len(me.polygons), np.int32); me.attributes['part'].data.foreach_get('value', part)
+    armg = {g.index for g in ob.vertex_groups if g.name in ARM or g.name in HAND}
+    arm_w = np.array([sum(g.weight for g in v.groups if g.group in armg) for v in me.vertices])
+    sleeve = np.array([arm_w[list(p.vertices)].mean() > 0.5 for p in me.polygons])
+    part[(part == 0) & sleeve] = 3
+    print('uniform painter: %d sleeve faces' % int((part == 3).sum()))
     for tri in me.loop_triangles:
         t_uv = uv[list(tri.loops)]; t_co = co[list(tri.vertices)]
         x0, y0 = np.floor(t_uv.min(0)).astype(int); x1, y1 = np.ceil(t_uv.max(0)).astype(int)
