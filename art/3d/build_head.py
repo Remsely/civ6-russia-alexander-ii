@@ -1017,6 +1017,9 @@ def hair_detail():
     cap = (skin_lum * (1 - hw) + hair_lum * hw) * UNDER_JAW_SHADE
     l_now = np.maximum(rgb @ mat_util.LUM, 1e-4)
     pale = np.clip(1 - (rgb.max(-1) - rgb.min(-1)) / np.maximum(rgb.max(-1), 1e-4) / 0.25, 0, 1)  # low chroma: white
+    # ... and the throat under the chin whichever way it faces: the picture's shirt collar was projected onto it and
+    # showed from below as a white sheet between the chin and the collar
+    du = np.maximum(du, ((pale > 0.5) & cov & (p[..., 2] < CHIN_Z + UNDER_JAW[2]) & (hw < 0.5)).astype(du.dtype))
     tint = (skin_hue[None, None, :] * (1 - hw[..., None]) + target[None, None, :] * hw[..., None])
     fixed = np.where((pale > 0.5)[..., None], tint * np.minimum(l_now, cap)[..., None],
                      rgb * (np.minimum(l_now, cap) / l_now)[..., None])

@@ -43,10 +43,12 @@ BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dis
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
 # on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.026, 0.070  # in the portrait the collar's top corners at the front are ~1.5 cm
-                                  # under the chin's underside (in its 'ref' view): only the shirt's white edge and a
-                                  # little shadowed throat between them (4.6 cm down, a bare neck stood out of it) - and
-                                  # it rises towards the back (~1 cm higher at the sides)
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.033, 0.035  # in the portrait the collar's top corners at the front are ~2.5 cm
+                                  # under the chin's underside (in its 'ref' view, px 214 against the chin's 195): only
+                                  # the shirt's white edge between them (4.6 cm down, a bare neck stood out of it; 2.6
+                                  # cm, the collar came up to the chin) - and it rises towards the back
+STAND_RISE_POW = 1.7              # ... slowly at first: at the sides only ~1.6 cm higher than at the front (rising as
+                                  # (1 - cos) / 2, the sides stood 3.5 cm up and the red halves covered the whole neck)
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
 STAND_OFF = 0.016                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top) -
                                   # the portrait's collar stands off the neck, ~17 cm across at the top (6 mm: a tube
@@ -77,14 +79,14 @@ FLAP_X, FLAP_STEP = -0.02, 0.003  # closure edge: 2 cm to the wearer's right, fl
 # Texture: dark green-black wool of the Imperial uniform, red piping (linear RGB); widths are half-widths in metres.
 TEX = 2048
 TEX_OUT = os.path.join(HERE, 'textures', 'uniform_albedo.png')
-CLOTH_RGB = (0.0065, 0.007, 0.0105)
+CLOTH_RGB = (0.0034, 0.0037, 0.0058)  # the portrait's near-black broadcloth (at twice this the lit chest read grey)
 PIPING_RGB = (0.50, 0.012, 0.010)
 PIPING_W, STRIPE_W, CUFF_T = 0.007, 0.012, 0.30
 WOOL_REPEATS, WOOL_CONTRAST = 10, 0.07  # textures/gen/wool.png over the UVs (~15 cm a tile), its weave's strength (the
                                     # portrait's broadcloth is smooth: a stronger weave read as grain)
 NORMAL_OUT = os.path.join(HERE, 'textures', 'uniform_normal.png')
 WOOL_H, PIPING_H = 0.06, 2.5        # px of relief: the weave; the piping, a cord sewn into the seams
-WOOL_SHEEN, SHEEN_TINT = 0.25, (0.04, 0.045, 0.07)  # broadcloth's fuzz at grazing angles: a faint dark blue (the portrait's cloth is near black)
+WOOL_SHEEN, SHEEN_TINT = 0.15, (0.04, 0.045, 0.07)  # broadcloth's fuzz at grazing angles: a faint dark blue (the portrait's cloth is near black)
 PLEAT_ANGLE = (66.0, 80.0)        # degrees from the front centre (at the belt, at the hem) to the piped pleats of the skirt: in the portrait (the
                                   # 'ref' view) the piping runs from x ~435 at the belt out to ~350 at the hem on his
                                   # right, ~655 on his left - the front panel's edge, the back panel stepping out
@@ -259,7 +261,7 @@ def stand_top(c):
     """Top of the tunic's standing collar above c (by direction round the neck)."""
     d = c.xy - NECK_AXIS
     back = (1 + d.y / max(d.length, 1e-6)) / 2  # 0 front .. 1 back
-    return STAND_TOP_FRONT + (STAND_TOP_BACK - STAND_TOP_FRONT) * back
+    return STAND_TOP_FRONT + (STAND_TOP_BACK - STAND_TOP_FRONT) * back ** STAND_RISE_POW
 
 
 freg = [region(p) for p in cut_me.polygons]
@@ -936,6 +938,7 @@ print('uniform verts', len(uni.data.vertices), 'faces', len(uni.data.polygons))
 # Measurements the details (build_details.py) are fitted to.
 sc['uniform'] = dict(WAIST_Z=WAIST_Z, HEM_Z=HEM_Z, SLEEVE_T=SLEEVE_T, CUFF_T=CUFF_T, FLAP_X=FLAP_X, BOOT_TOP=BOOT_TOP,
                      ANKLE_Z=ANKLE_Z, STAND_TOP_FRONT=STAND_TOP_FRONT, STAND_TOP_BACK=STAND_TOP_BACK,
+                     STAND_RISE_POW=STAND_RISE_POW,
                      NECK_AXIS=tuple(NECK_AXIS), **BELT)
 print('body under verts', len(under.data.vertices))
 bpy.ops.outliner.orphans_purge(do_recursive=True)

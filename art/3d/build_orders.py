@@ -41,10 +41,11 @@ ATLAS = {'pal': (0.0, 0.0, 1.0, 0.125), 'ribbons': (0.0, 0.125, 0.25, 0.25), 'sc
 # Ribbons left to right (stripes as (colour, share)): St George, St Alexander Nevsky, St Andrew, St Vladimir, St Anna,
 # the Crimean war medal.
 RIBBON_SRGB = {'O': (232, 118, 18), 'K': (18, 18, 20), 'R': (176, 22, 30), 'B': (60, 110, 200), 'Y': (230, 190, 40),
-               'L': (120, 170, 225)}
+               'L': (120, 170, 225), 'W': (236, 234, 228)}
 RIBBONS = [[('O', 1), ('K', 1), ('O', 1), ('K', 1), ('O', 1)], [('R', 1)], [('B', 1)], [('K', 1), ('R', 1), ('K', 1)],
-           [('Y', 0.15), ('R', 0.7), ('Y', 0.15)], [('L', 1)], [('K', 1), ('O', 1), ('K', 1)]]
-MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal', 'smedal']
+           [('Y', 0.15), ('R', 0.7), ('Y', 0.15)], [('L', 1)], [('K', 1), ('O', 1), ('K', 1)],
+           [('W', 0.12), ('R', 0.76), ('W', 0.12)]]  # ... and St Stanislaus, its end under the epaulette's fringe
+MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal', 'smedal', 'medal']
 # Measured on alexander_ii_full.png (1 px ~ 1.4 mm of the model): the bar ~105 mm wide, its ribbons ~50 mm long, the
 # medals ~28 mm across, the St George cross ~40 mm; the neck cross ~62 mm; the stars ~80 mm across.
 # The portrait's bar: seven ribbons side by side, edge to edge (overlapping, the stripes of one ran into the next),
@@ -52,9 +53,13 @@ MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal', 'smedal']
 BAR_PX = (565, 300)                # the bar's top left corner in the portrait (px, cast onto the chest): just right of
                                    # the closure's piping, its top level with the cross's lower arm (at a fixed x in the
                                    # model it lay 2.5 cm left, on the piping)
-RIB_W, RIB_H = 0.016, 0.060        # a ribbon on the bar: width (also the step to the next), height (the portrait's bar
-                                   # ~11 cm wide, its ribbons ~6 cm long behind the medals)
-MEDAL_R, WCROSS_S = 0.016, 0.024   # the portrait's medals ~3.3 cm across, the St George cross ~4.8 cm
+RIB_W, RIB_H = 0.021, 0.060        # a ribbon on the bar: width (also the step to the next), height: the portrait's bar
+                                   # runs from the piping in under the epaulette's fringe (~11 cm of it showing), its
+                                   # ribbons ~6 cm long behind the medals (1.6 cm wide, it ended 3 cm short of the fringe)
+BAR_ROWS = 6                       # rows down the band (it follows the chest's round under it)
+MEDAL_R, WCROSS_S = 0.0125, 0.025  # the medals ~2.4 cm across, side by side on their ribbons (3.2 cm, each hid half the
+                                   # next); the St George cross ~4.6 cm, over its neighbours as in the portrait
+MEDAL_STEP = 0.0008                # between a medal and the one it overlaps (front to back)
 RIB_T, MEDAL_T, MEDAL_DOME = 0.0006, 0.0014, 0.0008  # thicknesses: a ribbon on its mount, a medal (and its dome)
 # The bar tilts as the chest does under it as a whole (one slope: tops in a line, all parallel), each ribbon turned
 # about the upright to the cloth behind it (round the chest - a flat mount stood off at its ends); the medals all as far
@@ -75,11 +80,11 @@ BADGE = (640, 396, 0.013, 0.017)     # px of the portrait (cast onto the cloth),
                                      # badge under the bar's right end: a crowned openwork cartouche with a monogram (the
                                      # portrait's), its crown above that
 SEAT_N = 5                           # seat(): rays across a piece's footprint each way
-STARS = [(660, 415, 0.044), (662, 467, 0.044)]  # px of the portrait (cast onto the cloth), radius: one above the
+STARS = [(666, 405, 0.044), (666, 457, 0.044)]  # px of the portrait (cast onto the cloth), radius: one above the
                                      # other between the sash and the arm, as there (~9 cm tall, seen at a slant on the
                                      # turning chest; at 7 cm they were specks)
 STAR_LIFT = 0.0015                   # off the cloth at the nearest
-STAR_FACING = 55.0                   # degrees: the cloth under a star faces the viewer at least this squarely
+STAR_FACING = 60.0                   # degrees: the cloth under a star faces the viewer at least this squarely
 STAR_TURN = 0.15                     # ... and the star turned this much further towards the viewer (pinned on the
                                      # chest's round, the lower one stood edge-on)
 LIFT = 0.003
@@ -533,6 +538,13 @@ def ref_hit(bvh, px, py):
     return bvh.ray_cast(o, d, 2.0)[:2]
 
 
+def ref_px(q):
+    """The portrait's pixel (column, row) where q shows in the 'ref' view (ref_hit's inverse)."""
+    k = HEIGHT / (REF_SOLES - REF_CROWN)
+    a = math.radians(YAW)
+    return (REF_W - REF_X) + q.dot(Vector((math.cos(a), -math.sin(a), 0.0))) / k, REF_SOLES - q.z / k
+
+
 def chest_frame(x, z, bvh=CHEST):
     """Point on the front of the chest at (x, z) and its frame: X along the cloth to his left, Y up it, N out."""
     loc, nrm = bvh.ray_cast(Vector((x, -1.0, z)), Vector((0, 1, 0)), 2.0)[:2]
@@ -739,46 +751,68 @@ def build_orders():
     ring = [top + cX * (math.cos(a) * NECK_RING_R) + cY * (math.sin(a) * NECK_RING_R)
             for a in (2 * math.pi * k / 16 for k in range(17))]
     tube(part, ring, 0.0009, lambda i, k: pal_uv('silver'), w, sides=6)
-    # ribbon bar: straight ribbons edge to edge, tops in a line; the medals hanging from them, alternately in front
-    # and behind
+    # ribbon bar: the ribbons edge to edge as one band round the chest - its columns RIB_W apart along the cloth, each
+    # upright, the tops in a line, every row of it off the cloth by LIFT (laid ribbon by ribbon, each on its own plane,
+    # they fanned apart in wedges with the cloth between them and the medals on them ran into each other); the medals
+    # hanging from the ribbons' middles side by side, all turned as the band is there
     n = len(RIBBONS)
-    rect = [(-1, 1), (1, 1), (1, -1), (-1, -1)]
     corner = ref_hit(NO_SASH, *BAR_PX)[0]
     BAR_X, BAR_Z = corner.x, corner.z
-    xs = [BAR_X + RIB_W * (k + 0.5) for k in range(n)]
-    zc = BAR_Z - RIB_H / 2
-    Yb = seat((xs[0] + xs[-1]) / 2, zc - 0.01, RIB_W * n / 2, RIB_H / 2 + 0.01, NO_SASH)[2]
-    w = None
-    frames = []
-    for k in range(n):
-        o, _, _, N = seat(xs[k], zc, RIB_W / 2, RIB_H / 2, NO_SASH, LIFT)
+    Yb = seat(BAR_X + RIB_W * n / 2, BAR_Z - RIB_H / 2 - 0.01, RIB_W * n / 2, RIB_H / 2 + 0.01, NO_SASH)[2]
+    rows = BAR_ROWS
+    cols, p = [], corner
+    for k in range(n + 1):
+        o, _, _, N = seat(p.x, p.z - RIB_H / 2, RIB_W / 2, RIB_H / 2, NO_SASH, 0.0)
         N = (N - Yb * N.dot(Yb)).normalized()
         X = Yb.cross(N).normalized()
-        o = o + Yb * ((BAR_Z - RIB_H / 2 * Yb.z - o.z) / max(Yb.z, 0.5))  # its top exactly on the line
-        o = lifted(o, X, Yb, N, RIB_W / 2, RIB_H / 2, LIFT)
-        frames.append((o, X, Yb, N))
-        if w is None:
-            w = TORSO_W.at(o)
-        ptop = plaque(part, rect, (o, X * (RIB_W / RIB_H), Yb, N), RIB_H / 2, RIB_T, 'ribbons', w=w)
-        for v, (px_, py_) in zip(ptop, rect):  # the ribbon's own stripes: its share of the region
-            for l in v.link_loops:
-                l[part.uv].uv = uv_in('ribbons', k / n + (px_ * 0.5 + 0.5) / n, py_ * 0.5 + 0.5)
-    # each medal hangs from its ribbon's end against the cloth under it (lifted only as far as its own place needs:
-    # all as far off as the one the cloth pushed out most, they hung a centimetre off the chest), overlapping its
-    # neighbours alternately in front and behind
+        col = []
+        for r in range(rows + 1):
+            q = p - Yb * (RIB_H * r / rows)
+            hit = NO_SASH.ray_cast(q + N * 0.05, -N, 0.1)[0]
+            col.append((hit if hit is not None else q, N))
+        cols.append((col, X, N))
+        nxt = p + X * RIB_W  # the next column: RIB_W on along the cloth, back onto it
+        hit = NO_SASH.ray_cast(nxt + N * 0.05, -N, 0.1)[0]
+        p = hit if hit is not None else nxt
+        p = p + Yb * ((BAR_Z - p.z) / max(Yb.z, 0.5))  # its top on the line
+    # every point of the band on the cloth (the chord between two columns sinks < 0.5 mm into the chest's round)
+    lift = [LIFT] * len(cols)
+    w = TORSO_W.at(corner)
+    front = [[part.vert(q + nn * (lift[k] + RIB_T), w) for q, nn in col] for k, (col, X, N) in enumerate(cols)]
+    back = [[part.vert(q + nn * lift[k], w) for q, nn in col] for k, (col, X, N) in enumerate(cols)]
+    for k in range(n):
+        for r in range(rows):
+            uv = [uv_in('ribbons', (k + a) / n, 1 - (r + b) / rows) for a, b in ((0, 0), (0, 1), (1, 1), (1, 0))]
+            part.face([front[k][r], front[k][r + 1], front[k + 1][r + 1], front[k + 1][r]], uv)
+            part.face([back[k + 1][r], back[k + 1][r + 1], back[k][r + 1], back[k][r]], uv[::-1])
+    edge = uv_in('ribbons', 0.0, 0.0)
+    rim = ([(k, 0) for k in range(n + 1)] + [(n, r) for r in range(1, rows + 1)]
+           + [(k, rows) for k in range(n - 1, -1, -1)] + [(0, r) for r in range(rows - 1, 0, -1)])
+    for (k0, r0), (k1, r1) in zip(rim, rim[1:] + rim[:1]):
+        part.face([front[k0][r0], back[k0][r0], back[k1][r1], front[k1][r1]], [edge] * 4, smooth=False)
+    # each medal hangs from its ribbon's middle, against the cloth under it, in the band's turn there; neighbours
+    # overlap at most at their rims (alternately a little in front and behind)
     offs = []
-    for k, (o, X, Y, N) in enumerate(frames):
+    for k in range(n):
         kind = MEDALS[k]
         size = WCROSS_S if kind == 'wcross' else MEDAL_R
-        mc = o - Y * (RIB_H / 2 + size * 0.8)
+        b0, b1 = front[k][-1].co, front[k + 1][-1].co
+        X = (b1 - b0).normalized()
+        N = (cols[k][2] + cols[k + 1][2]).normalized()
+        N = (N - X * N.dot(X)).normalized()
+        Y = N.cross(X).normalized()
+        if Y.z < 0:
+            Y = -Y
+        mc = (b0 + b1) / 2 - Y * (size * 0.8) - N * RIB_T
         off = max((lifted(mc, X, Y, N, size * 0.75, size * 0.75, MEDAL_LIFT) - mc).dot(N), RIB_T + 0.0003)
         layer = 2 if kind == 'wcross' else k % 2
-        mc = mc + N * (off + (MEDAL_T + 0.0004) * layer)
+        mc = mc + N * (off + (MEDAL_T + MEDAL_STEP) * layer)
         offs.append(off)
         plaque(part, CROSS_OUTLINE if kind == 'wcross' else DISC, (mc, X, Y, N), size, MEDAL_T, kind,
                dome=MEDAL_DOME, w=w)
-    print('ribbon bar: %d ribbons from x %.3f, tops at z %.3f, medals %.4f..%.4f off' % (
-        n, BAR_X, BAR_Z, min(offs), max(offs)))
+    print('ribbon bar: %d ribbons from x %.3f to %.3f (px %d..%d), tops at z %.3f, medals %.4f..%.4f off' % (
+        n, BAR_X, cols[-1][0][0][0].x, ref_px(cols[0][0][0][0])[0], ref_px(cols[-1][0][0][0])[0], BAR_Z,
+        min(offs), max(offs)))
     # the gold badge under the bar: the cartouche, scalloped round, its crown standing on it, both on the cloth's plane
     bpx, bpy, bw, bh = BADGE
     hit = ref_hit(CHEST, bpx, bpy)[0]
@@ -804,13 +838,20 @@ def build_orders():
                 break
             px -= 2
         cols.append(px)
-    for _, py, r in STARS:  # one above the other, as in the portrait
-        px = min(cols)
+    first = None
+    for _, py, r in STARS:  # one above the other, as in the portrait, both turned as the upper one (on its own cloth,
+        px = min(cols)      # where the chest turns away to the side, the lower one stood edge-on to the viewer)
         p = ref_hit(NO_SASH, px, py)[0]
         o, X, Y, N = seat(p.x, p.z, r * 0.8, r * 0.8, NO_SASH, STAR_LIFT)
-        N = (N - view * STAR_TURN).normalized()
-        Y = (Vector((0, 0, 1)) - N * N.z).normalized()
-        X = Y.cross(N).normalized()
+        if first is None:
+            N = (N - view * STAR_TURN).normalized()
+            Y = (Vector((0, 0, 1)) - N * N.z).normalized()
+            X = Y.cross(N).normalized()
+            first = (X, Y, N)
+        else:  # half way between the upper one's turn and its own cloth's (as the upper one, it stood 1.8 cm off)
+            N = (first[2] + (N - view * STAR_TURN).normalized()).normalized()
+            Y = (Vector((0, 0, 1)) - N * N.z).normalized()
+            X = Y.cross(N).normalized()
         o = lifted(o, X, Y, N, r * 0.75, r * 0.75, STAR_LIFT)
         star_piece(part, (o, X, Y, N), r, TORSO_W.at(o))
         print('star at px %d: x %.3f z %.3f, %.4f off the cloth at its middle' % (

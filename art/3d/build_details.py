@@ -30,33 +30,41 @@ GOLD = tuple(float(((c / 255 + 0.055) / 1.055) ** 2.4) for c in mat_util.GOLD_SR
 LEATHER = (0.009, 0.009, 0.010)
 SOLE = (0.006, 0.005, 0.005)
 WHITE = (0.80, 0.78, 0.72)
-CLOTH = (0.0065, 0.007, 0.0105)    # the tunic's wool (build_uniform.CLOTH_RGB)
+CLOTH = (0.0034, 0.0037, 0.0058)    # the tunic's wool (build_uniform.CLOTH_RGB)
 
 # Red collar over the tunic's standing collar: down from its top edge to where the cloth turns out into the shoulders
 # (by COLLAR_TURN, at most COLLAR_MAX_H); as in the portrait the halves stand apart at the front, their edges nearly
 # parallel, the tunic's dark collar between them up to the top (the white shirt collar's edge over it); the neck
 # stays behind it (build_pose.neck_in_collar).
-COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.066
+COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.11  # (at 6.6 cm the band ended
+                                  # over the shoulders at the back, the tunic's black stand under it: a horse collar)
 COLLAR_FLARE = 0.012              # the band widens downwards by at most this: its walls lean out a little (the portrait's
                                   # are nearly upright, ~21 cm across at the top and 23 cm at the foot; flared 3 cm the
                                   # collar was a cone with its lip spread over the shoulders)
 COLLAR_MIN_H = 0.060              # ... but at the front at least this tall (the portrait's red band: 6-7 cm at the front)
 COLLAR_FRONT_GAP = 0.032          # the opening at the front, at the top (x the radius / 0.08 m: ~3.2 cm half-width; the
                                   # portrait's halves stand ~6 cm apart, the dark tunic and the cross between them) ...
-COLLAR_FRONT_GAP_BOTTOM = 0.026   # ... and at the bottom edge
-STAND_DROP = 0.008                # the dark stand between the halves ends this far under their top: the shirt's white
+COLLAR_FRONT_GAP_BOTTOM = 0.012   # ... and at the bottom edge: the portrait's opening is a V, ~7.4 cm across at the top
+                                  # and ~3.5 cm at the foot (at 2.6 cm half-width there the halves stood apart as two
+                                  # upright panels with a broad black strip between them)
+STAND_DROP = 0.0                # the dark stand between the halves ends this far under their top: the shirt's white
                                   # edge shows over it (up to the top, it read as a black strip down the front)
 COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
 COLLAR_THICK = 0.004
 STAND_ROWS, STAND_COLS = 7, 13    # the dark stand between the halves: rows up it, columns across
+SHIRT_SHOW = 0.0145                # the shirt collar's edge this far over the bottom of its band (~6 mm over the red
+                                  # collar's top: the portrait's white line is 5-8 px)
 SHIRT_IN = 0.0045                 # the white shirt collar this far inside the tunic collar's outside (further in it ran into
                                   # the neck and showed in white flecks round it): its edge a white line along the
                                   # collar's top, as in the portrait
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
-BUTTON_R, BUTTON_H = 0.0085, 0.0055
-BUTTON_ZS = (1.66, 1.60, 1.54, 1.48, 1.42, 1.36)  # above the belt
-BUTTON_DXS = (-0.024, 0.031)      # from the flap edge: a row either side of the piped closure, as in the portrait
-BUTTON_SKIP = ((0.031, 1.66),)     # (dx, z): under the ribbon bar (build_orders.py)
+# Measured on alexander_ii_full.png (rows of the 'ref' view: z ~ (1510 - row) * 1.397 mm): on his left of the piping
+# the pencil's crook comes from a button at row 385 and the last one over the belt is at 540; on his right the one
+# over the belt is at 510; the rest lie under the sash. The two rows stagger (the portrait's do), ~7.2 cm apart.
+BUTTON_R, BUTTON_H = 0.0115, 0.0065  # the portrait's are big gilt domes, ~2.5 cm across (1.7 cm read as studs)
+BUTTON_SPOTS = [(-0.030, 1.614), (-0.030, 1.542), (-0.030, 1.470), (-0.030, 1.397),  # (dx from the flap edge, z)
+                (0.055, 1.572), (0.047, 1.500), (0.039, 1.428), (0.031, 1.356)]  # his left row slants in to the
+                                  # belt as the portrait's does (its pencil button 33 px off the piping, the last 13 px)
 # Belt over the waist seam of the tunic; buckle plate taller than the belt, top corners cut off.
 BELT_THICK, BELT_EASE = 0.004, 0.001
 BELT_RED, BELT_EDGE = 0.24, 0.05  # across the belt: red borders to this, a gold edge outside them   # height and profile come from build_uniform.py (it takes the tunic in)
@@ -456,7 +464,8 @@ def build_collar(nu=64, nv=7):
     gap = COLLAR_FRONT_GAP / 0.08
     thetas = [gap + (2 * math.pi - 2 * gap) * j / (nu - 1) for j in range(nu)]
     dirs = [Vector((math.sin(t), -math.cos(t), 0.0)) for t in thetas]
-    top_at = lambda t: P['STAND_TOP_FRONT'] + (P['STAND_TOP_BACK'] - P['STAND_TOP_FRONT']) * (1 - math.cos(t)) / 2
+    top_at = lambda t: P['STAND_TOP_FRONT'] + (P['STAND_TOP_BACK'] - P['STAND_TOP_FRONT']) * (
+        (1 - math.cos(t)) / 2) ** P.get('STAND_RISE_POW', 1.0)  # as build_uniform.stand_top
     cloth = lambda z, d: ray_dist(UNI_BVH, c0.to_3d() + Vector((0, 0, z)), d, 0.16)
     tops, bots, turns = [], [], []
     for t, d in zip(thetas, dirs):
@@ -526,9 +535,12 @@ def build_collar(nu=64, nv=7):
         for t in full:
             d = Vector((math.sin(t), -math.cos(t), 0.0))
             zt = top_at(t) + 0.001
-            z = zt - 0.008 + 0.0115 * k  # its edge ~3 mm over the collar's top, as in the portrait
             rn = cloth(zt - 0.006, d) or 0.07
-            ring.append(c0.to_3d() + Vector((0, 0, z)) + d * (rn - SHIRT_IN))
+            # in the opening between the halves it lies over the dark stand's top and the tunic's own collar edge
+            # (inside them, that edge came through it in black and red jags), only its edge showing there too
+            front = 1 - smoothstep(min(t, 2 * math.pi - t), gap * 0.8, gap * 0.98)
+            z = zt - 0.008 + 0.0065 * front * (1 - k) + SHIRT_SHOW * k  # its edge over the collar's top
+            ring.append(c0.to_3d() + Vector((0, 0, z)) + d * (rn - SHIRT_IN + (SHIRT_IN + COLLAR_LIFT - 0.0005) * front))
         rings.append(ring)
     bm, grid = loft(rings, closed=True)
     outward_normals(bm, lambda p: Vector((c0.x, c0.y, p.z)))
@@ -540,10 +552,8 @@ def build_collar(nu=64, nv=7):
 # ---------------------------------------------------------------- buttons
 def build_buttons():
     spots = []
-    for dx in BUTTON_DXS:
-        for z in BUTTON_ZS:
-            if (dx, z) in BUTTON_SKIP:
-                continue
+    for dx, z in BUTTON_SPOTS:
+        if True:
             loc, nrm, _, _ = UNI_BVH.ray_cast(Vector((P['FLAP_X'] + dx, -0.6, z)), Vector((0, 1, 0)), 1.0)
             spots.append((loc, nrm, UNI_W.at(loc)))
     return buttons_detail('Buttons', spots)
