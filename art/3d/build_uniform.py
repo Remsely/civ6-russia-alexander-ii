@@ -64,7 +64,7 @@ SLEEVE_EASE, CUFF_EASE = 0.026, 0.014  # sleeves: round tubes this much looser t
                                   # across at the elbow); cuff off the wrist
 SLEEVE_CUFF_R = 0.047             # ... narrowing along the forearm to this radius at the cuff (the portrait's ~10 cm)
 SKIRT_EASE, SKIRT_FLARE = 0.008, 0.025  # skirt clearance over hips and thighs, extra radius at the hem
-PLEAT_FLARE = 0.04                # ... and more at the sides and back, where the pleats are: in the portrait the skirt
+PLEAT_FLARE = 0.0                 # ... and more at the sides and back, where the pleats are: in the portrait the skirt
                                   # kicks out behind the piped pleat edge (~4 cm past a plain flare at the hem)
 TROUSER_EASE = 1.08                # trouser leg radius over the mid-thigh
 TROUSER_TAPER = 0.75              # straight trouser leg: radius at the ankle relative to the top of the thigh
@@ -85,8 +85,11 @@ WOOL_REPEATS, WOOL_CONTRAST = 10, 0.07  # textures/gen/wool.png over the UVs (~1
 NORMAL_OUT = os.path.join(HERE, 'textures', 'uniform_normal.png')
 WOOL_H, PIPING_H = 0.06, 2.5        # px of relief: the weave; the piping, a cord sewn into the seams
 WOOL_SHEEN, SHEEN_TINT = 0.25, (0.04, 0.045, 0.07)  # broadcloth's fuzz at grazing angles: a faint dark blue (the portrait's cloth is near black)
-PLEAT_ANGLE = 100                 # degrees from the front centre to the piped pleats of the skirt (at the sides, a little
-                                  # behind: the portrait shows the piping on the skirt's outline)
+PLEAT_ANGLE = (66.0, 80.0)        # degrees from the front centre (at the belt, at the hem) to the piped pleats of the skirt: in the portrait (the
+                                  # 'ref' view) the piping runs from x ~435 at the belt out to ~350 at the hem on his
+                                  # right, ~655 on his left - the front panel's edge, the back panel stepping out
+                                  # behind it in a fold
+PLEAT_STEP = 0.012                # ... by this much at the hem (none at the belt): the piping on the outline there
 
 sc = bpy.data.scenes['Human']
 bpy.context.window.scene = sc
@@ -566,6 +569,10 @@ def extrude_skirt(bm, rings=20):
         side = smoothstep(math.degrees(math.atan2(abs(dirs[j].x), -dirs[j].y)), 55.0, 110.0)  # 0 front .. 1 sides, back
         for i in range(1, rings):
             col[i] += (SKIRT_FLARE + PLEAT_FLARE * side) * (i / (rings - 1)) ** 1.6
+            # the pleat: behind the piped edge the back panel stands out (a fold the light catches, as in the portrait)
+            ang = math.degrees(math.atan2(abs(dirs[j].x), -dirs[j].y))
+            pa = PLEAT_ANGLE[0] + (PLEAT_ANGLE[1] - PLEAT_ANGLE[0]) * i / (rings - 1)
+            col[i] += PLEAT_STEP * smoothstep(ang, pa + 1.0, pa + 9.0) * (i / (rings - 1))
     rows, out = [loop], []
     for i in range(1, rings):
         t = i / (rings - 1)
@@ -737,7 +744,8 @@ def uniform_colour(pos, part):
     red |= (part == 2) & (np.abs(y - yc) < STRIPE_W) & (np.abs(x) > xc)  # outer side only
     # piping on the skirt's rear pleats, seen at the sides from the front: from the belt to the hem
     ang = np.degrees(np.arctan2(np.abs(x), -y))
-    dist = np.radians(np.abs(ang - PLEAT_ANGLE)) * np.hypot(x, y)
+    pa = PLEAT_ANGLE[0] + (PLEAT_ANGLE[1] - PLEAT_ANGLE[0]) * np.clip((WAIST_Z - z) / (WAIST_Z - HEM_Z), 0, 1)
+    dist = np.radians(np.abs(ang - pa)) * np.hypot(x, y)
     red |= coat & (z < WAIST_Z - 0.03) & (dist < PIPING_W)
     col = np.tile(np.array(CLOTH_RGB, np.float32), (len(pos), 1))
     col[red] = PIPING_RGB
