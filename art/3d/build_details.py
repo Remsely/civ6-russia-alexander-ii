@@ -36,12 +36,16 @@ CLOTH = (0.0065, 0.007, 0.0105)    # the tunic's wool (build_uniform.CLOTH_RGB)
 # (by COLLAR_TURN, at most COLLAR_MAX_H); as in the portrait the halves stand apart at the front, their edges nearly
 # parallel, the tunic's dark collar between them up to the top (the white shirt collar's edge over it); the neck
 # stays behind it (build_pose.neck_in_collar).
-COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.056
-COLLAR_FLARE = 0.03               # the band widens downwards by at most this: its walls lean out onto the shoulders, as
-                                  # in the portrait (~17 cm across at the top, ~22 cm at the foot)
-COLLAR_MIN_H = 0.052              # ... but at the front at least this tall (the portrait's red band: ~5.5 cm at the front)
-COLLAR_FRONT_GAP = 0.018          # the opening at the front, at the top (x the radius / 0.08 m: ~1.6 cm half-width) ...
-COLLAR_FRONT_GAP_BOTTOM = 0.014   # ... and at the bottom edge (wider round: ~1.75 cm - the edges nearly parallel)
+COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.066
+COLLAR_FLARE = 0.012              # the band widens downwards by at most this: its walls lean out a little (the portrait's
+                                  # are nearly upright, ~21 cm across at the top and 23 cm at the foot; flared 3 cm the
+                                  # collar was a cone with its lip spread over the shoulders)
+COLLAR_MIN_H = 0.060              # ... but at the front at least this tall (the portrait's red band: 6-7 cm at the front)
+COLLAR_FRONT_GAP = 0.032          # the opening at the front, at the top (x the radius / 0.08 m: ~3.2 cm half-width; the
+                                  # portrait's halves stand ~6 cm apart, the dark tunic and the cross between them) ...
+COLLAR_FRONT_GAP_BOTTOM = 0.026   # ... and at the bottom edge
+STAND_DROP = 0.008                # the dark stand between the halves ends this far under their top: the shirt's white
+                                  # edge shows over it (up to the top, it read as a black strip down the front)
 COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
 COLLAR_THICK = 0.004
 STAND_ROWS, STAND_COLS = 7, 13    # the dark stand between the halves: rows up it, columns across
@@ -504,7 +508,7 @@ def build_collar(nu=64, nv=7):
     rs = []
     for k in range(STAND_ROWS):
         f = k / (STAND_ROWS - 1)
-        z = bots[0] + (tops[0] - bots[0]) * f
+        z = bots[0] + (tops[0] - STAND_DROP - bots[0]) * f
         rr = (r_top[0] + r_top[-1]) / 2 + COLLAR_LIFT - 0.0015 + COLLAR_FLARE * (1 - f) ** 2
         g = (gap_b + (gap - gap_b) * f) * 1.5
         rs.append([ctr + Vector((0, 0, z)) + Vector((math.sin(t), -math.cos(t), 0)) * rr

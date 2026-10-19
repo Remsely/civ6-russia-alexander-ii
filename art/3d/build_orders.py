@@ -49,10 +49,12 @@ MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'smedal', 'medal', 'smedal']
 # medals ~28 mm across, the St George cross ~40 mm; the neck cross ~62 mm; the stars ~80 mm across.
 # The portrait's bar: seven ribbons side by side, edge to edge (overlapping, the stripes of one ran into the next),
 # straight strips with their tops in a line, the medals hanging from them and overlapping.
-BAR_X, BAR_Z = -0.010, 1.69        # left end of the bar (right at the closure's piping, as in the portrait), its top
-RIB_W, RIB_H = 0.018, 0.060        # a ribbon on the bar: width (also the step to the next), height (the portrait's bar
-                                   # ~13 cm wide, its ribbons ~6 cm long)
-MEDAL_R, WCROSS_S = 0.0145, 0.021  # medals no wider than two ribbons: one over the other only at its neighbours
+BAR_PX = (565, 300)                # the bar's top left corner in the portrait (px, cast onto the chest): just right of
+                                   # the closure's piping, its top level with the cross's lower arm (at a fixed x in the
+                                   # model it lay 2.5 cm left, on the piping)
+RIB_W, RIB_H = 0.016, 0.060        # a ribbon on the bar: width (also the step to the next), height (the portrait's bar
+                                   # ~11 cm wide, its ribbons ~6 cm long behind the medals)
+MEDAL_R, WCROSS_S = 0.016, 0.024   # the portrait's medals ~3.3 cm across, the St George cross ~4.8 cm
 RIB_T, MEDAL_T, MEDAL_DOME = 0.0006, 0.0014, 0.0008  # thicknesses: a ribbon on its mount, a medal (and its dome)
 # The bar tilts as the chest does under it as a whole (one slope: tops in a line, all parallel), each ribbon turned
 # about the upright to the cloth behind it (round the chest - a flat mount stood off at its ends); the medals all as far
@@ -61,18 +63,25 @@ RIB_T, MEDAL_T, MEDAL_DOME = 0.0006, 0.0014, 0.0008  # thicknesses: a ribbon on 
 CROWN_OUTLINE = [(-0.8, -1.0), (0.8, -1.0), (0.9, -0.55), (1.0, 0.25), (0.7, 0.05), (0.45, 0.6), (0.2, 0.2),
                  (0.08, 0.75), (0.08, 1.0), (-0.08, 1.0), (-0.08, 0.75), (-0.2, 0.2), (-0.45, 0.6), (-0.7, 0.05),
                  (-1.0, 0.25), (-0.9, -0.55)]  # the badge's crown, flat (band, three arches, a cross)
-NECK_CROSS_S = 0.036                 # half-size of the neck cross; its crown lies over the collar's lower edge, the
-NECK_CROWN_S = 0.015                 # ring on the collar (as in the portrait); the crown's half-size
+NECK_CROSS_S = 0.034                 # half-size of the neck cross (the portrait's: ~43 px across, 6 cm, on the turned
+                                     # chest; at 3.1 cm it came out 35 px); its crown lies
+NECK_CROWN_S = 0.011                 # in the collar's opening over its lower edge, the ring on the dark stand (as in the
+                                     # portrait); the crown's half-size
+NECK_CROSS_UP = -0.004               # ... and the whole cross this much lower (in the portrait its middle is ~25 px
+                                     # under the halves' lower corners, the crown just over them)
 NECK_RING_R = 0.0032                 # the ring it hangs by
 NECK_CROSS_RAYS = 0.8                # the silver rays between its arms reach this far (of the half-size)
-BADGE = (0.128, 1.582, 0.012, 0.017)  # x, z, half-width, half-height of the gold badge under the bar: a crowned
-                                     # openwork cartouche with a monogram (the portrait's), its crown above that
+BADGE = (640, 396, 0.013, 0.017)     # px of the portrait (cast onto the cloth), half-width, half-height of the gold
+                                     # badge under the bar's right end: a crowned openwork cartouche with a monogram (the
+                                     # portrait's), its crown above that
 SEAT_N = 5                           # seat(): rays across a piece's footprint each way
-STARS = [(667, 397, 0.036), (667, 457, 0.036)]  # px of the portrait (cast onto the cloth), radius: one above the
-                                     # other beside the sash, as there (~8 cm tall, seen at a slant on the turning
-                                     # chest; at 5 cm they were specks)
+STARS = [(660, 415, 0.044), (662, 467, 0.044)]  # px of the portrait (cast onto the cloth), radius: one above the
+                                     # other between the sash and the arm, as there (~9 cm tall, seen at a slant on the
+                                     # turning chest; at 7 cm they were specks)
 STAR_LIFT = 0.0015                   # off the cloth at the nearest
-STAR_FACING = 62.0                   # degrees: the cloth under a star faces the viewer at least this squarely
+STAR_FACING = 55.0                   # degrees: the cloth under a star faces the viewer at least this squarely
+STAR_TURN = 0.15                     # ... and the star turned this much further towards the viewer (pinned on the
+                                     # chest's round, the lower one stood edge-on)
 LIFT = 0.003
 MEDAL_LIFT = 0.001                   # a medal off the cloth at the nearest
 # Sabre: pommel under the left palm, the blade hanging down and a little back along the left hip and leg.
@@ -355,16 +364,18 @@ def build_atlas():
 
     enamel_cross('wcross', 'white')
 
-    # the neck cross: Maltese (eight points), as in the portrait - silver, its arms filled with pale blue-grey enamel
-    # inside a broad silver edge (dark navy, it read heavy and dark against the portrait's), a white ring round a dark
-    # blue medallion
+    # the neck cross: Maltese (eight points), as in the portrait - silver, its arms white enamel inside a broad silver
+    # edge with a thin dark blue line down each arm's middle (all pale blue, it read as a plastic toy), a white ring
+    # round a dark blue medallion
     r, th, x, y = polar('cross')
     inside = in_poly(x, y, MALTESE)
     inner = erode(inside, 14)
     c = np.tile(srgb(PALETTE['silver'][0]), r.shape + (1,)); m = np.full_like(r, PALETTE['silver'][1])
     ro = np.full_like(r, 0.25)
     hg = np.where(inside, 0.6, 0.0)
-    c[inner] = srgb(PALETTE['pale_blue'][0]); m[inner] = 0.0; ro[inner] = 0.12; hg[inner] = 0.5
+    c[inner] = srgb(PALETTE['white'][0]); m[inner] = 0.0; ro[inner] = 0.12; hg[inner] = 0.5
+    line = inner & ((np.abs(x) < 0.035) | (np.abs(y) < 0.035))
+    c[line] = srgb(PALETTE['navy'][0])
     for rr, col, met, h in ((0.27, 'silver', 0.55, 0.85), (0.23, 'white', 0.0, 0.9), (0.18, 'navy', 0.0, 0.95),
                             (0.05, 'silver', 0.55, 1.0)):
         d = r < rr
@@ -709,17 +720,17 @@ def build_orders():
     front = min(v.co.y for v in me.vertices)
     edge = [v.co for v in me.vertices if v.co.y < front + 0.012]
     x = sum(p.x for p in edge) / len(edge) + 0.006
-    z_open = min(v.co.z for v in me.vertices if abs(v.co.x - x) < 0.025 and v.co.y < front + 0.03)
+    z_open = min(v.co.z for v in me.vertices if abs(v.co.x - x) < 0.05 and v.co.y < front + 0.03)  # the halves' corners
     cs = NECK_CROWN_S
     notch = 0.74  # the top arm's notch, where the crown stands (MALTESE: its points at 1.0, the notch at 0.72)
-    zc = z_open - cs * 0.4 - s * notch  # the crown's upper half over the collar's edge, the ring on the collar
+    zc = z_open + NECK_CROSS_UP - cs * 0.4 - s * notch  # the crown's upper half over the collar's edge, the ring on it
     o, X, Y, N = seat(x, zc, s * 0.9, s * 0.9, NO_SASH, LIFT + 0.0015)
     print('neck cross at x %.3f z %.3f y %.3f (collar edge z %.3f)' % (x, zc, o.y, z_open))
     w = TORSO_W.at(o)
     plaque(part, rays(), (o - N * 0.0022, X, Y, N), s, 0.0015, 'ornate', w=w, flat=True)  # gold, as in the portrait;
     # wholly under the cross (1 mm under it, the rays' fans came up through its enamel as needles)
     plaque(part, MALTESE, (o, X, Y, N), s, 0.003, 'cross', dome=0.003, w=w)
-    collar = bvh_of([col, uni])
+    collar = bvh_of([col, obj('CollarStand'), uni])
     notch_at = o + Y * (s * notch)
     co_, cX, cY, cN = seat(notch_at.x, notch_at.z + cs, cs, cs, collar, LIFT)
     co_ = co_ + cY * ((notch_at.z + cs - co_.z) / max(cY.z, 0.5))  # its foot on the notch's height
@@ -732,6 +743,8 @@ def build_orders():
     # and behind
     n = len(RIBBONS)
     rect = [(-1, 1), (1, 1), (1, -1), (-1, -1)]
+    corner = ref_hit(NO_SASH, *BAR_PX)[0]
+    BAR_X, BAR_Z = corner.x, corner.z
     xs = [BAR_X + RIB_W * (k + 0.5) for k in range(n)]
     zc = BAR_Z - RIB_H / 2
     Yb = seat((xs[0] + xs[-1]) / 2, zc - 0.01, RIB_W * n / 2, RIB_H / 2 + 0.01, NO_SASH)[2]
@@ -767,7 +780,9 @@ def build_orders():
     print('ribbon bar: %d ribbons from x %.3f, tops at z %.3f, medals %.4f..%.4f off' % (
         n, BAR_X, BAR_Z, min(offs), max(offs)))
     # the gold badge under the bar: the cartouche, scalloped round, its crown standing on it, both on the cloth's plane
-    x, z, bw, bh = BADGE
+    bpx, bpy, bw, bh = BADGE
+    hit = ref_hit(CHEST, bpx, bpy)[0]
+    x, z = hit.x, hit.z
     cs = bw * 0.8
     o, X, Y, N = seat(x, z + cs * 0.8, bw, bh + cs * 0.8, CHEST)
     o = o - Y * (cs * 0.8)
@@ -793,6 +808,10 @@ def build_orders():
         px = min(cols)
         p = ref_hit(NO_SASH, px, py)[0]
         o, X, Y, N = seat(p.x, p.z, r * 0.8, r * 0.8, NO_SASH, STAR_LIFT)
+        N = (N - view * STAR_TURN).normalized()
+        Y = (Vector((0, 0, 1)) - N * N.z).normalized()
+        X = Y.cross(N).normalized()
+        o = lifted(o, X, Y, N, r * 0.75, r * 0.75, STAR_LIFT)
         star_piece(part, (o, X, Y, N), r, TORSO_W.at(o))
         print('star at px %d: x %.3f z %.3f, %.4f off the cloth at its middle' % (
             px, o.x, o.z, (o - NO_SASH.ray_cast(o + N * 0.05, -N, 0.1)[0]).dot(N)))

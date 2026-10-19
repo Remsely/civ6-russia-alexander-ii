@@ -31,17 +31,17 @@ REF_W, REF_CROWN, REF_SOLES, REF_X = 1024, 12, 1510, 515
 # folds) lying on top of the shoulder, centred on it front to back, its outer end a little past the shoulder's end; a
 # thick twisted rim; a strap to the collar with a button; bullion fringe hanging from under the rim round its outer
 # three quarters, fanning out over the arm (as in the portrait).
-EP_A, EP_B = 0.066, 0.052        # semi-axes along the shoulder and across it (the portrait's field: ~16 cm wide
-                                 # with its rim, ~23 cm with the fringe belling out under it; 20 cm, it read as a dish)
+EP_A, EP_B = 0.064, 0.05         # semi-axes along the shoulder and across it (the portrait's field: ~14.5 cm wide
+                                 # with its rim in the 'ref' view, ~22 cm with the fringe belling out under it)
 EP_REF_X = {'r': 360, 'l': 660}  # the fields' middles where the portrait has them (px across alexander_ii_full.png, as
                                  # the 'ref' view frames the figure): on the shoulder's line front to back, out to there
 EP_GAP, EP_DOME, EP_THICK = 0.003, 0.012, 0.006  # the field's underside off the cloth at the nearest, its dome, edge
 EP_CURVE = (0.30, 0.09)          # radii of the field's curve along and across the shoulder (a plate bent to it)
-EP_TILT = {'r': 28.0, 'l': 18.0}  # degrees the field's outer end is lower: in the portrait both fields face the viewer -
+EP_TILT = {'r': 20.0, 'l': 14.0}  # degrees the field's outer end is lower: in the portrait both fields face the viewer -
                                  # the camera stands to his right, so his left one is tilted out less (as much, it
                                  # showed its edge); the inner end rises over the slope to the collar (tilted 18 deg,
                                  # it rested there and stood 4-5 cm over the shoulder)
-EP_FORWARD = {'r': 26.0, 'l': 30.0}  # degrees its front edge is lower (his left one more, turned to the camera) - in the portrait the
+EP_FORWARD = {'r': 16.0, 'l': 20.0}  # degrees its front edge is lower (his left one more, turned to the camera) - in the portrait the
                                  # fields face the viewer (their faces show as ovals ~0.45 as high as wide); fitted to
                                  # the shoulder's slope (~25 deg out) the field was edge-on and the fringe stood out
                                  # like wings
@@ -50,16 +50,18 @@ EP_PRESS = (0.004, 0.012)        # the rim pressed this far into the padded shou
                                  # neck) half (resting on it, the field stood 5 cm over the portrait's)
 EP_PRESS_FRONT = 0.014           # ... and the quarter towards the neck and the chest this much more: tilted forward to
                                  # the viewer, the field's front edge rested on the chest and held it 4-5 cm up
-STRAP_X, STRAP_W = 0.085, 0.05   # strap from the field to this |x|, by the collar: the epaulette's own broad shoulder
+STRAP_X, STRAP_W = 0.085, 0.038   # strap from the field to this |x|, by the collar: the epaulette's own broad shoulder
                                  # strap, gold galloon edged in red, as in the portrait
 STRAP_T, STRAP_GAP = 0.006, 0.002  # its thickness (a stiff padded galloon, not a ribbon); off the cloth
 STRAP_REPEATS = 3                # the galloon picture along the strap
-FRINGE_N, FRINGE_ARC = 90, 290.0  # strands over this arc of the rim, centred on the outer end (none by the collar)
-FRINGE_LEN, FRINGE_R = 0.085, 0.0095  # a strand's length and radius (the portrait's: ~8.5 cm long, ~1.4 cm thick,
-                                 # side by side and in rows behind each other - a dense feathered skirt)
-FRINGE_DEEP = 0.012               # a strand whose root is this far inside the cloth is left out
+FRINGE_N, FRINGE_ARC = 60, 316.0  # strands over this arc of the rim, centred on the outer end (none by the collar)
+FRINGE_LEN, FRINGE_R = 0.10, 0.0075  # a strand's length and radius (the portrait's: ~10 cm long, ~1.5 cm thick, side
+                                 # by side and a row behind them - a dense skirt; 1.9 cm thick in three rows, they
+                                 # bunched into clumps and stood out behind the shoulders like horns)
+FRINGE_DEEP = 0.04                # a strand whose root is this far inside the cloth is left out (at 1.2 cm the front of
+                                 # the bell, over the chest, was missing: the cords came out of nowhere beside it)
 FRINGE_ROOT = 0.8                # ... at its root under the rim this share of the radius (they crowd there)
-FRINGE_DROOP = (74.0, 60.0)      # degrees below level a strand points at the front and back, and at the outer end
+FRINGE_DROOP = (72.0, 52.0)      # degrees below level a strand points at the front and back, and at the outer end
                                  # (straight and stiff, belling out from under the field round the shoulder as in the
                                  # portrait - ~21 cm across at the tips; hanging straight down (80-88 deg) they read as a
                                  # curtain round a too big field; fanned out at 48 deg over the arm they stood out like
@@ -68,10 +70,12 @@ FRINGE_DROOP = (74.0, 60.0)      # degrees below level a strand points at the fr
                                  # where the arm, the chest or the cords are in the way a strand bends out over
                                  # them, lying on them (turned up to clear them, the outer ones stuck out level like
                                  # a dish's rim and the front ones came short)
-FRINGE_ROWS = ((1.0, 0.0, 1.0), (0.86, 7.0, 0.96), (0.72, 13.0, 0.92))  # rows of strands from the outside in (strand i
+FRINGE_ROWS = ((1.0, 0.0, 1.0), (0.84, 8.0, 0.94))  # rows of strands from the outside in (strand i
                                  # in row i % 3): its root this far out under the field (x the semi-axes: all of them
                                  # under it, the rim over their tops), this much steeper (closer to the body), this share
                                  # as long - the portrait's fringe is layered like feathers, no gaps between strands
+FRINGE_END_DROOP = 14.0          # ... and this much steeper towards the arc's ends by the collar (pointing in along
+                                 # the field's plane there, they stuck out over the sash like sticks)
 FRINGE_JITTER = 0.001            # strand to strand: length (a neat even fringe, as in the portrait)
 FRINGE_STEP = 0.006              # path sampling along a strand (straight: few rings)
 FRINGE_TIP = 0.32                # the bright wire end in each strand's rounded tip (x the radius)
@@ -89,10 +93,13 @@ SASH_SHOULDER = Vector((-0.193, 0.0, 1.77))  # in the portrait it comes over the
 SASH_HIP = Vector((0.107, 0.0, 1.27))   # inner edge and runs steeply down across the chest (~0.6 px across per px down in
                                        # the 'ref' view; nearer the collar and flatter, it lay 30-40 px right of the
                                        # portrait's over the chest)
-SASH_SIDE_LIFT = (0.14, (0.02, 0.14), (-0.09, 0.0))  # the band where it turns round his left side (x, y: fading in
-                                       # over these) lifted this much: the plane steep enough for the chest put it 15 cm
-                                       # under the belt there, slung under the elbow; in the portrait it goes under the
-                                       # arm at the belt
+SASH_FLOOR = (-0.012, 0.06)      # its middle line held SASH_W / 2 + the first over the belt's top, eased in over the
+                                       # second: in the portrait the band comes down to the belt at his left hip and
+                                       # goes round his side along its top (the plane steep enough for the chest put its
+                                       # bottom 15 cm under the belt - over the belt in front and slung below it)
+SASH_BACK = (0.17, (-0.03, 0.08))  # on the back it runs straight from his left side (this x, at the floor's height) up
+                                 # to the shoulder, fading in from the side over these y: held over the belt, the plane
+                                 # (15 cm under the belt round the side) ran level round the waist like a cummerbund
 SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.12, 0.005, 0.002, 320  # the portrait's band: ~12.5 cm wide
 SASH_RELAX = 40                  # rounds of smoothing the band and pushing it out of the cloth
 SASH_TIGHTEN = 25                # rounds of envelope() of the cloth the sash lies on
@@ -101,6 +108,9 @@ SASH_SETTLE = 14                 # rounds of relax() after the lift over the bel
 SASH_EVEN = 30                   # rounds of evening out the width along the band
 BRIDGE_DZ, BRIDGE_SLOPE, BRIDGE_SPREAD, BRIDGE_SMOOTH = 0.07, 0.0007, 18, 30  # over the belt: zone round its centre; lift lost per step to a neighbour; steps
 TORSO_ARM_Z = 1.5                # below this the upper arms' sleeves are not part of the torso surface
+AIG_ARM_Z = 1.36                 # ... for the cords up to here: they lie on the sleeve's front all the way down (cast
+                                 # onto the sleeve above 1.5 m and the chest under it, they jumped in depth there and
+                                 # twisted together; without the sleeve they fell through the armpit)
 GOLD_FLOOR = 0.55                # gold albedo: the pictures' shading only darkens it down to this (the relief does the rest)
 NORMAL_STRENGTH = {'pole': 2.0, 'sash': 0.05}  # the pictures' light and dark as relief (the fringe's own)
 # Aiguillettes, as the portrait shows them (px of alexander_ii_full.png, cast onto the chest): from under the right
@@ -110,13 +120,15 @@ NORMAL_STRENGTH = {'pole': 2.0, 'sash': 0.05}  # the pictures' light and dark as
 # under the fringe. Side by side, at least a cord's thickness apart (where two crossed, the later was lifted over the
 # other by its thickness and stood 2 cm off the chest; stack_lift() still keeps them apart if they touch).
 AIG_REF = [
-    [(362, 352), (366, 382), (372, 412), (378, 442), (385, 466), (392, 489), (399, 497), (402, 493), (397, 466),
-     (391, 442), (385, 412), (379, 382), (374, 352)],                                 # the hanging loop by the arm
     [(385, 352), (390, 382), (397, 412), (403, 442), (412, 466), (428, 483), (460, 489), (490, 472), (512, 446)],
     [(396, 352), (401, 380), (409, 405), (420, 430), (437, 450), (456, 460), (476, 454), (498, 432)],
     [(407, 350), (414, 370), (423, 386), (437, 402), (454, 414), (468, 410), (478, 394)],
+    [(373, 352), (377, 375), (381, 400), (386, 425), (390, 450), (394, 472), (398, 490), (402, 496), (406, 490),
+     (406, 470), (404, 450), (400, 425), (396, 400), (392, 375), (388, 352)],              # the hanging loop by the arm
 ]
-AIG_INTO_SASH = (False, True, True, True)  # which cords end in under the sash (the hanging loop ends under the fringe)
+# (laid in this order, each over the ones before where they cross: the hanging loop last - in the portrait the lowest
+# sash loop runs up behind it; laid first, it had the others lifted over it into a twisted knot)
+AIG_INTO_SASH = (True, True, True, False)  # which cords end in under the sash (the hanging loop ends under the fringe)
 AIG_UNDER = 0.04                 # a cord's end this far in under the sash's edge (2.2 cm: the band lifted over the
                                  # cord showed its cut end at the edge)
 AIG_THIN = (0.004, 0.02, 0.45)   # under the band from the first to the second (m in from its edge) down to this
@@ -205,10 +217,11 @@ def envelope(bm, rounds):
             v.co = q
 
 
-def bvh_of(obs, torso=False, tighten=0):
+def bvh_of(obs, torso=False, tighten=0, arm_z=None):
     """BVH of the objects; torso: the uniform without its sleeves (the sash and the cords lie on the torso - the hanging
     left arm is right by the sash's end at the hip, which would wrap onto it); tighten: rounds of envelope() on the
-    uniform (a band lies across its folds, not into them)."""
+    uniform (a band lies across its folds, not into them); arm_z: the sleeves go up to this height (TORSO_ARM_Z)."""
+    arm_z = TORSO_ARM_Z if arm_z is None else arm_z
     bm = bmesh.new()
     for o in obs:
         me = o.data.copy(); me.transform(o.matrix_world)
@@ -225,7 +238,7 @@ def bvh_of(obs, torso=False, tighten=0):
             # the sleeves by the hips go; not the cloth behind the shoulders (the arms taken back pull it onto the back)
             bmesh.ops.delete(b2, geom=[v for v in b2.verts
                                        if sum(w for g, w in v[dl].items() if g in fore) > 0.3
-                                       or (v.co.z < TORSO_ARM_Z and sum(w for g, w in v[dl].items() if g in upper) > 0.5)],
+                                       or (v.co.z < arm_z and sum(w for g, w in v[dl].items() if g in upper) > 0.5)],
                              context='VERTS')
             b2.to_mesh(me); b2.free()
         if o == uni and tighten:
@@ -658,7 +671,8 @@ def ply_relief(s, v):
 # ---------------------------------------------------------------- sash
 def build_sash():
     """A band SASH_W wide round the torso. Its middle line: the outermost cloth (tunic, belt, collar) round the plane
-    through SASH_SHOULDER and SASH_HIP that holds the front-back axis, smoothed. Across it, at every point, the band
+    through SASH_SHOULDER and SASH_HIP that holds the front-back axis, held over the belt (SASH_FLOOR), on the back
+    straight up from the side (SASH_BACK), smoothed. Across it, at every point, the band
     runs along the cloth square to the line (the cloth's normal x the line's direction), so it keeps its width where
     the torso turns away from that plane; SASH_GAP off the cloth."""
     U = (SASH_SHOULDER - SASH_HIP).normalized()
@@ -677,8 +691,12 @@ def build_sash():
         d = -Y * math.cos(th) + U * math.sin(th)
         loc, nrm = outer(CLOTH, c, d)
         p = (loc + nrm * SASH_GAP) if loc is not None else c + d * 0.2
-        lift, (x0, x1), (y0, y1) = SASH_SIDE_LIFT
-        mid.append(p + Vector((0, 0, lift * smoothstep(p.x, x0, x1) * smoothstep(p.y, y0, y1))))
+        zf, ease = P['BELT_ZC'] + P['BELT_H'] / 2 + SASH_W / 2 + SASH_FLOOR[0], SASH_FLOOR[1]
+        xs, (y0, y1) = SASH_BACK
+        z_back = zf + (xs - p.x) * (SASH_SHOULDER.z - zf) / (xs - SASH_SHOULDER.x)
+        p.z = p.z + max(0.0, z_back - p.z) * smoothstep(p.y, y0, y1) * (1 - smoothstep(p.x, xs, xs + 0.06))
+        p.z = 0.5 * (p.z + zf + math.sqrt((p.z - zf) ** 2 + ease * ease))  # a smooth max(z, zf)
+        mid.append(p)
     for _ in range(12):  # the cloth's buttons and seams would show through
         mid = [mid[j] * 0.5 + (mid[j - 1] + mid[(j + 1) % SASH_N]) * 0.25 for j in range(SASH_N)]
         mid = [on_cloth(p)[0] for p in mid]
@@ -1251,6 +1269,7 @@ def build_epaulette(side):
         ends = 0.7 + 0.3 * smoothstep(half - abs(a), 0.0, 0.5)  # shorter towards the arc's ends (by the collar)
         length = (FRINGE_LEN + FRINGE_JITTER * math.sin(i * 2.399)) * shorter * ends
         droop = FRINGE_DROOP[1] + (FRINGE_DROOP[0] - FRINGE_DROOP[1]) * math.sin(a) ** 2 + steeper
+        droop += FRINGE_END_DROOP * (1 - smoothstep(half - abs(a), 0.0, 0.7))  # by the collar: hanging straight
         loc, nrm, _, _ = CLOTH.find_nearest(root, 0.06)
         if loc is not None and (root - loc).dot(nrm) < FRINGE_R + 0.002:
             # its root in the cloth (the field's front and inner end are pressed onto the shoulder): out onto it, the
@@ -1304,7 +1323,7 @@ O = bpy.data.objects
 # portrait they go under it), whatever of them still comes through it pressed in under it
 CLOTH = bvh_of([uni, O['Belt'], O['Buckle'], O['Buttons']], torso=True, tighten=SASH_TIGHTEN)
 O.remove(build_sash())
-loops = build_loops(bvh_of([uni, O['Buttons']], torso=True, tighten=SASH_TIGHTEN))
+loops = build_loops(bvh_of([uni, O['Buttons']], torso=True, tighten=SASH_TIGHTEN, arm_z=AIG_ARM_Z))
 CLOTH = bvh_of([uni, loops, O['Belt'], O['Buckle'], O['Buttons']], torso=True, tighten=SASH_TIGHTEN)
 sash = build_sash()
 UNDER_SASH, SASH_BVH = bvh_of([uni], torso=True), bvh_of([sash])
