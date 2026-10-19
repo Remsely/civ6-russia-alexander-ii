@@ -269,8 +269,7 @@ def cuff_tex(w, hh):
     u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
     rgb = sample(ref, mirrored(u, CUFF_REPEATS), (v - 0.12) / 0.76)
     edge = (v < 0.12) | (v > 0.88)
-    shade = 0.7 + 0.3 * np.sin(np.where(v < 0.5, v, 1 - v)[edge] / 0.12 * math.pi)
-    rgb[edge] = to_srgb(RED) * shade[:, None]
+    rgb[edge] = to_srgb(RED)  # its own colour: no shading painted in (the lighting gives it)
     return rgb
 
 

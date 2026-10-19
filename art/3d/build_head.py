@@ -45,6 +45,8 @@ NECK_CUT = 0.016                  # the generated head ends this far under the c
 RIM_SPIKES = 6                    # rounds of taking spikes off the cut's rim (before it is capped)
 VOXEL = 0.002                     # remesh voxel (m)
 TRIS = 40000                      # the head after decimation (the generation's curls, moustache and lips kept)
+UNDER_SMOOTH = (0.3, 0.6, 0.07, 0.045)  # ... and where facing down past normal z -first (fully by -second), from the
+                                  # chin + third down to the chin + fourth
 BEARD_SMOOTH = (0.03, 24)         # the bottom this high over the cut smoothed, rounds (the ragged beard ends: at 12 rounds
                                   # shards of them stood out under the jaw over the shirt collar)
 EAR_GROW, EAR_FACING = 0.0, 0.35  # the ears' box grown by this (m); how far sideways a face of the ear faces (normal x)
@@ -52,11 +54,12 @@ EAR_NEAR = 0.004                  # ... and this close to an ear vertex of MPFB'
 EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin times this
 NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
 NECK_FLARE = 0.04                  # the neck widens to the jaw's outline over this much under the cut
-NECK_SHADE = (0.62, 0.52)          # the neck's skin this bright at the collar and under the jaw: in the beard's and the
-                                  # chin's shadow, as in the portrait (lit full, it showed as a pale tube in the collar)
+NECK_SHADE = (1.0, 1.0)          # the neck's skin this bright at the collar and under the jaw: its own colour - no
+                                  # shadow is painted in, the lighting puts the beard's and the chin's shade on it
 UNDER_JAW = (0.15, 0.5, 0.012)    # hair_detail: surfaces facing down (normal z under -first, fully by -second) up to the
-                                  # chin + third are shaded ...
-UNDER_JAW_SHADE = 0.45            # ... to at most this of the skin's (hair's) brightness
+                                  # chin + third are cleaned ...
+UNDER_JAW_SHADE = 1.0             # ... to no brighter than the skin's (hair's) own colour: the picture's white shirt
+                                  # projected there taken out, no shadow painted in (the lighting shades it)
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 16  # top ring this far inside the cut's outline; segments, rings
 NECK_TWIST_ZS = (1.84, 1.90)       # the neck's turn spreads between these heights (head bone above, chest below): over
                                   # the collar's front top - inside it the neck stays with the chest (the collar does
@@ -94,7 +97,8 @@ EYE_IRIS, EYE_PUPIL = 0.66, 0.4   # iris radius / the opening's height (the lids
                                   # portrait; touching it, the eyes stared), pupil / iris
 EYE_IRIS_RGB = (0.42, 0.46, 0.52)  # sRGB: the portrait's cool grey irises
 EYE_SCLERA_RGB = (0.78, 0.73, 0.69)  # sRGB: the portrait's whites are dull (paper white, they stared out of the face)
-EYE_SCLERA_SHADE = 0.4            # ... darker by this much towards the corners
+EYE_SCLERA_SHADE = 0.0            # ... darker by this much towards the corners (none: the lids' shade comes from the
+                                  # lighting, not the texture)
 EYE_SUBDIV_R = 0.026              # the head's faces this near an opening split twice: its rim needs ~1 mm edges
 EYE_IN, EYE_OUT = 0.0008, 0.0005  # inside the opening the surface sinks this far into the eyeball, outside it (the
                                   # lids) it stays this far out of it: the rim is where the eyeball shows, smooth
@@ -785,6 +789,13 @@ def build_head():
     cut = CHIN_Z - NECK_CUT
     band = np.array([smoothstep(z, cut + BEARD_SMOOTH[0], cut) * smoothstep(z, HEAD_Z + 0.01, HEAD_Z + 0.03)
                      for z in co[:, 2]])
+    # ... and the jaw's underside back to the ears (facing down, under the mouth): seen from below it was a crumpled
+    # sheet with white glints on its folds
+    nz = np.array([v.normal.z for v in me.vertices])
+    down = np.array([smoothstep(-n, UNDER_SMOOTH[0], UNDER_SMOOTH[1]) * smoothstep(z, CHIN_Z + UNDER_SMOOTH[2],
+                                                                                   CHIN_Z + UNDER_SMOOTH[3])
+                     for n, z in zip(nz, co[:, 2])])
+    band = np.maximum(band, down)
 
     def taubin(w, rounds):
         nonlocal co
@@ -998,8 +1009,8 @@ def hair_detail():
     chroma = chroma + (skin_hue - chroma) * g
     print('skin: %d greenish texels to the skin hue' % int((g[..., 0] > 0.5).sum()))
     rgb = chroma * lum[..., None]
-    # the neck under the jaw: plain skin, darker up in the beard's shadow (projected and carried down, the picture's
-    # collar and the rim's colours ran down it in stripes)
+    # the neck under the jaw: plain skin (projected and carried down, the picture's collar and the rim's colours ran
+    # down it in stripes); no shadow painted in
     cut = CHIN_Z - NECK_CUT
     neck = cov & (p[..., 2] < cut + 0.004) & (hw < 0.5)
     fade = np.clip((cut + 0.004 - p[..., 2]) / 0.012, 0, 1)
@@ -1008,9 +1019,8 @@ def hair_detail():
     skin_rgb = skin_hue[None, None, :] * (skin_lum * sh)[..., None]
     rgb = np.where(neck[..., None], rgb + (skin_rgb - rgb) * fade[..., None], rgb)
     print('neck: %d texels plain skin' % int(neck.sum()))
-    # under the jaw and the beard (facing down, out of the picture's view): in their shade, no paler than the skin
-    # there - the picture's white shirt collar and the generation's pale beard ends were stretched over them in light
-    # shards
+    # under the jaw and the beard (facing down, out of the picture's view): no paler than the skin (the hair) there -
+    # the picture's white shirt collar and the generation's pale beard ends were stretched over them in light shards
     hair_lum = float(np.median(lum[(hw > 0.9) & cov & (facing > 0.6)]))
     under = cov & (n[..., 2] < -UNDER_JAW[0]) & (p[..., 2] < CHIN_Z + UNDER_JAW[2])
     du = np.clip((-n[..., 2] - UNDER_JAW[0]) / (UNDER_JAW[1] - UNDER_JAW[0]), 0, 1) * under
@@ -1024,7 +1034,7 @@ def hair_detail():
     fixed = np.where((pale > 0.5)[..., None], tint * np.minimum(l_now, cap)[..., None],
                      rgb * (np.minimum(l_now, cap) / l_now)[..., None])
     rgb = rgb + (fixed - rgb) * du[..., None]
-    print('under the jaw: %d texels shaded' % int((du > 0.5).sum()))
+    print('under the jaw: %d texels cleaned' % int((du > 0.5).sum()))
     px[..., :3] = np.clip(rgb * (1 + HAIR_CONTRAST * s[..., None] * k), 0, 1)
     # the baked islands (and the bake's own margin) padded out over the background: no dark rims on the small ones
     px[..., :3] = mat_util.pad(px[..., :3], px[..., :3].max(-1) > 0.004)
