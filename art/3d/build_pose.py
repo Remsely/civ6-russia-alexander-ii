@@ -557,14 +557,18 @@ def neck_in_collar():
         o = bpy.data.objects.get(n)
         if o:
             me = o.data.copy(); me.transform(o.matrix_world); cb.from_mesh(me); bpy.data.meshes.remove(me)
+        if n == 'Collar':
+            red = len(cb.verts)  # the red halves' vertices first: their tops are the edge (the dark stand between them
+            # ends lower, under the shirt's white edge: taken as the edge, the throat was pulled out over it in a shelf)
     tree = BVHTree.FromBMesh(cb)
+    cb.verts.ensure_lookup_table()
     ax = sum((v.co for v in cb.verts), Vector()) / len(cb.verts)
     zbot = min(v.co.z for v in cb.verts)
     tops, outer = {}, {}
-    for v in cb.verts:
+    for v in cb.verts[:red]:
         k = int(math.degrees(math.atan2(v.co.x - ax.x, -(v.co.y - ax.y))) // 5)
         tops[k] = max(tops.get(k, 0.0), v.co.z)
-    for v in cb.verts:  # its outside up by the top (it flares out lower down)
+    for v in cb.verts[:red]:  # its outside up by the top (it flares out lower down)
         k = int(math.degrees(math.atan2(v.co.x - ax.x, -(v.co.y - ax.y))) // 5)
         if v.co.z > tops[k] - 0.015:
             outer[k] = max(outer.get(k, 0.0), (v.co - ax).xy.length)

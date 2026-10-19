@@ -45,7 +45,8 @@ NECK_CUT = 0.016                  # the generated head ends this far under the c
 RIM_SPIKES = 6                    # rounds of taking spikes off the cut's rim (before it is capped)
 VOXEL = 0.002                     # remesh voxel (m)
 TRIS = 40000                      # the head after decimation (the generation's curls, moustache and lips kept)
-BEARD_SMOOTH = (0.03, 12)         # the bottom this high over the cut smoothed, rounds (the ragged beard ends)
+BEARD_SMOOTH = (0.03, 24)         # the bottom this high over the cut smoothed, rounds (the ragged beard ends: at 12 rounds
+                                  # shards of them stood out under the jaw over the shirt collar)
 EAR_GROW, EAR_FACING = 0.0, 0.35  # the ears' box grown by this (m); how far sideways a face of the ear faces (normal x)
 EAR_NEAR = 0.004                  # ... and this close to an ear vertex of MPFB's (fitted onto the generated ears)
 EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin times this
