@@ -24,6 +24,8 @@ RIGID = ('Buttons', 'Buckle', 'CuffButtons')  # each piece of these moves as a w
 SUBDIVIDE = 1                           # cuts per edge of the uniform's sheet before the simulation
 SLEEVE_PIN = 0.5                        # sleeves held this much to the arm (less: they slide down and balloon)
 CLOSURE_PIN = 0.7                       # the strip along the front closure held this much (its step and piping straight)
+TROUSER_PIN = 0.6                       # trouser legs held this much to the legs: they turn with them (at 0.05 the
+                                        # legs turned out inside them and the stripes stayed where a straight leg has them)
 SKIRT_PIN = (0.14, 0.32)                # the skirt held this much at the hem, at the belt
 # cloth: heavy broadcloth
 CLOTH = dict(quality=8, mass=0.35, air_damping=1.0, tension_stiffness=40, compression_stiffness=40,
@@ -171,7 +173,7 @@ def pin_weights():
         g = {names[x.group]: x.weight for x in v.groups}
         arm = sum(x for n, x in g.items() if n.startswith(('upperarm', 'lowerarm', 'hand')))
         if part_v[v.index] == 2:  # trousers: the waistband and inside the boot shafts
-            w[v.index] = max(0.05, smoothstep(c.z, P['WAIST_Z'] - 0.16, P['WAIST_Z'] - 0.08),
+            w[v.index] = max(TROUSER_PIN, smoothstep(c.z, P['WAIST_Z'] - 0.16, P['WAIST_Z'] - 0.08),
                              1 - smoothstep(c.z, P['BOOT_TOP'], P['BOOT_TOP'] + 0.10))
             continue
         if arm > 0.5:  # sleeve: held at the shoulder seam and the cuff

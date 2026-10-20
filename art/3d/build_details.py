@@ -73,6 +73,7 @@ BUCKLE_CUT_X, BUCKLE_CUT_Z = 0.018, 0.027  # cut-off top corners, measured on th
 BUCKLE_CLOSURE = 0.8               # the closure runs through the buckle this far across it (from the picture's left)
 # Cuffs: a band over the end of the sleeve with piped (beaded) edges; a gold flap with three buttons outside.
 CUFF_RAISE, CUFF_THICK, CUFF_LIP, CUFF_BEAD = 0.002, 0.003, 0.012, 0.003
+SHIRT_CUFF_CLEAR = 0.006
 FLAP_ACROSS, FLAP_ALONG, FLAP_RAISE = 0.068, 0.074, 0.003
 # Riding boots up to BOOT_TOP, wider than the tucked-in trousers; sole with a welt, heel, accordion folds over the
 # ankle, a spur at the heel.
@@ -635,10 +636,13 @@ def build_cuffs(nu=40):
         outward_normals(bm, lambda p, a=a, b=b: a + (b - a) * ((p - a).dot(b - a) / (b - a).length_squared))
         uvs = {v: uv_in('cuff', j / nu, vs[i]) for i, row in enumerate(grid) for j, v in enumerate(row)}
         out.append(new_detail('Cuff_' + s, bm, uvs, lambda v: UNI_W.at(v.co), CUFF_THICK))
-        rw = [(ray_dist(BODY_BVH, axis(1.0), d, 0.1) or 0.03) + 0.003 for d in dirs[:-1]]
+        # the shirt's cuff: just showing out of the coat's, SHIRT_CUFF_CLEAR off the wrist (its edge reached 1.2 cm
+        # past the coat's cuff and 3 mm off: the bent wrist came up through it as a pink patch)
+        rw = [max(ray_dist(BODY_BVH, axis(1.0) + ax * dz, d, 0.1) or 0.03 for dz in (0.0, 0.006, 0.012))
+              + SHIRT_CUFF_CLEAR for d in dirs[:-1]]
         rw = circ_smooth(rw, 3); rw.append(rw[0])
         span = 0.012 / (b - a).length
-        rings = [[a + (b - a) * (t1 + span * k) + d * r for d, r in zip(dirs, rw)] for k in (-1.5, 0.0, 1.0)]
+        rings = [[a + (b - a) * (t1 + span * k) + d * r for d, r in zip(dirs, rw)] for k in (-1.5, 0.0, 0.6)]
         bm, grid = loft(rings, closed=False)
         outward_normals(bm, lambda p, a=a, b=b: a + (b - a) * ((p - a).dot(b - a) / (b - a).length_squared))
         out.append(new_detail('ShirtCuff_' + s, bm, lambda v: uv_in('white', 0.5, 0.5), lambda v: BODY_W.at(v.co), 0.0012))

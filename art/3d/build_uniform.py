@@ -22,8 +22,12 @@ import mat_util  # noqa: E402
 HEAD_SCALE = 1.0
 NECK_LONGER = 0.6
 BODY_MACROS = {'weight': 0.85, 'muscle': 0.7}
-BODY_TARGETS = {'torso/torso-scale-depth-incr': 0.4, 'torso/measure-shoulder-dist-incr': 0.6,
-                'torso/torso-scale-horiz-incr': 0.35, 'torso/measure-bust-circ-incr': 0.3,
+BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-horiz-incr': 0.35,
+                # no extra depth or bust: with them the chest stood ~15 cm in front of the collar (a pigeon breast
+                # in profile, the epaulettes' fringe could not lie on the shoulders' front); flat pectorals
+                'torso/torso-scale-depth-decr': 0.35, 'torso/torso-muscle-pectoral-decr': 0.6,
+                # the weight macro's paunch taken back in (the front of the tunic bulged out over it below the chest)
+                'stomach/stomach-pregnant-decr': 0.8,
                 # the portrait's head is 1/7.7 of his height, MPFB's 1/8.6: a bigger head (the generated one follows it)
                 'head/head-scale-vert-incr': HEAD_SCALE, 'head/head-scale-horiz-incr': HEAD_SCALE,
                 'head/head-scale-depth-incr': HEAD_SCALE,
@@ -60,20 +64,21 @@ HEM_Z = 0.905                     # tunic hem, mid-thigh (the portrait's, row 85
 ANKLE_Z = 0.12                    # trousers end, inside the boot
 BOOT_TOP = 0.45                   # top of the boot shafts: the trousers are tucked in below it
 SLEEVE_T = 0.95                   # sleeve end along the forearm (0 elbow, 1 wrist)
-TUNIC_OFF, TROUSERS_OFF = 0.028, 0.015
+TUNIC_OFF, TROUSERS_OFF = 0.016, 0.015  # a tailored tunic (at 2.8 cm it stood off
+                                  # the chest and back like a padded coat)
 SHOULDER_OFF = 0.012              # tunic offset over the shoulders (above the armpits)
 SLEEVE_EASE, CUFF_EASE = 0.026, 0.014  # sleeves: round tubes this much looser than the arm (the portrait's are full: ~15 cm
                                   # across at the elbow); cuff off the wrist
 SLEEVE_CUFF_R = 0.047             # ... narrowing along the forearm to this radius at the cuff (the portrait's ~10 cm)
-SKIRT_EASE, SKIRT_FLARE = 0.008, 0.025  # skirt clearance over hips and thighs, extra radius at the hem
+SKIRT_EASE, SKIRT_FLARE = 0.020, 0.025  # skirt clearance over hips and thighs, extra radius at the hem
 PLEAT_FLARE = 0.0                 # ... and more at the sides and back, where the pleats are: in the portrait the skirt
                                   # kicks out behind the piped pleat edge (~4 cm past a plain flare at the hem)
 TROUSER_EASE = 1.08                # trouser leg radius over the mid-thigh
 TROUSER_TAPER = 0.75              # straight trouser leg: radius at the ankle relative to the top of the thigh
 CLOTH_THICK = 0.006
 WELD = 0.007                      # body vertices closer than this are merged in the clothes
-WAIST_GAP, WAIST_TAPER = 0.012, 0.015 # front pulled in from the chest to the belt by up to WAIST_TAPER
-CHEST_GAP = 0.02                  # cloth (wool and lining) over the ironed chest
+WAIST_GAP, WAIST_TAPER = 0.012, 0.03 # front pulled in from the chest to the belt by up to WAIST_TAPER
+CHEST_GAP = 0.01                  # cloth (wool and lining) over the ironed chest
 SKIN_GAP = 0.008                  # minimum cloth-to-skin distance (skinning moves them apart unevenly)
 FLAP_X, FLAP_STEP = -0.02, 0.003  # closure edge: 2 cm to the wearer's right, flap lifted 3 mm
 # Texture: dark green-black wool of the Imperial uniform, red piping (linear RGB); widths are half-widths in metres.
@@ -415,10 +420,18 @@ def tailored_front(bm):
             env[i] = max(floor[i], min(env[i], env[top] - WAIST_TAPER * smoothstep(t, 0.0, 1.0)))
         grid[:, j] = env
     across = np.abs(xs) <= 0.17
-    for i in range(len(zs)):  # horizontal: per height one arc f = a - b*x^2 lifted over the columns. A stretched
-        # envelope would be a flat plate between the pectorals with rounded corners that read as two bumps.
-        b = min(max(0.0, -np.polyfit(xs[across] ** 2, grid[i][across], 1)[0]), 4.0)
-        grid[i] = (grid[i][across] + b * xs[across] ** 2).max() - b * xs ** 2
+    x2, x4 = xs[across] ** 2, xs[across] ** 4
+    for i in range(len(zs)):  # horizontal: per height one arc f = a - b*x^2 - c*x^4 lifted over the columns. A
+        # stretched envelope would be a flat plate between the pectorals with rounded corners that read as two bumps;
+        # a parabola alone (a broad flat chest, sides turning back sharply) stood out 3-4 cm at the breastbone
+        A = np.stack([np.ones_like(x2), -x2, -x4], 1)
+        _, b, c = np.linalg.lstsq(A, grid[i][across], rcond=None)[0]
+        if c < 0:
+            b, c = max(0.0, -np.polyfit(x2, grid[i][across], 1)[0]), 0.0
+        elif b < 0:
+            b, c = 0.0, max(0.0, -np.polyfit(x4, grid[i][across], 1)[0])
+        arc = b * xs ** 2 + c * xs ** 4
+        grid[i] = (grid[i][across] + arc[across]).max() - arc
     for _ in range(3):  # soften the envelope's corners
         grid[1:-1] = (grid[:-2] + grid[1:-1] + grid[2:]) / 3
     front = [v for v in bm.verts if v.co.y < 0 and abs(v.co.x) < xmax and z0 < v.co.z < z1 and arm_weight(v, dl) < 0.3]

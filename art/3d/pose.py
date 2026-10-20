@@ -37,11 +37,14 @@ ARM = {
     'r': dict(wrist=(-0.07, 0.15, 1.21), elbow=(-0.33, 0.11, 1.24), hand_to=(0.06, 0.13, 1.21), palm=(0, 1, 0)),
 }
 # Right leg in front, carrying the weight; the left a step behind, its toe turned further out. twist: degrees the leg
-# is turned out about its own axis (towards his left +) - the right one shows its trouser stripe to the viewer as in
-# the portrait (the legs are nearly straight: the knee pole alone bowed them instead of turning them).
+# is turned about the hip-to-ankle line (it swings the bent knee: at +20 the right leg bowed off the portrait's
+# outline); shin: degrees the shin is turned about its own axis, out with the foot - the trouser stripe on the outer
+# seam ~75-85 degrees round from the toe, on the outline in the portrait's view (at twist -30 / 15 and no shin turn
+# the right knee pointed 80 degrees inside its foot and the stripe ran down the front of the shin over a turned-out
+# boot).
 LEG = {
-    'r': dict(ankle=(-0.166, -0.006), pole=(-0.159, -0.784), turn=-40.0, twist=-30.0),
-    'l': dict(ankle=(0.098, 0.049), pole=(-0.119, -0.791), turn=16.0, twist=15.0),
+    'r': dict(ankle=(-0.166, -0.006), pole=(-0.159, -0.784), turn=-40.0, twist=0.0, shin=35.0),
+    'l': dict(ankle=(0.098, 0.049), pole=(-0.119, -0.791), turn=16.0, twist=0.0),
 }
 # Fingers: curl about each bone's own X (degrees per joint 1, 2, 3); thumb separately.
 CURL = {
@@ -120,6 +123,12 @@ def set_pose(rig):
             p = thigh.head.copy()
             thigh.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(leg['twist']), 4, ax)
                             @ Matrix.Translation(-p) @ thigh.matrix)
+            _upd()
+        if leg.get('shin'):  # the shin turned about its own axis (knee and ankle stay): it turns out with the foot
+            ax = (calf.tail - calf.head).normalized()
+            p = calf.head.copy()
+            calf.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(leg['shin']), 4, ax)
+                           @ Matrix.Translation(-p) @ calf.matrix)
             _upd()
         # the foot keeps its rest attitude (flat sole) turned about Z, at the new ankle
         rest = foot.bone.matrix_local

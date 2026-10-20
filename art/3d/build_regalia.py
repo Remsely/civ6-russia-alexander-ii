@@ -52,6 +52,7 @@ EP_PRESS_FRONT = 0.014           # ... and the quarter towards the neck and the 
                                  # the viewer, the field's front edge rested on the chest and held it 4-5 cm up
 STRAP_X, STRAP_W = 0.085, 0.038   # strap from the field to this |x|, by the collar: the epaulette's own broad shoulder
                                  # strap, gold galloon edged in red, as in the portrait
+STRAP_SHORT = 0.006               # ... ending this far short of the collar's foot
 STRAP_T, STRAP_GAP = 0.006, 0.002  # its thickness (a stiff padded galloon, not a ribbon); off the cloth
 STRAP_REPEATS = 3                # the galloon picture along the strap
 FRINGE_ARC = 290.0               # the fringe hangs round this arc of the rim, centred on the outer end: none on the
@@ -138,10 +139,11 @@ AIG_THIN = (-0.002, 0.014, 0.4)   # under the band from the first to the second 
 # under the band's edge, showed as a crumpled lump), its point over the band by the buttons.
 PENCIL_KNOB, PENCIL_TOP, PENCIL_END = (585, 385), (615, 401), (617, 526)  # px
 KNOB_R, CROOK_R = 0.0085, 0.0048  # the crook's knob and its neck (gilt, cast with the pencil)
-AIG_R, AIG_GAP = 0.0078, 0.0015  # the portrait's cords: ~1.6-1.9 cm thick round braid (at 1.3 cm they read as string)
+AIG_R, AIG_GAP = 0.0060, 0.0015  # the portrait's cords: ~1.2-1.3 cm thick round braid (9 px; at 1.6 cm they
+                                 # came out much thicker than the portrait's next to the fringe)
 AIG_STEP = 0.003                 # path sampling along a cord (its braid is modelled in its surface)
 AIG_STACK = 0.001                # crossing cords: the one on top at least this far off the one under it
-BRAID_N, BRAID_PITCH, BRAID_SLANT = 2, 0.0072, 1.45  # the braid's chevrons round the cord, their pitch along it, the
+BRAID_N, BRAID_PITCH, BRAID_SLANT = 2, 0.0056, 1.45  # the braid's chevrons round the cord, their pitch along it, the
                                  # strands' slant (along per half chevron, x pitch): the herringbone of the portrait's
 BRAID_FIBRES = 5                 # fibres across a strand
 BRAID_AMP = 0.12                 # the strands stand this much of the radius proud
@@ -192,6 +194,17 @@ for o in list(bpy.data.objects):  # previous run
     if o.get('regalia'):
         bpy.data.objects.remove(o)
 bones = {b.name for b in rig.data.bones}
+
+
+def upper_hull(pts):
+    """Upper convex envelope of (t, f) points sorted by t, as (ts, fs)."""
+    hull = []
+    for q in pts:
+        while len(hull) >= 2 and ((hull[-1][0] - hull[-2][0]) * (q[1] - hull[-2][1])
+                                  - (hull[-1][1] - hull[-2][1]) * (q[0] - hull[-2][0])) >= 0:
+            hull.pop()
+        hull.append(q)
+    return [q[0] for q in hull], [q[1] for q in hull]
 
 
 def smoothstep(x, a, b):
@@ -1256,20 +1269,47 @@ def build_epaulette(side):
         x, y = EP_A * math.cos(a), EP_B * math.sin(a)
         rim.append(L(x, y, U(x, y) + EP_THICK * 0.5))
     _, u = tube(bm, rim, EP_RIM_R, 12, 'bullion', uv_len=BULLION_UV_LEN * 3, cap=False); uvs.update(u)
-    # strap to the collar, from under the field, a button on its end: every point of it on the cloth (and the sash)
-    # under it; top, bottom and side faces, STRAP_T thick
+    # strap to the collar, from under the field, a button on its end: a stiff board - flat across, bent along its
+    # length in one smooth curve (a parabola) resting on the highest points of the cloth (and the sash) under it (laid
+    # on the cloth point by point it followed every fold and came out crumpled); top, bottom and side faces
     x_end = sign * STRAP_X - C.x
     strap_len = abs(x_end / X.x) if abs(X.x) > 1e-3 else 0.1
+
+    def over_collar(x):  # the collar stands higher than the cloth there
+        p0 = L(x, 0.0, 0.0) + Z * 0.15
+        a_, b_ = FIELD_CLOTH.ray_cast(p0, -Z, 0.4)[0], STRAP_CLOTH.ray_cast(p0, -Z, 0.4)[0]
+        return a_ is not None and (b_ is None or (a_ - b_).dot(Z) > 0.002)
+    for _ in range(40):  # the strap ends STRAP_SHORT before the collar's foot (run up onto it, it bridged the hollow
+        if not over_collar(-strap_len - STRAP_SHORT):  # before it, 1 cm off the shoulder)
+            break
+        strap_len -= 0.002
     top_rows, bot_rows = [], []
     n_rows = 16
+    xs = [-EP_A * 0.6 - (strap_len - EP_A * 0.6) * i / n_rows for i in range(n_rows + 1)]
+    hs = []
+    for i, x in enumerate(xs):
+        hh = []
+        for y in np.linspace(-STRAP_W / 2, STRAP_W / 2, 7):
+            hit = FIELD_CLOTH.ray_cast(L(x, y * (1 - 0.15 * i / n_rows), 0.0) + Z * 0.15, -Z, 0.4)[0]
+            if hit is not None:
+                hh.append((hit - C).dot(Z))
+        hs.append(max(hh) if hh else 0.0)
+    # the line a stiff band takes over them: their upper convex envelope (it bridges only hollows), smoothed, kept
+    # on them (a parabola through them stood 1.5 cm off the shoulder in its middle)
+    order = np.argsort(xs)
+    ex, eh = upper_hull([(xs[i], hs[i]) for i in order])
+    line = np.interp(xs, ex, eh)
+    for _ in range(4):
+        line[1:-1] = np.maximum((line[:-2] + line[1:-1] * 2 + line[2:]) / 4, np.array(hs[1:-1]))
+    line = np.maximum(line, hs)
+    gaps = line - np.array(hs)
+    print('strap %s: %.3f long, off the cloth %.4f..%.4f: %s' % (side, strap_len, gaps.min(), gaps.max(), ' '.join('%.0f' % (g * 1000) for g in gaps)))
     for i in range(n_rows + 1):
         f = i / n_rows
-        x = -EP_A * 0.6 - (strap_len - EP_A * 0.6) * f
+        x = xs[i]
         trow, brow = [], []
         for y in (-STRAP_W / 2, STRAP_W / 2):
-            p0 = L(x, y * (1 - 0.15 * f), 0.0)
-            hit = FIELD_CLOTH.ray_cast(p0 + Z * 0.15, -Z, 0.4)[0]
-            p = hit + Z * STRAP_GAP if hit is not None else p0
+            p = L(x, y * (1 - 0.15 * f), float(line[i]) + STRAP_GAP)
             b = bm.verts.new(p); t = bm.verts.new(p + Z * STRAP_T)
             uvs[b] = uvs[t] = uv_in('strap', f, 0.5 + y / STRAP_W * 0.9)
             brow.append(b); trow.append(t)
@@ -1438,6 +1478,7 @@ pencils = build_pencil(bvh_of([uni, O['Belt'], O['Buckle'], O['Buttons']]),
 CLOTH = bvh_of([uni, sash, loops] + [O[n] for n in ('Belt', 'Buckle', 'Buttons', 'Collar')])
 FRINGE_CLOTH, SASH_TOP = bvh_of([uni, loops] + [O[n] for n in ('Belt', 'Buckle', 'Buttons', 'Collar')]), bvh_of([sash], outer=True)
 FIELD_CLOTH = bvh_of([uni, sash, O['Collar']])
+STRAP_CLOTH = bvh_of([uni, sash])
 eps = [build_epaulette(s) for s in 'lr']
 
 rig.data.pose_position = 'POSE'

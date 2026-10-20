@@ -30,6 +30,8 @@ import mat_util  # noqa: E402
 OUT = os.path.join(HERE, 'alexander_rest.blend')  # in the rest pose; build_pose.py poses it into alexander_leader.blend
 SKIN_TEX = os.path.join(HERE, 'textures', 'head_albedo.png')
 HEAD_NORMAL = os.path.join(HERE, 'textures', 'head_normal.png')
+HEAD_MR = os.path.join(HERE, 'textures', 'head_mr.png')  # R metal, G roughness
+SKIN_ROUGH, HAIR_ROUGH = 0.62, 0.85
 HAIR_CROWN = (0.04, 2.08)          # (y, z) the hair grows away from: the crown, a little behind the top
 HAIR_STREAKS = ((60, 1.0), (150, 0.6), (380, 0.3))  # strands across the hair: (per metre, weight)
 HAIR_HUE = 0.85                    # ... all of it this much towards the hue of the portrait's hair
@@ -47,13 +49,14 @@ VOXEL = 0.002                     # remesh voxel (m)
 TRIS = 40000                      # the head after decimation (the generation's curls, moustache and lips kept)
 UNDER_SMOOTH = (0.3, 0.6, 0.07, 0.045)  # ... and where facing down past normal z -first (fully by -second), from the
                                   # chin + third down to the chin + fourth
+FILLET = (0.025, 0.012, 40)       # the corner under the cut rounded: from this far under it, to this far over it; rounds
 BEARD_SMOOTH = (0.03, 24)         # the bottom this high over the cut smoothed, rounds (the ragged beard ends: at 12 rounds
                                   # shards of them stood out under the jaw over the shirt collar)
 EAR_GROW, EAR_FACING = 0.0, 0.35  # the ears' box grown by this (m); how far sideways a face of the ear faces (normal x)
 EAR_NEAR = 0.004                  # ... and this close to an ear vertex of MPFB's (fitted onto the generated ears)
 EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin times this
 NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
-NECK_FLARE = 0.04                  # the neck widens to the jaw's outline over this much under the cut
+NECK_FLARE_OVER = 0.004            # the neck widens to the jaw's outline from this far over the collar's top
 NECK_SHADE = (1.0, 1.0)          # the neck's skin this bright at the collar and under the jaw: its own colour - no
                                   # shadow is painted in, the lighting puts the beard's and the chin's shade on it
 UNDER_JAW = (0.15, 0.5, 0.012)    # hair_detail: surfaces facing down (normal z under -first, fully by -second) up to the
@@ -741,7 +744,13 @@ def neck_source():
             r = head_shape.neck_radius(d.x, d.y) * NECK_FIT
             # widening up into the jaw: out to the cut's outline at the top (kept inside it, the beard's flat underside
             # stood out over the neck like a shelf - a cap on a post)
-            f = smoothstep(z, cut - NECK_FLARE, cut + NECK_INTO) ** 2
+            # ... from just over the collar's top (lower at the front) evenly up to the cut: a slope from the throat to
+            # the chin (from NECK_FLARE under the cut and squared, it widened only in the last 1.5 cm - seen from below
+            # the chin's underside was a flat shelf over a thin neck)
+            u = sc['uniform']
+            z0 = (u['STAND_TOP_FRONT'] + (u['STAND_TOP_BACK'] - u['STAND_TOP_FRONT'])
+                  * ((1 - math.cos(a)) / 2) ** u.get('STAND_RISE_POW', 1.0) + NECK_FLARE_OVER)
+            f = smoothstep(z, min(z0, cut - 0.008), cut + NECK_INTO)
             r = r + (max(r, rim_r[k] - NECK_INSET) - r) * f
             r = r + (min(r, rim_r[k] - NECK_INSET) - r) * w * (1 - f)
             ring.append(b.verts.new((c.x + d.x * r, c.y + d.y * r, z)))
@@ -806,6 +815,14 @@ def build_head():
                 avg = s_ / np.maximum(deg, 1)[:, None]
                 co = co + (avg - co) * (f * w)[:, None]
     taubin(band, BEARD_SMOOTH[1])
+    # the corner where the head's cut floor meets the neck rounded off into a slope (plain Laplacian: it fills a hollow
+    # corner): seen from below in the collar's opening it was a flat shelf under the jaw with a crease and a pale rim
+    fillet = np.array([smoothstep(z, cut - FILLET[0], cut - FILLET[0] * 0.4) * smoothstep(z, cut + FILLET[1], cut)
+                       for z in co[:, 2]])
+    for _ in range(FILLET[2]):
+        s_ = np.zeros_like(co)
+        np.add.at(s_, ed[:, 0], co[ed[:, 1]]); np.add.at(s_, ed[:, 1], co[ed[:, 0]])
+        co = co + (s_ / np.maximum(deg, 1)[:, None] - co) * (0.5 * fillet)[:, None]
     me.vertices.foreach_set('co', co.astype(np.float32).ravel())
     me.update()
     dec = ob.modifiers.new('D', 'DECIMATE')
@@ -820,6 +837,20 @@ def build_head():
                 for ed in f.edges}
         bmesh.ops.subdivide_edges(b, edges=list(near), cuts=1, use_grid_fill=True)
         bmesh.ops.triangulate(b, faces=b.faces[:])
+    # folds the decimation left: two triangles on the same three vertices, back to back (a fin - an edge of four
+    # faces, non-manifold for the game's importer): both out, the hole (if any) closed
+    seen = {}
+    for f in b.faces:
+        seen.setdefault(frozenset(v.index for v in f.verts), []).append(f)
+    fins = [f for fs in seen.values() if len(fs) > 1 for f in fs]
+    if fins:
+        bmesh.ops.delete(b, geom=fins, context='FACES')
+        bmesh.ops.delete(b, geom=[v for v in b.verts if not v.link_faces], context='VERTS')
+        holes = [e for e in b.edges if e.is_boundary]
+        if holes:
+            bmesh.ops.holes_fill(b, edges=holes, sides=8)
+            bmesh.ops.triangulate(b, faces=b.faces[:])
+        print('head: %d folded faces removed, %d edges of holes closed' % (len(fins), len(holes)))
     b.to_mesh(ob.data); b.free()
     for p in ob.data.polygons:
         p.use_smooth = True
@@ -1041,7 +1072,11 @@ def hair_detail():
     img.pixels.foreach_set(px.ravel()); mat_util.write(img)
     height = s * k[..., 0] * HAIR_RELIEF
     nrm = mat_util.save('Head_Normal', mat_util.normals(height) * 0.5 + 0.5, HEAD_NORMAL, 'Non-Color')
-    mat_util.material('Head_Skin', img, None, nrm, rough=0.6)
+    # roughness: skin SKIN_ROUGH, hair and beard HAIR_ROUGH (matt: one roughness for both, the beard's smoothed
+    # underside shone like wet plastic from below)
+    rough = (SKIN_ROUGH * (1 - hw) + HAIR_ROUGH * hw).astype(np.float32)
+    mr = mat_util.save('Head_MR', np.stack([np.zeros_like(rough), rough, np.zeros_like(rough)], 2), HEAD_MR, 'Non-Color')
+    mat_util.material('Head_Skin', img, mr, nrm)
     print('hair strands: %d texels' % int((hw > 0.5).sum()))
 
 
