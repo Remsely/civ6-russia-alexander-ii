@@ -49,14 +49,17 @@ VOXEL = 0.002                     # remesh voxel (m)
 TRIS = 40000                      # the head after decimation (the generation's curls, moustache and lips kept)
 UNDER_SMOOTH = (0.3, 0.6, 0.07, 0.045)  # ... and where facing down past normal z -first (fully by -second), from the
                                   # chin + third down to the chin + fourth
-FILLET = (0.025, 0.012, 40)       # the corner under the cut rounded: from this far under it, to this far over it; rounds
+FILLET = (0.025, 0.03, 40)        # the corner under the cut rounded: from this far under it, to this far over it; rounds
 BEARD_SMOOTH = (0.03, 24)         # the bottom this high over the cut smoothed, rounds (the ragged beard ends: at 12 rounds
                                   # shards of them stood out under the jaw over the shirt collar)
 EAR_GROW, EAR_FACING = 0.0, 0.35  # the ears' box grown by this (m); how far sideways a face of the ear faces (normal x)
 EAR_NEAR = 0.004                  # ... and this close to an ear vertex of MPFB's (fitted onto the generated ears)
 EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin times this
-NECK_Z0, NECK_INTO = 1.70, 0.012  # the neck tube: from inside the tunic up to this far into the head over the cut
-NECK_FLARE_OVER = 0.004            # the neck widens to the jaw's outline from this far over the collar's top
+NECK_Z0, NECK_INTO = 1.70, 0.03   # the neck tube: from inside the tunic up to this far into the head over the cut
+UNDER_JOIN, UNDER_STEP = 0.014, 0.007  # the neck's column made anew from this far under the cut down, rings this far
+                                  # apart (under_jaw)
+JOIN_PLAIN = (0.012, 0.02)        # ... and where it meets the jaw: plain up to this far over the cut, fading out by this
+NECK_PLAIN = 0.006                # the neck's skin plain up to this far over the cut (fully at the cut)
 NECK_SHADE = (1.0, 1.0)          # the neck's skin this bright at the collar and under the jaw: its own colour - no
                                   # shadow is painted in, the lighting puts the beard's and the chin's shade on it
 UNDER_JAW = (0.15, 0.5, 0.012)    # hair_detail: surfaces facing down (normal z under -first, fully by -second) up to the
@@ -340,14 +343,26 @@ def cut_neck():
             break
         bmesh.ops.delete(gbm, geom=spikes, context='FACES')
         bmesh.ops.delete(gbm, geom=[v for v in gbm.verts if not v.link_faces], context='VERTS')
+    # the cap takes the class of the rim round it: under the whiskers it is the beard's underside (hair), under the
+    # chin skin (all skin, the whiskers' underside was a flat pale shelf between the beard and the collar)
+    rim = [(v.co.copy(), any(f[CLS] == head_shape.HAIR for f in v.link_faces))
+           for v in {v for e in gbm.edges if e.is_boundary for v in e.verts}]
+    kd = KDTree(len(rim))
+    for i, (q, _) in enumerate(rim):
+        kd.insert(q, i)
+    kd.balance()
     cap = bmesh.ops.holes_fill(gbm, edges=[e for e in gbm.edges if e.is_boundary], sides=0)['faces']
     cap = bmesh.ops.triangulate(gbm, faces=cap)['faces']
+    n_hair = 0
     for f in cap:
-        f[CLS] = head_shape.SKIN
+        near = kd.find_n(f.calc_center_median(), 6)
+        hair = sum(rim[i][1] for _, i, _ in near) * 2 > len(near)
+        f[CLS] = head_shape.HAIR if hair else head_shape.SKIN
+        n_hair += hair
         f.material_index = 1
     bmesh.ops.recalc_face_normals(gbm, faces=gbm.faces[:])
     gbm.normal_update()
-    print('neck cut: %d cap faces' % len(cap))
+    print('neck cut: %d cap faces (%d under the beard)' % (len(cap), n_hair))
 
 
 cut_neck()
@@ -742,17 +757,10 @@ def neck_source():
             d = Vector((math.sin(a), -math.cos(a)))
             # the collar's ellipse all the way up (inside the jaw's cut): wider, it shows over the collar
             r = head_shape.neck_radius(d.x, d.y) * NECK_FIT
-            # widening up into the jaw: out to the cut's outline at the top (kept inside it, the beard's flat underside
-            # stood out over the neck like a shelf - a cap on a post)
-            # ... from just over the collar's top (lower at the front) evenly up to the cut: a slope from the throat to
-            # the chin (from NECK_FLARE under the cut and squared, it widened only in the last 1.5 cm - seen from below
-            # the chin's underside was a flat shelf over a thin neck)
-            u = sc['uniform']
-            z0 = (u['STAND_TOP_FRONT'] + (u['STAND_TOP_BACK'] - u['STAND_TOP_FRONT'])
-                  * ((1 - math.cos(a)) / 2) ** u.get('STAND_RISE_POW', 1.0) + NECK_FLARE_OVER)
-            f = smoothstep(z, min(z0, cut - 0.008), cut + NECK_INTO)
-            r = r + (max(r, rim_r[k] - NECK_INSET) - r) * f
-            r = r + (min(r, rim_r[k] - NECK_INSET) - r) * w * (1 - f)
+            # kept inside the cut's outline, not widened to it: widened, its top came out of the jaw's underside (which
+            # narrows over the cut, and at the sides lies 1-2 cm over it) as a thin flange round the neck. It runs up
+            # into the head and the corner is rounded (FILLET)
+            r = r + (min(r, rim_r[k] - NECK_INSET) - r) * w
             ring.append(b.verts.new((c.x + d.x * r, c.y + d.y * r, z)))
         rings.append(ring)
     for r0, r1 in zip(rings, rings[1:]):
@@ -775,6 +783,68 @@ src_neck = neck_source()
 
 
 # ---------------------------------------------------------------- 3. one closed head: remesh, smooth, decimate, unwrap
+def under_jaw(b):
+    """The neck's column on the decimated head made anew: the remeshed tube cut off UNDER_JOIN under the cut (under the
+    corner into the jaw) and from that rim straight down to NECK_Z0 in even rings on the tube's surface (src_neck),
+    capped - one column of quads per rim vertex. (Remeshed and decimated, the neck was long slivers from the collar
+    to the jaw - bright streaks down it.)"""
+    cut = CHIN_Z - NECK_CUT
+    top_z = cut - UNDER_JOIN
+    ax = sc['uniform']['NECK_AXIS']
+    c0 = Vector((ax[0], ax[1] + head_shape.NECK_C_DY, 0.0))
+    tube = BVHTree.FromObject(src_neck, bpy.context.evaluated_depsgraph_get())
+
+    def on_tube(a, z):
+        o = Vector((c0.x, c0.y, z)); d = Vector((math.cos(a), math.sin(a), 0.0))
+        hit = tube.ray_cast(o, d, 0.3)[0]
+        return hit if hit is not None else o + d * 0.05
+    bmesh.ops.bisect_plane(b, geom=b.verts[:] + b.edges[:] + b.faces[:], dist=1e-6, plane_co=(0, 0, top_z),
+                           plane_no=(0, 0, 1), clear_inner=True)
+    bmesh.ops.delete(b, geom=[v for v in b.verts if not v.link_faces], context='VERTS')
+    edges = {e for e in b.edges if e.is_boundary}
+    loops = []
+    while edges:
+        e = edges.pop()
+        loop = [e.verts[0], e.verts[1]]
+        while True:
+            nxt = [f for f in loop[-1].link_edges if f in edges]
+            if not nxt:
+                break
+            edges.discard(nxt[0])
+            v = nxt[0].other_vert(loop[-1])
+            if v is loop[0]:
+                break
+            loop.append(v)
+        loops.append(loop)
+    loops.sort(key=lambda l: -len(l))
+    rim = loops[0]
+    for small in loops[1:]:
+        bmesh.ops.holes_fill(b, edges=list({e for v in small for e in v.link_edges if e.is_boundary}), sides=0)
+    ang = [math.atan2(v.co.y - c0.y, v.co.x - c0.x) for v in rim]
+    rings_z = list(np.arange(top_z, NECK_Z0, -UNDER_STEP)) + [NECK_Z0]
+    cols = []
+    for v, a in zip(rim, ang):
+        r0 = (v.co.xy - c0.xy).length
+        k0 = r0 / max((on_tube(a, top_z).xy - c0.xy).length, 1e-6)  # the rim off the tube (smoothed in): eased out
+        col = [v]
+        for j, z in enumerate(rings_z[1:], 1):
+            q = on_tube(a, z)
+            k = 1 + (k0 - 1) * max(0.0, 1 - j / 3)
+            col.append(b.verts.new((c0.x + (q.x - c0.x) * k, c0.y + (q.y - c0.y) * k, z)))
+        cols.append(col)
+    n = len(cols)
+    for i in range(n):
+        c1, c2 = cols[i], cols[(i + 1) % n]
+        for j in range(len(c1) - 1):
+            b.faces.new((c1[j], c2[j], c2[j + 1], c1[j + 1]))
+    centre = b.verts.new((c0.x, c0.y, NECK_Z0))
+    for i in range(n):
+        b.faces.new((cols[i][-1], cols[(i + 1) % n][-1], centre))
+    bmesh.ops.triangulate(b, faces=[f for f in b.faces if len(f.verts) > 3])
+    bmesh.ops.recalc_face_normals(b, faces=b.faces[:])
+    print('neck column: rim of %d vertices (rims %s), %d rings' % (n, [len(l) for l in loops], len(rings_z)))
+
+
 def build_head():
     b = bmesh.new()
     for o in (src_head, src_neck):
@@ -851,6 +921,7 @@ def build_head():
             bmesh.ops.holes_fill(b, edges=holes, sides=8)
             bmesh.ops.triangulate(b, faces=b.faces[:])
         print('head: %d folded faces removed, %d edges of holes closed' % (len(fins), len(holes)))
+    under_jaw(b)
     b.to_mesh(ob.data); b.free()
     for p in ob.data.polygons:
         p.use_smooth = True
@@ -943,6 +1014,8 @@ hb.normal_update()
 HIMG, HCLS = {}, {}
 for v in hb.verts:
     HCLS[v], HIMG[v] = from_generated(v.co)
+    if v.co.z < CHIN_Z - NECK_CUT - 0.003:  # the neck under the cap (nearest to it): skin
+        HCLS[v] = head_shape.SKIN
     if HIMG[v] is None:
         HIMG[v] = (-1e4, -1e4)
 
@@ -1043,8 +1116,12 @@ def hair_detail():
     # the neck under the jaw: plain skin (projected and carried down, the picture's collar and the rim's colours ran
     # down it in stripes); no shadow painted in
     cut = CHIN_Z - NECK_CUT
-    neck = cov & (p[..., 2] < cut + 0.004) & (hw < 0.5)
-    fade = np.clip((cut + 0.004 - p[..., 2]) / 0.012, 0, 1)
+    # ... and the skin under the chin's level facing down (the slope from the throat up under the jaw): fading out over
+    # 1.2 cm under the cut, the bake's flecks of the beard's ends and its islands' dotted edges showed there
+    down_ = np.clip((-n[..., 2] - 0.1) / 0.2, 0, 1) * np.clip((CHIN_Z - p[..., 2]) / 0.008, 0, 1)
+    fade = np.maximum(np.clip((cut + NECK_PLAIN - p[..., 2]) / NECK_PLAIN, 0, 1), down_)
+    fade = fade * np.clip((0.65 - hw) / 0.3, 0, 1) * cov  # soft at the hair's edge (cut at hw 0.5, its edge was a
+    neck = fade > 0                                         # jagged step between plain and textured skin)
     sh = NECK_SHADE[1] + (NECK_SHADE[0] - NECK_SHADE[1]) * np.clip((cut - p[..., 2]) / (cut - NECK_Z0), 0, 1)
     skin_lum = float(np.median(lum[skin & (facing > 0.6)]))  # (in the picture's own encoding, like rgb)
     skin_rgb = skin_hue[None, None, :] * (skin_lum * sh)[..., None]
@@ -1066,9 +1143,26 @@ def hair_detail():
                      rgb * (np.minimum(l_now, cap) / l_now)[..., None])
     rgb = rgb + (fixed - rgb) * du[..., None]
     print('under the jaw: %d texels cleaned' % int((du > 0.5).sum()))
+    # the beard's underside over the neck (the cut's cap, facing down): one plain colour, the hair's - the bake left
+    # light rim colours and flecks there, a pale plank between the whiskers and the collar
+    fl = (cov * np.clip((hw - 0.35) / 0.3, 0, 1) * np.clip((cut + NECK_PLAIN * 3 - p[..., 2]) / NECK_PLAIN, 0, 1)
+          * np.clip((-n[..., 2] - UNDER_JAW[0]) / (UNDER_JAW[1] - UNDER_JAW[0]), 0, 1))
+    rgb = rgb + (target[None, None, :] * hair_lum * UNDER_JAW_SHADE - rgb) * fl[..., None]
+    print('beard underside: %d texels plain' % int((fl > 0.5).sum()))
+    # where the neck meets the beard's and the jaw's underside, away from the picture's view: skin into hair by the hair
+    # weight alone, each its plain colour - the bake left the source's jagged class edges there (a dark twig on the
+    # neck's side) and its islands' edges in dotted lines
+    zw = np.clip((cut + JOIN_PLAIN[1] - p[..., 2]) / (JOIN_PLAIN[1] - JOIN_PLAIN[0]), 0, 1) * cov
+    zw = zw * (1 - np.clip((facing - 0.3) / 0.3, 0, 1))
+    hk = np.clip((hw - 0.35) / 0.3, 0, 1)[..., None]
+    plain = (skin_hue[None, None, :] * skin_lum) * (1 - hk) + (target[None, None, :] * hair_lum) * hk
+    rgb = rgb + (plain - rgb) * zw[..., None]
+    print('neck join: %d texels plain' % int((zw > 0.5).sum()))
     px[..., :3] = np.clip(rgb * (1 + HAIR_CONTRAST * s[..., None] * k), 0, 1)
-    # the baked islands (and the bake's own margin) padded out over the background: no dark rims on the small ones
-    px[..., :3] = mat_util.pad(px[..., :3], px[..., :3].max(-1) > 0.004)
+    # the islands padded out over the background and the bake's own margin (no dark rims on the small ones; the
+    # margin kept the bake's raw colours, which the cleaning above never saw - pale dotted lines along the seams
+    # under the jaw)
+    px[..., :3] = mat_util.pad(px[..., :3], cov)
     img.pixels.foreach_set(px.ravel()); mat_util.write(img)
     height = s * k[..., 0] * HAIR_RELIEF
     nrm = mat_util.save('Head_Normal', mat_util.normals(height) * 0.5 + 0.5, HEAD_NORMAL, 'Non-Color')

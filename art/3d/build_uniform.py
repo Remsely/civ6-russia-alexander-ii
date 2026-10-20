@@ -33,12 +33,13 @@ BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-hori
                 'head/head-scale-depth-incr': HEAD_SCALE,
                 # a longer neck: the portrait's chin is ~8 cm over the shoulders at the collar, room for its tall collar
                 'neck/measure-neck-height-incr': NECK_LONGER,
-                # the macros' muscle and weight swell the arms past the portrait's (its sleeves ~10 cm across at the
-                # biceps): slimmer upper arms and forearms
+                # the macros' muscle and weight swell the upper arms (the sleeves are made round them, SLEEVE_EASE):
+                # slimmer there; the forearms and hands as the macros make them and the hands larger - the portrait's
+                # fist on the hilt is ~14% bigger than MPFB's, and a thin wrist stood in the wide cuff
                 'arms/measure-upperarm-circ-decr': 1.0,
                 'arms/l-upperarm-muscle-decr': 0.6, 'arms/r-upperarm-muscle-decr': 0.6,
                 'arms/l-upperarm-fat-decr': 0.6, 'arms/r-upperarm-fat-decr': 0.6,
-                'arms/l-lowerarm-fat-decr': 0.5, 'arms/r-lowerarm-fat-decr': 0.5,
+                'hands/l-hand-scale-incr': 0.6, 'hands/r-hand-scale-incr': 0.6,
                 # full deltoids: the shoulder's end rounded out under the epaulette, not a narrow slope into the arm
                 'arms/l-upperarm-shoulder-muscle-incr': 0.6, 'arms/r-upperarm-shoulder-muscle-incr': 0.6,
                 # the portrait's elbows hang ~35 cm under the shoulder joints (MPFB's upper arm: 31 cm), its legs come
@@ -69,9 +70,11 @@ SLEEVE_T = 0.95                   # sleeve end along the forearm (0 elbow, 1 wri
 TUNIC_OFF, TROUSERS_OFF = 0.016, 0.015  # a tailored tunic (at 2.8 cm it stood off
                                   # the chest and back like a padded coat)
 SHOULDER_OFF = 0.012              # tunic offset over the shoulders (above the armpits)
-SLEEVE_EASE, CUFF_EASE = 0.026, 0.014  # sleeves: round tubes this much looser than the arm (the portrait's are full: ~15 cm
-                                  # across at the elbow); cuff off the wrist
-SLEEVE_CUFF_R = 0.047             # ... narrowing along the forearm to this radius at the cuff (the portrait's ~10 cm)
+SLEEVE_EASE, CUFF_EASE = 0.036, 0.014  # sleeves: round tubes this much looser than the arm (the portrait's are full: ~15 cm
+                                  # across at the elbow; at 2.6 cm, 12.8 cm across, the arms read thin as a boy's beside
+                                  # the chest and the epaulettes); cuff off the wrist
+SLEEVE_CUFF_R = 0.058             # ... narrowing along the forearm to this radius at the cuff (the portrait's gauntlet
+                                  # cuff ~14 cm across where it meets the sleeve; at 4.7 cm it was 10)
 SKIRT_EASE, SKIRT_FLARE = 0.020, 0.025  # skirt clearance over hips and thighs, extra radius at the hem
 PLEAT_FLARE = 0.0                 # ... and more at the sides and back, where the pleats are: in the portrait the skirt
                                   # kicks out behind the piped pleat edge (~4 cm past a plain flare at the hem)

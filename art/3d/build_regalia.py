@@ -41,10 +41,11 @@ EP_TILT = {'r': 15.0, 'l': 18.0}  # degrees the field's outer end is lower: in t
                                  # the camera stands to his right, so his left one is tilted out less (as much, it
                                  # showed its edge); the inner end rises over the slope to the collar (tilted 18 deg,
                                  # it rested there and stood 4-5 cm over the shoulder)
-EP_FORWARD = {'r': 26.0, 'l': 26.0}  # degrees its front edge is lower (his left one more, turned to the camera) - in the portrait the
-                                 # fields face the viewer (their faces show as ovals ~0.45 as high as wide); fitted to
-                                 # the shoulder's slope (~25 deg out) the field was edge-on and the fringe stood out
-                                 # like wings
+EP_FORWARD = {'r': 20.0, 'l': 20.0}  # degrees its front edge is lower - in the portrait the fields face the viewer
+                                 # (their faces show as ovals ~0.45 as high as wide); fitted to the shoulder's slope
+                                 # (~25 deg out) the field was edge-on and the fringe stood out like wings; at 26 deg
+                                 # it slid off the shoulder's top down onto the chest (seen from the side and below),
+                                 # at 14 the field was edge-on in the game's view and the fringe stood out sideways
 EP_TURN = {'r': 0.0, 'l': 22.0}   # degrees the field is turned about the upright towards the front: in the portrait his
                                  # left one shows its face nearly square to the viewer as the right one does (the
                                  # shoulder turned away from the camera with the figure, it showed its edge)
@@ -75,6 +76,7 @@ FRINGE_TILT = (22.0, 6.0, 4.0)   # degrees off the upright at the outer end, at 
 FRINGE_TILT_MAX = 36.0           # ... out to this at most to clear what is under it (then shortened)
 FRINGE_TILT_SPREAD = 0.4         # ... its neighbours tilted as far, less this many degrees a degree round the rim
 FRINGE_START, FRINGE_BEND = 55.0, 0.035  # ... coming out from under the rim this far off the upright, turning down to it over this
+FRINGE_KNEE_SPREAD = 0.0005      # ... its neighbours curled as far, less this (m) a degree round the rim
 FRINGE_KNEE = 0.03               # ... or curled out over the rim by up to this first (see course())
 FRINGE_MIN_LEN = 0.03            # a strand that clears less than this is left out
 FRINGE_SAMPLES, FRINGE_SMOOTH = 14, 6  # points down a strand checked; rounds of evening the tilts and lengths
@@ -1510,7 +1512,7 @@ def build_epaulette(side):
         if DEBUG_FRINGE:
             print('  a %4.0f root h %.3f tilt %.0f -> %.0f knee %.3f, clear %.3f of %.3f' % (
                 math.degrees(a), h, math.degrees(t0), math.degrees(t), e, clear_len(t, root + lift * e), length))
-        return dict(a=a, root=root + lift * e, base=root, push=push, tilt=t, length=length)
+        return dict(a=a, root=root + lift * e, base=root, push=push, tilt=t, length=length, lift=lift, knee=e)
     # the bell round the rim, finely; the tilt evened round it (each at least its neighbours' less FRINGE_TILT_SPREAD
     # a degree round the rim, then smoothed): a neat bell, no strand standing out from the next; each as long as it
     # clears what is under it at that tilt
@@ -1520,6 +1522,15 @@ def build_epaulette(side):
     for _ in range(FRINGE_SMOOTH):
         tilts = [max(tilts[j], (tilts[max(j - 1, 0)] + 2 * tilts[j] + tilts[min(j + 1, len(tilts) - 1)]) / 4)
                  for j in range(len(tilts))]
+    # ... and the curl out over the rim the same way: each at least its neighbours' less FRINGE_KNEE_SPREAD a degree
+    # (where it set in from one strand to the next, the curled ones stood apart from the rest - a break in the bell
+    # at its front and back)
+    knees = [max(o['knee'] - FRINGE_KNEE_SPREAD * math.degrees(abs(o['a'] - c['a'])) for o in dense) for c in dense]
+    for _ in range(FRINGE_SMOOTH):
+        knees = [max(knees[j], (knees[max(j - 1, 0)] + 2 * knees[j] + knees[min(j + 1, len(knees) - 1)]) / 4)
+                 for j in range(len(knees))]
+    for c, e in zip(dense, knees):
+        c['root'] = c['base'] + c['lift'] * e
     for c, t in zip(dense, tilts):
         ln = c['length']
         for j, q in enumerate(line(c['root'], c['push'], t, c['length'])):

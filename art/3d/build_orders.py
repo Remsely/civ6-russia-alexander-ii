@@ -115,7 +115,10 @@ MOUNT_PROUD = 1.08
 # Slings: the scabbard hangs by its two rings from the sword belt under the tunic - two narrow straps of black lacquered
 # leather out from under the belt at the left hip (without them it hung in the air, held only by the hand)
 SLING_W, SLING_T = 0.016, 0.0025     # width, thickness
-SLING_TOP_Z = 0.035                  # their tops this far under the belt's lower edge, on the skirt
+SLING_TOP_Z = 0.014                  # their tops this far under the belt's lower edge, looped through the clasp's ring
+CLASP_W, CLASP_H = 0.024, 0.020      # the gilt clasp they hang from: a plate on the belt's face over its lower edge
+                                    # (ending on the skirt 3.5 cm under the belt, it was not clear what held them)
+CLASP_RING = (0.011, 0.006, 0.0017)  # ... and the ring hanging from it: half-width, half-height, wire radius
 SLING_JOIN = 0.07                    # ... down onto the scabbard's back edge this far under the guard, along it to the rings
 SLING_RING_R = 0.007                 # the suspension rings, lying flat on the bands
 # Sword knot (temlyak) and the hanger's cord from the belt (both in the portrait): braided gold cord to a knotted ball
@@ -1042,6 +1045,20 @@ def build_sabre():
     q = Vector((top_at.x, top_at.y, belt_lo - SLING_TOP_Z))
     loc, nrm, _, _ = LOWER.find_nearest(q, 0.3)
     top = loc + nrm * (SLING_T + 0.002) if loc is not None else q
+    # the clasp on the belt: a chased gilt plate on its face down to its lower edge, a ring hanging from the plate's
+    # foot over the skirt, the slings' tops looped through it
+    bl, bn, _, _ = bvh_of([obj('Belt')]).find_nearest(Vector((q.x, q.y, belt_lo + CLASP_H / 2)), 0.3)
+    bn = Vector((bn.x, bn.y, 0.0)).normalized()
+    bx = Vector((0, 0, 1)).cross(bn).normalized()
+    hh = CLASP_H / CLASP_W
+    plaque(part, [(-1, -hh), (1, -hh), (1, hh), (-1, hh)],
+           (Vector((bl.x, bl.y, belt_lo + CLASP_H / 2 - 0.004)) + bn * 0.0008, bx, Vector((0, 0, 1)), bn),
+           CLASP_W / 2, 0.0022, 'ornate', dome=0.001, w=w)
+    rw, rh, rr = CLASP_RING
+    rc = Vector((bl.x, bl.y, belt_lo - 0.004 - rh * 0.7)) + bn * (rr + 0.0015)
+    tube(part, [rc + bx * (rw * math.cos(2 * math.pi * j / 20)) + Vector((0, 0, rh * math.sin(2 * math.pi * j / 20)))
+                for j in range(21)], rr, lambda ii, kk: pal_uv('gold'), w, sides=6)
+    top = rc - Vector((0, 0, rh)) + bn * (SLING_T / 2 + rr)  # through the ring's foot
     for n_, s_r in enumerate(ring_s):
         i = at(s_r)
         t, u, v = fr[i]
