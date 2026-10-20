@@ -42,6 +42,9 @@ EP_TILT = {'r': 15.0, 'l': 18.0}  # degrees the field's outer end is lower: in t
                                  # showed its edge); the inner end rises over the slope to the collar (tilted 18 deg,
                                  # it rested there and stood 4-5 cm over the shoulder). Not tilted forward: level front
                                  # to back, as it sits on the shoulder (tilted 20-26 deg, it slid down onto the chest)
+EP_TO_VIEWER = 8.0               # ... and tilted this much towards the viewer (the camera): the portrait shows both
+                                 # fields' faces; level, from chest height they showed their edges (20-26 deg towards
+                                 # the front, the field slid down onto the chest)
 EP_TURN = {'r': 0.0, 'l': 22.0}   # degrees the field is turned about the upright towards the front: in the portrait his
                                  # left one shows its face nearly square to the viewer as the right one does (the
                                  # shoulder turned away from the camera with the figure, it showed its edge)
@@ -1264,6 +1267,8 @@ def build_epaulette(side):
     turn = Matrix.Rotation(-sign * math.radians(EP_TURN[side]), 3, 'Z')  # towards the front (the viewer)
     out_f = turn @ out
     Z = Vector((0, 0, 1)) + out_f * math.tan(math.radians(EP_TILT[side]))
+    to_cam = Vector((-math.sin(math.radians(YAW)), -math.cos(math.radians(YAW)), 0.0))
+    Z += to_cam * math.tan(math.radians(EP_TO_VIEWER))
     Z.normalize()
     X = (out_f - Z * out_f.dot(Z)).normalized()
     Y = Z.cross(X)

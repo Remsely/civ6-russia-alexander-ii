@@ -36,7 +36,7 @@ CLOTH = (0.0034, 0.0037, 0.0058)    # the tunic's wool (build_uniform.CLOTH_RGB)
 # (by COLLAR_TURN, at most COLLAR_MAX_H); as in the portrait the halves stand apart at the front, their edges nearly
 # parallel, the tunic's dark collar between them up to the top (the white shirt collar's edge over it); the neck
 # stays behind it (build_pose.neck_in_collar).
-COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.07  # (at the back the cloth turns out
+COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.085  # (at the back the cloth turns out
                                   # slowly down the nape: at 11 cm the band hung down the back in a tongue, its
                                   # picture stretched)
 COLLAR_FLARE = 0.012              # the band widens downwards by at most this: its walls lean out a little (the portrait's
@@ -45,7 +45,7 @@ COLLAR_FLARE = 0.012              # the band widens downwards by at most this: i
                                   # cloth under its foot (at the back the tunic is upright there: the foot stood 1.2 cm
                                   # off it)
 COLLAR_MIN_H = 0.060              # ... but at the front at least this tall (the portrait's red band: 6-7 cm at the front)
-COLLAR_DIP = 0.04                 # ... and its foot running down towards the front edges by up to this, as a shirt
+COLLAR_DIP = 0.03                 # ... and its foot running down towards the front edges by up to this, as a shirt
                                   # collar's neckline: the portrait's halves end at the front in a corner ~4.5 cm under
                                   # the foot at the sides (level all round, the front edge was a square corner); there
                                   # the band lies on the chest
@@ -543,7 +543,7 @@ def build_collar(nu=64, nv=7):
         for t in [-g + 2 * g * q / (STAND_COLS - 1) for q in range(STAND_COLS)]:
             d = Vector((math.sin(t), -math.cos(t), 0))
             rc = cloth(z, d)
-            row.append(ctr + Vector((0, 0, z)) + d * (max(rr, rc + COLLAR_LIFT - 0.0015) if rc is not None else rr))
+            row.append(ctr + Vector((0, 0, z)) + d * (max(rr, rc + 0.002) if rc is not None else rr))
         rs.append(row)
     bm, grid = loft(rs, closed=False)
     outward_normals(bm, lambda p: Vector((c0.x, c0.y, p.z)))

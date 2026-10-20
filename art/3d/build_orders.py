@@ -81,19 +81,21 @@ NECK_CROSS_UP = -0.004               # ... and the whole cross this much lower (
                                      # under the halves' lower corners, the crown just over them)
 NECK_RING_R = 0.0032                 # the ring it hangs by
 NECK_CROSS_RAYS = 0.8                # the silver rays between its arms reach this far (of the half-size)
-BADGE = (640, 396, 0.015, 0.0195)     # px of the portrait (cast onto the cloth), half-width, half-height of the gold
+BADGE = (630, 396, 0.015, 0.0195)     # px of the portrait (cast onto the cloth), half-width, half-height of the gold
                                      # badge under the bar's right end: a crowned openwork cartouche with a monogram (the
                                      # portrait's), its crown above that
 SEAT_N = 5                           # seat(): rays across a piece's footprint each way
-STARS = [(666, 405, 0.05), (666, 457, 0.05)]  # px of the portrait (cast onto the cloth), radius: one above the
-                                     # other between the sash and the arm, as there (~9 cm tall, seen at a slant on the
-                                     # turning chest; at 7 cm they were specks)
+STARS = [(666, 400, 0.042), (666, 468, 0.042)]  # px of the portrait (cast onto the cloth), radius: one above the
+                                     # other between the sash and the arm, as there (~8.5 cm across, ~1 cm apart, the
+                                     # lower one by the sash's edge - over it, it stood 1.6 cm off the cloth; seen at a
+                                     # slant on the turning chest: at 7 cm they were specks)
+STAR_MEET = 0.3                      # ... the pair's column this far from the upper one's own towards the lower's
 STAR_FROM_BADGE = 0.04               # the stars' middles this far right of the badge's (x)
 STAR_LIFT = 0.0015                   # off the cloth at the nearest
 STAR_FACING = 60.0                   # degrees: the cloth under a star faces the viewer at least this squarely
-STAR_TURN = 0.45                     # ... and the star turned this much further towards the viewer (pinned on the
-                                     # chest's round, the lower one stood edge-on; at 0.15 both showed half the portrait's
-                                     # width)
+STAR_TURN = 0.1                      # ... and the star turned this much further towards the viewer (pinned on the
+                                     # chest's round, the lower one stood edge-on; at 0.25-0.45 its far edge stood off
+                                     # the cloth, floating)
 LIFT = 0.003
 MEDAL_LIFT = 0.001                   # a medal off the cloth at the nearest
 # Sabre: pommel under the left palm, the blade hanging down and a little back along the left hip and leg.
@@ -893,23 +895,38 @@ def build_orders():
             px -= 2
         cols.append(px)
     # one straight above the other on the chest (the same x: cast at the same column of the portrait, the lower one
-    # landed further round the chest's turn and the pair ran diagonally), both turned alike: the mean of the cloth's
-    # turn under them, a little further towards the viewer
+    # landed further round the chest's turn and the pair ran diagonally), each on the cloth's turn under it, a little
+    # further towards the viewer
     px = min(cols)
     hits = [ref_hit(NO_SASH, px, py)[0] for _, py, _ in STARS]
     # ... and to the right of the badge as in the portrait (the upper star's top under the badge's lower right edge):
     # at the portrait's column on the model's narrower chest they landed under the badge, or round on the side
     x = badge_x + STAR_FROM_BADGE
     print('stars: the column of the portrait lands at x %.3f, the badge at %.3f' % (sum(p.x for p in hits) / len(hits), badge_x))
-    seats = [seat(x, p.z, r * 0.8, r * 0.8, NO_SASH, STAR_LIFT) for p, (_, _, r) in zip(hits, STARS)]
-    mean = sum((sv[3] for sv in seats), Vector()).normalized()
-    for (o, _, _, Nc), (_, _, r) in zip(seats, STARS):
-        N = ((Nc + mean).normalized() - view * STAR_TURN).normalized()  # half its own cloth's turn, half the pair's
+    # one straight over the other as the viewer sees them (the lower one sits deeper on the chest's turn: at the same
+    # x it showed to the left): moved across till it shows in the upper one's column, seated afresh at each try - on
+    # the cloth's turn under it, a little further towards the viewer, down onto the cloth (only lifted after a move, it
+    # stood 1.5 cm off it)
+    k = HEIGHT / (REF_SOLES - REF_CROWN)
+
+    def placed(xs, z, r):
+        o, _, _, Nc = seat(xs, z, r * 0.8, r * 0.8, NO_SASH, STAR_LIFT)
+        N = (Nc - view * STAR_TURN).normalized()
         Y = (Vector((0, 0, 1)) - N * N.z).normalized()
         X = Y.cross(N).normalized()
-        o = lifted(o, X, Y, N, r * 0.75, r * 0.75, STAR_LIFT)
-        o.x = x  # lifted along its normal it moved sideways: back onto the pair's line (still clear: the cloth is
-        o = lifted(o, X, Y, N, r * 0.75, r * 0.75, STAR_LIFT)  # checked again)
+        return lifted(o - N * 0.03, X, Y, N, r * 0.75, r * 0.75, STAR_LIFT), X, Y, N
+    # both meet in a column between their own, nearer the upper one's (the lower one moved out all the way to the
+    # upper one's, it went round onto the chest's side and stood 2.8 cm off it; halfway, the upper one ran over the
+    # badge)
+    cu, cl = (ref_px(placed(x, p.z, r)[0])[0] for p, (_, _, r) in zip(hits, STARS))
+    col = cu + (cl - cu) * STAR_MEET
+    for p, (_, _, r) in zip(hits, STARS):
+        xs = x
+        for _ in range(8):
+            o, X, Y, N = placed(xs, p.z, r)
+            if abs(ref_px(o)[0] - col) < 0.5:
+                break
+            xs -= (ref_px(o)[0] - col) * k / math.cos(a)
         star_piece(part, (o, X, Y, N), r, TORSO_W.at(o))
         under = NO_SASH.ray_cast(o + N * 0.05, -N, 0.2)[0]
         print('star at px %d: x %.3f z %.3f, %.4f off the cloth at its middle' % (

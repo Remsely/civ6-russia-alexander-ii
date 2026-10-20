@@ -469,7 +469,7 @@ POSTURE_X0, POSTURE_X1 = 0.07, 0.13  # |x|: the turn fades out from the neck tow
 POSTURE_DROP = 0.02                # ... and the head, which the turn lifts, comes down by this (the neck's length kept)
 # Back: MPFB's shoulder blades stand out far behind the spine (a rounded upper back). Shape key 'BackFit' pulls the back
 # surface between BACK_Z0 and BACK_Z1 towards the straight line between its depths there, by BACK_K of the bulge.
-BACK_Z0, BACK_Z1, BACK_K = 1.36, 1.74, 0.75
+BACK_Z0, BACK_Z1, BACK_K = 1.36, 1.74, 0.45  # (at 0.75 the back was flat as a board)
 BACK_X = 0.22                      # |x| over which the back is flattened (fading out towards the arms)
 # Shoulders: the top of the shoulders runs down from the neck root parallel to the clavicles (shape key 'ShoulderFit',
 # after NeckFit) instead of MPFB's flat plateau that ends in a square corner over the deltoid.

@@ -80,8 +80,9 @@ NECK_COLLAR_GAP = 0.004           # inside the collar the neck fills it to this 
                                   # ellipse alone stood 2-3 cm inside it at the back and the sides: a thin neck in a broad
                                   # ring - a horse collar); not at the front (the dark stand fills the opening there, and
                                   # the throat, widened, came through the tunic's own stand inside it once turned) ...
-NECK_COLLAR_EASE = (0.004, 0.016)  # ... from this far under the collar's top, back to the ellipse this far over it (the
-                                  # neck over the collar and its join into the jaw as they were)
+NECK_COLLAR_EASE = (0.004, 0.016)  # ... and over the collar as wide all round, the front too, eased in between these
+                                  # under and over its top (back to the ellipse over it, the neck narrowed between the
+                                  # collar and the jaw: the head hung on a twig)
 NECK_TWIST_ZS = (1.84, 1.90)       # the neck's turn spreads between these heights (head bone above, chest below): over
                                   # the collar's front top - inside it the neck stays with the chest (the collar does
                                   # not turn: the oval neck turned in it came out through it)
@@ -114,7 +115,8 @@ UNDER_EYE = ((3, 9), (28, 46))    # px under the lower rim: the band clean_under
 UNDER_EYE_AMOUNT = 0.9
 LID_FADE = 22                     # px: the upper lid's skin above the rim follows less and less up to the brow
 EYE_DEPTH = 0.011                 # eyeball centre (the lids' pivot) this far behind the eye opening
-EYE_R = (0.012, 0.016)            # the eyeballs' radius: the opening's half-width, within these (the model is ~2.1 m)
+EYE_R = (0.0148, 0.0148)          # the eyeballs' radius (the opening's half-width, within these): both alike - each
+                                  # its own opening's (16 and 14.4 mm) and his left eye, iris and all, looked bigger
 EYE_IRIS, EYE_PUPIL = 0.66, 0.4   # iris radius / the opening's height (the lids cover its top and bottom, as in the
                                   # portrait; touching it, the eyes stared), pupil / iris
 EYE_IRIS_RGB = (0.42, 0.46, 0.52)  # sRGB: the portrait's cool grey irises
@@ -879,8 +881,8 @@ def neck_source():
             d = Vector((math.sin(a), -math.cos(a)))
             # the collar's ellipse all the way up (inside the jaw's cut): wider, it shows over the collar
             r = head_shape.neck_radius(d.x, d.y) * NECK_FIT
-            fill = 1 - smoothstep(z, coll_top[k] - NECK_COLLAR_EASE[0], coll_top[k] + NECK_COLLAR_EASE[1])
-            fill *= 1 - smoothstep(-d.y, 0.2, 0.6)
+            inside = 1 - smoothstep(z, coll_top[k] - NECK_COLLAR_EASE[0], coll_top[k] + NECK_COLLAR_EASE[1])
+            fill = max(inside * (1 - smoothstep(-d.y, 0.2, 0.6)), 1 - inside)
             r = max(r, r + (coll_r[k] - NECK_COLLAR_GAP - r) * fill)
             # kept inside the cut's outline, not widened to it: widened, its top came out of the jaw's underside (which
             # narrows over the cut, and at the sides lies 1-2 cm over it) as a thin flange round the neck. It runs up

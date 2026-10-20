@@ -20,9 +20,10 @@ HEAD_NECK_SHARE = 0.4              # of that turn the neck takes this much, the 
 HEAD_PITCH = 0.0                   # head bent forward (degrees about X): none - bent, the chin went down into the collar
 HEAD_ROLL = -1.75                  # ... and tilted about its forward line (towards his left shoulder +): a little to his
                                    # right, as in the portrait
-LID_DROP = 7.0                     # degrees the upper lids are let down from the generated head's (of a ~59 deg
+LID_DROP = {'l': 10.0, 'r': 7.0}   # degrees the upper lids are let down from the generated head's (of a ~59 deg
                                    # blink): in the portrait they cover the irises' tops; wide open, the eyes stared
-                                   # (16 deg hid half the iris: sleepy)
+                                   # (16 deg hid half the iris: sleepy). His left one more: its opening is the taller
+                                   # (painted on the side turned to the viewer) and at 7 deg that eye looked bigger
 CLAVICLE_DROP = {'l': 7.0, 'r': 7.0}  # degrees the shoulders are let down, both alike: the tunic's top from the collar's
                                    # foot to over the shoulder joint falls ~15 deg, as the portrait's straps and fields
                                    # (1.77 -> 1.73 m) - square shoulders (let down 11-12 deg over a 21 deg trapezius,
@@ -177,14 +178,14 @@ def lower_lids(pbs):
     """The upper lids turned down LID_DROP about the eyeballs' centres (their bones' heads), about the line between
     the eyes - as a blink turns them."""
     el, er = pbs.get('eye_l'), pbs.get('eye_r')
-    if el is None or er is None or not LID_DROP:
+    if el is None or er is None or not any(LID_DROP.values()):
         return
     ax = (el.head - er.head).normalized()
     for s in 'lr':
         pb = pbs.get('lid_upper_' + s)
         if pb:
             p = pb.head.copy()
-            pb.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(LID_DROP), 4, ax)
+            pb.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(LID_DROP[s]), 4, ax)
                          @ Matrix.Translation(-p) @ pb.matrix)
     _upd()
 

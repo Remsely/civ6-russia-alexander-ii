@@ -50,13 +50,14 @@ BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-hori
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
 # on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.033, 0.012  # in the portrait the collar's top corners at the front are ~2.5 cm
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.027, 0.025  # in the portrait the collar's top corners at the front are ~2.5 cm
                                   # under the chin's underside (in its 'ref' view, px 214 against the chin's 195): only
                                   # the shirt's white edge between them (4.6 cm down, a bare neck stood out of it; 2.6
-                                  # cm, the collar came up to the chin) - and it rises a little towards the back, as
-                                  # a shirt's collar (3.5 cm, its back stood up the nape tilted like a horse collar)
-STAND_RISE_POW = 1.7              # ... slowly at first: at the sides only ~1.6 cm higher than at the front (rising as
-                                  # (1 - cos) / 2, the sides stood 3.5 cm up and the red halves covered the whole neck)
+                                  # cm, the collar came up to the chin; 3.3 cm with the front dipped, it read as slid
+                                  # down) - and it rises towards the back, tilted as a shirt's collar (3.5 cm, its back
+                                  # stood up the nape like a horse collar; 1.2 cm, too little tilt)
+STAND_RISE_POW = 1.2              # ... soon from the front (the portrait's top edge climbs along the side behind the
+                                  # whiskers; rising as (1 - cos) / 2, the sides stood 3.5 cm up over the whole neck)
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
 STAND_OFF = 0.016                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top) -
                                   # the portrait's collar stands off the neck, ~17 cm across at the top (6 mm: a tube
@@ -108,7 +109,8 @@ PLEAT_ANGLE = (66.0, 80.0)        # degrees from the front centre (at the belt, 
                                   # 'ref' view) the piping runs from x ~435 at the belt out to ~350 at the hem on his
                                   # right, ~655 on his left - the front panel's edge, the back panel stepping out
                                   # behind it in a fold
-PLEAT_STEP = 0.012                # ... by this much at the hem (none at the belt): the piping on the outline there
+PLEAT_STEP = 0.0                  # ... by this much at the hem (none at the belt): the piping on the outline there (at
+                                  # 1.2 cm the skirt's back was a stepped, fussy hem)
 
 sc = bpy.data.scenes['Human']
 bpy.context.window.scene = sc

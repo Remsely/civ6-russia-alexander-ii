@@ -36,6 +36,7 @@ SHOULDER_R = (0.06, 0.16)               # ... and the cloth round the shoulder j
 JOINT_ROUNDS, JOINT_CLEAR = 12, 0.006   # Taubin rounds; the cloth at least this off the skin there
 SLEEVE_MIN_R, ELBOW_PASSES = 0.05, 4    # the sleeve this far at least from the arm bones round the elbow; rounds
 UNTANGLE_TRIES, UNTANGLE_RINGS = 6, 4      # rounds of smoothing round the sheet's self-crossings; rings of neighbours
+SKIRT_BACK_ROUNDS = 30                  # smooth_skirt_back: Taubin rounds over the skirt's back
 TORSO_ROUNDS = 40                       # smooth_torso: Taubin rounds over the tunic's body above the belt
 SHOULDER_FIT_OFF = 0.008               # fit_shoulders: the tunic this far off the body over the shoulders' top ...
 SHOULDER_FIT_FROM = 0.03                # ... fading in over this much beyond the collar's foot
@@ -444,6 +445,44 @@ def smooth_torso():
 smooth_torso()
 
 
+def smooth_skirt_back():
+    """The skirt's back, from under the belt to over the hem, smoothed (Taubin, SKIRT_BACK_ROUNDS) as the torso: the
+    hands held behind and the stepping legs left it bumpy with a crease down the middle - fussy for a broadcloth
+    skirt that hangs plain. The hem's own line and the sleeves stay; then kept JOINT_CLEAR off the body."""
+    from mathutils.bvhtree import BVHTree
+    me = uni.data
+    co = np.array([v.co[:] for v in me.vertices])
+    nb = [[] for _ in range(len(co))]
+    for e in me.edges:
+        a, b = e.vertices
+        nb[a].append(b); nb[b].append(a)
+    low = P['HEM_Z']
+    top = P['BELT_ZC'] - P['BELT_H'] / 2 - 0.01
+    cy = P['BELT_C'][1]
+    arm = arm_w(uni)
+    k = np.array([smoothstep(c[2], low + 0.01, low + 0.05) * (1 - smoothstep(c[2], top - 0.03, top))
+                  * smoothstep(c[1] - cy, -0.02, 0.04) * (1 - smoothstep(a, 0.15, 0.5)) for c, a in zip(co, arm)])
+    zone = np.where(k > 0)[0]
+    for _ in range(SKIRT_BACK_ROUNDS):
+        for f in (0.6, -0.63):
+            lap = np.array([co[nb[i]].mean(0) - co[i] if nb[i] else np.zeros(3) for i in zone])
+            co[zone] += lap * (f * k[zone])[:, None]
+    tree = BVHTree.FromPolygons([v.co.copy() for v in h.data.vertices], [tuple(p.vertices) for p in h.data.polygons])
+    pushed = 0
+    for i in zone:
+        q = Vector(co[i])
+        loc, nrm, _, _ = tree.find_nearest(q, 0.05)
+        if loc is not None and (q - loc).dot(nrm) < JOINT_CLEAR:
+            co[i] = loc + nrm * JOINT_CLEAR
+            pushed += 1
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel())
+    me.update()
+    print('skirt back: %d cloth vertices smoothed, %d kept off the body' % (len(zone), pushed))
+
+
+smooth_skirt_back()
+
+
 def fit_shoulders():
     """Simulated, the tunic stood 1.5-2.2 cm off the shoulders' top beside the collar - a flat plateau that dropped
     onto the body in a step half way out - and swelled 2.5-3 cm over the shoulder joints: the shoulder's line ran
@@ -755,7 +794,7 @@ h.vertex_groups.remove(h.vertex_groups['collider'])
 sc.frame_set(1)
 sc['pose'] = dict(YAW_DEG=pose.YAW_DEG)
 if 'BLINK_DEG' in sc['head'] and not sc['head'].get('LIDS_LOWERED'):  # the stance's lids are part closed
-    hd = dict(sc['head']); hd['BLINK_DEG'] = hd['BLINK_DEG'] - pose.LID_DROP; hd['LIDS_LOWERED'] = True; sc['head'] = hd
+    hd = dict(sc['head']); hd['BLINK_DEG'] = hd['BLINK_DEG'] - min(pose.LID_DROP.values()); hd['LIDS_LOWERED'] = True; sc['head'] = hd
 bpy.ops.outliner.orphans_purge(do_recursive=True)
 bpy.ops.wm.save_as_mainfile(filepath=OUT, compress=True)
 print('saved', OUT, os.path.getsize(OUT))
