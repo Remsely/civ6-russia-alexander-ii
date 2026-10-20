@@ -116,11 +116,13 @@ MOUNT_PROUD = 1.08
 # leather out from under the belt at the left hip (without them it hung in the air, held only by the hand)
 SLING_W, SLING_T = 0.016, 0.0025     # width, thickness
 SLING_TOP_Z = 0.035                  # their tops this far under the belt's lower edge, on the skirt
-SLING_SAG = 0.012                    # how far a strap sags out of the straight line
+SLING_JOIN = 0.07                    # ... down onto the scabbard's back edge this far under the guard, along it to the rings
+SLING_RING_R = 0.007                 # the suspension rings, lying flat on the bands
 # Sword knot (temlyak) and the hanger's cord from the belt (both in the portrait): braided gold cord to a knotted ball
 # and a tassel of fine bullion (the Regalia material: build_regalia.py's braid and bullion). Heights of the balls.
 KNOT_BALL_Z, KNOT_CORD_R = 0.70, 0.0042
-BELT_KNOT_X, BELT_KNOT_BALL_Z, BELT_KNOT_R = 0.112, 0.97, 0.0048  # (at x 0.13 it ran into the fist on the hilt)
+BELT_KNOT_X, BELT_KNOT_BALL_Z, BELT_KNOT_R = 0.075, 0.97, 0.0048  # (at x 0.13 it ran into the fist on the hilt, at 0.112
+                                    # it pressed into its thumb side, at 0.088 still touched it: the fist reaches in to 0.095)
 HAND_CLEAR = 0.003                 # the hanger's cord this far off the skin of the hand it passes
 TASSEL_LEN, TASSEL_R, TASSEL_STRANDS = 0.07, 0.0125, 40
 # build_regalia.py's atlas (TEX 2048) and its texture lengths: the cords' braid and the fringe's bullion
@@ -1022,24 +1024,57 @@ def build_sabre():
     loft(part, rings, scab_uv)
     cap(part, rings[-1], path[-1] + (path[-1] - path[-2]).normalized() * 0.008, pal_uv('gold'))
     cap(part, list(reversed(rings[0])), path[0], pal_uv('gold'))
-    # suspension rings on the bands, at the back edge, and the slings from the belt to them
+    # suspension rings lying flat on the bands' back edge, and the slings from the belt down onto that edge and along
+    # it to them, the long one (to the lower ring) over the short one (hung straight from the belt to rings 3 cm off
+    # the scabbard, the long one ran down beside it like a loose rod)
     belt_lo = min(v.co.z for v in obj('Belt').data.vertices if v.co.x > 0.1)
-    for m0, m1 in MOUNTS[1:3]:
-        i = min(range(len(acc)), key=lambda j: abs(acc[j] - (m0 + m1) / 2))
+
+    def at(s):
+        return min(range(len(acc)), key=lambda j: abs(acc[j] - s))
+
+    def edge(s, off):  # the back edge at s down the scabbard, off out from its (banded) surface
+        i = at(s)
+        return path[i] - fr[i][1] * (SCABBARD_W / 2 * (1 - 0.3 * acc[i] / length) * MOUNT_PROUD + off)
+    ring_s = [(m0 + m1) / 2 for m0, m1 in MOUNTS[1:3]]
+    ring_off = 0.0018  # the flat ring's wire (r 1.6 mm) on the surface
+    strap_off = (ring_off + 0.0021 + SLING_T / 2, ring_off + 0.0021 + SLING_T * 1.5 + 0.0008)
+    top_at = edge(SLING_JOIN, strap_off[1])
+    q = Vector((top_at.x, top_at.y, belt_lo - SLING_TOP_Z))
+    loc, nrm, _, _ = LOWER.find_nearest(q, 0.3)
+    top = loc + nrm * (SLING_T + 0.002) if loc is not None else q
+    for n_, s_r in enumerate(ring_s):
+        i = at(s_r)
         t, u, v = fr[i]
-        c = path[i] - u * (SCABBARD_W / 2 * MOUNT_PROUD + 0.006)
-        loop = [c + (u * math.cos(2 * math.pi * j / 16) + t * math.sin(2 * math.pi * j / 16)) * 0.008
+        c = edge(s_r, ring_off)
+        loop = [c + (t * math.cos(2 * math.pi * j / 16) + v * math.sin(2 * math.pi * j / 16)) * SLING_RING_R
                 for j in range(17)]
-        tube(part, loop, 0.0017, lambda ii, kk: pal_uv('gold'), w, sides=6)
-        ring_top = c - u * 0.008
-        q = Vector((ring_top.x, ring_top.y, belt_lo - SLING_TOP_Z))
-        loc, nrm, _, _ = LOWER.find_nearest(q, 0.3)
-        top = loc + nrm * (SLING_T + 0.002) if loc is not None else q
-        out = Vector((nrm.x, nrm.y, 0.0)).normalized() if loc is not None else -u
-        sp = [top.lerp(ring_top, j / 14) + out * SLING_SAG * math.sin(math.pi * j / 14) for j in range(15)]
-        sp = clear_path(sp, SLING_T + 0.002)
-        sp = clear_hand(sp, SLING_W / 2 + HAND_CLEAR)  # behind the fist on the hilt, not through it
-        tube(part, sp, SLING_T / 2, lambda ii, kk: pal_uv('leather'), w, sides=8, rx=SLING_W / 2, ref=out.cross(Vector((0, 0, 1))))
+        tube(part, loop, 0.0016, lambda ii, kk: pal_uv('gold'), w, sides=6)
+
+        def off(s):  # the long strap stands over the short one down to its ring, then lies on the edge
+            return strap_off[0] + (strap_off[1] - strap_off[0]) * n_ * (1 - smoothstep(s, ring_s[0] + 0.03,
+                                                                                        ring_s[0] + 0.07))
+        down_s = np.linspace(SLING_JOIN, s_r - SLING_RING_R * 0.6, 24)
+        down = [edge(s, off(s)) for s in down_s]
+        sp = [top.lerp(down[0], j / 10) for j in range(10)] + down
+        for _ in range(6):  # the bend onto the edge rounded off
+            sp[1:12] = [sp[j] * 0.5 + (sp[j - 1] + sp[j + 1]) * 0.25 for j in range(1, 12)]
+        sp[:12] = clear_path(sp[:12], SLING_T + 0.002)  # out over the skirt from under the belt
+        sp[:12] = clear_hand(sp[:12], SLING_W / 2 + HAND_CLEAR)  # behind the fist on the hilt, not through it
+        # flat on the skirt where it comes out, turning to lie flat on the scabbard's edge (one frame all along, it
+        # stood edge-on in the skirt)
+        flat0 = nrm.cross(Vector((0, 0, 1))).normalized() if loc is not None else v
+        ss = [SLING_JOIN] * 10 + list(down_s)
+        rings = []
+        for j, p in enumerate(sp):
+            tj = (sp[min(j + 1, len(sp) - 1)] - sp[max(j - 1, 0)]).normalized()
+            vj = fr[at(ss[j])][2]
+            vj = vj if vj.dot(flat0) >= 0 else -vj
+            wd = flat0.lerp(vj, smoothstep(j, 2, 11))
+            wd = (wd - tj * wd.dot(tj)).normalized()
+            th = tj.cross(wd)
+            rings.append([part.vert(p + wd * (math.cos(2 * math.pi * k / 8) * SLING_W / 2)
+                                    + th * (math.sin(2 * math.pi * k / 8) * SLING_T / 2), w) for k in range(8)])
+        loft(part, rings, lambda ii, kk: [pal_uv('leather')] * 4)
     # hilt: the grip, oval, bound with gold wire in a spiral (dark between the turns), swelling a little
     grip_n, gs = 14, 12
     grip = [POMMEL.lerp(GUARD, i / grip_n) for i in range(grip_n + 1)]
@@ -1108,12 +1143,25 @@ def build_sabre():
     return sabre, knot, belt_knot
 
 
-def clear_hand(path, r, rounds=40):
+def clear_hand(path, r, rounds=40, away=None):
     """Path points out of the left hand: a point nearer its skin than r (or inside it) goes to r off the nearest
     point, then the path is smoothed; the ends stay. (Straight from the belt to its tassel the hanger's cord ran
-    through the fist on the hilt; in the portrait it passes behind the hand.)"""
+    through the fist on the hilt; in the portrait it passes behind the hand.) away: first carried that way, 2 mm a
+    step, till clear of the hand (pushed to the nearest skin, a cord between the thumb and the fingers stayed there)."""
     if HAND_L is None:
         return path
+
+    def near(p):
+        loc, nrm, _, d = HAND_L.find_nearest(p)
+        return loc is not None and (d < r or (p - loc).dot(nrm) < r)
+    if away is not None:
+        for _ in range(8):
+            for i in range(1, len(path) - 1):
+                for _ in range(40):
+                    if not near(path[i]):
+                        break
+                    path[i] = path[i] + away * 0.002
+            path[1:-1] = [path[i] * 0.5 + (path[i - 1] + path[i + 1]) * 0.25 for i in range(1, len(path) - 1)]
     for _ in range(rounds):
         moved = 0
         for i in range(1, len(path) - 1):
@@ -1128,8 +1176,9 @@ def clear_hand(path, r, rounds=40):
         loc, nrm, _, d = HAND_L.find_nearest(path[i])
         if loc is not None and (path[i] - loc).dot(nrm) < r:
             path[i] = loc + nrm * r
-    worst = min(((p - HAND_L.find_nearest(p)[0]).dot(HAND_L.find_nearest(p)[1]) for p in path), default=1.0)
-    print('cord past the hand: %.4f off its skin at the nearest' % worst)
+    offs = [(p - HAND_L.find_nearest(p)[0]).dot(HAND_L.find_nearest(p)[1]) for p in path]
+    print('cord past the hand: %.4f off its skin at the nearest (point %d of %d)' % (
+        min(offs), offs.index(min(offs)), len(offs)))
     return path
 
 

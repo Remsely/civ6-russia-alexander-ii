@@ -39,6 +39,8 @@ BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-hori
                 'arms/l-upperarm-muscle-decr': 0.6, 'arms/r-upperarm-muscle-decr': 0.6,
                 'arms/l-upperarm-fat-decr': 0.6, 'arms/r-upperarm-fat-decr': 0.6,
                 'arms/l-lowerarm-fat-decr': 0.5, 'arms/r-lowerarm-fat-decr': 0.5,
+                # full deltoids: the shoulder's end rounded out under the epaulette, not a narrow slope into the arm
+                'arms/l-upperarm-shoulder-muscle-incr': 0.6, 'arms/r-upperarm-shoulder-muscle-incr': 0.6,
                 # the portrait's elbows hang ~35 cm under the shoulder joints (MPFB's upper arm: 31 cm), its legs come
                 # down closer together under a narrower skirt
                 'arms/measure-upperarm-length-incr': 0.5, 'hip/hip-scale-horiz-decr': 1.0}
@@ -266,7 +268,7 @@ def neck_sector(d):
 def stand_top(c):
     """Top of the tunic's standing collar above c (by direction round the neck)."""
     d = c.xy - NECK_AXIS
-    back = (1 + d.y / max(d.length, 1e-6)) / 2  # 0 front .. 1 back
+    back = max(0.0, (1 + d.y / max(d.length, 1e-6)) / 2)  # 0 front .. 1 back (rounded under 0: a complex power)
     return STAND_TOP_FRONT + (STAND_TOP_BACK - STAND_TOP_FRONT) * back ** STAND_RISE_POW
 
 

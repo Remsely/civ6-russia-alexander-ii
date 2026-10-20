@@ -472,7 +472,8 @@ BACK_X = 0.22                      # |x| over which the back is flattened (fadin
 # Shoulders: the top of the shoulders runs down from the neck root parallel to the clavicles (shape key 'ShoulderFit',
 # after NeckFit) instead of MPFB's flat plateau that ends in a square corner over the deltoid.
 SHOULDER_ROOT_X = 0.095            # |x| where the slope starts (keeps its height)
-SHOULDER_DEG = 21.0                # slope of the top line, down outwards
+SHOULDER_DEG = 12.0                # slope of the top line, down outwards (a square military bearing; 21 with the
+                                   # clavicles let down: sloping shoulders)
 SHOULDER_TIP_X = 0.36              # ... fading out by here (the deltoid)
 SHOULDER_DEPTH = 0.12              # vertices this far under the top move less and less
 

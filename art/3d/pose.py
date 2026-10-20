@@ -23,10 +23,11 @@ HEAD_ROLL = -1.75                  # ... and tilted about its forward line (towa
 LID_DROP = 7.0                     # degrees the upper lids are let down from the generated head's (of a ~59 deg
                                    # blink): in the portrait they cover the irises' tops; wide open, the eyes stared
                                    # (16 deg hid half the iris: sleepy)
-CLAVICLE_DROP = {'l': 12.0, 'r': 11.0}  # degrees the shoulders are let down: the portrait's epaulettes and elbows are
-                                   # lower than the body's own shoulders put them - a sloping trapezius; his left one more
-                                   # (at 8 deg each, over a tunic fitted to the shoulders, his left epaulette stood 2.5 cm
-                                   # over the portrait's, his right one's inner end 1-2 cm)
+CLAVICLE_DROP = {'l': 7.0, 'r': 7.0}  # degrees the shoulders are let down, both alike: the tunic's top from the collar's
+                                   # foot to over the shoulder joint falls ~15 deg, as the portrait's straps and fields
+                                   # (1.77 -> 1.73 m) - square shoulders (let down 11-12 deg over a 21 deg trapezius,
+                                   # the line fell 32 deg: an old man's sloping shoulders; not at all, the fields stood
+                                   # 3 cm over the portrait's and the straps rose from the collar)
 # His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand over
 # the hilt's top in line with the forearm, back of the hand forward, fingers closed round the grip (as in the portrait;
 # bent down at the wrist it looked broken); his right arm hangs down by his side, the elbow at his side and a little

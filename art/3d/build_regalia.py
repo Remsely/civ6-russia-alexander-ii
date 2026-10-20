@@ -31,22 +31,25 @@ REF_W, REF_CROWN, REF_SOLES, REF_X = 1024, 12, 1510, 515
 # folds) lying on top of the shoulder, centred on it front to back, its outer end a little past the shoulder's end; a
 # thick twisted rim; a strap to the collar with a button; bullion fringe hanging from under the rim round its outer
 # three quarters, fanning out over the arm (as in the portrait).
-EP_A, EP_B = 0.064, 0.05         # semi-axes along the shoulder and across it (the portrait's field: ~14.5 cm wide
+EP_A, EP_B = 0.072, 0.056        # semi-axes along the shoulder and across it (the portrait's field: ~14.5 cm wide
                                  # with its rim in the 'ref' view, ~22 cm with the fringe belling out under it)
 EP_REF_X = {'r': 360, 'l': 668}  # the fields' middles where the portrait has them (px across alexander_ii_full.png, as
                                  # the 'ref' view frames the figure): on the shoulder's line front to back, out to there
 EP_GAP, EP_DOME, EP_THICK = 0.003, 0.012, 0.006  # the field's underside off the cloth at the nearest, its dome, edge
 EP_CURVE = (0.30, 0.09)          # radii of the field's curve along and across the shoulder (a plate bent to it)
-EP_TILT = {'r': 28.0, 'l': 16.0}  # degrees the field's outer end is lower: in the portrait both fields face the viewer -
+EP_TILT = {'r': 15.0, 'l': 18.0}  # degrees the field's outer end is lower: in the portrait both fields face the viewer -
                                  # the camera stands to his right, so his left one is tilted out less (as much, it
                                  # showed its edge); the inner end rises over the slope to the collar (tilted 18 deg,
                                  # it rested there and stood 4-5 cm over the shoulder)
-EP_FORWARD = {'r': 16.0, 'l': 28.0}  # degrees its front edge is lower (his left one more, turned to the camera) - in the portrait the
+EP_FORWARD = {'r': 26.0, 'l': 26.0}  # degrees its front edge is lower (his left one more, turned to the camera) - in the portrait the
                                  # fields face the viewer (their faces show as ovals ~0.45 as high as wide); fitted to
                                  # the shoulder's slope (~25 deg out) the field was edge-on and the fringe stood out
                                  # like wings
+EP_TURN = {'r': 0.0, 'l': 22.0}   # degrees the field is turned about the upright towards the front: in the portrait his
+                                 # left one shows its face nearly square to the viewer as the right one does (the
+                                 # shoulder turned away from the camera with the figure, it showed its edge)
 EP_RIM_R = 0.008                 # the rim's radius: a thick padded roll of bullion, as in the portrait
-EP_PRESS = (0.004, 0.012)        # the rim pressed this far into the padded shoulder, its outer and inner (towards the
+EP_PRESS = (0.004, 0.02)        # the rim pressed this far into the padded shoulder, its outer and inner (towards the
                                  # neck) half (resting on it, the field stood 5 cm over the portrait's)
 EP_PRESS_FRONT = 0.014           # ... and the quarter towards the neck and the chest this much more: tilted forward to
                                  # the viewer, the field's front edge rested on the chest and held it 4-5 cm up
@@ -58,19 +61,20 @@ STRAP_REPEATS = 3                # the galloon picture along the strap
 FRINGE_ARC = 290.0               # the fringe hangs round this arc of the rim, centred on the outer end: none on the
                                  # quarter by the collar, where the strap is (round 316 deg the strands there were buried
                                  # in the collar and the sash, stuck out level like sticks and drew their neighbours out)
-FRINGE_LEN, FRINGE_R = 0.085, 0.0092  # a strand's length and radius: the portrait's are ~8.5 cm long, ~1.5 cm thick,
+FRINGE_LEN, FRINGE_R = 0.09, 0.009  # a strand's length and radius: the portrait's are ~8.5 cm long, ~1.5 cm thick,
                                  # side by side, touching under the rim
 FRINGE_DEEP = 0.04                # a strand whose root is this far inside the cloth is left out (at 1.2 cm the front of
                                  # the bell, over the chest, was missing: the cords came out of nowhere beside it)
 FRINGE_ROOT = 0.8                # ... at its root under the rim this share of the radius (they crowd there)
 DEBUG_FRINGE = bool(os.environ.get('DEBUG_FRINGE'))
 FRINGE_DENSE = 89                # the bell worked out at this many points round the rim ...
-FRINGE_TOUCH = 1.02              # ... and the strands set along its lower edge this many diameters apart (touching)
-FRINGE_TILT = (40.0, 28.0, 18.0)   # degrees off the upright at the outer end, at the front and back, by the collar: the
+FRINGE_TOUCH = 1.25              # ... and the strands set along its lower edge this many diameters apart (touching)
+FRINGE_TILT = (22.0, 6.0, 4.0)   # degrees off the upright at the outer end, at the front and back, by the collar: the
                                  # portrait's fringe is a stiff bell, ~40 deg out over the arm (fanned out at 38-50 deg
                                  # below level they stood out like a sunburst; hanging nearly straight, a narrow tube)
-FRINGE_TILT_MAX = 46.0           # ... out to this at most to clear what is under it (then shortened)
+FRINGE_TILT_MAX = 36.0           # ... out to this at most to clear what is under it (then shortened)
 FRINGE_TILT_SPREAD = 0.4         # ... its neighbours tilted as far, less this many degrees a degree round the rim
+FRINGE_START, FRINGE_BEND = 55.0, 0.035  # ... coming out from under the rim this far off the upright, turning down to it over this
 FRINGE_KNEE = 0.03               # ... or curled out over the rim by up to this first (see course())
 FRINGE_MIN_LEN = 0.03            # a strand that clears less than this is left out
 FRINGE_SAMPLES, FRINGE_SMOOTH = 14, 6  # points down a strand checked; rounds of evening the tilts and lengths
@@ -79,7 +83,7 @@ FRINGE_STEP = 0.006              # path sampling along a strand (straight: few r
 FRINGE_TIP = 0.32                # the bright wire end in each strand's rounded tip (x the radius)
 # Bullion (canitel): gold wire coiled tight and the coil twisted - the portrait's strands are beaded all over, a slant
 # row of grains per turn of the coil, shining (matt, with a rope's twist, they read as moulded rods)
-BULLION_COIL, BULLION_GRAINS, BULLION_UV_LEN = 0.0034, 13, 0.147  # the coil's pitch, grains round a turn; metres of
+BULLION_COIL, BULLION_GRAINS, BULLION_UV_LEN = 0.0055, 8, 0.147  # the coil's pitch, grains round a turn; metres of
                                  # strand over the width of its atlas region
 BULLION_RELIEF = 0.4             # the coil's height (x pitch) in the normal map
 BULLION_METAL, BULLION_ROUGH = (0.15, 0.75), (0.7, 0.32)  # in the gaps, on the grains: gold wire catching the light
@@ -142,7 +146,7 @@ AIG_THIN = (-0.002, 0.014, 0.4)   # under the band from the first to the second 
 PENCIL_KNOB, PENCIL_TOP, PENCIL_END = (585, 385), (608, 401), (617, 526)  # px (the top: its axis is lifted off the
                                  # sash and leans, at 615 it came out 7 px right of the portrait's)
 KNOB_R, CROOK_R = 0.0085, 0.0058  # the crook's knob and its neck (gilt, cast with the pencil)
-AIG_R, AIG_GAP = 0.0060, 0.0015  # the portrait's cords: ~1.2-1.3 cm thick round braid (9 px; at 1.6 cm they
+AIG_R, AIG_GAP = 0.0050, 0.0015  # the portrait's cords: ~1.2-1.3 cm thick round braid (9 px; at 1.6 cm they
                                  # came out much thicker than the portrait's next to the fringe)
 AIG_UP, AIG_UP_X = 45, 15  # px: the cords begin this much over where the portrait shows them, in under the
                                  # epaulette's field (25 px over: with the fringe hanging close round the shoulder their
@@ -460,7 +464,7 @@ def bullion_tex(w, hh):
     turns = u * BULLION_UV_LEN / BULLION_COIL + v  # one slanting turn of the coil round the strand per pitch
     f = turns % 1.0
     g = (v * BULLION_GRAINS + np.floor(turns) * 0.5) % 1.0  # grains along each turn, staggered turn to turn
-    h = np.sin(np.pi * f) ** 0.7 * (0.5 + 0.5 * np.sin(np.pi * g) ** 0.6)
+    h = np.sin(np.pi * f) ** 0.7 * (0.3 + 0.7 * np.sin(np.pi * g) ** 0.6)  # beads standing out (0.5: rings)
     tone = fibre_noise(h.shape, 11)
     return thread_colour(h, h, tone), None, h * BULLION_COIL * BULLION_RELIEF
 
@@ -1256,12 +1260,18 @@ def build_epaulette(side):
     e = outermost(Vector((c.x, c.y, c.z)), out)
     print('epaulette %s: middle %.3f out from the shoulder joint, the shoulder ends %.3f out' % (
         side, (c - joint).dot(out), (e - joint).dot(out) if e is not None else float('nan')))
-    Z = (Vector((0, 0, 1)) + out * math.tan(math.radians(EP_TILT[side])) + fwd * math.tan(math.radians(EP_FORWARD[side])))
+    turn = Matrix.Rotation(-sign * math.radians(EP_TURN[side]), 3, 'Z')  # towards the front (the viewer)
+    out_f, fwd_f = turn @ out, turn @ fwd
+    Z = (Vector((0, 0, 1)) + out_f * math.tan(math.radians(EP_TILT[side]))
+         + fwd_f * math.tan(math.radians(EP_FORWARD[side])))
     Z.normalize()
-    X = (out - Z * out.dot(Z)).normalized()
+    X = (out_f - Z * out_f.dot(Z)).normalized()
     Y = Z.cross(X)
+    XS = (out - Z * out.dot(Z)).normalized()  # the strap runs along the shoulder to the collar, however the field is
+    YS = Z.cross(XS)                          # turned
     C = top_at(c) or c
     L = lambda x, y, z: C + X * x + Y * y + Z * z  # noqa: E731
+    LS = lambda x, y, z: C + XS * x + YS * y + Z * z  # noqa: E731
     shell = lambda x, y: -(x * x / (2 * EP_CURVE[0]) + y * y / (2 * EP_CURVE[1]))  # noqa: E731
     rings, segs = 6, 48
 
@@ -1285,6 +1295,11 @@ def build_epaulette(side):
             hh = cloth_h(x, y) - shell(x, y) + need
             if hh > h0:
                 h0, worst = hh, (round(f, 2), round(math.degrees(a)), tuple(round(v, 3) for v in L(x, y, 0)))
+    if DEBUG_FRINGE:
+        for a_ in (0, 90, 180, 270):
+            print('  ep %s a %d: ' % (side, a_) + ' '.join(
+                '%.2f:%.3f' % (f_, cloth_h(EP_A * f_ * math.cos(math.radians(a_)), EP_B * f_ * math.sin(math.radians(a_))))
+                for f_ in (0.0, 0.25, 0.5, 0.75, 1.0, 1.12)))
     U = lambda x, y: h0 + shell(x, y)  # noqa: E731  the plate's underside
     print('epaulette %s: centre %s, normal %s (%.0f deg), plate %.3f over the shoulder top (held up at %s)' % (
         side, tuple(round(v, 3) for v in C), tuple(round(v, 2) for v in Z), math.degrees(Z.angle(Vector((0, 0, 1)))),
@@ -1329,10 +1344,10 @@ def build_epaulette(side):
     # length in one smooth curve (a parabola) resting on the highest points of the cloth (and the sash) under it (laid
     # on the cloth point by point it followed every fold and came out crumpled); top, bottom and side faces
     x_end = sign * STRAP_X - C.x
-    strap_len = abs(x_end / X.x) if abs(X.x) > 1e-3 else 0.1
+    strap_len = abs(x_end / XS.x) if abs(XS.x) > 1e-3 else 0.1
 
     def over_collar(x):  # the collar stands higher than the cloth there
-        p0 = L(x, 0.0, 0.0) + Z * 0.15
+        p0 = LS(x, 0.0, 0.0) + Z * 0.15
         a_, b_ = FIELD_CLOTH.ray_cast(p0, -Z, 0.4)[0], STRAP_CLOTH.ray_cast(p0, -Z, 0.4)[0]
         return a_ is not None and (b_ is None or (a_ - b_).dot(Z) > 0.002)
     for _ in range(40):  # the strap ends STRAP_SHORT before the collar's foot (run up onto it, it bridged the hollow
@@ -1346,7 +1361,7 @@ def build_epaulette(side):
     for i, x in enumerate(xs):
         hh = []
         for y in np.linspace(-STRAP_W / 2, STRAP_W / 2, 7):
-            hit = FIELD_CLOTH.ray_cast(L(x, y * (1 - 0.15 * i / n_rows), 0.0) + Z * 0.15, -Z, 0.4)[0]
+            hit = FIELD_CLOTH.ray_cast(LS(x, y * (1 - 0.15 * i / n_rows), 0.0) + Z * 0.15, -Z, 0.4)[0]
             if hit is not None:
                 hh.append((hit - C).dot(Z))
         hs.append(max(hh) if hh else 0.0)
@@ -1365,7 +1380,7 @@ def build_epaulette(side):
         x = xs[i]
         trow, brow = [], []
         for y in (-STRAP_W / 2, STRAP_W / 2):
-            p = L(x, y * (1 - 0.15 * f), float(line[i]) + STRAP_GAP)
+            p = LS(x, y * (1 - 0.15 * f), float(line[i]) + STRAP_GAP)
             b = bm.verts.new(p); t = bm.verts.new(p + Z * STRAP_T)
             uvs[b] = uvs[t] = uv_in('strap', f, 0.5 + y / STRAP_W * 0.9)
             brow.append(b); trow.append(t)
@@ -1403,6 +1418,9 @@ def build_epaulette(side):
     # the shoulder - a sunburst.)
     bm = bmesh.new(); uvs = {}; wmap = {}
     half = math.radians(FRINGE_ARC) / 2
+    # the arc without fringe centred on the strap (the field may be turned off the strap's line): angles round the
+    # rim are taken from a_off
+    a_off = math.atan2(-(-XS).dot(Y), -(-XS).dot(X))
     down = Vector((0, 0, -1))
     ns = FRINGE_SAMPLES
 
@@ -1427,12 +1445,24 @@ def build_epaulette(side):
 
     def gap(q):  # the strand's surface at q off what is under it
         return under(q)[0] - FRINGE_R - FRINGE_CLEAR
+
+    def line(start, push, t, ln):
+        """A strand's line from start, ns steps: out from under the rim FRINGE_START off the upright, turning down at
+        an even rate over FRINGE_BEND of its length to its own tilt t, straight on from there - every strand bent
+        alike, a rigid dome as in the portrait (straight from the rim, the bell was a cone, a lampshade)."""
+        a0 = max(t, math.radians(FRINGE_START))
+        pts, p, step = [start], start.copy(), ln / ns
+        for j in range(ns):
+            tt = a0 + (t - a0) * min((j + 0.5) * step / FRINGE_BEND, 1.0)
+            p = p + (down * math.cos(tt) + push * math.sin(tt)).normalized() * step
+            pts.append(p)
+        return pts
     def course(a, rf, shorter):
         """The bell at angle a round the rim: root, flat radial, the strand's line before carrying out, how far out it
         must be at each point (None where it is buried)."""
-        x, y = EP_A * rf * math.cos(a), EP_B * rf * math.sin(a)
+        x, y = EP_A * rf * math.cos(a + a_off), EP_B * rf * math.sin(a + a_off)
         root = L(x, y, U(x, y) - 0.002 - FRINGE_R * 0.6)  # under the field, the rim over its top
-        radial = X * math.cos(a) * EP_B + Y * math.sin(a) * EP_A  # square to the rim
+        radial = X * math.cos(a + a_off) * EP_B + Y * math.sin(a + a_off) * EP_A  # square to the rim
         flat = Vector((radial.x, radial.y, 0.0)).normalized()
         h, loc, nrm = under(root)
         if loc is not None and h < FRINGE_R + 0.002:
@@ -1459,9 +1489,8 @@ def build_epaulette(side):
         # over the body and hanging on from it, the bell hugged the arm - a narrow tube, not the portrait's wide fan;
         # bent over it down their length one by one, the strands came out crooked
         def clear_len(t, knee):
-            d = (down * math.cos(t) + push * math.sin(t)).normalized()
-            for j in range(ns + 1):
-                if length * j / ns > FRINGE_R * 1.5 and gap(knee + d * (length * j / ns)) < 0:
+            for j, q in enumerate(line(knee, push, t, length)):
+                if length * j / ns > FRINGE_R * 1.5 and gap(q) < 0:
                     return length * (j - 1) / ns
             return length
         # where the field lies on the shoulder (its front and back by the strap) the strand first curls out over the
@@ -1492,10 +1521,8 @@ def build_epaulette(side):
         tilts = [max(tilts[j], (tilts[max(j - 1, 0)] + 2 * tilts[j] + tilts[min(j + 1, len(tilts) - 1)]) / 4)
                  for j in range(len(tilts))]
     for c, t in zip(dense, tilts):
-        d = (down * math.cos(t) + c['push'] * math.sin(t)).normalized()
         ln = c['length']
-        for j in range(ns + 1):
-            q = c['root'] + d * (c['length'] * j / ns)
+        for j, q in enumerate(line(c['root'], c['push'], t, c['length'])):
             if c['length'] * j / ns > FRINGE_R * 1.5 and gap(q) < 0:
                 ln = c['length'] * (j - 1) / ns
                 break
@@ -1506,9 +1533,9 @@ def build_epaulette(side):
                 for j in range(len(lens))]
     dense = [c for c, ln in zip(dense, lens) if ln > FRINGE_MIN_LEN]
     for c, ln in zip(dense, [ln for ln in lens if ln > FRINGE_MIN_LEN]):
-        d = (down * math.cos(c['tilt']) + c['push'] * math.sin(c['tilt'])).normalized()
-        c['path'] = [c['root'] + d * (ln * j / ns) for j in range(ns + 1)]
-        if (c['root'] - c['base']).length > 1e-4:  # the curl over the rim: from the root out to the straight part
+        c['path'] = line(c['root'], c['push'], c['tilt'], ln)
+        d = (c['path'][1] - c['path'][0]).normalized()
+        if (c['root'] - c['base']).length > 1e-4:  # the curl over the rim: from the root out to the strand's line
             k_ = c['root'] - c['base']
             c['path'] = [c['base'], c['base'] + k_ * 0.6 + d * (k_.length * 0.15)] + c['path'][1:]
         c['tip'] = c['path'][-1]
