@@ -59,7 +59,7 @@ RIB_W, RIB_SIDE, RIB_V = 0.0276, 0.046, 0.0092  # a pentagonal mount (the Russia
 RIB_STEP = (0.0184, 0.0265)         # the step from one mount to the next is found in this range so the bar ends at
                                    # BAR_END_PX: each overlaps the one to its left (as mounts are worn: the bar is not
                                    # stretched with extra ribbons to reach the fringe)
-MEDAL_R, WCROSS_S = 0.0185, 0.0235  # the medals ~3.7 cm across, the St George cross ~4.7 cm: in the portrait the
+MEDAL_R, WCROSS_S = 0.0195, 0.027  # the medals ~3.7 cm across, the St George cross ~4.7 cm: in the portrait the
                                    # cross is ~1.3 times a medal (~34 and 26 px; at 2.9 and 4.4 cm the medals were small
                                    # for their ribbons and the cross stood out); each overlaps its neighbours, in two
                                    # layers turn about, the cross over both
@@ -73,7 +73,7 @@ RIB_T, MEDAL_T, MEDAL_DOME = 0.0006, 0.0014, 0.0008  # thicknesses: a ribbon on 
 CROWN_OUTLINE = [(-0.8, -1.0), (0.8, -1.0), (0.9, -0.55), (1.0, 0.25), (0.7, 0.05), (0.45, 0.6), (0.2, 0.2),
                  (0.08, 0.75), (0.08, 1.0), (-0.08, 1.0), (-0.08, 0.75), (-0.2, 0.2), (-0.45, 0.6), (-0.7, 0.05),
                  (-1.0, 0.25), (-0.9, -0.55)]  # the badge's crown, flat (band, three arches, a cross)
-NECK_CROSS_S = 0.034                 # half-size of the neck cross (the portrait's: ~43 px across, 6 cm, on the turned
+NECK_CROSS_S = 0.037                 # half-size of the neck cross (the portrait's: ~43 px across, 6 cm, on the turned
                                      # chest; at 3.1 cm it came out 35 px); its crown lies
 NECK_CROWN_S = 0.011                 # in the collar's opening over its lower edge, the ring on the dark stand (as in the
                                      # portrait); the crown's half-size
@@ -81,18 +81,19 @@ NECK_CROSS_UP = -0.004               # ... and the whole cross this much lower (
                                      # under the halves' lower corners, the crown just over them)
 NECK_RING_R = 0.0032                 # the ring it hangs by
 NECK_CROSS_RAYS = 0.8                # the silver rays between its arms reach this far (of the half-size)
-BADGE = (640, 396, 0.013, 0.017)     # px of the portrait (cast onto the cloth), half-width, half-height of the gold
+BADGE = (640, 396, 0.015, 0.0195)     # px of the portrait (cast onto the cloth), half-width, half-height of the gold
                                      # badge under the bar's right end: a crowned openwork cartouche with a monogram (the
                                      # portrait's), its crown above that
 SEAT_N = 5                           # seat(): rays across a piece's footprint each way
-STARS = [(666, 405, 0.044), (666, 457, 0.044)]  # px of the portrait (cast onto the cloth), radius: one above the
+STARS = [(666, 405, 0.05), (666, 457, 0.05)]  # px of the portrait (cast onto the cloth), radius: one above the
                                      # other between the sash and the arm, as there (~9 cm tall, seen at a slant on the
                                      # turning chest; at 7 cm they were specks)
 STAR_FROM_BADGE = 0.04               # the stars' middles this far right of the badge's (x)
 STAR_LIFT = 0.0015                   # off the cloth at the nearest
 STAR_FACING = 60.0                   # degrees: the cloth under a star faces the viewer at least this squarely
-STAR_TURN = 0.15                     # ... and the star turned this much further towards the viewer (pinned on the
-                                     # chest's round, the lower one stood edge-on)
+STAR_TURN = 0.45                     # ... and the star turned this much further towards the viewer (pinned on the
+                                     # chest's round, the lower one stood edge-on; at 0.15 both showed half the portrait's
+                                     # width)
 LIFT = 0.003
 MEDAL_LIFT = 0.001                   # a medal off the cloth at the nearest
 # Sabre: pommel under the left palm, the blade hanging down and a little back along the left hip and leg.
@@ -762,16 +763,17 @@ def build_orders():
     edge = [v.co for v in me.vertices if v.co.y < front + 0.012]
     x = sum(p.x for p in edge) / len(edge) + 0.006
     z_open = min(v.co.z for v in me.vertices if abs(v.co.x - x) < 0.05 and v.co.y < front + 0.03)  # the halves' corners
+    z_open += col.get('dip', 0.0)  # ... before their dip (the portrait's cross hangs between the dipped corners)
     cs = NECK_CROWN_S
     notch = 0.74  # the top arm's notch, where the crown stands (MALTESE: its points at 1.0, the notch at 0.72)
     zc = z_open + NECK_CROSS_UP - cs * 0.4 - s * notch  # the crown's upper half over the collar's edge, the ring on it
-    o, X, Y, N = seat(x, zc, s * 0.9, s * 0.9, NO_SASH, LIFT + 0.0015)
+    collar = bvh_of([col, obj('CollarStand'), uni])  # over the halves' dipped corners too (it lies on them)
+    o, X, Y, N = seat(x, zc, s * 0.9, s * 0.9, collar, LIFT + 0.0015)
     print('neck cross at x %.3f z %.3f y %.3f (collar edge z %.3f)' % (x, zc, o.y, z_open))
     w = TORSO_W.at(o)
     plaque(part, rays(), (o - N * 0.0022, X, Y, N), s, 0.0015, 'ornate', w=w, flat=True)  # gold, as in the portrait;
     # wholly under the cross (1 mm under it, the rays' fans came up through its enamel as needles)
     plaque(part, MALTESE, (o, X, Y, N), s, 0.003, 'cross', dome=0.003, w=w)
-    collar = bvh_of([col, obj('CollarStand'), uni])
     notch_at = o + Y * (s * notch)
     co_, cX, cY, cN = seat(notch_at.x, notch_at.z + cs, cs, cs, collar, LIFT)
     co_ = co_ + cY * ((notch_at.z + cs - co_.z) / max(cY.z, 0.5))  # its foot on the notch's height

@@ -45,9 +45,13 @@ EP_TILT = {'r': 15.0, 'l': 18.0}  # degrees the field's outer end is lower: in t
 EP_TURN = {'r': 0.0, 'l': 22.0}   # degrees the field is turned about the upright towards the front: in the portrait his
                                  # left one shows its face nearly square to the viewer as the right one does (the
                                  # shoulder turned away from the camera with the figure, it showed its edge)
+EP_PAD = {'r': 0.008, 'l': 0.0}  # the field stands on its padding this far over where it would rest on the shoulder
+                                 # (resting on it, his right one looked pressed into the shoulder: the portrait's top
+                                 # is ~1 cm higher; his left one's matches)
 EP_RIM_R = 0.008                 # the rim's radius: a thick padded roll of bullion, as in the portrait
-EP_PRESS = (0.004, 0.02)        # the rim pressed this far into the padded shoulder, its outer and inner (towards the
-                                 # neck) half (resting on it, the field stood 5 cm over the portrait's)
+EP_PRESS = (0.004, 0.008)       # the rim pressed this far into the padded shoulder, its outer and inner (towards the
+                                 # neck) half (resting on it on square shoulders, the field stood 5 cm over the
+                                 # portrait's; on the sloped ones 2 cm pressed it into the shoulder)
 STRAP_X, STRAP_W = 0.085, 0.038   # strap from the field to this |x|, by the collar: the epaulette's own broad shoulder
                                  # strap, gold galloon edged in red, as in the portrait
 STRAP_SHORT = 0.006               # ... ending this far short of the collar's foot
@@ -69,7 +73,8 @@ FRINGE_TILT = (22.0, 6.0, 4.0)   # degrees off the upright at the outer end, at 
                                  # below level they stood out like a sunburst; hanging nearly straight, a narrow tube)
 FRINGE_TILT_MAX = 36.0           # ... out to this at most to clear what is under it (then shortened)
 FRINGE_TILT_SPREAD = 0.4         # ... its neighbours tilted as far, less this many degrees a degree round the rim
-FRINGE_START, FRINGE_BEND = 55.0, 0.035  # ... coming out from under the rim this far off the upright, turning down to it over this
+FRINGE_START, FRINGE_BEND = 40.0, 0.035  # ... coming out from under the rim this far off the upright, turning down to it over this
+                                 # (at 55 the strands came out level over the tilted field: the fringe splayed up)
 FRINGE_KNEE_SPREAD = 0.0005      # ... its neighbours curled as far, less this (m) a degree round the rim
 FRINGE_KNEE = 0.03               # ... or curled out over the rim by up to this first (see course())
 FRINGE_MIN_LEN = 0.03            # a strand that clears less than this is left out
@@ -1293,6 +1298,7 @@ def build_epaulette(side):
             print('  ep %s a %d: ' % (side, a_) + ' '.join(
                 '%.2f:%.3f' % (f_, cloth_h(EP_R * f_ * math.cos(math.radians(a_)), EP_R * f_ * math.sin(math.radians(a_))))
                 for f_ in (0.0, 0.25, 0.5, 0.75, 1.0, 1.12)))
+    h0 += EP_PAD[side]
     U = lambda x, y: h0  # noqa: E731  the plate's underside (flat)
     print('epaulette %s: centre %s, normal %s (%.0f deg), plate %.3f over the shoulder top (held up at %s)' % (
         side, tuple(round(v, 3) for v in C), tuple(round(v, 2) for v in Z), math.degrees(Z.angle(Vector((0, 0, 1)))),

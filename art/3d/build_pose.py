@@ -48,6 +48,7 @@ UNI_IN, UNI_IN_BELOW, UNI_IN_SHIRT = 0.003, 0.004, 0.003  # uniform_in_collar: i
 COLLIDE = dict(distance_min=0.004, self_distance_min=0.003, collision_quality=4)
 LEADER_CM, LEADER_CAMERA = 150.0, (320.0, 0.0, 137.741)  # the export's height and the leader camera (leader space, cm)
 NECK_IN, NECK_EASE, NECK_ROUNDS = 0.008, 0.03, 12
+NECK_CLEAR = 0.002                      # uniform_off_neck: the tunic's inside at least this off the neck
 NECK_OVER = 0.004                       # ... or this far up over its top edge
 NECK_OUT = 0.003                        # ... or (the beard and whiskers, nearer its outside) this far out of it
 NECK_UP_DEPTH = (0.012, 0.025)          # from under the edge: up only down to the first, in only from the second  # the head inside the collar's inner side by this (the shirt collar
@@ -709,6 +710,36 @@ def neck_in_collar():
 
 
 neck_in_collar()
+
+
+def uniform_off_neck():
+    """The tunic's stand at least NECK_CLEAR off the neck (its thickness goes inwards): after the simulation a corner
+    of its closure's edge reached in through the throat, under the collar."""
+    from mathutils.bvhtree import BVHTree
+    head = bpy.data.objects.get('Head')
+    if head is None:
+        return
+    hm = head.evaluated_get(bpy.context.evaluated_depsgraph_get()).to_mesh()
+    tree = BVHTree.FromPolygons([head.matrix_world @ v.co for v in hm.vertices], [tuple(p.vertices) for p in hm.polygons])
+    inv = uni.matrix_world.inverted()
+    need = NECK_CLEAR + thick.thickness
+    n = 0
+    for v in uni.data.vertices:
+        p = uni.matrix_world @ v.co
+        if not 1.70 < p.z < 1.795:  # (not up by its top edge, where the whiskers' ends hang over the collar)
+            continue
+        loc, nrm, _, d = tree.find_nearest(p, need)
+        if loc is None:
+            continue
+        s = (p - loc).dot(nrm)
+        if s < need:
+            v.co = inv @ (loc + nrm * need)
+            n += 1
+    uni.data.update()
+    print('tunic off the neck: %d vertices moved out' % n)
+
+
+uniform_off_neck()
 for o in skinned:
     o.modifiers.new('Armature', 'ARMATURE').object = rig
 uni.vertex_groups.remove(uni.vertex_groups['pin'])

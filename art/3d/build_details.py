@@ -45,6 +45,10 @@ COLLAR_FLARE = 0.012              # the band widens downwards by at most this: i
                                   # cloth under its foot (at the back the tunic is upright there: the foot stood 1.2 cm
                                   # off it)
 COLLAR_MIN_H = 0.060              # ... but at the front at least this tall (the portrait's red band: 6-7 cm at the front)
+COLLAR_DIP = 0.04                 # ... and its foot running down towards the front edges by up to this, as a shirt
+                                  # collar's neckline: the portrait's halves end at the front in a corner ~4.5 cm under
+                                  # the foot at the sides (level all round, the front edge was a square corner); there
+                                  # the band lies on the chest
 COLLAR_FRONT_GAP = 0.032          # the opening at the front, at the top (x the radius / 0.08 m: ~3.2 cm half-width; the
                                   # portrait's halves stand ~6 cm apart, the dark tunic and the cross between them) ...
 COLLAR_FRONT_GAP_BOTTOM = 0.012   # ... and at the bottom edge: the portrait's opening is a V, ~7.4 cm across at the top
@@ -486,7 +490,8 @@ def build_collar(nu=64, nv=7):
             z -= 0.002
         turns.append(z)
         front = smoothstep(math.cos(t), 0.4, 0.85)  # the front only: at the sides and back it would lie on the shoulders
-        tops.append(zt); bots.append(min(z, zt - COLLAR_MIN_H * front - (zt - z) * (1 - front)))
+        dip = COLLAR_DIP * smoothstep(math.cos(t), 0.0, math.cos(gap)) ** 2
+        tops.append(zt); bots.append(min(z, zt - COLLAR_MIN_H * front - (zt - z) * (1 - front)) - dip)
     bots = circ_smooth(bots, 3)
     rings = []
     gap_b = COLLAR_FRONT_GAP_BOTTOM / 0.08
@@ -503,7 +508,9 @@ def build_collar(nu=64, nv=7):
             t = g + (2 * math.pi - 2 * g) * j / (nu - 1)
             d = Vector((math.sin(t), -math.cos(t), 0.0))
             z = zb + (zt - zb) * f
-            ring.append(ctr + Vector((0, 0, z)) + d * (r_top[j] + COLLAR_LIFT + flare[j] * (1 - f) ** 2))
+            r = r_top[j] + COLLAR_LIFT + flare[j] * (1 - f) ** 2
+            rc = cloth(z, d)  # down on the chest (the dipped front): on the cloth, not through it
+            ring.append(ctr + Vector((0, 0, z)) + d * (max(r, rc + COLLAR_LIFT) if rc is not None else r))
         rings.append(ring)
     # the piped top edge rolls over the tunic collar's edge to its inside
     rings.append([Vector((c0.x, c0.y, p.z + 0.003)) + (Vector((p.x, p.y, 0)) - c0.to_3d()).normalized()
@@ -520,6 +527,7 @@ def build_collar(nu=64, nv=7):
             uvs[v] = uv_in('collar', s, f)
             wts[v] = UNI_W.at(v.co)
     collar = new_detail('Collar', bm, uvs, wts, -COLLAR_THICK)
+    collar['dip'] = COLLAR_DIP  # (build_orders.py: the neck cross hangs from where the corners were before the dip)
     # the tunic's dark stand filling the opening between the halves (no neck shows through)
     # (rows like the halves', widening downwards with them: two rows only, the cloth crumpled it into a twisted strip)
     # (flaring as the halves' front edges do and no lower than them: flared the full COLLAR_FLARE, its foot stood out
@@ -531,8 +539,12 @@ def build_collar(nu=64, nv=7):
         z = zb0 + (tops[0] - STAND_DROP - zb0) * f
         rr = (r_top[0] + r_top[-1]) / 2 + COLLAR_LIFT - 0.0015 + fl0 * (1 - f) ** 2
         g = (gap_b + (gap - gap_b) * f) * 1.5
-        rs.append([ctr + Vector((0, 0, z)) + Vector((math.sin(t), -math.cos(t), 0)) * rr
-                   for t in [-g + 2 * g * q / (STAND_COLS - 1) for q in range(STAND_COLS)]])
+        row = []
+        for t in [-g + 2 * g * q / (STAND_COLS - 1) for q in range(STAND_COLS)]:
+            d = Vector((math.sin(t), -math.cos(t), 0))
+            rc = cloth(z, d)
+            row.append(ctr + Vector((0, 0, z)) + d * (max(rr, rc + COLLAR_LIFT - 0.0015) if rc is not None else rr))
+        rs.append(row)
     bm, grid = loft(rs, closed=False)
     outward_normals(bm, lambda p: Vector((c0.x, c0.y, p.z)))
     stand = new_detail('CollarStand', bm, {v: uv_in('cloth', 0.5, 0.5) for row in grid for v in row},

@@ -474,9 +474,10 @@ BACK_X = 0.22                      # |x| over which the back is flattened (fadin
 # Shoulders: the top of the shoulders runs down from the neck root parallel to the clavicles (shape key 'ShoulderFit',
 # after NeckFit) instead of MPFB's flat plateau that ends in a square corner over the deltoid.
 SHOULDER_ROOT_X = 0.095            # |x| where the slope starts (keeps its height)
-SHOULDER_DEG = 5.0                 # slope of the top line, down outwards, at rest (a square military bearing; the
-                                   # pose lets the shoulder joints down another 2 cm, ~12 deg in all; 21 with the
-                                   # clavicles let down: sloping shoulders)
+SHOULDER_DEG = 10.0                # slope of the top line, down outwards, at rest (with the pose's clavicles the tunic
+                                   # falls ~15 deg from the collar to over the joint; at 5 deg it ran out level to a
+                                   # square corner - too straight, the epaulettes pressed into it and their fringe
+                                   # splayed out)
 SHOULDER_TIP_X = 0.36              # ... fading out by here (the deltoid)
 SHOULDER_DEPTH = 0.12              # vertices this far under the top move less and less
 

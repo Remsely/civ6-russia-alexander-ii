@@ -76,6 +76,9 @@ SHOULDER_OFF = 0.012              # tunic offset over the shoulders (above the a
 SLEEVE_EASE, CUFF_EASE = 0.036, 0.014  # sleeves: round tubes this much looser than the arm (the portrait's are full: ~15 cm
                                   # across at the elbow; at 2.6 cm, 12.8 cm across, the arms read thin as a boy's beside
                                   # the chest and the epaulettes); cuff off the wrist
+SLEEVE_TOP_IN = 0.012             # ... and this much narrower over the top of the upper arm, full by mid-arm (the
+                                  # portrait's arms under the epaulettes are ~1.2 cm in from ours each side; the
+                                  # elbows match)
 SLEEVE_CUFF_R = 0.058             # ... narrowing along the forearm to this radius at the cuff (the portrait's gauntlet
                                   # cuff ~14 cm across where it meets the sleeve; at 4.7 cm it was 10)
 SKIRT_EASE, SKIRT_FLARE = 0.020, 0.025  # skirt clearance over hips and thighs, extra radius at the hem
@@ -548,7 +551,8 @@ def loosen_sleeves(bm):
         for k in keys:
             u = (k + 0.5) / nb
             # the portrait's full wool sleeve: one width down past the elbow, then narrowing into the cuff
-            prof[k] = max(top + (end - top) * smoothstep(u, 0.45, 0.95), body[k] + 0.012)
+            prof[k] = max(top + (end - top) * smoothstep(u, 0.45, 0.95) - SLEEVE_TOP_IN * (1 - smoothstep(u, 0.1, 0.45)),
+                          body[k] + 0.012)
         print('sleeve', s, 'radius %.3f, at the cuff %.3f' % (top, end))
         for v, p, u in vs:
             k = smoothstep(arm_weight(v, dl), 0.3, 0.7) * smoothstep(u, 0.0, 0.18)  # blend into the shoulder

@@ -15,7 +15,8 @@
 # joints; the lid and eye bones moved to the generated eyes). The eyes are eyeballs ('Eyes', on eye_l / eye_r) fitted
 # to the openings, the lids wrapping them (fit_eyes); build_pose.py turns them to the leader camera. A blink turns the
 # upper lid down about the eyeball centre by sc['head']['BLINK_DEG'], the weights grading from the upper rim to the
-# lower one. Talking: jaw about X. His right whisker takes the left one's colour, the ears one skin colour, the skin under the eyes evened out.
+# lower one. Talking: jaw about X. His left jaw and whisker are his right's mirror image (mirror_jaw), the ears one skin
+# colour, the skin under the eyes evened out.
 import bpy, bmesh, math, os, sys, json, colorsys
 import numpy as np
 from mathutils import Vector, Matrix
@@ -55,6 +56,13 @@ BEARD_SMOOTH = (0.03, 24)         # the bottom this high over the cut smoothed, 
 EAR_GROW, EAR_FACING = 0.0, 0.35  # the ears' box grown by this (m); how far sideways a face of the ear faces (normal x)
 EAR_NEAR = 0.004                  # ... and this close to an ear vertex of MPFB's (fitted onto the generated ears)
 EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin times this
+MIRROR_JAW = (0.035, 0.04, 0.015)  # mirror_jaw: his left's block |x| over the first, up to this far over the chin, made
+                                  # his right's mirror image; the surface round it drawn onto that over the third (all
+                                  # under the ear lobe: at 0.05 / 0.02 the lobe was torn, a pale ragged seam under it)
+SIDE_CLASS = (0.05, 2.0, 0.006)   # side_class: |x| over the first, up to the second height, the ears (and this round
+                                  # them) kept
+CHIN_SKIN_X = 0.04                # under the jaw this near the middle: skin (the chin is shaved; whiskers beside it)
+NOSE_UNDER = (0.024, 0.035, 0.03)  # under the nose: plain skin this far to the sides, back, down from the tip
 NECK_Z0, NECK_INTO = 1.70, 0.03   # the neck tube: from inside the tunic up to this far into the head over the cut
 UNDER_JOIN, UNDER_STEP = 0.014, 0.007  # the neck's column made anew from this far under the cut down, rings this far
                                   # apart (under_jaw)
@@ -79,6 +87,7 @@ NECK_TWIST_ZS = (1.84, 1.90)       # the neck's turn spreads between these heigh
                                   # not turn: the oval neck turned in it came out through it)
 NECK_FIT = 0.97                   # the tube to the collar's ellipse (the tunic's stand collar lies on that): it fills
                                   # the collar, no gap round a thin neck
+EAR_SMOOTH, EAR_PROUD = 80, 0.004  # head_ears: the ear's flap stands this far out of the head smoothed so many rounds
 EAR_RING = (0.002, 0.005)         # ear_surroundings: within the first of an ear its skin colour, fading by the second
 EAR_AT = [((0.098, 0.003, 1.932), (0.024, 0.026, 0.034)),   # the generated ears (rest pose): middle, radii (m)
           ((-0.096, -0.005, 1.926), (0.024, 0.026, 0.034))]
@@ -375,6 +384,103 @@ def cut_neck():
 cut_neck()
 
 
+def bary(p, a, b, c):
+    """Barycentric weights of p's projection onto the plane of a, b, c (unclamped: a point just outside extrapolates)."""
+    v0, v1, v2 = b - a, c - a, p - a
+    d00, d01, d11, d20, d21 = v0.dot(v0), v0.dot(v1), v1.dot(v1), v2.dot(v0), v2.dot(v1)
+    den = d00 * d11 - d01 * d01
+    if abs(den) < 1e-18:
+        return 1.0, 0.0, 0.0
+    y = (d11 * d20 - d01 * d21) / den
+    z = (d00 * d21 - d01 * d20) / den
+    return 1 - y - z, y, z
+
+
+def mirror_jaw():
+    """His left's jaw and whisker made his right's mirror image: generated, the left whisker hung down to the collar,
+    narrow, while the right one flares out over the neck with the jaw's line rising to the ear (the user's choice of
+    the two). The block x > MIRROR_JAW[0], z < CHIN_Z + MIRROR_JAW[1] is cut out and the right's block, mirrored over
+    x = 0, put in its place (each closed by a cap inside it; the remesh unites them); his left's surface round the
+    block is drawn onto the mirrored right's over MIRROR_JAW[2], so the seams meet. The mirrored faces take the colour
+    of his left's own surface where they stand (with the right whisker's, the block was a dark patch with a straight
+    edge under the paler left sideburn and the hair behind the ear)."""
+    x0, z1, band = MIRROR_JAW[0], CHIN_Z + MIRROR_JAW[1], MIRROR_JAW[2]
+    mvs = [Vector((-v.co.x, v.co.y, v.co.z)) for v in gbm.verts]
+    gbm.verts.index_update()
+    mirrored = BVHTree.FromPolygons(mvs, [[v.index for v in f.verts][::-1] for f in gbm.faces])
+    mirrored_cls = [f[CLS] for f in gbm.faces]
+    for co, no in (((0, 0, z1), (0, 0, 1)), ((x0, 0, 0), (1, 0, 0)), ((-x0, 0, 0), (1, 0, 0))):
+        # only round the blocks (the planes x = +-x0 run through the eyes)
+        near = [f for f in gbm.faces if min(v.co.z for v in f.verts) < z1 + 0.005
+                and max(abs(v.co.x) for v in f.verts) > x0 - 0.005]
+        geom = list({e for f in near for e in f.edges}) + near + list({v for f in near for v in f.verts})
+        bmesh.ops.bisect_plane(gbm, geom=geom, dist=1e-6, plane_co=co, plane_no=no)
+    bmesh.ops.triangulate(gbm, faces=[f for f in gbm.faces if len(f.verts) > 3])
+
+    def in_block(f, s):
+        c = f.calc_center_median()
+        return c.x * s > x0 and c.z < z1
+    right = [f for f in gbm.faces if in_block(f, -1)]
+    left = [f for f in gbm.faces if in_block(f, 1)]
+    # the left's surface round the block onto the mirrored right's (the block's own goes)
+    moved = 0
+    for v in gbm.verts:
+        if v.co.x < x0 - band or v.co.z > z1 + band:
+            continue
+        w = (1 - smoothstep(v.co.z, z1, z1 + band)) * smoothstep(v.co.x, x0 - band, x0)
+        if w <= 0 or any(f[EAR] for f in v.link_faces):
+            continue
+        loc = mirrored.find_nearest(v.co)[0]
+        if loc is not None:
+            v.co = v.co.lerp(loc, w)
+            moved += 1
+    # ... and hair where the right is (his right ear sits 6 mm lower: its whisker reaches up to the lobe; drawn out to
+    # it, the left's skin under its lobe was a pale band over the whisker)
+    n_hair = 0
+    for f in gbm.faces:
+        c = f.calc_center_median()
+        w = (1 - smoothstep(c.z, z1, z1 + band)) * smoothstep(c.x, x0 - band, x0)
+        if 0.3 < w and not in_block(f, 1) and not f[EAR] and f[CLS] != head_shape.HAIR:
+            if mirrored_cls[mirrored.find_nearest(c)[2]] == head_shape.HAIR:
+                f[CLS] = head_shape.HAIR
+                n_hair += 1
+    uvl = gbm.loops.layers.uv['UVMap']
+    gbm.faces.index_update()
+    own = BVHTree.FromBMesh(gbm)  # his left as it was, for the colour
+    own_f = [([v.co.copy() for v in f.verts], [l[uvl].uv.copy() for l in f.loops], [l[puv].uv.copy() for l in f.loops])
+             for f in gbm.faces]
+    dup = bmesh.ops.duplicate(gbm, geom=right)
+    piece = [g for g in dup['geom'] if isinstance(g, bmesh.types.BMFace)]
+    for v in {v for f in piece for v in f.verts}:
+        v.co.x = -v.co.x
+    bmesh.ops.reverse_faces(gbm, faces=piece)
+    gbm.normal_update()
+    for f in piece:  # the colour of his left's own surface nearest it: each face from one face of it (a face's corners
+        # from different faces spanned other islands of the texture), its corners' places in that face's plane
+        k = own.find_nearest(f.calc_center_median())[2]
+        co, uv, pj = own_f[k]
+        for l in f.loops:
+            w = bary(l.vert.co, *co)
+            l[uvl].uv = uv[0] * w[0] + uv[1] * w[1] + uv[2] * w[2]
+            l[puv].uv = pj[0] * w[0] + pj[1] * w[1] + pj[2] * w[2]
+            l[FACING].uv = (l.vert.normal.dot(FWD), 0.0)
+    bmesh.ops.delete(gbm, geom=left, context='FACES')
+    bmesh.ops.delete(gbm, geom=[v for v in gbm.verts if not v.link_faces], context='VERTS')
+    gbm.normal_update()
+    caps = bmesh.ops.holes_fill(gbm, edges=[e for e in gbm.edges if e.is_boundary], sides=0)['faces']
+    caps = bmesh.ops.triangulate(gbm, faces=caps)['faces']
+    for f in caps:  # inside the union: no rim (material 0, not the cut's cap)
+        f[CLS] = head_shape.SKIN; f[UNIFORM] = 0; f[EAR] = 0; f.material_index = 0
+        for l in f.loops:  # no area in the texture (holes_fill's UVs spanned islands of the face: patches all over it)
+            l[uvl].uv = l[puv].uv = (0.0, 0.0)
+    gbm.normal_update()  # (the caps' orientation does not matter to the remesh)
+    print('jaw mirrored: %d faces of his right put in for %d of his left, %d round them drawn on (%d made hair), '
+          '%d cap faces' % (len(piece), len(left), moved, n_hair, len(caps)))
+
+
+mirror_jaw()
+
+
 def img_points(bm):
     """vert -> its point in head_input.png (px)."""
     p = bm.loops.layers.uv['proj']
@@ -403,18 +509,6 @@ def lip_s(v, img):
     x, y = img[v]
     ly = interp(MOUTH_LINE, x)
     return None if ly is None else y - ly
-
-
-def bary(p, a, b, c):
-    """Barycentric weights of p's projection onto the plane of a, b, c (unclamped: a point just outside extrapolates)."""
-    v0, v1, v2 = b - a, c - a, p - a
-    d00, d01, d11, d20, d21 = v0.dot(v0), v0.dot(v1), v1.dot(v1), v2.dot(v0), v2.dot(v1)
-    den = d00 * d11 - d01 * d01
-    if abs(den) < 1e-18:
-        return 1.0, 0.0, 0.0
-    y = (d11 * d20 - d01 * d21) / den
-    z = (d00 * d21 - d01 * d20) / den
-    return 1 - y - z, y, z
 
 
 def face_plane():
@@ -973,18 +1067,54 @@ def build_head():
 head = build_head()
 
 
+def _hull(pts):
+    """Convex hull of 2D points (counter-clockwise)."""
+    pts = sorted(map(tuple, pts))
+    if len(pts) < 3:
+        return pts
+    cross = lambda o, a, b: (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])  # noqa: E731
+    lo, up = [], []
+    for q in pts:
+        while len(lo) >= 2 and cross(lo[-2], lo[-1], q) <= 0:
+            lo.pop()
+        lo.append(q)
+    for q in reversed(pts):
+        while len(up) >= 2 and cross(up[-2], up[-1], q) <= 0:
+            up.pop()
+        up.append(q)
+    return lo[:-1] + up[:-1]
+
+
 def head_ears():
-    """The ears on the head: what faces sideways inside EAR_AT's ellipsoids (measured on the generated head - MPFB's
-    ears, which the generated ones were found by, sit ~3 cm off: over the right ear they took in a patch of curls).
-    Returns their points and each ear's middle."""
+    """The ears on the head: inside EAR_AT's ellipsoids (measured on the generated head - MPFB's ears, which the
+    generated ones were found by, sit ~3 cm off), facing sideways, and seen from the side within the outline of the
+    flap - what stands out of the head (EAR_PROUD over the head smoothed EAR_SMOOTH rounds). (The whole ellipsoid took
+    in the hair round the ear: a ring of skin colour ~1 cm wide on the hair.) Returns their points and each ear's
+    middle."""
     me = head.data
+    co = np.array([v.co[:] for v in me.vertices]); nrm = np.array([v.normal[:] for v in me.vertices])
+    ed = np.array([e.vertices[:] for e in me.edges])
+    deg = np.maximum(np.bincount(ed.ravel(), minlength=len(co)), 1)[:, None]
+    sm = co.copy()
+    for _ in range(EAR_SMOOTH):
+        acc = np.zeros_like(sm)
+        np.add.at(acc, ed[:, 0], sm[ed[:, 1]]); np.add.at(acc, ed[:, 1], sm[ed[:, 0]])
+        sm = sm + (acc / deg - sm) * 0.5
+    proud = ((co - sm) * nrm).sum(1)
     pts = []
     for c, r in EAR_AT:
-        c, r = Vector(c), Vector(r)
-        pts += [v.co.copy() for v in me.vertices
-                if sum(((v.co[i] - c[i]) / r[i]) ** 2 for i in range(3)) < 1 and abs(v.normal.x) > 0.2]
+        inside = (((co - np.array(c)) / np.array(r)) ** 2).sum(1) < 1
+        side = inside & (np.abs(nrm[:, 0]) > 0.2)
+        flap = side & (proud > EAR_PROUD)
+        hull = _hull(co[flap][:, 1:3])
+        ok = np.ones(len(co), bool)
+        for a, b in zip(hull, hull[1:] + hull[:1]):  # inside the (counter-clockwise) outline: left of every edge
+            ok &= (b[0] - a[0]) * (co[:, 2] - a[1]) - (b[1] - a[1]) * (co[:, 1] - a[0]) >= 0
+        sel = side & ok
+        pts += [Vector(q) for q in co[sel]]
+        print('ear at %s: %d vertices of %d in the ellipsoid (%d standing out)' % (
+            tuple(round(x, 3) for x in c), sel.sum(), side.sum(), flap.sum()))
     mids = [Vector(c) for c, _ in EAR_AT]
-    print('ears on the head: %d vertices' % len(pts))
     return pts, mids
 
 
@@ -1047,8 +1177,46 @@ for v in hb.verts:
     HCLS[v], HIMG[v] = from_generated(v.co)
     if v.co.z < CHIN_Z - NECK_CUT - 0.003:  # the neck under the cap (nearest to it): skin
         HCLS[v] = head_shape.SKIN
+    # under the jaw between the whiskers: the shaved chin's underside and the throat (generated and capped as hair, it
+    # was a dark brown sheet from the chin to the collar)
+    if v.normal.z < -0.3 and v.co.z < CHIN_Z + 0.015 and abs(v.co.x - SYM_M.x) < CHIN_SKIN_X:
+        HCLS[v] = head_shape.SKIN
     if HIMG[v] is None:
         HIMG[v] = (-1e4, -1e4)
+
+
+def side_class():
+    """His left's sideburn and the hair round it take his right's class where his right is hair (only skin made
+    hair): generated, the left sideburn in front of the ear was skin colour with a dark stripe down it and pale
+    blotches stood in the hair over the ear. Where the surface faces sideways, |x| over SIDE_CLASS[0], from over the
+    mirrored jaw up to SIDE_CLASS[1]; neither ear nor its mirror image (they sit apart: his right 6 mm lower, 8 mm
+    further forward)."""
+    ear = KDTree(len(HEAD_EAR_PTS))
+    for i, q in enumerate(HEAD_EAR_PTS):
+        ear.insert(q, i)
+    ear.balance()
+    rv = [v for v in hb.verts if v.co.x < 0]
+    kd = KDTree(len(rv))
+    for i, v in enumerate(rv):
+        kd.insert(v.co, i)
+    kd.balance()
+    n = 0
+    for v in hb.verts:
+        c = v.co
+        if (c.x < SIDE_CLASS[0] or not CHIN_Z + MIRROR_JAW[1] < c.z < SIDE_CLASS[1] or v.normal.x < 0.25
+                or HCLS[v] != head_shape.SKIN):
+            continue
+        m = Vector((-c.x, c.y, c.z))
+        if ear.find(c)[2] < SIDE_CLASS[2] or ear.find(m)[2] < SIDE_CLASS[2]:
+            continue
+        q, k, d = kd.find(m)
+        if d < 0.01 and HCLS[rv[k]] == head_shape.HAIR:
+            HCLS[v] = head_shape.HAIR
+            n += 1
+    print('his left sideburn: %d vertices made hair as his right' % n)
+
+
+side_class()
 
 
 # The opening each eye takes: its own, as the picture painted it (the head is the generated one, not mirrored: an
@@ -1143,6 +1311,10 @@ def hair_detail():
                                   / (SKIN_GREEN[1] - SKIN_GREEN[0]), 0, 1)
     chroma = chroma + (skin_hue - chroma) * g
     print('skin: %d greenish texels to the skin hue' % int((g[..., 0] > 0.5).sum()))
+    # ... and no lighter than the portrait's hair (HAIR_MAX_L): where skin colour lay under what is hair (his left
+    # sideburn) it came out a blond streak
+    hl_max = float(np.median(lum[front])) * HAIR_MAX_L
+    lum = lum + (np.minimum(lum, hl_max) - lum) * k[..., 0]
     rgb = chroma * lum[..., None]
     # the neck under the jaw: plain skin (projected and carried down, the picture's collar and the rim's colours ran
     # down it in stripes); no shadow painted in
@@ -1158,6 +1330,13 @@ def hair_detail():
     skin_rgb = skin_hue[None, None, :] * (skin_lum * sh)[..., None]
     rgb = np.where(neck[..., None], rgb + (skin_rgb - rgb) * fade[..., None], rgb)
     print('neck: %d texels plain skin' % int(neck.sum()))
+    # under the nose (the nostrils, out of the picture's view): plain skin of the skin's brightness - the bake left the
+    # picture's light from the nose's tip there, a pale yellow sheet with dark flecks
+    box = cov & (np.abs(p[..., 0] - NOSE.x) < NOSE_UNDER[0]) & (p[..., 1] > NOSE.y - 0.01) & (
+        p[..., 1] < NOSE.y + NOSE_UNDER[1]) & (p[..., 2] < NOSE.z + 0.004) & (p[..., 2] > NOSE.z - NOSE_UNDER[2])
+    wn = box * np.clip((-n[..., 2] - 0.15) / 0.25, 0, 1) * (1 - hw)
+    rgb = rgb + (skin_rgb - rgb) * wn[..., None]
+    print('under the nose: %d texels plain skin (tip at %s)' % (int((wn > 0.5).sum()), tuple(round(x, 3) for x in NOSE)))
     # under the jaw and the beard (facing down, out of the picture's view): no paler than the skin (the hair) there -
     # the picture's white shirt collar and the generation's pale beard ends were stretched over them in light shards
     hair_lum = float(np.median(lum[(hw > 0.9) & cov & (facing > 0.6)]))
