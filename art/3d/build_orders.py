@@ -120,7 +120,7 @@ SLING_SAG = 0.012                    # how far a strap sags out of the straight 
 # Sword knot (temlyak) and the hanger's cord from the belt (both in the portrait): braided gold cord to a knotted ball
 # and a tassel of fine bullion (the Regalia material: build_regalia.py's braid and bullion). Heights of the balls.
 KNOT_BALL_Z, KNOT_CORD_R = 0.70, 0.0042
-BELT_KNOT_X, BELT_KNOT_BALL_Z, BELT_KNOT_R = 0.13, 0.97, 0.0048
+BELT_KNOT_X, BELT_KNOT_BALL_Z, BELT_KNOT_R = 0.112, 0.97, 0.0048  # (at x 0.13 it ran into the fist on the hilt)
 HAND_CLEAR = 0.003                 # the hanger's cord this far off the skin of the hand it passes
 TASSEL_LEN, TASSEL_R, TASSEL_STRANDS = 0.07, 0.0125, 40
 # build_regalia.py's atlas (TEX 2048) and its texture lengths: the cords' braid and the fringe's bullion
@@ -1123,6 +1123,10 @@ def clear_hand(path, r, rounds=40):
         if not moved:
             break
         path[1:-1] = [path[i] * 0.5 + (path[i - 1] + path[i + 1]) * 0.25 for i in range(1, len(path) - 1)]
+    for i in range(1, len(path) - 1):  # the last smoothing must not take it back in
+        loc, nrm, _, d = HAND_L.find_nearest(path[i])
+        if loc is not None and (path[i] - loc).dot(nrm) < r:
+            path[i] = loc + nrm * r
     worst = min(((p - HAND_L.find_nearest(p)[0]).dot(HAND_L.find_nearest(p)[1]) for p in path), default=1.0)
     print('cord past the hand: %.4f off its skin at the nearest' % worst)
     return path

@@ -74,6 +74,7 @@ SKIRT_EASE, SKIRT_FLARE = 0.020, 0.025  # skirt clearance over hips and thighs, 
 PLEAT_FLARE = 0.0                 # ... and more at the sides and back, where the pleats are: in the portrait the skirt
                                   # kicks out behind the piped pleat edge (~4 cm past a plain flare at the hem)
 TROUSER_EASE = 1.08                # trouser leg radius over the mid-thigh
+TUCKED = 0.005                    # the trousers inside the boots this far off the leg
 TROUSER_TAPER = 0.75              # straight trouser leg: radius at the ankle relative to the top of the thigh
 CLOTH_THICK = 0.006
 WELD = 0.007                      # body vertices closer than this are merged in the clothes
@@ -719,6 +720,13 @@ def extract(name, keep, offset, smooth):
                 loc, nrm, _, _ = SMOOTH_BVH.find_nearest(v.co)
                 if (v.co - loc).dot(nrm) > 0.005:
                     v.co = v.co.lerp(loc + nrm * 0.005, k)
+            # ... and tucked into the boots it lies on the calf (as loose as above, it held the boot's shaft out to
+            # 17 cm across at the top: the portrait's are slim)
+            k = 1 - smoothstep(v.co.z, BOOT_TOP - 0.02, BOOT_TOP + 0.03)
+            if k > 0:
+                loc, nrm, _, _ = BODY_BVH.find_nearest(v.co)
+                if loc is not None and (v.co - loc).dot(nrm) > TUCKED:
+                    v.co = v.co.lerp(loc + nrm * TUCKED, k)
     if name == 'Tunic':
         stand_collar(bm)
         depth = bm.verts.layers.float.new('skirt_depth')  # 0 above the waist, 0..1 down the skirt; read for skinning

@@ -84,7 +84,11 @@ BOOT_ROUGH = 0.24                 # polished calf: the portrait's boots shine in
 # foot plus BOOT_FOOT_OFF at every point along it; its top line (z over the sole, by the share of the length from the
 # toe tip) - a low rounded toe box rising over the instep into the shaft; the bottom on the sole in front, on the heel
 # behind, the arch between. The body's foot inflated (and decimated) came out a crumpled sock on a flat plate.
-LAST_TOP = ((0.0, 0.008), (0.03, 0.030), (0.08, 0.047), (0.2, 0.058), (0.4, 0.075), (0.6, 0.115), (0.78, 0.14), (1.0, 0.13))
+LAST_TOE_ROUND = 0.035            # the toe's end rounded over this far back (side view)
+LAST_TOE_PLAN = 0.06              # ... and in plan
+LAST_TOP = ((0.0, 0.024), (0.03, 0.034), (0.08, 0.045), (0.2, 0.055), (0.4, 0.068), (0.6, 0.090), (0.78, 0.112),
+            (1.0, 0.112))  # (the instep at 0.115-0.14 made a block round the ankle, 13 cm front to back up to 15 cm
+                           # high: the boot did not narrow at the ankle as the portrait's does)
 LAST_ROOM = 0.012                 # the toe this far past the body's toes
 LAST_ARCH = (0.45, 0.68)          # the bottom rises from the sole to the heel's top between these shares
 SOLE_H, WELT, HEEL_H = 0.010, 0.0015, 0.032
@@ -732,15 +736,19 @@ def boot_last(foot, n=36, m=24):
     for _ in range(4):  # an even outline (the toes made it lumpy and lopsided)
         xcs = [xcs[0]] + [(xcs[i - 1] + 2 * xcs[i] + xcs[i + 1]) / 4 for i in range(1, n)] + [xcs[-1]]
         ws = [ws[0]] + [(ws[i - 1] + 2 * ws[i] + ws[i + 1]) / 4 for i in range(1, n)] + [ws[-1]]
+    i_cap = min(n, int(math.ceil(LAST_TOE_PLAN / length * n)))  # the toe's end: the width there, rounded off
     for i in range(n + 1):
         t = i / n
         y = y_toe + length * t
-        xc, w = xcs[i], ws[i]
+        xc, w = (xcs[i_cap], ws[i_cap]) if i < i_cap else (xcs[i], ws[i])  # (the toes' own taper made it a point)
         # rounded in plan at the toe and the heel's back
-        w *= math.sqrt(max(0.02, min(1.0, (y - y_toe) / 0.075))) * math.sqrt(max(0.02, min(1.0, (y_heel - y) / 0.03)))
-        w *= 0.88 + 0.12 * smoothstep(t, 0.0, 0.35)  # a slimmer toe (the portrait's is narrow, a little pointed)
+        u = min(1.0, (y - y_toe) / LAST_TOE_PLAN)  # a round toe (a circle's arc in plan; as a parabola it came to a point)
+        w *= math.sqrt(max(0.02, 1 - (1 - u) ** 2)) * math.sqrt(max(0.02, min(1.0, (y_heel - y) / 0.03)))
+        w *= 0.82 + 0.18 * smoothstep(t, 0.0, 0.35)  # a slimmer toe (the portrait's is narrow, a little pointed)
         top = SOLE_H + float(np.interp(t, [a for a, _ in LAST_TOP], [b for _, b in LAST_TOP]))
         bot = SOLE_H + (HEEL_H - SOLE_H) * smoothstep(t, *LAST_ARCH)
+        # the toe's end rounded over in side view too (a dome, not a wedge: thin at the tip it came out a beak)
+        top = bot + (top - bot) * max(0.3, math.sqrt(max(0.0, min(1.0, (y - y_toe) / LAST_TOE_ROUND))))
         top = max(top, bot + 0.006)
         mid, hh = (top + bot) / 2, (top - bot) / 2
         ring = []
@@ -838,10 +846,24 @@ def build_boots(nu=48):
         bpy.data.objects.remove(ob)
         out.append(new_detail('Boot_' + s, bm, lambda v: uv_in('leather', 0.5, 0.5), lambda v, s=s: boot_weights(v.co, s),
                               BOOT_THICK))
-        # sole with a welt, and the heel block, from the outline of the boot's bottom
+        # sole with a welt, and the heel block, from the outline of the boot's bottom: its farthest point per direction
+        # round the middle (the convex hull ran straight across the arch and out to a point at the toe - a plate
+        # sticking out round the foot)
         hull = [low[i] for i in mg.convex_hull_2d(low)]
         cxy = sum(hull, Vector((0.0, 0.0))) / len(hull)
-        welt = [p + (p - cxy).normalized() * WELT for p in hull]
+        nb = 72
+        rad = [0.0] * nb
+        for p in low:
+            d = p - cxy
+            k = int((math.atan2(d.x, d.y) % (2 * math.pi)) / (2 * math.pi) * nb) % nb
+            rad[k] = max(rad[k], d.length)
+        for _ in range(nb):
+            if not all(rad):
+                rad = [r or max(rad[k - 1], rad[(k + 1) % nb]) for k, r in enumerate(rad)]
+        rad = [max(rad[k], (rad[k - 1] + rad[(k + 1) % nb]) / 2) for k in range(nb)]
+        outline = [cxy + Vector((math.sin(a), math.cos(a))) * r
+                   for a, r in ((2 * math.pi * (k + 0.5) / nb, rad[k]) for k in range(nb))]
+        welt = [p + (p - cxy).normalized() * WELT for p in outline]
         heel_poly = [p - (p - cxy).normalized() * 0.002 for p in welt if p.y > y_breast]
         heel_poly.sort(key=lambda p: math.atan2(p.x - cxy.x, p.y - cxy.y))
         sole = merge_bms([prism(welt, 0.0, SOLE_H), prism(heel_poly, 0.0, HEEL_H)])
