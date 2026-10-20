@@ -1038,6 +1038,7 @@ def build_sabre():
         out = Vector((nrm.x, nrm.y, 0.0)).normalized() if loc is not None else -u
         sp = [top.lerp(ring_top, j / 14) + out * SLING_SAG * math.sin(math.pi * j / 14) for j in range(15)]
         sp = clear_path(sp, SLING_T + 0.002)
+        sp = clear_hand(sp, SLING_W / 2 + HAND_CLEAR)  # behind the fist on the hilt, not through it
         tube(part, sp, SLING_T / 2, lambda ii, kk: pal_uv('leather'), w, sides=8, rx=SLING_W / 2, ref=out.cross(Vector((0, 0, 1))))
     # hilt: the grip, oval, bound with gold wire in a spiral (dark between the turns), swelling a little
     grip_n, gs = 14, 12

@@ -37,6 +37,11 @@ JOINT_ROUNDS, JOINT_CLEAR = 12, 0.006   # Taubin rounds; the cloth at least this
 SLEEVE_MIN_R, ELBOW_PASSES = 0.05, 4    # the sleeve this far at least from the arm bones round the elbow; rounds
 UNTANGLE_TRIES, UNTANGLE_RINGS = 6, 4      # rounds of smoothing round the sheet's self-crossings; rings of neighbours
 TORSO_ROUNDS = 40                       # smooth_torso: Taubin rounds over the tunic's body above the belt
+SHOULDER_FIT_OFF = 0.008               # fit_shoulders: the tunic this far off the body over the shoulders' top ...
+SHOULDER_FIT_FROM = 0.03                # ... fading in over this much beyond the collar's foot
+SHOULDER_FIT_Z = (1.57, 1.63)           # ... above the armpits
+SHOULDER_FIT_NZ = (0.0, 0.3)            # ... where the body faces up (fading out down the arm's outside)
+SHOULDER_FIT_ROUNDS = 8                 # ... the move smoothed out into the cloth round
 TORSO_KEEP = (0.012, 0.03)              # ... none within the first of a button or the closure's edge, fully past the second
 UNI_IN, UNI_IN_BELOW, UNI_IN_SHIRT = 0.003, 0.004, 0.003  # uniform_in_collar: inside the collar by; from under
                                         # its foot; up to over the shirt collar's lower edge
@@ -433,6 +438,84 @@ def smooth_torso():
 
 
 smooth_torso()
+
+
+def fit_shoulders():
+    """Simulated, the tunic stood 1.5-2.2 cm off the shoulders' top beside the collar - a flat plateau that dropped
+    onto the body in a step half way out - and swelled 2.5-3 cm over the shoulder joints: the shoulder's line ran
+    straight, dipped and bulged again, and the epaulettes and their straps lay on that. The body's own line is a smooth
+    convex curve from the neck down over the deltoid: over the shoulders' top (from the collar's foot out over the
+    joints, down to the armpits) the tunic is laid SHOULDER_FIT_OFF off it, the move smoothed out into the cloth."""
+    from mathutils.bvhtree import BVHTree
+    outer = [bpy.data.objects[n] for n in ('Collar', 'CollarStand') if n in bpy.data.objects]
+    O = np.array([(o.matrix_world @ v.co)[:] for o in outer for v in o.data.vertices])
+    ax = O[:, :2].mean(0)
+    nb_ = 72
+
+    def bins(A):
+        d = A[:, :2] - ax
+        return np.floor((np.arctan2(d[:, 0], -d[:, 1]) + np.pi) / (2 * np.pi) * nb_).astype(int) % nb_
+    ob = bins(O)
+    rad = np.linalg.norm(O[:, :2] - ax, axis=1)
+    foot = np.zeros(nb_)
+    for k in range(nb_):
+        sel = ob == k
+        if sel.any():
+            low = O[sel, 2].min()
+            foot[k] = rad[sel & (O[:, 2] < low + 0.012)].max()
+    foot = np.where(foot > 0, foot, foot.max())
+    me = uni.data
+    co = np.array([v.co[:] for v in me.vertices])
+    nb = [[] for _ in range(len(co))]
+    for e in me.edges:
+        a, b = e.vertices
+        nb[a].append(b); nb[b].append(a)
+    bi = h.vertex_groups['body'].index  # the skin only: MPFB's helpers (tights, skirt) stand off it
+    skin = {v.index for v in h.data.vertices if any(g.group == bi and g.weight > 0.5 for g in v.groups)}
+    tree = BVHTree.FromPolygons([v.co.copy() for v in h.data.vertices],
+                                [tuple(p.vertices) for p in h.data.polygons if all(i in skin for i in p.vertices)])
+    ub = bins(co)
+    r = np.linalg.norm(co[:, :2] - ax, axis=1)
+    disp = np.zeros_like(co)
+    k = np.zeros(len(co))
+    for i, c in enumerate(co):
+        if c[2] < SHOULDER_FIT_Z[0] or r[i] < foot[ub[i]]:
+            continue
+        loc, nrm, _, _ = tree.find_nearest(Vector(c), 0.08)
+        if loc is None:
+            continue
+        w = smoothstep(c[2], *SHOULDER_FIT_Z) * smoothstep(nrm.z, *SHOULDER_FIT_NZ)
+        w *= smoothstep(r[i] - foot[ub[i]], 0.0, SHOULDER_FIT_FROM)
+        if w <= 0:
+            continue
+        k[i] = w
+        disp[i] = (np.array((loc + nrm * SHOULDER_FIT_OFF)[:]) - c) * w
+    zone = np.where(k > 0)[0]
+    ring = set(zone)  # the move spread a few rings of neighbours further, fading
+    for _ in range(4):
+        ring |= {j for i in list(ring) for j in nb[i]}
+    ring = np.array(sorted(ring))
+    fixed = k > 0.5
+    need = disp.copy()
+    for _ in range(SHOULDER_FIT_ROUNDS):
+        avg = np.array([disp[nb[i]].mean(0) if nb[i] else disp[i] for i in ring])
+        disp[ring] = avg
+        disp[fixed] = need[fixed]
+    co = co + disp
+    pushed = 0
+    for i in ring:
+        q = Vector(co[i])
+        loc, nrm, _, _ = tree.find_nearest(q, 0.05)
+        if loc is not None and (q - loc).dot(nrm) < JOINT_CLEAR:
+            co[i] = loc + nrm * JOINT_CLEAR
+            pushed += 1
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel())
+    me.update()
+    print('shoulders: %d cloth vertices laid on them (moved %.4f m at most), %d eased round, %d kept off the body' % (
+        int(fixed.sum()), float(np.linalg.norm(need, axis=1).max()), len(ring), pushed))
+
+
+fit_shoulders()
 
 
 def uniform_in_collar():

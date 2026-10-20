@@ -33,15 +33,15 @@ REF_W, REF_CROWN, REF_SOLES, REF_X = 1024, 12, 1510, 515
 # three quarters, fanning out over the arm (as in the portrait).
 EP_A, EP_B = 0.064, 0.05         # semi-axes along the shoulder and across it (the portrait's field: ~14.5 cm wide
                                  # with its rim in the 'ref' view, ~22 cm with the fringe belling out under it)
-EP_REF_X = {'r': 360, 'l': 660}  # the fields' middles where the portrait has them (px across alexander_ii_full.png, as
+EP_REF_X = {'r': 360, 'l': 668}  # the fields' middles where the portrait has them (px across alexander_ii_full.png, as
                                  # the 'ref' view frames the figure): on the shoulder's line front to back, out to there
 EP_GAP, EP_DOME, EP_THICK = 0.003, 0.012, 0.006  # the field's underside off the cloth at the nearest, its dome, edge
 EP_CURVE = (0.30, 0.09)          # radii of the field's curve along and across the shoulder (a plate bent to it)
-EP_TILT = {'r': 20.0, 'l': 14.0}  # degrees the field's outer end is lower: in the portrait both fields face the viewer -
+EP_TILT = {'r': 28.0, 'l': 16.0}  # degrees the field's outer end is lower: in the portrait both fields face the viewer -
                                  # the camera stands to his right, so his left one is tilted out less (as much, it
                                  # showed its edge); the inner end rises over the slope to the collar (tilted 18 deg,
                                  # it rested there and stood 4-5 cm over the shoulder)
-EP_FORWARD = {'r': 16.0, 'l': 20.0}  # degrees its front edge is lower (his left one more, turned to the camera) - in the portrait the
+EP_FORWARD = {'r': 16.0, 'l': 28.0}  # degrees its front edge is lower (his left one more, turned to the camera) - in the portrait the
                                  # fields face the viewer (their faces show as ovals ~0.45 as high as wide); fitted to
                                  # the shoulder's slope (~25 deg out) the field was edge-on and the fringe stood out
                                  # like wings
@@ -66,12 +66,14 @@ FRINGE_ROOT = 0.8                # ... at its root under the rim this share of t
 DEBUG_FRINGE = bool(os.environ.get('DEBUG_FRINGE'))
 FRINGE_DENSE = 89                # the bell worked out at this many points round the rim ...
 FRINGE_TOUCH = 1.02              # ... and the strands set along its lower edge this many diameters apart (touching)
-FRINGE_TILT = (24.0, 9.0, 3.0)   # degrees off the upright at the outer end, at the front and back, by the collar: the
-                                 # portrait's hang nearly straight down, the outer ones belling out over the arm (fanned
-                                 # out at 38-50 deg below level they stood out like a sunburst)
-FRINGE_OUT_MAX = 0.08            # how far out a strand may be carried over what is under it
-FRINGE_OUT_SPREAD = 0.0012       # ... its neighbours carried out as far, less this a degree round the rim (a smooth bell)
-FRINGE_SAMPLES, FRINGE_SMOOTH = 14, 6  # points down a strand; rounds of smoothing them
+FRINGE_TILT = (40.0, 28.0, 18.0)   # degrees off the upright at the outer end, at the front and back, by the collar: the
+                                 # portrait's fringe is a stiff bell, ~40 deg out over the arm (fanned out at 38-50 deg
+                                 # below level they stood out like a sunburst; hanging nearly straight, a narrow tube)
+FRINGE_TILT_MAX = 46.0           # ... out to this at most to clear what is under it (then shortened)
+FRINGE_TILT_SPREAD = 0.4         # ... its neighbours tilted as far, less this many degrees a degree round the rim
+FRINGE_KNEE = 0.03               # ... or curled out over the rim by up to this first (see course())
+FRINGE_MIN_LEN = 0.03            # a strand that clears less than this is left out
+FRINGE_SAMPLES, FRINGE_SMOOTH = 14, 6  # points down a strand checked; rounds of evening the tilts and lengths
 FRINGE_CLEAR = 0.002             # a strand's surface off the cloth (and the sash, the cords) under it
 FRINGE_STEP = 0.006              # path sampling along a strand (straight: few rings)
 FRINGE_TIP = 0.32                # the bright wire end in each strand's rounded tip (x the radius)
@@ -89,11 +91,11 @@ SASH_SHOULDER = Vector((-0.193, 0.0, 1.77))  # in the portrait it comes over the
 SASH_HIP = Vector((0.107, 0.0, 1.27))   # inner edge and runs steeply down across the chest (~0.6 px across per px down in
                                        # the 'ref' view; nearer the collar and flatter, it lay 30-40 px right of the
                                        # portrait's over the chest)
-SASH_FLOOR = (-0.045, 0.08)      # its middle line held SASH_W / 2 + the first over the belt's top, eased in over the
+SASH_FLOOR = (-0.07, 0.08)       # its middle line held SASH_W / 2 + the first over the belt's top, eased in over the
                                        # second: in the portrait the band comes down to the belt at his left hip and
                                        # goes round his side along its top (the plane steep enough for the chest put its
                                        # bottom 15 cm under the belt - over the belt in front and slung below it)
-SASH_V = (0.4, 0.0)             # ... that floor rising this much a metre to the front of this y (his side): the band
+SASH_V = (0.2, 0.0)             # ... that floor rising this much a metre to the front of this y (his side): the band
                                  # at its lowest by the hip at his side, a V there (held level over the belt from the
                                  # front round to the side, it read as a cummerbund)
 SASH_BACK = (0.17, (-0.03, 0.08))  # on the back it runs straight from his left side (this x, at the floor's height) up
@@ -137,13 +139,19 @@ AIG_THIN = (-0.002, 0.014, 0.4)   # under the band from the first to the second 
 # The pencil: in the portrait it hangs over the sash from a gilt crook by the band's upper edge (its knob on the
 # coat at the band's edge, where the cord it hangs by comes out from under the band - a stub of that cord, pressed
 # under the band's edge, showed as a crumpled lump), its point over the band by the buttons.
-PENCIL_KNOB, PENCIL_TOP, PENCIL_END = (585, 385), (615, 401), (617, 526)  # px
-KNOB_R, CROOK_R = 0.0085, 0.0048  # the crook's knob and its neck (gilt, cast with the pencil)
+PENCIL_KNOB, PENCIL_TOP, PENCIL_END = (585, 385), (608, 401), (617, 526)  # px (the top: its axis is lifted off the
+                                 # sash and leans, at 615 it came out 7 px right of the portrait's)
+KNOB_R, CROOK_R = 0.0085, 0.0058  # the crook's knob and its neck (gilt, cast with the pencil)
 AIG_R, AIG_GAP = 0.0060, 0.0015  # the portrait's cords: ~1.2-1.3 cm thick round braid (9 px; at 1.6 cm they
                                  # came out much thicker than the portrait's next to the fringe)
+AIG_UP, AIG_UP_X = 45, 15  # px: the cords begin this much over where the portrait shows them, in under the
+                                 # epaulette's field (25 px over: with the fringe hanging close round the shoulder their
+                                 # cut ends showed under it); and AIG_UP_X px out, towards the arm (the two by the sash
+                                 # came up beside the fringe, at its edge)
 AIG_STEP = 0.003                 # path sampling along a cord (its braid is modelled in its surface)
 AIG_STACK = 0.001                # crossing cords: the one on top at least this far off the one under it
-BRAID_N, BRAID_PITCH, BRAID_SLANT = 2, 0.0056, 1.45  # the braid's chevrons round the cord, their pitch along it, the
+BRAID_N, BRAID_PITCH, BRAID_SLANT = 2, 0.6 / 107, 1.45  # the braid's chevrons round the cord, their pitch along it
+                                 # (a whole number of them in CORD_UV_LEN: the texture repeats along a long cord), the
                                  # strands' slant (along per half chevron, x pitch): the herringbone of the portrait's
 BRAID_FIBRES = 5                 # fibres across a strand
 BRAID_AMP = 0.12                 # the strands stand this much of the radius proud
@@ -152,13 +160,13 @@ AIG_BRIDGE = 12                  # px (~1.7 cm): the layer takes the nearest clo
 AIG_STIFF = 10                   # rounds of straightening the cords over the cloth's folds
 PENCIL_L = 0.185
 # The pencil (the aiguillette's cast tip), top to point: (t along it, radius m, fluted) - a cup the cord goes into, a
-# knob, a fluted shaft between ring mouldings, a vase-shaped boss, a second fluted shaft tapering to a pointed finial
+# knob, a fluted shaft between ring mouldings, a vase-shaped boss, a second fluted shaft down to a ball (as the portrait's)
 PENCIL_PROFILE = [(0.0, 0.0), (0.004, 0.0062), (0.012, 0.0082), (0.045, 0.0088), (0.055, 0.0058), (0.075, 0.0058),
                   (0.095, 0.0092), (0.115, 0.0092), (0.135, 0.0056), (0.15, 0.0056), (0.16, 0.0079), (0.18, 0.0079),
                   (0.19, 0.0062, True), (0.43, 0.0062, True), (0.44, 0.0079), (0.46, 0.0079), (0.47, 0.0060),
                   (0.53, 0.0088), (0.57, 0.0088), (0.62, 0.0060), (0.63, 0.0077), (0.65, 0.0077),
-                  (0.66, 0.0058, True), (0.86, 0.0046, True), (0.87, 0.0064), (0.89, 0.0064), (0.90, 0.0045),
-                  (0.97, 0.0016), (0.985, 0.0024), (1.0, 0.0)]
+                  (0.66, 0.0058, True), (0.86, 0.0046, True), (0.87, 0.0064), (0.89, 0.0064), (0.90, 0.0046),
+                  (0.915, 0.0050), (0.94, 0.0072), (0.965, 0.0074), (0.985, 0.0055), (1.0, 0.0)]  # a ball at the end
 PENCIL_FLUTES, PENCIL_FLUTE_D = 10, 0.0009  # flutes round the shafts and their depth
 PENCIL_K = 1.55                  # every radius of the profile times this: the portrait's pencil is ~2.2 cm thick
 CORD_UV_LEN = 0.6                # metres of cord over the width of its atlas region (the twist repeats along it)
@@ -358,12 +366,15 @@ def sash_tex(w, hh):
     return np.clip(srgb(SASH_SRGB) * (1 + (rgb / med - 1) * SASH_CONTRAST), 0, 1)  # the damask shows a little more
 
 
-def fibre_noise(shape, seed):
-    """Smooth random tone per texel area (0..1): a few octaves of value noise, for the fibres' uneven colour."""
+def fibre_noise(shape, seed, wrap=False):
+    """Smooth random tone per texel area (0..1): a few octaves of value noise, for the fibres' uneven colour; wrap:
+    its right edge runs on into its left (a texture repeated along a tube)."""
     rng = np.random.default_rng(seed)
     out = np.zeros(shape, np.float32)
     for cells, wgt in ((8, 0.5), (32, 0.3), (128, 0.2)):
         g = rng.random((cells + 1, cells + 1)).astype(np.float32)
+        if wrap:
+            g[:, cells] = g[:, 0]
         y = np.linspace(0, cells, shape[0]); x = np.linspace(0, cells, shape[1])
         y0 = np.minimum(y.astype(int), cells - 1); x0 = np.minimum(x.astype(int), cells - 1)
         fy = (y - y0)[:, None]; fx = (x - x0)[None, :]
@@ -401,7 +412,7 @@ def braid_tex(w, hh):
     h, f = braid_height(u * CORD_UV_LEN / BRAID_PITCH, v)
     fib = 0.5 + 0.5 * np.cos(2 * np.pi * f * BRAID_FIBRES)
     h = h * (0.94 + 0.06 * fib)
-    tone = fibre_noise(h.shape, 7)
+    tone = fibre_noise(h.shape, 7, wrap=True)
     return thread_colour(h, fib, tone), h
 
 
@@ -631,13 +642,28 @@ def catmull(pts, step):
     return out
 
 
-def tube(bm, path, r, sides, region, uv_len=CORD_UV_LEN, cap=True, taper=None, relief=None, u0=0.0):
+def tube(bm, path, r, sides, region, uv_len=CORD_UV_LEN, cap=True, taper=None, relief=None, u0=0.0, cap0=False):
     """A tube along path into bm (the seam column doubled for the UVs); returns its verts and their UVs. relief(s, v):
     the radius' factor at s metres along and v (0..1) round (the strands of a braid, the plies of a twisted cord,
-    modelled); u0: where along its atlas region the tube's texture starts."""
+    modelled); u0: where along its atlas region the tube's texture starts. Past the region's end the texture starts
+    again on a doubled ring (clamped there, a cord longer than uv_len had the region's last column of texels drawn
+    out over its whole tail: a smooth streaked stretch among the braided ones). cap0: the start rounded off too."""
     uvs = {}
     prev_u = None
     rings, s = [], 0.0
+    lap = 0          # the texture's repeats passed
+    cut = set()      # rings after which a new run starts (no faces across)
+
+    def make_ring(p, u, w, rr, s, uu):
+        ring = []
+        for k in range(sides + 1):
+            a = 2 * math.pi * k / sides
+            rk = rr * (relief(s + u0 * uv_len, k / sides) if relief else 1.0)
+            v = bm.verts.new(p + rk * (math.cos(a) * u + math.sin(a) * w))
+            uvs[v] = uv_in(region, uu, k / sides)
+            ring.append(v)
+        return ring
+    rr_prev = None
     for i, p in enumerate(path):
         t = (path[min(i + 1, len(path) - 1)] - path[max(i - 1, 0)]).normalized()
         if prev_u is None:
@@ -645,26 +671,53 @@ def tube(bm, path, r, sides, region, uv_len=CORD_UV_LEN, cap=True, taper=None, r
             prev_u = t.cross(ref).normalized()
         u = (prev_u - t * prev_u.dot(t)).normalized(); prev_u = u  # parallel transport: no twist
         w = t.cross(u)
+        s0 = s
         if i:
             s += (p - path[i - 1]).length
         rr = r * (taper(i / (len(path) - 1)) if taper else 1.0)
-        ring = []
-        for k in range(sides + 1):
-            a = 2 * math.pi * k / sides
-            rk = rr * (relief(s + u0 * uv_len, k / sides) if relief else 1.0)
-            v = bm.verts.new(p + rk * (math.cos(a) * u + math.sin(a) * w))
-            uvs[v] = uv_in(region, min(s / uv_len + u0, 1.0), k / sides)
-            ring.append(v)
-        rings.append(ring)
-    for r0, r1 in zip(rings, rings[1:]):
+        while i and s / uv_len + u0 - lap > 1.0:  # the region's end inside this step: a ring there, twice
+            sc = (lap + 1 - u0) * uv_len
+            f = (sc - s0) / max(s - s0, 1e-9)
+            pc, rc = path[i - 1].lerp(p, f), rr_prev + (rr - rr_prev) * f
+            rings.append(make_ring(pc, u, w, rc, sc, 1.0))
+            cut.add(len(rings) - 1)
+            lap += 1
+            rings.append(make_ring(pc, u, w, rc, sc, 0.0))
+        rings.append(make_ring(p, u, w, rr, s, s / uv_len + u0 - lap))
+        rr_prev = rr
+    for j, (r0, r1) in enumerate(zip(rings, rings[1:])):
+        if j in cut:
+            continue
         for k in range(sides):
             bm.faces.new((r0[k], r0[k + 1], r1[k + 1], r1[k]))
+    if cap0:  # the same dome on the first ring, pointing back (a cord's top cut square showed under the fringe)
+        t = (path[0] - path[1]).normalized()
+        rr = r * (taper(0.0) if taper else 1.0)
+        tf = -t
+        u = (rings[0][0].co - path[0]).normalized()
+        w = tf.cross(u)  # the first ring's own frame: the dome's rings line up with it
+        prev = rings[0]
+        for a in (30, 60):
+            ring = []
+            for k in range(sides + 1):
+                b = 2 * math.pi * k / sides
+                v = bm.verts.new(path[0] + t * rr * 0.8 * math.sin(math.radians(a))
+                                 + rr * math.cos(math.radians(a)) * (math.cos(b) * u + math.sin(b) * w))
+                uvs[v] = uv_in(region, min(u0 + 0.004 * a / 30, 1.0), k / sides)
+                ring.append(v)
+            for k in range(sides):
+                bm.faces.new((ring[k], ring[k + 1], prev[k + 1], prev[k]))
+            prev = ring
+        tip = bm.verts.new(path[0] + t * rr * 0.8)
+        uvs[tip] = uv_in(region, min(u0 + 0.012, 1.0), 0.5)
+        for k in range(sides):
+            bm.faces.new((prev[k + 1], prev[k], tip))
     if cap:  # rounded end: a dome on the last ring (a cone to a point showed as dark teeth)
         t = (path[-1] - path[-2]).normalized()
         rr = r * (taper(1.0) if taper else 1.0)
         u, w = (rings[-1][0].co - path[-1]).normalized(), None
         w = t.cross(u)
-        u_end = min(s / uv_len + u0, 1.0)  # the strand's own texture runs on over the dome (another region's UVs there
+        u_end = s / uv_len + u0 - lap      # the strand's own texture runs on over the dome (another region's UVs there
         for a in (30, 60):            # made a dark ring: the faces between ran across the atlas)
             ring = []
             for k in range(sides + 1):
@@ -914,7 +967,7 @@ def stack_lift(path, below, frames):
 
 def build_loops(under):
     """The cords of AIG_REF on the cloth 'under' (tightened: they lie over its folds): each cast from the portrait
-    onto it (begun 2.5 cm higher, under the fringe), the sash cords carried on along their last direction to AIG_UNDER
+    onto it (begun AIG_UP px higher, in under the field), the sash cords carried on along their last direction to AIG_UNDER
     in under the sash (SASH_EDGES of the band laid without them) - or cut there - and thinned under it; lifted off the
     cloth by their radius, straightened (a thick cord bridges the cloth's folds), laid over the ones before where
     they cross."""
@@ -956,7 +1009,8 @@ def build_loops(under):
         o, d = ref_ray(px, py)
         return o + d * t
     for k, (ref, into) in enumerate(zip(AIG_REF, AIG_INTO_SASH)):
-        ref = [(ref[0][0], ref[0][1] - 25)] + list(ref) + ([] if into else [(ref[-1][0], ref[-1][1] - 25)])
+        ref = ([(ref[0][0] - AIG_UP_X, ref[0][1] - AIG_UP)] + list(ref)
+               + ([] if into else [(ref[-1][0] - AIG_UP_X, ref[-1][1] - AIG_UP)]))
         ctrl = [h for h in (layer_hit(px, py) for px, py in ref) if h is not None]
         pts = catmull(ctrl, AIG_STEP)
         if into:
@@ -1000,8 +1054,8 @@ def build_loops(under):
                     if short > 0:
                         path[j] = path[j] - view * (short * toward(nn))
         laid.append((path, AIG_R))
-        _, u = tube(bm, path, AIG_R, 12, 'cord', cap=False, taper=lambda t, th=thin: th[round(t * (len(th) - 1))],
-                    relief=braid_relief, u0=0.13 * k)
+        _, u = tube(bm, path, AIG_R, 12, 'cord', cap=not into, taper=lambda t, th=thin: th[round(t * (len(th) - 1))],
+                    relief=braid_relief, u0=0.13 * k, cap0=True)
         uvs.update(u)
         print('aiguillette %d: %d points, %.2f m, %s, lifted over the others up to %.4f' % (
             k, n, sum((b - a).length for a, b in zip(path, path[1:])),
@@ -1075,8 +1129,10 @@ def build_pencil(coat, over):
     # the crook: from the button, its neck arching up and over into the pencil's cup
     b2 = bmesh.new()
     up = Vector((0, 0, 1))
-    P0, P3 = knob, top + axis * 0.003
-    P1, P2 = P0 + up * 0.013 + (P3 - P0) * 0.2, P3 - axis * 0.016
+    # the portrait's is short and thick, going down from the button straight into the top's side (arched 1.3 cm up
+    # and coming down into the top from 1.6 cm over it, it looked half again as long)
+    P0, P3 = knob, top + axis * 0.004
+    P1, P2 = P0 + (P3 - P0) * 0.35 + up * 0.003, P3 - axis * 0.006 - (P3 - P0) * 0.15
     path = []
     for k in range(25):
         t = k / 24
@@ -1385,42 +1441,77 @@ def build_epaulette(side):
             if h < -FRINGE_DEEP:
                 return None
             root = loc + nrm * (FRINGE_R + 0.002)
-        ends = 0.55 + 0.45 * smoothstep(half - abs(a), 0.0, 0.9)  # shorter towards the collar (as long, the last ones
-                                                                  # hung down the chest over the cords on their own)
+        ends = 0.75 + 0.25 * smoothstep(half - abs(a), 0.0, 0.9)  # shorter towards the collar (as long, the last ones
+                                                                  # hung down the chest over the cords on their own;
+                                                                  # at 0.55 they were stubs bent over the cords' tops)
         length = FRINGE_LEN * shorter * ends
-        t = math.radians(base_tilt(a))
-        d = (down * math.cos(t) + flat * math.sin(t)).normalized()
-        base = [root + d * (length * j / ns) for j in range(ns + 1)]
         # carried out away from what is under it: between straight out from the field and off the body there (by the
         # collar straight out ran along the shoulder into the neck and never cleared it)
-        _, _, nb = under(base[ns // 2])
+        t0 = math.radians(base_tilt(a))
+        mid = root + (down * math.cos(t0) + flat * math.sin(t0)) * (length / 2)
+        _, _, nb = under(mid)
         push = flat
         if nb is not None and Vector((nb.x, nb.y, 0.0)).length > 0.2:
             push = (flat + Vector((nb.x, nb.y, 0.0)).normalized()).normalized()
-        need = []
-        for j, q in enumerate(base):  # how far out it has to be at each height
-            e = 0.0
-            if length * j / ns > FRINGE_R * 1.5:
-                while e < FRINGE_OUT_MAX and gap(q + push * e) < 0:
-                    e += 0.002
-            need.append(e)
-        for j in range(1, ns + 1):  # once out over something it hangs on from there
-            need[j] = max(need[j], need[j - 1])
+        # straight and stiff, as the portrait's: a bell of rods. Tilted off the upright at least by its own
+        # (FRINGE_TILT) and as far as it must to clear what is under it, up to FRINGE_TILT_MAX; past that it is
+        # shortened to where it still clears (by the strap, over the chest - the portrait's are shorter there). Laid
+        # over the body and hanging on from it, the bell hugged the arm - a narrow tube, not the portrait's wide fan;
+        # bent over it down their length one by one, the strands came out crooked
+        def clear_len(t, knee):
+            d = (down * math.cos(t) + push * math.sin(t)).normalized()
+            for j in range(ns + 1):
+                if length * j / ns > FRINGE_R * 1.5 and gap(knee + d * (length * j / ns)) < 0:
+                    return length * (j - 1) / ns
+            return length
+        # where the field lies on the shoulder (its front and back by the strap) the strand first curls out over the
+        # rim's padded edge - its straight part starts FRINGE_KNEE at most out from the root (along the cloth's
+        # normal and out from the field): straight from the root, those by the strap could not clear the chest at
+        # any tilt and were left out, and the cords' tops showed under the field
+        _, _, nr = under(root)
+        lift = ((nr if nr is not None else push) + push).normalized()
+        t, e = t0, 0.0
+        while clear_len(t, root + lift * e) < length:
+            if t < math.radians(FRINGE_TILT_MAX):
+                t += math.radians(1.0)
+            elif e < FRINGE_KNEE:
+                t, e = t0, e + 0.003
+            else:
+                break
         if DEBUG_FRINGE:
-            print('  a %4.0f root h %.3f need %s' % (math.degrees(a), h, ' '.join('%.0f' % (e * 1000) for e in need)))
-        if need[-1] >= FRINGE_OUT_MAX:  # buried (in the collar, the sash): none there
-            return None
-        return dict(a=a, base=base, flat=push, need=need)
-    # the bell round the rim, finely; how far out at each height evened round it (each point at least as far out as
-    # any neighbour needs, less FRINGE_OUT_SPREAD a degree, then smoothed down its length: no kinks)
+            print('  a %4.0f root h %.3f tilt %.0f -> %.0f knee %.3f, clear %.3f of %.3f' % (
+                math.degrees(a), h, math.degrees(t0), math.degrees(t), e, clear_len(t, root + lift * e), length))
+        return dict(a=a, root=root + lift * e, base=root, push=push, tilt=t, length=length)
+    # the bell round the rim, finely; the tilt evened round it (each at least its neighbours' less FRINGE_TILT_SPREAD
+    # a degree round the rim, then smoothed): a neat bell, no strand standing out from the next; each as long as it
+    # clears what is under it at that tilt
     dense = [c for c in (course(-half + 2 * half * k / (FRINGE_DENSE - 1), 1.0, 1.0) for k in range(FRINGE_DENSE)) if c]
-    for c in dense:
-        out = [max(o['need'][j] - FRINGE_OUT_SPREAD * math.degrees(abs(o['a'] - c['a'])) for o in dense)
-               for j in range(ns + 1)]
-        for _ in range(FRINGE_SMOOTH):
-            out = [out[0]] + [max(out[j], (out[j - 1] + 2 * out[j] + out[j + 1]) / 4) for j in range(1, ns)] + [out[-1]]
-        c['out'] = out
-        c['tip'] = c['base'][-1] + c['flat'] * out[-1]
+    tilts = [max(o['tilt'] - math.radians(FRINGE_TILT_SPREAD) * math.degrees(abs(o['a'] - c['a'])) for o in dense)
+             for c in dense]
+    for _ in range(FRINGE_SMOOTH):
+        tilts = [max(tilts[j], (tilts[max(j - 1, 0)] + 2 * tilts[j] + tilts[min(j + 1, len(tilts) - 1)]) / 4)
+                 for j in range(len(tilts))]
+    for c, t in zip(dense, tilts):
+        d = (down * math.cos(t) + c['push'] * math.sin(t)).normalized()
+        ln = c['length']
+        for j in range(ns + 1):
+            q = c['root'] + d * (c['length'] * j / ns)
+            if c['length'] * j / ns > FRINGE_R * 1.5 and gap(q) < 0:
+                ln = c['length'] * (j - 1) / ns
+                break
+        c['tilt'], c['len'] = t, ln
+    lens = [c['len'] for c in dense]  # lengths evened too: no single short one in a row of long ones
+    for _ in range(FRINGE_SMOOTH):
+        lens = [min(lens[j], (lens[max(j - 1, 0)] + 2 * lens[j] + lens[min(j + 1, len(lens) - 1)]) / 4)
+                for j in range(len(lens))]
+    dense = [c for c, ln in zip(dense, lens) if ln > FRINGE_MIN_LEN]
+    for c, ln in zip(dense, [ln for ln in lens if ln > FRINGE_MIN_LEN]):
+        d = (down * math.cos(c['tilt']) + c['push'] * math.sin(c['tilt'])).normalized()
+        c['path'] = [c['root'] + d * (ln * j / ns) for j in range(ns + 1)]
+        if (c['root'] - c['base']).length > 1e-4:  # the curl over the rim: from the root out to the straight part
+            k_ = c['root'] - c['base']
+            c['path'] = [c['base'], c['base'] + k_ * 0.6 + d * (k_.length * 0.15)] + c['path'][1:]
+        c['tip'] = c['path'][-1]
     # strands side by side along the bell's lower edge, touching there (spaced along the rim, they stood apart below
     # with the cloth between them); their roots crowd under the rim
     run = [0.0]
@@ -1433,13 +1524,13 @@ def build_epaulette(side):
         i = max(0, min(len(dense) - 2, next((j for j in range(len(run) - 1) if run[j + 1] >= target), len(run) - 2)))
         t = (target - run[i]) / max(run[i + 1] - run[i], 1e-9)
         c0, c1 = dense[i], dense[i + 1]
-        specs.append(dict(a=c0['a'] + (c1['a'] - c0['a']) * t, flat=c0['flat'].lerp(c1['flat'], t).normalized(),
-                          base=[p.lerp(q, t) for p, q in zip(c0['base'], c1['base'])],
-                          out=[p + (q - p) * t for p, q in zip(c0['out'], c1['out'])]))
-    print('fringe %s: %d strands, carried out up to %.3f m, the bell %.2f m round at the tips' % (
-        side, len(specs), max(max(sp['out']) for sp in specs), run[-1]))
+        p0, p1 = c0['path'], c1['path']
+        if len(p0) != len(p1):  # one curls over the rim, the other not: both without the curl's point
+            p0, p1 = [p0[0]] + p0[-ns:], [p1[0]] + p1[-ns:]
+        specs.append(dict(a=c0['a'] + (c1['a'] - c0['a']) * t, path=[p.lerp(q, t) for p, q in zip(p0, p1)]))
+    print('fringe %s: %d strands, the bell %.2f m round at the tips' % (side, len(specs), run[-1]))
     for i, sp in enumerate(specs):
-        path = [q + sp['flat'] * e for q, e in zip(sp['base'], sp['out'])]
+        path = catmull(sp['path'], FRINGE_STEP)
         root, d = path[0], (path[-1] - path[-2]).normalized()
         vs, u = tube(bm, path, FRINGE_R, 10, 'bullion', uv_len=BULLION_UV_LEN,
                      taper=lambda t: FRINGE_ROOT + (1 - FRINGE_ROOT) * smoothstep(t, 0.0, 0.25),

@@ -23,8 +23,10 @@ HEAD_ROLL = -1.75                  # ... and tilted about its forward line (towa
 LID_DROP = 7.0                     # degrees the upper lids are let down from the generated head's (of a ~59 deg
                                    # blink): in the portrait they cover the irises' tops; wide open, the eyes stared
                                    # (16 deg hid half the iris: sleepy)
-CLAVICLE_DROP = 8.0                # degrees the shoulders are let down: the portrait's epaulettes and elbows are ~3 cm
-                                   # lower than the body's own shoulders put them (15 deg slumped him like an old man)
+CLAVICLE_DROP = {'l': 12.0, 'r': 11.0}  # degrees the shoulders are let down: the portrait's epaulettes and elbows are
+                                   # lower than the body's own shoulders put them - a sloping trapezius; his left one more
+                                   # (at 8 deg each, over a tunic fitted to the shoulders, his left epaulette stood 2.5 cm
+                                   # over the portrait's, his right one's inner end 1-2 cm)
 # His left arm hangs too, the elbow out at the belt, the forearm in to the sword's hilt by the left hip, the hand over
 # the hilt's top in line with the forearm, back of the hand forward, fingers closed round the grip (as in the portrait;
 # bent down at the wrist it looked broken); his right arm hangs down by his side, the elbow at his side and a little
@@ -143,7 +145,7 @@ def set_pose(rig):
         d = (pb.tail - pb.head).normalized()
         ax = d.cross(Vector((0, 0, -1))).normalized()
         p = pb.head.copy()
-        pb.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(CLAVICLE_DROP), 4, ax)
+        pb.matrix = (Matrix.Translation(p) @ Matrix.Rotation(math.radians(CLAVICLE_DROP[s]), 4, ax)
                      @ Matrix.Translation(-p) @ pb.matrix)
         _upd()
     for s, arm in ARM.items():
