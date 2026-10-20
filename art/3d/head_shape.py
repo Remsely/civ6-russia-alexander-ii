@@ -396,7 +396,9 @@ def fit(h):
 NECK_C_DY = -0.012               # ellipse centre: in front of the neck bone by this much
 NECK_A, NECK_B = 0.06, 0.052     # semi-axes: front-back, sides
 NECK_SQ_Z0, NECK_SQ_Z1 = 1.72, 1.77  # the squeeze fades in from Z0 to full at Z1 (and out again round the jaw)
-SHOULDER_Z, SHOULDER_K = 1.74, 0.5   # trapezius above SHOULDER_Z is pulled down to this fraction of its height
+SHOULDER_Z, SHOULDER_K = 1.74, 0.15  # trapezius above SHOULDER_Z is pulled down to this fraction of its height
+                                 # (at half, the tunic beside the collar stood 1.5-2 cm over the portrait's: a mound
+                                 # under the epaulettes' straps, the collar's foot lifted on it, a hump behind the neck)
 SHOULDER_R0, SHOULDER_R1 = 0.12, 0.30  # ... most at the neck, fading out towards the shoulder joints (keeps a slope)
 
 
@@ -472,7 +474,8 @@ BACK_X = 0.22                      # |x| over which the back is flattened (fadin
 # Shoulders: the top of the shoulders runs down from the neck root parallel to the clavicles (shape key 'ShoulderFit',
 # after NeckFit) instead of MPFB's flat plateau that ends in a square corner over the deltoid.
 SHOULDER_ROOT_X = 0.095            # |x| where the slope starts (keeps its height)
-SHOULDER_DEG = 12.0                # slope of the top line, down outwards (a square military bearing; 21 with the
+SHOULDER_DEG = 5.0                 # slope of the top line, down outwards, at rest (a square military bearing; the
+                                   # pose lets the shoulder joints down another 2 cm, ~12 deg in all; 21 with the
                                    # clavicles let down: sloping shoulders)
 SHOULDER_TIP_X = 0.36              # ... fading out by here (the deltoid)
 SHOULDER_DEPTH = 0.12              # vertices this far under the top move less and less

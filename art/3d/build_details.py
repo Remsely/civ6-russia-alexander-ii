@@ -522,11 +522,14 @@ def build_collar(nu=64, nv=7):
     collar = new_detail('Collar', bm, uvs, wts, -COLLAR_THICK)
     # the tunic's dark stand filling the opening between the halves (no neck shows through)
     # (rows like the halves', widening downwards with them: two rows only, the cloth crumpled it into a twisted strip)
+    # (flaring as the halves' front edges do and no lower than them: flared the full COLLAR_FLARE, its foot stood out
+    # in front of theirs in a black corner)
     rs = []
+    zb0, fl0 = max(bots[0], bots[-1]), (flare[0] + flare[-1]) / 2
     for k in range(STAND_ROWS):
         f = k / (STAND_ROWS - 1)
-        z = bots[0] + (tops[0] - STAND_DROP - bots[0]) * f
-        rr = (r_top[0] + r_top[-1]) / 2 + COLLAR_LIFT - 0.0015 + COLLAR_FLARE * (1 - f) ** 2
+        z = zb0 + (tops[0] - STAND_DROP - zb0) * f
+        rr = (r_top[0] + r_top[-1]) / 2 + COLLAR_LIFT - 0.0015 + fl0 * (1 - f) ** 2
         g = (gap_b + (gap - gap_b) * f) * 1.5
         rs.append([ctr + Vector((0, 0, z)) + Vector((math.sin(t), -math.cos(t), 0)) * rr
                    for t in [-g + 2 * g * q / (STAND_COLS - 1) for q in range(STAND_COLS)]])

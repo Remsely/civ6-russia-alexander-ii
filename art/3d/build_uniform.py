@@ -50,10 +50,11 @@ BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-hori
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
 # on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.033, 0.035  # in the portrait the collar's top corners at the front are ~2.5 cm
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.033, 0.012  # in the portrait the collar's top corners at the front are ~2.5 cm
                                   # under the chin's underside (in its 'ref' view, px 214 against the chin's 195): only
                                   # the shirt's white edge between them (4.6 cm down, a bare neck stood out of it; 2.6
-                                  # cm, the collar came up to the chin) - and it rises towards the back
+                                  # cm, the collar came up to the chin) - and it rises a little towards the back, as
+                                  # a shirt's collar (3.5 cm, its back stood up the nape tilted like a horse collar)
 STAND_RISE_POW = 1.7              # ... slowly at first: at the sides only ~1.6 cm higher than at the front (rising as
                                   # (1 - cos) / 2, the sides stood 3.5 cm up and the red halves covered the whole neck)
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
@@ -63,6 +64,8 @@ STAND_OFF = 0.016                 # off the neck: its narrowest outline over NEC
 NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
 WAIST_Z = 1.325                   # belt line (its centre 3 cm below: 1.295 in the portrait): the torso part of the tunic ends just below, the skirt starts just above
 BELT_H, BELT_N = 0.058, 96        # belt over the waist seam (WAIST_Z - 0.03): height; directions of its profile
+BELT_TAPER = 0.14                 # under the belt the skirt runs out to its own width in a straight line over this
+                                  # height (let go within 3 cm, it sprang out over the seat in a round bulge)
 HEM_Z = 0.905                     # tunic hem, mid-thigh (the portrait's, row 855 in the 'ref' view)
 ANKLE_Z = 0.12                    # trousers end, inside the boot
 BOOT_TOP = 0.45                   # top of the boot shafts: the trousers are tucked in below it
@@ -653,13 +656,39 @@ def belt_band(bm):
     for _ in range(4):
         prof = [prof[k] * 0.5 + (prof[k - 1] + prof[(k + 1) % BELT_N]) * 0.25 for k in range(BELT_N)]
     half = BELT_H / 2 + 0.004
+    # the skirt's width BELT_TAPER under the belt, per direction (where the straight taper meets it)
+    zr = zc - half - BELT_TAPER
+    reach = [0.0] * BELT_N
     for v in bm.verts:
-        w = 1 - smoothstep(abs(v.co.z - zc), half, half + 0.03)
-        if w <= 0 or abs(v.co.x) > 0.35:
+        if abs(v.co.z - zr) < 0.012 and abs(v.co.x) < 0.35:
+            d = v.co.xy - c
+            k = int(round(sector(d))) % BELT_N
+            reach[k] = max(reach[k], d.length)
+    for _ in range(BELT_N):
+        if all(reach):
+            break
+        reach = [r or max(reach[k - 1], reach[(k + 1) % BELT_N]) for k, r in enumerate(reach)]
+    for _ in range(4):
+        reach = [reach[k] * 0.5 + (reach[k - 1] + reach[(k + 1) % BELT_N]) * 0.25 for k in range(BELT_N)]
+    for v in bm.verts:
+        if abs(v.co.x) > 0.35:
             continue
         d = v.co.xy - c
         f = sector(d); k0 = int(f) % BELT_N
-        target = prof[k0] + (prof[(k0 + 1) % BELT_N] - prof[k0]) * (f - int(f))
+        lerp = lambda a: a[k0] + (a[(k0 + 1) % BELT_N] - a[k0]) * (f - int(f))  # noqa: E731
+        target = lerp(prof)
+        if zc - v.co.z > half:  # under the belt: straight out to the skirt, never into the body
+            t = (zc - v.co.z - half) / BELT_TAPER
+            if t >= 1:
+                continue
+            hull = hull_at(v.co.z)
+            target = max(target + (lerp(reach) - target) * t,
+                         ray_hull(hull, c, d.normalized()) + TUNIC_OFF if hull else 0.0)
+            w = 1.0
+        else:
+            w = 1 - smoothstep(v.co.z - zc, half, half + 0.03)
+        if w <= 0:
+            continue
         if d.length > target:
             v.co.xy = c + d.normalized() * (d.length + (target - d.length) * w)
     print('belt fit %.3f, profile %.3f..%.3f' % (fit, min(prof), max(prof)))
