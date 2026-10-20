@@ -59,6 +59,15 @@ NECK_Z0, NECK_INTO = 1.70, 0.03   # the neck tube: from inside the tunic up to t
 UNDER_JOIN, UNDER_STEP = 0.014, 0.007  # the neck's column made anew from this far under the cut down, rings this far
                                   # apart (under_jaw)
 JOIN_PLAIN = (0.012, 0.02)        # ... and where it meets the jaw: plain up to this far over the cut, fading out by this
+NECK_OFF_GEN = 0.004              # a vertex under the chin this far off the generated head is the neck's (skin)
+UNDER_LEVEL = (0.035, 0.06, 6, 0.003)  # level_underside: the band over the underside stretched down (m); only an
+                                  # underside up to this far over the chin; smoothing rounds of the move; faces moved
+                                  # more than this are the whisker's (plain hair, hair_detail) ...
+UNDER_LEVEL_EAR = 1.5             # ... the ears held (their lobes, not flagged as ear, were drawn down in a long flap),
+                                  # free from this times their size out
+UNDER_LEVEL_PLAIN = 0.006         # ... stretched this far, fully the hair's plain colour
+UNDER_LEVEL_SIDE = (0.04, 0.008)  # ... on the sides only (this far off the face's midplane) and where the sides differ
+                                  # by more than this
 NECK_PLAIN = 0.006                # the neck's skin plain up to this far over the cut (fully at the cut)
 NECK_SHADE = (1.0, 1.0)          # the neck's skin this bright at the collar and under the jaw: its own colour - no
                                   # shadow is painted in, the lighting puts the beard's and the chin's shade on it
@@ -67,6 +76,10 @@ UNDER_JAW = (0.15, 0.5, 0.012)    # hair_detail: surfaces facing down (normal z 
 UNDER_JAW_SHADE = 1.0             # ... to no brighter than the skin's (hair's) own colour: the picture's white shirt
                                   # projected there taken out, no shadow painted in (the lighting shades it)
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 16  # top ring this far inside the cut's outline; segments, rings
+NECK_COLLAR_GAP = 0.012           # the neck fills the collar to this far inside it (inside the tunic's stand and its
+                                  # lining under it, ~9 mm in), as a shirt's collar sits round the
+                                  # neck (the collar's ellipse alone was 2-3 cm inside it at the back and the sides: a
+                                  # thin neck in a broad ring - a horse collar)
 NECK_TWIST_ZS = (1.84, 1.90)       # the neck's turn spreads between these heights (head bone above, chest below): over
                                   # the collar's front top - inside it the neck stays with the chest (the collar does
                                   # not turn: the oval neck turned in it came out through it)
@@ -243,6 +256,7 @@ CLS = gbm.faces.layers.int.new('cls')  # survives the edits below
 UNIFORM = gbm.faces.layers.int.new('uniform')  # uniform-coloured (red, gold, navy, white shirt), wherever it is
 COL = gbm.verts.layers.float_color.new('col')  # for the cap: the colour of the rim round it (rim_colours)
 EAR = gbm.faces.layers.int.new('ear')  # the ears: one flat skin colour (both pictures draw an ear there, a bit apart)
+LEV = gbm.faces.layers.float.new('lev')  # how far down level_underside stretched it (m)
 FACING = gbm.loops.layers.uv.new('facing')  # x: how squarely the surface faced the portrait (the mirrored whisker: its
 # source's, on the left), for how much of the portrait it takes
 for f, rgb in zip(gbm.faces, head_shape.face_colours(gbm, gimg)):
@@ -425,6 +439,59 @@ SYM_M, SYM_N, NOSE = face_plane()
 
 def mirror(p):
     return p - SYM_N * (2 * (p - SYM_M).dot(SYM_N))
+
+
+def level_underside():
+    """The head's underside as low on both sides: the generation hung his right whisker down to the collar but left
+    his left jaw's corner bare under the ear, its underside 3-5 cm higher (from the sides the head ended higher on one
+    side, the neck running up to the ear). Where the other side's underside (mirrored) is lower, the band UNDER_LEVEL[0]
+    over it is stretched down to it, the move smoothed over the mesh (the ears stay); the faces moved are hair, and
+    hair_detail gives them the hair's plain colour (stretched, their own picture ran in streaks; the other side's laid
+    over them - a face's corners mirrored onto different islands of the picture - painted thin lines over the brow)."""
+    gbm.verts.index_update()
+    faces = list(gbm.faces)
+    vco = [v.co.copy() for v in gbm.verts]
+    under = BVHTree.FromPolygons(vco, [[v.index for v in f.verts] for f in faces if not f[EAR]])
+    ear_v = {v.index for f in faces if f[EAR] for v in f.verts}
+
+    def floor(p):  # the lowest surface over p (x, y), the ears left out
+        hit = under.ray_cast(Vector((p.x, p.y, CHIN_Z - 0.1)), Vector((0, 0, 1)), 0.3)[0]
+        return hit.z if hit is not None else None
+    n = len(vco)
+    dz = np.zeros(n)
+
+    def ear_free(p):  # 0 in the ears' ellipsoids (EAR_AT), 1 from UNDER_LEVEL_EAR times their size out
+        e = min(math.sqrt(sum(((p[i] - c[i]) / r[i]) ** 2 for i in range(3))) for c, r in EAR_AT)
+        return smoothstep(e, 1.0, UNDER_LEVEL_EAR)
+    free = np.array([ear_free(v.co) for v in gbm.verts])
+    for v in gbm.verts:
+        if v.index in ear_v or v.co.z > CHIN_Z + UNDER_LEVEL[1] + UNDER_LEVEL[0]:
+            continue
+        if abs((v.co - SYM_M).dot(SYM_N)) < UNDER_LEVEL_SIDE[0]:
+            continue
+        h_, hm = floor(v.co), floor(mirror(v.co))
+        if h_ is None or hm is None or h_ > CHIN_Z + UNDER_LEVEL[1] or h_ - hm < UNDER_LEVEL_SIDE[1]:
+            continue
+        dz[v.index] = (h_ - hm) * (1 - smoothstep(v.co.z - h_, 0.0, UNDER_LEVEL[0])) * free[v.index]
+    nb = [[e.other_vert(v).index for e in v.link_edges] for v in gbm.verts]
+    for _ in range(UNDER_LEVEL[2]):
+        dz = np.array([0.0 if i in ear_v else (0.5 * dz[i] + 0.5 * dz[nb[i]].mean() if nb[i] else dz[i])
+                       for i in range(n)]) * free
+    for v in gbm.verts:
+        v.co.z -= dz[v.index]
+    moved = 0
+    for f in faces:
+        f[LEV] = float(np.mean([dz[v.index] for v in f.verts]))
+        if not f[EAR] and f[LEV] > UNDER_LEVEL[3]:
+            f[CLS] = head_shape.HAIR
+            moved += 1
+    gbm.normal_update()
+    print('underside levelled: %d vertices moved (%.3f at most), %d faces made hair' % (
+        int((dz > 1e-4).sum()), float(dz.max()), moved))
+
+
+level_underside()
+
 
 
 # ---------------------------------------------------------------- 2. colour of the sources
@@ -719,16 +786,18 @@ body = set(members('body'))
 HEADISH = {'head', 'neck_01'} | set(head_shape.FACE_BONES)
 src_head = new_object('_SrcHead', gbm, [material('_SrcHead', SRC_IMG, 0.55), material('_SrcSkin', None, 0.55, SKIN_LIN, 'col')],
                       part=False)
+
 GEN_BVH = BVHTree.FromBMesh(gbm)
 GEN_FACES = [(f[CLS], [l[puv].uv.copy() for l in f.loops], [v.co.copy() for v in f.verts]) for f in gbm.faces]
+GEN_LEV = [f[LEV] for f in gbm.faces]
 gbm.free()
 
 
 def neck_source():
     """The neck: a plain smooth tube from inside the tunic's collar (NECK_Z0) up into the head (NECK_INTO above the
     cut), no anatomy - MPFB's neck, squeezed into the collar, made bumps where it ran into the jaw. Straight up the
-    collar's axis, its rings the collar's ellipse (head_shape.NECK_*), only the top ones kept inside the cut's outline
-    less NECK_INSET (measured round the same axis: round the cut's own middle, far forward under the jaw, the tube
+    collar's axis, its rings the collar's ellipse (head_shape.NECK_*) or out to NECK_COLLAR_GAP inside the collar, only
+    the top ones kept inside the cut's outline (or the jaw's underside over it) less NECK_INSET (measured round the same axis: round the cut's own middle, far forward under the jaw, the tube
     leant forward and its back was cut away - a thin crooked neck with a gap behind it in the collar); ends capped."""
     ax = sc['uniform']['NECK_AXIS']
     c0 = Vector((ax[0], ax[1] + head_shape.NECK_C_DY, NECK_Z0))
@@ -744,6 +813,37 @@ def neck_source():
             rim_r = [r or max(rim_r[k - 1], rim_r[(k + 1) % n]) for k, r in enumerate(rim_r)]
     for _ in range(4):
         rim_r = [rim_r[k] * 0.5 + (rim_r[k - 1] + rim_r[(k + 1) % n]) * 0.25 for k in range(n)]
+    # the collar's inside (the red halves, the dark stand between them, the shirt's collar inside them) per direction,
+    # its narrowest under the top; and how far out the head's underside, solid over the tube's top, reaches (the tube
+    # runs straight up into the jaw there, no flange)
+    def bvh(names):
+        cb = bmesh.new()
+        for nm in names:
+            o = bpy.data.objects.get(nm)
+            if o is not None:
+                me_ = o.data.copy(); me_.transform(o.matrix_world); cb.from_mesh(me_); bpy.data.meshes.remove(me_)
+        t = BVHTree.FromBMesh(cb); cb.free()
+        return t
+    coll = bvh(('Collar', 'CollarStand', 'ShirtCollar'))
+    top = cut + NECK_INTO
+    coll_r, foot_r = [0.0] * n, [0.0] * n
+    for k in range(n):
+        a = 2 * math.pi * (k + 0.5) / n
+        d = Vector((math.sin(a), -math.cos(a), 0.0))
+        hits = [coll.ray_cast(Vector((c0.x, c0.y, z)), d, 0.2)[0] for z in np.arange(1.76, 1.821, 0.01)]
+        hits = [(q - Vector((c0.x, c0.y, q.z))).length for q in hits if q is not None]
+        coll_r[k] = min(hits) if hits else 0.0
+        for r in np.arange(0.03, 0.12, 0.002):
+            o_ = Vector((c0.x + d.x * r, c0.y + d.y * r, cut - 0.05))
+            hit = GEN_BVH.ray_cast(o_, Vector((0, 0, 1)), 0.2)[0]
+            out_ = GEN_BVH.ray_cast(hit + Vector((0, 0, 1e-4)), Vector((0, 0, 1)), 0.3)[0] if hit is not None else None
+            if hit is None or hit.z > top - 0.005 or out_ is None or out_.z < top + 0.005:
+                break
+            foot_r[k] = r
+    for _ in range(3):
+        coll_r = [coll_r[k] * 0.5 + (coll_r[k - 1] + coll_r[(k + 1) % n]) * 0.25 for k in range(n)]
+    print('neck: collar inside %.3f..%.3f, the underside solid over the top out to %.3f..%.3f' % (
+        min(coll_r), max(coll_r), min(foot_r), max(foot_r)))
     b = bmesh.new()
     rings = []
     for i in range(NECK_RINGS + 1):
@@ -756,11 +856,11 @@ def neck_source():
             a = 2 * math.pi * (k + 0.5) / n
             d = Vector((math.sin(a), -math.cos(a)))
             # the collar's ellipse all the way up (inside the jaw's cut): wider, it shows over the collar
-            r = head_shape.neck_radius(d.x, d.y) * NECK_FIT
+            r = max(head_shape.neck_radius(d.x, d.y) * NECK_FIT, coll_r[k] - NECK_COLLAR_GAP)
             # kept inside the cut's outline, not widened to it: widened, its top came out of the jaw's underside (which
             # narrows over the cut, and at the sides lies 1-2 cm over it) as a thin flange round the neck. It runs up
             # into the head and the corner is rounded (FILLET)
-            r = r + (min(r, rim_r[k] - NECK_INSET) - r) * w
+            r = r + (min(r, max(rim_r[k], foot_r[k]) - NECK_INSET) - r) * w
             ring.append(b.verts.new((c.x + d.x * r, c.y + d.y * r, z)))
         rings.append(ring)
     for r0, r1 in zip(rings, rings[1:]):
@@ -1011,11 +1111,17 @@ def from_generated(co):
 hb = bmesh.new(); hb.from_mesh(head.data)
 hb.verts.ensure_lookup_table()
 hb.normal_update()
-HIMG, HCLS = {}, {}
+HIMG, HCLS, HLEV = {}, {}, {}
 for v in hb.verts:
     HCLS[v], HIMG[v] = from_generated(v.co)
+    fi_ = GEN_BVH.find_nearest(v.co, 0.05)[2]
+    HLEV[v] = GEN_LEV[fi_] if fi_ is not None else 0.0
     if v.co.z < CHIN_Z - NECK_CUT - 0.003:  # the neck under the cap (nearest to it): skin
         HCLS[v] = head_shape.SKIN
+    elif v.co.z < CHIN_Z:  # ... and the neck's top off the generated surface (the beard nearest: a dark band round it)
+        dist = GEN_BVH.find_nearest(v.co, 0.05)[3]
+        if dist is None or dist > NECK_OFF_GEN:
+            HCLS[v] = head_shape.SKIN
     if HIMG[v] is None:
         HIMG[v] = (-1e4, -1e4)
 
@@ -1077,8 +1183,9 @@ def hair_detail():
         nb = np.array([np.mean([hair_v[e.other_vert(v).index] for e in v.link_edges]) for v in hb.verts])
         hair_v = 0.5 * hair_v + 0.5 * nb
     me = head.data
-    data, cov = mat_util.raster(me, TEX, hair_v[:, None])
-    p, n, hw = data[..., :3], data[..., 3:6], data[..., 6]
+    lev_v = np.array([HLEV[v] for v in hb.verts])
+    data, cov = mat_util.raster(me, TEX, np.stack([hair_v, lev_v], 1))
+    p, n, hw, lev = data[..., :3], data[..., 3:6], data[..., 6], data[..., 7]
     n = n / np.maximum(np.linalg.norm(n, axis=-1, keepdims=True), 1e-6)
     cx = float(np.mean([v.co.x for v in hb.verts]))
     # combed from the crown down: strands run along the meridians round a vertical axis through the crown, so across
@@ -1158,6 +1265,10 @@ def hair_detail():
     plain = (skin_hue[None, None, :] * skin_lum) * (1 - hk) + (target[None, None, :] * hair_lum) * hk
     rgb = rgb + (plain - rgb) * zw[..., None]
     print('neck join: %d texels plain' % int((zw > 0.5).sum()))
+    # the whisker carried down under the left ear (level_underside): the hair's plain colour, its strands over it
+    lw = (np.clip(lev / UNDER_LEVEL_PLAIN, 0, 1) * cov)[..., None]
+    rgb = rgb + (target[None, None, :] * hair_lum - rgb) * lw
+    print('whisker carried down: %d texels plain hair' % int((lw[..., 0] > 0.5).sum()))
     px[..., :3] = np.clip(rgb * (1 + HAIR_CONTRAST * s[..., None] * k), 0, 1)
     # the islands padded out over the background and the bake's own margin (no dark rims on the small ones; the
     # margin kept the bake's raw colours, which the cleaning above never saw - pale dotted lines along the seams

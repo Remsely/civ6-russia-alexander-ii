@@ -31,29 +31,23 @@ REF_W, REF_CROWN, REF_SOLES, REF_X = 1024, 12, 1510, 515
 # folds) lying on top of the shoulder, centred on it front to back, its outer end a little past the shoulder's end; a
 # thick twisted rim; a strap to the collar with a button; bullion fringe hanging from under the rim round its outer
 # three quarters, fanning out over the arm (as in the portrait).
-EP_A, EP_B = 0.072, 0.056        # semi-axes along the shoulder and across it (the portrait's field: ~14.5 cm wide
-                                 # with its rim in the 'ref' view, ~22 cm with the fringe belling out under it)
+EP_R = 0.062                     # the field's radius: a round plate, as a general's epaulette (the portrait's field
+                                 # ~14.5 cm across with its rim in the 'ref' view, ~22 cm with the fringe belling out)
 EP_REF_X = {'r': 360, 'l': 668}  # the fields' middles where the portrait has them (px across alexander_ii_full.png, as
                                  # the 'ref' view frames the figure): on the shoulder's line front to back, out to there
 EP_GAP, EP_DOME, EP_THICK = 0.003, 0.012, 0.006  # the field's underside off the cloth at the nearest, its dome, edge
-EP_CURVE = (0.30, 0.09)          # radii of the field's curve along and across the shoulder (a plate bent to it)
+                                 # (the underside flat: bent over the shoulder, the oval sagged at its front and back)
 EP_TILT = {'r': 15.0, 'l': 18.0}  # degrees the field's outer end is lower: in the portrait both fields face the viewer -
                                  # the camera stands to his right, so his left one is tilted out less (as much, it
                                  # showed its edge); the inner end rises over the slope to the collar (tilted 18 deg,
-                                 # it rested there and stood 4-5 cm over the shoulder)
-EP_FORWARD = {'r': 20.0, 'l': 20.0}  # degrees its front edge is lower - in the portrait the fields face the viewer
-                                 # (their faces show as ovals ~0.45 as high as wide); fitted to the shoulder's slope
-                                 # (~25 deg out) the field was edge-on and the fringe stood out like wings; at 26 deg
-                                 # it slid off the shoulder's top down onto the chest (seen from the side and below),
-                                 # at 14 the field was edge-on in the game's view and the fringe stood out sideways
+                                 # it rested there and stood 4-5 cm over the shoulder). Not tilted forward: level front
+                                 # to back, as it sits on the shoulder (tilted 20-26 deg, it slid down onto the chest)
 EP_TURN = {'r': 0.0, 'l': 22.0}   # degrees the field is turned about the upright towards the front: in the portrait his
                                  # left one shows its face nearly square to the viewer as the right one does (the
                                  # shoulder turned away from the camera with the figure, it showed its edge)
 EP_RIM_R = 0.008                 # the rim's radius: a thick padded roll of bullion, as in the portrait
 EP_PRESS = (0.004, 0.02)        # the rim pressed this far into the padded shoulder, its outer and inner (towards the
                                  # neck) half (resting on it, the field stood 5 cm over the portrait's)
-EP_PRESS_FRONT = 0.014           # ... and the quarter towards the neck and the chest this much more: tilted forward to
-                                 # the viewer, the field's front edge rested on the chest and held it 4-5 cm up
 STRAP_X, STRAP_W = 0.085, 0.038   # strap from the field to this |x|, by the collar: the epaulette's own broad shoulder
                                  # strap, gold galloon edged in red, as in the portrait
 STRAP_SHORT = 0.006               # ... ending this far short of the collar's foot
@@ -1221,7 +1215,7 @@ def on_shoulder(ws, side):
 
 def build_epaulette(side):
     """The field: a rigid gilt plate on top of the shoulder - centred on it front to back, its outer end EP_OVER past
-    the shoulder's end, tilted out and forward (EP_TILT, EP_FORWARD), bent to it by EP_CURVE, lifted till nothing of
+    the shoulder's end, tilted out (EP_TILT), its underside flat, lifted till nothing of
     the cloth (and sash, collar) under it is nearer than EP_GAP (it rests on the shoulder's highest points, standing
     off the rest as a plate does). Laid on the cloth's heights it followed every fold and came out soft and crooked.
     The strap from under it to the collar on the cloth; the fringe round its outer three quarters."""
@@ -1263,9 +1257,8 @@ def build_epaulette(side):
     print('epaulette %s: middle %.3f out from the shoulder joint, the shoulder ends %.3f out' % (
         side, (c - joint).dot(out), (e - joint).dot(out) if e is not None else float('nan')))
     turn = Matrix.Rotation(-sign * math.radians(EP_TURN[side]), 3, 'Z')  # towards the front (the viewer)
-    out_f, fwd_f = turn @ out, turn @ fwd
-    Z = (Vector((0, 0, 1)) + out_f * math.tan(math.radians(EP_TILT[side]))
-         + fwd_f * math.tan(math.radians(EP_FORWARD[side])))
+    out_f = turn @ out
+    Z = Vector((0, 0, 1)) + out_f * math.tan(math.radians(EP_TILT[side]))
     Z.normalize()
     X = (out_f - Z * out_f.dot(Z)).normalized()
     Y = Z.cross(X)
@@ -1274,7 +1267,6 @@ def build_epaulette(side):
     C = top_at(c) or c
     L = lambda x, y, z: C + X * x + Y * y + Z * z  # noqa: E731
     LS = lambda x, y, z: C + XS * x + YS * y + Z * z  # noqa: E731
-    shell = lambda x, y: -(x * x / (2 * EP_CURVE[0]) + y * y / (2 * EP_CURVE[1]))  # noqa: E731
     rings, segs = 6, 48
 
     def cloth_h(x, y):
@@ -1288,21 +1280,20 @@ def build_epaulette(side):
         f = i / 8  # to 1.125: the rim's outside
         for k in range(segs):
             a = 2 * math.pi * k / segs
-            x, y = EP_A * f * math.cos(a), EP_B * f * math.sin(a)
+            x, y = EP_R * f * math.cos(a), EP_R * f * math.sin(a)
             if f >= 0.85:  # (the inner half of the rim, towards the neck, presses into the padded cloth)
-                need = ((EP_GAP if f <= 1.0 else EP_RIM_R - EP_THICK * 0.5 + EP_GAP) - EP_PRESS[math.cos(a) < 0]
-                        - (EP_PRESS_FRONT if (Y * math.sin(a)).dot(fwd) > 0 else 0.0))
+                need = (EP_GAP if f <= 1.0 else EP_RIM_R - EP_THICK * 0.5 + EP_GAP) - EP_PRESS[math.cos(a) < 0]
             else:
                 need = 0.003 - EP_THICK - EP_DOME * (1 - f * f)
-            hh = cloth_h(x, y) - shell(x, y) + need
+            hh = cloth_h(x, y) + need
             if hh > h0:
                 h0, worst = hh, (round(f, 2), round(math.degrees(a)), tuple(round(v, 3) for v in L(x, y, 0)))
     if DEBUG_FRINGE:
         for a_ in (0, 90, 180, 270):
             print('  ep %s a %d: ' % (side, a_) + ' '.join(
-                '%.2f:%.3f' % (f_, cloth_h(EP_A * f_ * math.cos(math.radians(a_)), EP_B * f_ * math.sin(math.radians(a_))))
+                '%.2f:%.3f' % (f_, cloth_h(EP_R * f_ * math.cos(math.radians(a_)), EP_R * f_ * math.sin(math.radians(a_))))
                 for f_ in (0.0, 0.25, 0.5, 0.75, 1.0, 1.12)))
-    U = lambda x, y: h0 + shell(x, y)  # noqa: E731  the plate's underside
+    U = lambda x, y: h0  # noqa: E731  the plate's underside (flat)
     print('epaulette %s: centre %s, normal %s (%.0f deg), plate %.3f over the shoulder top (held up at %s)' % (
         side, tuple(round(v, 3) for v in C), tuple(round(v, 2) for v in Z), math.degrees(Z.angle(Vector((0, 0, 1)))),
         h0, worst))
@@ -1315,7 +1306,7 @@ def build_epaulette(side):
         ring = []
         for k in range(segs):
             a = 2 * math.pi * k / segs
-            x, y = EP_A * f * math.cos(a), EP_B * f * math.sin(a)
+            x, y = EP_R * f * math.cos(a), EP_R * f * math.sin(a)
             v = bm.verts.new(L(x, y, U(x, y) + EP_THICK + EP_DOME * (1 - f * f)))
             uvs[v] = uv_in('pole', 0.5 + 0.5 * f * math.cos(a), 0.5 + 0.5 * f * math.sin(a))
             ring.append(v)
@@ -1328,7 +1319,7 @@ def build_epaulette(side):
     bot = []
     for k, v in enumerate(grid[-1]):
         a = 2 * math.pi * k / segs
-        x, y = EP_A * math.cos(a), EP_B * math.sin(a)
+        x, y = EP_R * math.cos(a), EP_R * math.sin(a)
         b = bm.verts.new(L(x, y, U(x, y))); uvs[b] = uv_in('gold', 0.5, 0.5); bot.append(b)
     for k in range(segs):
         bm.faces.new((grid[-1][k], bot[k], bot[(k + 1) % segs], grid[-1][(k + 1) % segs]))
@@ -1339,7 +1330,7 @@ def build_epaulette(side):
     rim = []
     for k in range(97):
         a = 2 * math.pi * k / 96
-        x, y = EP_A * math.cos(a), EP_B * math.sin(a)
+        x, y = EP_R * math.cos(a), EP_R * math.sin(a)
         rim.append(L(x, y, U(x, y) + EP_THICK * 0.5))
     _, u = tube(bm, rim, EP_RIM_R, 12, 'bullion', uv_len=BULLION_UV_LEN * 3, cap=False); uvs.update(u)
     # strap to the collar, from under the field, a button on its end: a stiff board - flat across, bent along its
@@ -1358,7 +1349,7 @@ def build_epaulette(side):
         strap_len -= 0.002
     top_rows, bot_rows = [], []
     n_rows = 16
-    xs = [-EP_A * 0.6 - (strap_len - EP_A * 0.6) * i / n_rows for i in range(n_rows + 1)]
+    xs = [-EP_R * 0.6 - (strap_len - EP_R * 0.6) * i / n_rows for i in range(n_rows + 1)]
     hs = []
     for i, x in enumerate(xs):
         hh = []
@@ -1462,9 +1453,9 @@ def build_epaulette(side):
     def course(a, rf, shorter):
         """The bell at angle a round the rim: root, flat radial, the strand's line before carrying out, how far out it
         must be at each point (None where it is buried)."""
-        x, y = EP_A * rf * math.cos(a + a_off), EP_B * rf * math.sin(a + a_off)
+        x, y = EP_R * rf * math.cos(a + a_off), EP_R * rf * math.sin(a + a_off)
         root = L(x, y, U(x, y) - 0.002 - FRINGE_R * 0.6)  # under the field, the rim over its top
-        radial = X * math.cos(a + a_off) * EP_B + Y * math.sin(a + a_off) * EP_A  # square to the rim
+        radial = X * math.cos(a + a_off) * EP_R + Y * math.sin(a + a_off) * EP_R  # square to the rim
         flat = Vector((radial.x, radial.y, 0.0)).normalized()
         h, loc, nrm = under(root)
         if loc is not None and h < FRINGE_R + 0.002:

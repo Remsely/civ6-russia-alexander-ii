@@ -424,7 +424,10 @@ def smooth_torso():
         for f in (0.6, -0.63):
             lap = np.array([co[nb[i]].mean(0) - co[i] if nb[i] else np.zeros(3) for i in zone])
             co[zone] += lap * (f * k[zone])[:, None]
-    tree = BVHTree.FromPolygons([v.co.copy() for v in h.data.vertices], [tuple(p.vertices) for p in h.data.polygons])
+    bi = h.vertex_groups['body'].index  # the skin only: MPFB's helpers (tights, skirt) stand off it (kept off them,
+    skin = {v.index for v in h.data.vertices if any(g.group == bi and g.weight > 0.5 for g in v.groups)}  # the back
+    tree = BVHTree.FromPolygons([v.co.copy() for v in h.data.vertices],  # stood in a 2 cm ridge down the spine)
+                                [tuple(p.vertices) for p in h.data.polygons if all(i in skin for i in p.vertices)])
     pushed = 0
     for i in zone:
         q = Vector(co[i])

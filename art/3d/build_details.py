@@ -36,11 +36,14 @@ CLOTH = (0.0034, 0.0037, 0.0058)    # the tunic's wool (build_uniform.CLOTH_RGB)
 # (by COLLAR_TURN, at most COLLAR_MAX_H); as in the portrait the halves stand apart at the front, their edges nearly
 # parallel, the tunic's dark collar between them up to the top (the white shirt collar's edge over it); the neck
 # stays behind it (build_pose.neck_in_collar).
-COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.11  # (at 6.6 cm the band ended
-                                  # over the shoulders at the back, the tunic's black stand under it: a horse collar)
+COLLAR_LIFT, COLLAR_TURN, COLLAR_MAX_H = 0.0025, 0.004, 0.07  # (at the back the cloth turns out
+                                  # slowly down the nape: at 11 cm the band hung down the back in a tongue, its
+                                  # picture stretched)
 COLLAR_FLARE = 0.012              # the band widens downwards by at most this: its walls lean out a little (the portrait's
                                   # are nearly upright, ~21 cm across at the top and 23 cm at the foot; flared 3 cm the
-                                  # collar was a cone with its lip spread over the shoulders)
+                                  # collar was a cone with its lip spread over the shoulders) - no further than the
+                                  # cloth under its foot (at the back the tunic is upright there: the foot stood 1.2 cm
+                                  # off it)
 COLLAR_MIN_H = 0.060              # ... but at the front at least this tall (the portrait's red band: 6-7 cm at the front)
 COLLAR_FRONT_GAP = 0.032          # the opening at the front, at the top (x the radius / 0.08 m: ~3.2 cm half-width; the
                                   # portrait's halves stand ~6 cm apart, the dark tunic and the cross between them) ...
@@ -491,6 +494,7 @@ def build_collar(nu=64, nv=7):
     # the cloth's dents and folds); straight down from there, flaring a little - below the turn it sinks into the cloth
     ctr = c0.to_3d()
     r_top = circ_smooth([cloth(zt - 0.006, d) or 0.08 for zt, d in zip(tops, dirs)], 8)
+    flare = circ_smooth([min(COLLAR_FLARE, max(0.0, (cloth(zb, d) or 0.0) - r)) for zb, d, r in zip(bots, dirs, r_top)], 4)
     for i in range(nv):
         f = i / (nv - 1)
         g = gap_b + (gap - gap_b) * f
@@ -499,7 +503,7 @@ def build_collar(nu=64, nv=7):
             t = g + (2 * math.pi - 2 * g) * j / (nu - 1)
             d = Vector((math.sin(t), -math.cos(t), 0.0))
             z = zb + (zt - zb) * f
-            ring.append(ctr + Vector((0, 0, z)) + d * (r_top[j] + COLLAR_LIFT + COLLAR_FLARE * (1 - f) ** 2))
+            ring.append(ctr + Vector((0, 0, z)) + d * (r_top[j] + COLLAR_LIFT + flare[j] * (1 - f) ** 2))
         rings.append(ring)
     # the piped top edge rolls over the tunic collar's edge to its inside
     rings.append([Vector((c0.x, c0.y, p.z + 0.003)) + (Vector((p.x, p.y, 0)) - c0.to_3d()).normalized()

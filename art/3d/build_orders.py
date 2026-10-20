@@ -52,15 +52,17 @@ MEDALS = ['wcross', 'medal', 'medal', 'smedal', 'medal', 'smedal']
 BAR_PX = (565, 300)                # the bar's top left corner in the portrait (px, cast onto the chest): just right of
                                    # the closure's piping, its top level with the cross's lower arm (at a fixed x in the
                                    # model it lay 2.5 cm left, on the piping)
-BAR_END_PX = 640                   # ... its right end (the last ribbon's edge): in under the epaulette's fringe
-RIB_W, RIB_SIDE, RIB_V = 0.024, 0.040, 0.008  # a pentagonal mount (the Russian ribbon folded over its bar): 24 mm
-                                   # wide, its sides 40 mm long, the point 8 mm under them; the portrait's ~45 mm down to
-                                   # the medals' rings
-RIB_STEP = (0.016, 0.023)          # the step from one mount to the next is found in this range so the bar ends at
+BAR_END_PX = 651                   # ... its right end (the last ribbon's edge): in under the epaulette's fringe (the
+                                   # bar 15% larger than first fitted: the portrait's ribbons ~35 px long, ours were 30)
+RIB_W, RIB_SIDE, RIB_V = 0.0276, 0.046, 0.0092  # a pentagonal mount (the Russian ribbon folded over its bar):
+                                   # 28 mm wide, its sides 46 mm long, the point 9 mm under them
+RIB_STEP = (0.0184, 0.0265)         # the step from one mount to the next is found in this range so the bar ends at
                                    # BAR_END_PX: each overlaps the one to its left (as mounts are worn: the bar is not
                                    # stretched with extra ribbons to reach the fringe)
-MEDAL_R, WCROSS_S = 0.0145, 0.022  # the medals ~2.9 cm across, the St George cross ~4.4 cm, as in the portrait; each
-                                   # overlaps its neighbours, in two layers turn about, the cross over both
+MEDAL_R, WCROSS_S = 0.0185, 0.0235  # the medals ~3.7 cm across, the St George cross ~4.7 cm: in the portrait the
+                                   # cross is ~1.3 times a medal (~34 and 26 px; at 2.9 and 4.4 cm the medals were small
+                                   # for their ribbons and the cross stood out); each overlaps its neighbours, in two
+                                   # layers turn about, the cross over both
 MEDAL_RING = 0.0028                # the ring a medal hangs by from its mount's point
 MEDAL_STEP = 0.0006                # between a medal and the one it overlaps (front to back)
 RIB_T, MEDAL_T, MEDAL_DOME = 0.0006, 0.0014, 0.0008  # thicknesses: a ribbon on its mount, a medal (and its dome)
