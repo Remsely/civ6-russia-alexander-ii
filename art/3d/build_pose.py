@@ -647,10 +647,10 @@ for pb in rig.pose.bones:
 def aim_eyes():
     """The eyeballs (build_head.py) turned in the stance to look into the leader camera - where the diplomacy screen's
     camera stands in front of the figure (as tools/blender/render_leader.py places it: the export turns the model by
-    90 + YAW_DEG and scales it to 150 cm). Each iris goes where the camera sees the portrait's painted one (both balls
-    turned straight at the camera, one iris sat by the nose - a squint; to their openings' middles, his left one still
-    sat nearer the nose than the right, both off to our right in the portrait). The eye
-    bones keep their rest; the eyeballs' mesh turns about them."""
+    90 + YAW_DEG and scales it to 150 cm). Both look the same way: where the camera sees the portrait's painted irises,
+    the two aims averaged (straight at the camera his left iris sat by the nose; each to its own painted iris, they
+    turned 12 and 5 deg - apart, a squint from the front). The eye bones keep their rest; the eyeballs' mesh turns
+    about them."""
     from mathutils import Matrix, Vector
     eyes = bpy.data.objects.get('Eyes')
     if eyes is None:
@@ -660,6 +660,7 @@ def aim_eyes():
     leader = Matrix.Rotation(math.radians(90 + pose.YAW_DEG), 4, 'Z') @ Matrix.Scale(LEADER_CM / top, 4)
     cam = leader.inverted() @ Vector(LEADER_CAMERA)
     names = [g.name for g in eyes.vertex_groups]
+    aims = {}
     for s in 'lr':
         b = rig.data.bones['eye_' + s]
         c = b.head_local
@@ -672,12 +673,18 @@ def aim_eyes():
             disc = R * R - ((cam + u * t) - c).length_squared
             if disc > 0:
                 aim = c + ((cam + u * (t - math.sqrt(disc))) - c) * 10.0
-        q = (b.tail_local - c).normalized().rotation_difference((aim - c).normalized())
+        aims[s] = (aim - c).normalized()
+    gaze = (aims['l'] + aims['r']).normalized()
+    for s in 'lr':
+        b = rig.data.bones['eye_' + s]
+        c = b.head_local
+        q = (b.tail_local - c).normalized().rotation_difference(gaze)
         gi = names.index('eye_' + s)
         for v in eyes.data.vertices:
             if any(g.group == gi and g.weight > 0.5 for g in v.groups):
                 v.co = c + q @ (v.co - c)
-        print('eye %s: turned %.1f deg to the camera at %s' % (s, math.degrees(q.angle), tuple(round(x, 2) for x in cam)))
+        print('eye %s: turned %.1f deg (its own iris %.1f deg off)'
+              % (s, math.degrees(q.angle), math.degrees(aims[s].angle(gaze))))
     eyes.data.update()
 
 

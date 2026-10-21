@@ -123,6 +123,8 @@ EYE_IRIS_PX = {'l': (558, 427), 'r': (365, 436)}  # the painted irises' middles:
                                                  # our right (build_pose.py turns the balls to show them there)
 UNDER_EYE = ((3, 9), (28, 46))    # px under the lower rim: the band clean_under_eyes() evens out fades in, fades out
 UNDER_EYE_AMOUNT = 0.9
+LID_BAND = (1, 18)                # px over the upper rim: the lid up to its crease, where clean_lids() takes the light
+                                  # out (the portrait's bright highlight on his left lid read as a swollen lid)
 LID_FADE = 22                     # px: the upper lid's skin above the rim follows less and less up to the brow
 EYE_DEPTH = 0.011                 # eyeball centre (the lids' pivot) this far behind the eye opening
 EYE_R = (0.0148, 0.0148)          # the eyeballs' radius (the opening's half-width, within these): both alike - each
@@ -638,7 +640,7 @@ def delight_portrait(ppx):
     mean = np.stack([blur(blur(chroma[..., i] * skin, r), r) for i in range(3)], -1) / np.maximum(wsum, 1e-4)[..., None]
     even = (mean + (chroma - mean) * PORTRAIT_CHROMA_KEEP) * (lit @ LUM)[..., None]
     k = (skin * near)[..., None]
-    out[..., :3] = clean_under_eyes(np.clip(lit * (1 - k) + even * k, 0, 1))
+    out[..., :3] = clean_lids(clean_under_eyes(np.clip(lit * (1 - k) + even * k, 0, 1)))
     print('portrait light: skin to %.2f, gain %.2f..%.2f' % (target, gain[skin > 0].min(), gain[skin > 0].max()))
     return out
 
@@ -668,6 +670,29 @@ def clean_under_eyes(rgb):
         cheek = np.median(rgb[band], 0)
         rgb = rgb * (1 - wgt * UNDER_EYE_AMOUNT) + np.clip(cheek * detail, 0, 1) * wgt * UNDER_EYE_AMOUNT
         print('under eye %s: cheek %s' % (s, np.round(cheek, 2)))
+    return rgb
+
+
+def clean_lids(rgb):
+    """The portrait's light on the upper lids taken out: over each upper rim (LID_BAND px, the ends faded) the pixels
+    brighter than the lid's own median brought down to it, its colour kept; nothing darker than the lid. (The lit lid
+    and the highlight under his left brow, round in our light, read as a puffed-up lid.)"""
+    hh, ww = rgb.shape[:2]
+    ys = (hh - 1 - np.arange(hh))[:, None].astype(np.float32)  # px from the top (Blender rows run bottom-up)
+    xs = np.arange(ww)[None, :].astype(np.float32)
+    t0, t1 = LID_BAND
+    for s, rims in EYE_RIMS.items():
+        up = rims['upper']
+        x0, x1 = up[0][0], up[-1][0]
+        d = np.interp(xs, [x for x, _ in up], [y for _, y in up]) - ys  # px over the rim
+        wx = np_smooth(xs, x0 - 6, x0 + 6) * (1 - np_smooth(xs, x1 - 6, x1 + 6))
+        wgt = np_smooth(d, t0 - 1, t0 + 2) * (1 - np_smooth(d, t1 - 4, t1 + 2)) * wx
+        L = rgb @ LUM
+        band = (wgt > 0.5)
+        ref = float(np.median(L[band]))
+        k = (wgt * np.clip(1 - ref / np.maximum(L, 1e-4), 0, 1))[..., None]  # how much over the lid's level
+        rgb = rgb * (1 - k)
+        print('upper lid %s: to %.2f (%d px brighter)' % (s, ref, int((band & (L > ref)).sum())))
     return rgb
 
 

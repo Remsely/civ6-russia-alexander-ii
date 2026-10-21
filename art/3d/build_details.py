@@ -46,12 +46,11 @@ COLLAR_H = 0.068                  # the band's height, the same all round as a s
 COLLAR_TUCK = 0.004               # ... its foot this far into the cloth where the shoulder rises into it
 CROSS_OVER_FOOT = 0.0               # the neck cross hangs from this far over the corners' foot (build_orders.py): its
                                   # crown over the foot, the cross under the collar, as in the portrait
-COLLAR_FRONT_GAP = 0.016          # the opening's half-width at the top: the halves' front edges straight down at
-                                  # x = +-this (the portrait's halves stand ~21 px apart at the top in the 'ref' view,
-                                  # x 527-548, the dark tunic and the cross between them) ...
-COLLAR_FRONT_GAP_BOTTOM = 0.009   # ... and at the foot (~13 px there). (As an angle round the neck the edges slanted
-                                  # out on the cone; the collar turned per height to stand them up in the 'ref' view
-                                  # came out twisted ~17 deg, lopsided from the front.)
+COLLAR_FRONT_GAP = 0.020          # the opening's half-width at the top: the halves' front edges straight lines at
+                                  # x = +-this, the dark tunic and the cross between them ...
+COLLAR_FRONT_GAP_BOTTOM = 0.006   # ... and at the foot: a V, as the portrait's (1.6 and 0.9 cm read as a straight
+                                  # slot). (As an angle round the neck the edges slanted out on the cone; the collar
+                                  # turned per height to stand them up in the 'ref' view came out twisted ~17 deg.)
 STAND_DROP = 0.002                # the dark stand between the halves ends this far under their top: the shirt's white
                                   # edge shows over it (up to the top, it read as a black strip down the front; with
                                   # the shirt's edge 3 mm over the collar, the stand's top came through it in jags)
@@ -587,7 +586,8 @@ def build_collar(nu=64, nv=7):
         for t in [-g + 2 * g * q / (STAND_COLS - 1) for q in range(STAND_COLS)]:
             d = dv(t)
             rc = cloth(z, d)
-            row.append(ctr + Vector((0, 0, z)) + d * (max(rr, rc + 0.002) if rc is not None else rr))
+            # (out over the cloth at most 1 mm: further, its top stood out of the halves' rolled corners in a dark lip)
+            row.append(ctr + Vector((0, 0, z)) + d * (min(max(rr, rc + 0.002), rr + 0.001) if rc is not None else rr))
         rs.append(row)
     bm, grid = loft(rs, closed=False)
     outward_normals(bm, lambda p: Vector((c0.x, c0.y, p.z)))
