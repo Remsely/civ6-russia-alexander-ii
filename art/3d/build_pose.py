@@ -44,14 +44,18 @@ SHOULDER_FIT_Z = (1.57, 1.63)           # ... above the armpits
 SHOULDER_FIT_NZ = (0.0, 0.3)            # ... where the body faces up (fading out down the arm's outside)
 SHOULDER_FIT_ROUNDS = 8                 # ... the move smoothed out into the cloth round
 TORSO_KEEP = (0.012, 0.03)              # ... none within the first of a button or the closure's edge, fully past the second
-UNI_IN, UNI_IN_BELOW, UNI_IN_SHIRT = 0.003, 0.004, -0.001  # uniform_in_collar: inside the collar by; from under
-                                        # its foot; up to just under the shirt collar's lower edge (the shirt lies as
-                                        # far out as the tunic's inside: up over its edge, the tunic went through it)
+UNI_IN, UNI_IN_BELOW, UNI_IN_SHIRT = 0.003, 0.010, -0.001  # uniform_in_collar: inside the collar by; from under
+                                        # its foot (at 4 mm the creases over the shoulders rose to the foot in knobs);
+                                        # up to just under the shirt collar's lower edge (the shirt lies as far out as
+                                        # the tunic's inside: up over its edge, the tunic went through it)
 COLLIDE = dict(distance_min=0.004, self_distance_min=0.003, collision_quality=4)
 LEADER_CM, LEADER_CAMERA = 150.0, (320.0, 0.0, 137.741)  # the export's height and the leader camera (leader space, cm)
 NECK_IN, NECK_EASE, NECK_ROUNDS = 0.006, 0.03, 12  # the head inside the collar's inner side by this (the shirt
                                         # collar lies between; at 8 mm it pulled the neck in off the shirt); eased out
                                         # over this much above its top edge; smoothing rounds
+UNI_FOOT_ONLY = 0.012                   # uniform_in_collar(foot_only): up to this over the foot (higher, the settled
+                                        # stand pulled in onto the neck at the nape)
+UNI_FOOT_TRIES = 8                      # uniform_in_collar: rays 2 mm apart up from under the foot
 NECK_CLEAR = 0.002                      # uniform_off_neck: the tunic's inside at least this off the neck
 NECK_OVER = 0.004                       # ... or this far up over its top edge
 NECK_OUT = 0.003                        # ... or (the beard and whiskers, nearer its outside) this far out of it
@@ -563,7 +567,7 @@ def fit_shoulders():
 fit_shoulders()
 
 
-def uniform_in_collar():
+def uniform_in_collar(foot_only=False):
     """The tunic's own stand collar stays inside what is sewn over it: UNI_IN inside the gold collar's (and, in its
     front opening, the dark stand's) inner side, measured at each height (the collar flares out lower down), from a
     little under the collar's foot up; and no higher than just over the shirt collar's lower edge (the two lay on one
@@ -600,18 +604,24 @@ def uniform_in_collar():
     moved = 0
     for i in range(len(co)):
         k = ub[i]
-        if np.isnan(bot[k]) or co[i, 2] < bot[k] - UNI_IN_BELOW:
+        if np.isnan(bot[k]) or co[i, 2] < bot[k] - UNI_IN_BELOW or foot_only and co[i, 2] > bot[k] + UNI_FOOT_ONLY:
             continue
         d = Vector((co[i, 0] - ax[0], co[i, 1] - ax[1], 0.0))
         r = d.length
         if r < 1e-4 or r > 0.15:
             continue
         z = min(co[i, 2], s_bot[k] + UNI_IN_SHIRT) if not np.isnan(s_bot[k]) else co[i, 2]
-        hit = tree.ray_cast(Vector((ax[0], ax[1], z)), d.normalized(), 0.2)[0]
+        hit = None
+        for up in range(UNI_FOOT_TRIES):  # under the foot here (it rises between the bin's lowest vertices): the
+            # radius a little up it (narrower - the cone flares down); missed, a crease there stood out through it
+            hit = tree.ray_cast(Vector((ax[0], ax[1], z + 0.002 * up)), d.normalized(), 0.2)[0]
+            if hit is not None:
+                break
         if hit is None:
             continue
         lim = (hit.xy - Vector(ax)).length - UNI_IN
-        w = smoothstep(co[i, 2], bot[k] - UNI_IN_BELOW, bot[k] + 0.004)
+        w = smoothstep(co[i, 2], bot[k] - UNI_IN_BELOW, bot[k])  # all in from the foot up (to 4 mm over it, a crease
+        # risen to the foot stayed half out of it in a black knob)
         r_new = r + (min(r, lim) - r) * w
         if abs(r_new - r) > 1e-6 or z != co[i, 2]:
             co[i, :2] = ax + np.array(d.normalized().xy[:]) * r_new
@@ -814,6 +824,8 @@ def uniform_under_shirt():
     print('tunic under the shirt collar: %d vertices lowered' % int(over.sum()))
 
 
+uniform_in_collar(foot_only=True)  # again by the collar's foot on the settled cloth: settled, a crease over the
+# shoulder stood up through the foot at his right in a black knob
 uniform_under_shirt()
 h.hide_set(True); h.hide_render = True
 h.modifiers.remove(h.modifiers['ColliderMask'])

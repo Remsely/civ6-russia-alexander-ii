@@ -46,23 +46,37 @@ COLLAR_H = 0.068                  # the band's height, the same all round as a s
 COLLAR_TUCK = 0.004               # ... its foot this far into the cloth where the shoulder rises into it
 CROSS_OVER_FOOT = 0.0               # the neck cross hangs from this far over the corners' foot (build_orders.py): its
                                   # crown over the foot, the cross under the collar, as in the portrait
-COLLAR_FRONT_GAP = 0.032          # the opening at the front, at the top (x the radius / 0.08 m: ~3.2 cm half-width; the
-                                  # portrait's halves stand ~6 cm apart, the dark tunic and the cross between them) ...
-COLLAR_FRONT_GAP_BOTTOM = 0.008   # ... and at the bottom edge: the portrait's opening is a V, ~7.4 cm across at the top
+COLLAR_FRONT_GAP = 0.0216         # the opening at the front, at the top (x the radius / 0.08 m: ~2.2 cm half-width; the
+                                  # portrait's halves stand ~21 px apart at the top in the 'ref' view, x 527-548, the
+                                  # dark tunic and the cross between them; at 3.2 cm it was 37 px across) ...
+COLLAR_FRONT_GAP_BOTTOM = 0.0035  # ... and at the bottom edge: the portrait's opening is a V, ~7.4 cm across at the top
                                   # and ~3.5 cm at the foot (at 2.6 cm half-width there the halves stood apart as two
                                   # upright panels with a broad black strip between them)
-STAND_DROP = 0.0                # the dark stand between the halves ends this far under their top: the shirt's white
-                                  # edge shows over it (up to the top, it read as a black strip down the front)
-COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
+STAND_DROP = 0.002                # the dark stand between the halves ends this far under their top: the shirt's white
+                                  # edge shows over it (up to the top, it read as a black strip down the front; with
+                                  # the shirt's edge 3 mm over the collar, the stand's top came through it in jags)
+COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 1, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
+COLLAR_HALF_LEN = 0.22            # a half's length round the neck, front edge to back seam (for the texture's edges)
+COLLAR_PIPING = 0.004             # the portrait's red piping round each half's top, front and bottom edges ...
+COLLAR_FRAME_GAP, COLLAR_FRAME_LINE = 0.0018, 0.0012  # ... the thin gold line inside it (this far in, this wide)
+COLLAR_OAK_ROWS = (0.115, 0.885)  # the generated band's rows between its gold cords (the oak branch alone)
+PIPING_H = 4.0                    # px: the piping's round relief
+COLLAR_RED_SRGB = (150, 16, 9)   # the collar's cloth: the portrait's (median 142, 19, 9; at RED, the piping's, it
+                                  # came out a flat orange-red)
 COLLAR_THICK = 0.0035             # (at 4 mm and no rolled edge its top read as a thin sheet; the rolled edge makes it ~8 mm)
 STAND_ROWS, STAND_COLS = 7, 13    # the dark stand between the halves: rows up it, columns across
-SHIRT_SHOW = 0.0145                # the shirt collar's edge this far over the bottom of its band (~6 mm over the red
-                                  # collar's top: the portrait's white line is 5-8 px)
+SHIRT_SHOW = 0.0175               # the shirt collar's edge this far over the bottom of its band (~3 mm over the red
+                                  # collar's rolled top: the portrait's white line all along it; at 14.5 mm it stood
+                                  # 0.7 mm over the roll and showed only in the opening)
 SHIRT_IN = 0.006                  # the white shirt collar this far inside the tunic collar's outside: just inside the
                                   # red collar's rolled top edge (COLLAR_ROLL_IN) and the tunic's own inside (the neck,
                                   # built after it, fills it), its edge a white line along the collar's top, as in the
                                   # portrait (4.5 mm in, it ran through the rolled edge and showed over it in ragged
                                   # white flecks; 13 mm in, the neck in it was ~7 mm thinner than the body's: a stalk)
+COLLAR_TURN = (math.radians(-8.0), math.radians(8.6))  # the opening turned this far towards his left off the chest's
+                                  # front at the foot and at the top: the portrait's edges run straight down in the
+                                  # 'ref' view (his right one at x 527, his left from 548 to 540) - square to the chest
+                                  # on the cone (wider at the foot) they slanted out to the right, 11-13 px off there
 COLLAR_ROLL_IN = 0.003            # the rolled top edge turns in over the tunic collar's edge to this far inside it
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
 # Measured on alexander_ii_full.png (rows of the 'ref' view: z ~ (1510 - row) * 1.397 mm): on his left of the piping
@@ -267,12 +281,40 @@ def mirrored(u, n):
     return np.where(t > 1, 2 - t, t)
 
 
-def collar_tex(w, hh):
-    """One half of the collar, front edge at u = 0, back centre at u = 1: the generated oak-leaf band, mirrored repeats
-    (the halves meet at the back on the same column); its gold edges at the collar's top and bottom."""
-    ref = load_gen('collar_oak')
+def collar_frame(w, hh):
+    """Distances (metres) from the half's top, bottom and front edges per texel, and the nearest of them."""
     u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
-    return sample(ref, mirrored(u, COLLAR_REPEATS), v)
+    du, dv = u * COLLAR_HALF_LEN, v * COLLAR_H
+    return u, v, np.minimum(np.minimum(dv, COLLAR_H - dv), du)
+
+
+def collar_tex(w, hh):
+    """One half of the collar, front edge at u = 0, back centre at u = 1, as the portrait's: scarlet cloth, a red
+    piping round its top, front and bottom edges, a thin gold line inside it, and the oak branch inside that (the
+    generated band without its gold cords - the portrait has none - one mirrored repeat a half: at two the leaves came
+    out squeezed to half their width, a dense small pattern)."""
+    u, v, e = collar_frame(w, hh)
+    inset = COLLAR_PIPING + COLLAR_FRAME_GAP * 2 + COLLAR_FRAME_LINE  # the oak inside the gold line
+    ui = np.clip((u * COLLAR_HALF_LEN - inset) / (COLLAR_HALF_LEN - inset), 0, 1)
+    vi = np.clip((v * COLLAR_H - inset) / (COLLAR_H - 2 * inset), 0, 1)
+    oak = sample(load_gen('collar_oak'), mirrored(ui, COLLAR_REPEATS), COLLAR_OAK_ROWS[0]
+                 + (COLLAR_OAK_ROWS[1] - COLLAR_OAK_ROWS[0]) * vi)
+    g = np.clip(gold_mask(oak) * 1.5, 0, 1)[..., None] * (e > inset - 0.0005)[..., None]  # (at 1x the leaves' darker
+    # threads let the red through: pale pink leaves)
+    red = np.array(COLLAR_RED_SRGB, np.float32) / 255
+    c = red * (1 - g) + oak * g
+    line = COLLAR_PIPING + COLLAR_FRAME_GAP
+    aa = 0.0003  # (edges eased over this: no jaggies)
+    w_line = (np.clip((e - line + aa) / aa, 0, 1) * np.clip((line + COLLAR_FRAME_LINE + aa - e) / aa, 0, 1))[..., None]
+    c = c * (1 - w_line) + np.array(mat_util.GOLD_SRGB, np.float32) / 255 * w_line
+    w_pipe = np.clip((COLLAR_PIPING + aa - e) / aa, 0, 1)[..., None]
+    return c * (1 - w_pipe) + np.array(to_srgb(RED), np.float32) * w_pipe  # (the cuffs' red: brighter than the cloth)
+
+
+def collar_piping_height(w, hh):
+    """The piping's round profile (0..1) for the relief."""
+    t = np.clip(collar_frame(w, hh)[2] / COLLAR_PIPING, 0, 1)
+    return np.sqrt(np.clip(1 - (2 * t - 1) ** 2, 0, 1)) * (t < 1)
 
 
 def cuff_tex(w, hh):
@@ -352,6 +394,8 @@ def build_atlas():
         return fn
 
     put('collar', collar_tex, raw=True)
+    x0, y0, x1, y1 = px('collar')
+    height[y0:y1, x0:x1] += collar_piping_height(x1 - x0, y1 - y0) * PIPING_H
     put('cuff', cuff_tex, raw=True)
     put('belt', belt_tex, raw=True)
     put('buckle', buckle_tex, raw=True)
@@ -473,14 +517,16 @@ def build_collar(nu=64, nv=7):
     dark collar shows between them. A white shirt collar shows above the top edge."""
     c0 = Vector(P['NECK_AXIS'])
     gap = COLLAR_FRONT_GAP / 0.08
-    thetas = [gap + (2 * math.pi - 2 * gap) * j / (nu - 1) for j in range(nu)]
-    dirs = [Vector((math.sin(t), -math.cos(t), 0.0)) for t in thetas]
+    thetas = [gap + (2 * math.pi - 2 * gap) * j / (nu - 1) for j in range(nu)]  # from the opening's middle
+    turn = lambda f: COLLAR_TURN[0] + (COLLAR_TURN[1] - COLLAR_TURN[0]) * f  # f: 0 foot, 1 top
+    dv = lambda t, f=1.0: Vector((math.sin(t + turn(f)), -math.cos(t + turn(f)), 0.0))  # ... turned to the world
+    dirs = [dv(t) for t in thetas]
     lean = P['STAND_LEAN']
     def top_at(t):  # as build_uniform.stand_top (head_shape.collar_top)
         u = max(0.0, (abs(math.sin(t)) - P['COLLAR_DROP_SIN']) / (1 - P['COLLAR_DROP_SIN'])) if math.cos(t) > 0 else 1.0
         return P['STAND_TOP_FRONT'] + (P['STAND_TOP_BACK'] - P['STAND_TOP_FRONT']) * u
     cloth = lambda z, d: ray_dist(UNI_BVH, c0.to_3d() + Vector((0, 0, z)), d, 0.16)
-    tops = [top_at(t) + 0.001 for t in thetas]  # over the tunic's top edge
+    tops = [top_at(t + turn(1.0)) + 0.001 for t in thetas]  # over the tunic's top edge
     # one clean band: the radius round the neck from the cloth just under the top edge, smoothed hard (the rays catch
     # the cloth's dents and folds); down from there leaning out as the stand's cone does, COLLAR_H down - or to where
     # the shoulder rises into the cone, its foot tucked in there (carried on down over the shoulder, its foot turned
@@ -505,7 +551,7 @@ def build_collar(nu=64, nv=7):
         ring = []
         for j, (zb, zt) in enumerate(zip(bots, tops)):
             t = g + (2 * math.pi - 2 * g) * j / (nu - 1)
-            d = Vector((math.sin(t), -math.cos(t), 0.0))
+            d = dv(t, f)
             z = zb + (zt - zb) * f
             # straight down the cone (laid on the cloth under its foot, it turned out along the shoulders in a lip)
             ring.append(ctr + Vector((0, 0, z)) + d * (r_top[j] + COLLAR_LIFT + lean * (zt - z)))
@@ -539,7 +585,7 @@ def build_collar(nu=64, nv=7):
         g = (gap_b + (gap - gap_b) * f) * 1.5
         row = []
         for t in [-g + 2 * g * q / (STAND_COLS - 1) for q in range(STAND_COLS)]:
-            d = Vector((math.sin(t), -math.cos(t), 0))
+            d = dv(t, f)
             rc = cloth(z, d)
             row.append(ctr + Vector((0, 0, z)) + d * (max(rr, rc + 0.002) if rc is not None else rr))
         rs.append(row)
@@ -559,7 +605,8 @@ def build_collar(nu=64, nv=7):
             zt = top_at(t) + 0.001
             # in the opening between the halves it lies over the dark stand's top and the tunic's own collar edge
             # (inside them, that edge came through it in black and red jags), only its edge showing there too
-            front = 1 - smoothstep(min(t, 2 * math.pi - t), gap * 0.8, gap * 0.98)
+            tt = (t - turn(1.0)) % (2 * math.pi)
+            front = 1 - smoothstep(min(tt, 2 * math.pi - tt), gap * 0.8, gap * 0.98)
             z = zt - 0.008 + 0.0065 * front * (1 - k) + SHIRT_SHOW * k  # its edge over the collar's top
             ring.append(c0.to_3d() + Vector((0, 0, z)) + d * (rn - SHIRT_IN + (SHIRT_IN + COLLAR_LIFT - 0.0005) * front))
         rings.append(ring)

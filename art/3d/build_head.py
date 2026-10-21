@@ -891,7 +891,9 @@ def neck_source():
             r = head_shape.neck_radius(d.x, d.y) * NECK_FIT
             inside = 1 - smoothstep(z, coll_top[k] - NECK_COLLAR_EASE[0], coll_top[k] + NECK_COLLAR_EASE[1])
             fill = max(inside * (1 - smoothstep(-d.y, 0.2, 0.6)), 1 - inside)
-            r = max(r, r + (coll_r[k] - NECK_COLLAR_GAP - r) * fill)
+            rf = coll_r[k] - NECK_COLLAR_GAP
+            r = min(r + (rf - r) * fill, rf)  # never out of the shirt collar (wider than it, over the collar's top the
+            # neck stood out over the shirt and hid its white edge but at the front: the portrait's runs all along)
             # kept inside the cut's outline, not widened to it: widened, its top came out of the jaw's underside (which
             # narrows over the cut, and at the sides lies 1-2 cm over it) as a thin flange round the neck. It runs up
             # into the head and the corner is rounded (FILLET)
