@@ -11,7 +11,7 @@
 # 3. Every mesh is baked as it is at the last frame, the pose applied as the rig's rest, the armature put back.
 import bpy, math, os, sys
 import numpy as np
-from mathutils import Vector
+from mathutils import Quaternion, Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -49,7 +49,6 @@ UNI_IN, UNI_IN_BELOW, UNI_IN_SHIRT = 0.003, 0.010, -0.001  # uniform_in_collar: 
                                         # up to just under the shirt collar's lower edge (the shirt lies as far out as
                                         # the tunic's inside: up over its edge, the tunic went through it)
 COLLIDE = dict(distance_min=0.004, self_distance_min=0.003, collision_quality=4)
-LEADER_CM, LEADER_CAMERA = 150.0, (320.0, 0.0, 137.741)  # the export's height and the leader camera (leader space, cm)
 NECK_IN, NECK_EASE, NECK_ROUNDS = 0.006, 0.03, 12  # the head inside the collar's inner side by this (the shirt
                                         # collar lies between; at 8 mm it pulled the neck in off the shirt); eased out
                                         # over this much above its top edge; smoothing rounds
@@ -68,9 +67,6 @@ for o in list(bpy.data.objects):  # regalia are built on the posed uniform after
     if o.get('regalia'):
         bpy.data.objects.remove(o)
 names = [g.name for g in uni.vertex_groups]
-# the painted irises' middles on the eye openings, in their eye bones' frames (the bones' rest changes when the stance is applied)
-EYE_OPEN = {s: rig.data.bones['eye_' + s].matrix_local.inverted() @ Vector(p)
-            for s, p in sc['head'].get('EYE_OPEN', {}).items()}
 
 
 def smoothstep(x, a, b):
@@ -645,48 +641,30 @@ for pb in rig.pose.bones:
 
 
 def aim_eyes():
-    """The eyeballs (build_head.py) turned in the stance to look into the leader camera - where the diplomacy screen's
-    camera stands in front of the figure (as tools/blender/render_leader.py places it: the export turns the model by
-    90 + YAW_DEG and scales it to 150 cm). Both look the same way: where the camera sees the portrait's painted irises,
-    the two aims averaged (straight at the camera his left iris sat by the nose; each to its own painted iris, they
-    turned 12 and 5 deg - apart, a squint from the front). The eye bones keep their rest; the eyeballs' mesh turns
-    about them."""
-    from mathutils import Matrix, Vector
+    """The eyeballs (build_head.py) turned in the stance: each from the face's own forward (its eye bone's) by
+    pose.EYE_GAZE - set so that, seen square to the face, both irises sit alike in their openings (turned to the
+    camera, through the openings' middles or the portrait's painted irises, the generated openings and balls being
+    unalike, one iris sat by the nose or under the upper lid: a squint). The eye bones keep their rest; the eyeballs'
+    mesh turns about them."""
     eyes = bpy.data.objects.get('Eyes')
     if eyes is None:
         return
-    top = max((o.matrix_world @ v.co).z for o in sc.objects if o.type == 'MESH' and not o.hide_render
-              for v in o.data.vertices)
-    leader = Matrix.Rotation(math.radians(90 + pose.YAW_DEG), 4, 'Z') @ Matrix.Scale(LEADER_CM / top, 4)
-    cam = leader.inverted() @ Vector(LEADER_CAMERA)
     names = [g.name for g in eyes.vertex_groups]
-    aims = {}
-    for s in 'lr':
-        b = rig.data.bones['eye_' + s]
+    bones = {s: rig.data.bones['eye_' + s] for s in 'lr'}
+    lat = (bones['l'].head_local - bones['r'].head_local).normalized()  # towards his left
+    for s, b in bones.items():
         c = b.head_local
-        aim = cam
-        if s in EYE_OPEN:  # the ray from the camera through the painted iris, where it meets the ball
-            o = b.matrix_local @ EYE_OPEN[s]
-            R = sc['head']['EYE_R'][s]
-            u = (o - cam).normalized()
-            t = u.dot(c - cam)
-            disc = R * R - ((cam + u * t) - c).length_squared
-            if disc > 0:
-                aim = c + ((cam + u * (t - math.sqrt(disc))) - c) * 10.0
-        aims[s] = (aim - c).normalized()
-    gaze = (aims['l'] + aims['r']).normalized()
-    for s in 'lr':
-        b = rig.data.bones['eye_' + s]
-        c = b.head_local
-        q = (b.tail_local - c).normalized().rotation_difference(gaze)
+        f = (b.tail_local - c).normalized()
+        yaw, pitch = (math.radians(a) for a in pose.EYE_GAZE[s])
+        g = Quaternion(f.cross(lat).normalized(), yaw) @ f   # + towards his left
+        g = Quaternion(lat, -pitch) @ g                      # + up
+        q = f.rotation_difference(g)
         gi = names.index('eye_' + s)
         for v in eyes.data.vertices:
-            if any(g.group == gi and g.weight > 0.5 for g in v.groups):
+            if any(gr.group == gi and gr.weight > 0.5 for gr in v.groups):
                 v.co = c + q @ (v.co - c)
-        print('eye %s: turned %.1f deg (its own iris %.1f deg off)'
-              % (s, math.degrees(q.angle), math.degrees(aims[s].angle(gaze))))
+        print('eye %s: turned %.1f deg to his left, %.1f up' % (s, *pose.EYE_GAZE[s]))
     eyes.data.update()
-
 
 aim_eyes()
 

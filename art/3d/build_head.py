@@ -134,8 +134,6 @@ EYE_RIMS = {
     'r': {'upper': [(323, 437), (335, 431), (350, 427), (365, 424), (380, 427), (390, 432), (395, 439)],
           'lower': [(323, 437), (335, 444), (350, 447), (365, 446), (380, 443), (390, 441), (395, 439)]},
 }
-EYE_IRIS_PX = {'l': (558, 427), 'r': (365, 436)}  # the painted irises' middles: both off their openings' middles to
-                                                 # our right (build_pose.py turns the balls to show them there)
 UNDER_EYE = ((3, 9), (28, 46))    # px under the lower rim: the band clean_under_eyes() evens out fades in, fades out
 UNDER_EYE_AMOUNT = 0.9
 LID_BAND = (1, 18)                # px over the upper rim: the lid up to its crease, where clean_lids() takes the light
@@ -1616,15 +1614,13 @@ def fit_eyes():
         poly = EYE_POLY[EYE_FROM[s_]]
         near = [hv for hv in hb.verts if (hv.co - e['pivot']).length < 0.035 and hv.normal.dot(FWD) > -0.2]
         ins = {hv for hv in near if in_poly(eye_img(hv, s_), poly)}
-        rim, rim_img, edge_of = [], [], {}
+        rim, edge_of = [], {}
         for hv in ins:
             for ed in hv.link_edges:
                 o = ed.other_vert(hv)
                 if o not in ins:
                     da, db = edge_dist(eye_img(hv, s_), poly), edge_dist(eye_img(o, s_), poly)
-                    f = da / max(da + db, 1e-9)
-                    rim.append(hv.co.lerp(o.co, f))
-                    rim_img.append([a + (b - a) * f for a, b in zip(eye_img(hv, s_), eye_img(o, s_))] + [1.0])
+                    rim.append(hv.co.lerp(o.co, da / max(da + db, 1e-9)))
                     edge_of.setdefault(hv, []).append(rim[-1])
         P = np.array([q[:] for q in rim])
         cen = P.mean(0)
@@ -1660,10 +1656,7 @@ def fit_eyes():
             me.vertices[hv.index].co = c + (q - c).normalized() * R
         U3, L3 = (e['U3'], e['L3']) if EYE_FROM[s_] == s_ else (mirror(EYE[EYE_FROM[s_]]['U3']), mirror(EYE[EYE_FROM[s_]]['L3']))
         ang = lambda q: math.atan2((q - c).z, (q - c).dot(FWD))  # noqa: E731
-        # the painted iris's middle on the opening: the rim's picture to its place, affine (least squares)
-        A = np.linalg.lstsq(np.array(rim_img), P, rcond=None)[0]
-        iris = Vector((np.array(list(EYE_IRIS_PX[EYE_FROM[s_]]) + [1.0]) @ A).tolist())
-        e.update(pivot=c, R=R, h=(U3 - L3).length, deg=math.degrees(ang(U3) - ang(L3)), open=iris)
+        e.update(pivot=c, R=R, h=(U3 - L3).length, deg=math.degrees(ang(U3) - ang(L3)))
         print('eye %s: r %.4f at %s, rim %d pts off the sphere %.4f..%.4f; %d sunk, %d lids lifted (most %.4f)'
               % (s_, R, tuple(round(x, 3) for x in c), len(rim), L.min() - R, L.max() - R, sunk, lifted, worst))
     me.update()
@@ -1876,7 +1869,6 @@ def eyeballs():
 eyeballs()
 hd = dict(sc['head']); hd['BLINK_DEG'] = BLINK_DEG
 # for build_pose.py's aim_eyes: each opening's middle (its rim's) and the eyeball's radius, rest pose
-hd['EYE_OPEN'] = {s: list(e['open']) for s, e in EYE.items()}
 hd['EYE_R'] = {s: e['R'] for s, e in EYE.items()}
 sc['head'] = hd
 print('head: %d verts, %d faces' % (len(head.data.vertices), len(head.data.polygons)))

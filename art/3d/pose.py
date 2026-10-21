@@ -20,12 +20,14 @@ HEAD_NECK_SHARE = 0.4              # of that turn the neck takes this much, the 
 HEAD_PITCH = 0.0                   # head bent forward (degrees about X): none - bent, the chin went down into the collar
 HEAD_ROLL = -1.75                  # ... and tilted about its forward line (towards his left shoulder +): a little to his
                                    # right, as in the portrait
-LID_DROP = {'l': 18.0, 'r': 7.0}   # degrees the upper lids are let down from the generated head's (of a ~59 deg
+LID_DROP = {'l': 18.0, 'r': 4.0}   # degrees the upper lids are let down from the generated head's (of a ~59 deg
                                    # blink): in the portrait they cover the irises' tops; wide open, the eyes stared
                                    # (16 deg on both hid half the iris: sleepy). His left one more: its opening is the
                                    # taller (painted on the side turned to the viewer) - at 10 deg it still showed a
                                    # third more of the eye (seen square to the face: 50 px mean height against 40; at
                                    # 18 deg, 41 against 40)
+EYE_GAZE = {'l': (4.2, 1.7), 'r': (-1.9, -6.4)}  # each eyeball turned from the face's forward (degrees towards his
+                                   # left, up): seen square to the face, both irises alike in their openings
 CLAVICLE_DROP = {'l': 7.0, 'r': 7.0}  # degrees the shoulders are let down, both alike: the tunic's top from the collar's
                                    # foot to over the shoulder joint falls ~15 deg, as the portrait's straps and fields
                                    # (1.77 -> 1.73 m) - square shoulders (let down 11-12 deg over a 21 deg trapezius,
