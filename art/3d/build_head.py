@@ -59,6 +59,21 @@ EAR_TINT = (1.0, 0.93, 0.92)      # the ears' flat colour: the portrait's skin t
 MIRROR_JAW = (0.035, 0.04, 0.015)  # mirror_jaw: his left's block |x| over the first, up to this far over the chin, made
                                   # his right's mirror image; the surface round it drawn onto that over the third (all
                                   # under the ear lobe: at 0.05 / 0.02 the lobe was torn, a pale ragged seam under it)
+FACE_RELIEF_EYE = (546, 433)      # face_relief: his left eye (px in head_input.png), the region's reference ...
+FACE_RELIEF_X = (0.006, 0.020, 0.060, 0.008)  # ... the region across: from x (m; the face's midplane is x = 0), from
+                                  # this under the brows (the nose is off the middle, to his right: its mirror image
+                                  # stood beside it), out to this, each edge faded over the last
+FACE_RELIEF_Z = (-0.050, 0.012, 0.090, 0.010)  # ... and up: from under the eye (over the moustache), the brows' foot
+                                  # (under it, the nose's edge), up to the forehead's top, edges faded
+FACE_RELIEF_MAX = 0.012           # m at most a vertex goes back
+FACE_RELIEF_EYE_ZONE = (0.016, 0.018, 0.009, 1.3, 2.2)  # m: the eye's opening and lids (half-widths to the nose
+                                  # and to the temple, half-height round its middle) go back as one, by the depth under
+                                  # its middle, faded out to these many times it - towards the nose, the rest (by the
+                                  # field, its corner by the nose stayed - the nose's mirror image beside it - and the
+                                  # rim came out 7 mm off the eyeball, thin flaps at the corners; faded over 5 mm up
+                                  # and down, the lids round it crumpled)
+FACE_RELIEF_BLUR = 0.005          # m: the right's depth taken over this coarse (not its wrinkles: the texture is the
+                                  # left's; finer, the eye opening's rim came out off any sphere by up to 1 cm)
 SIDE_CLASS = (0.05, 2.0, 0.006)   # side_class: |x| over the first, up to the second height, the ears (and this round
                                   # them) kept
 THROAT_SKIN = (0.004, 0.003)      # the throat: skin this far under the chin and this close to the neck's tube
@@ -495,12 +510,95 @@ def mirror_jaw():
 mirror_jaw()
 
 
+def blur(a, r):
+    for ax in (0, 1):
+        pad = [(r + 1, r) if i == ax else (0, 0) for i in range(a.ndim)]
+        c = np.cumsum(np.pad(a, pad, mode='edge'), axis=ax)
+        n = c.shape[ax]
+        a = (np.take(c, range(2 * r + 1, n), axis=ax) - np.take(c, range(0, n - 2 * r - 1), axis=ax)) / (2 * r + 1)
+    return a
+
+
+def np_smooth(x, a, b):
+    t = np.clip((x - a) / (b - a), 0, 1)
+    return t * t * (3 - 2 * t)
+
+
+def face_relief():
+    """His left upper face as deep as his right: generated from the portrait's three-quarter view as if it were the
+    front, the side turned to the viewer (his left) came out forward of the right's mirror image - the forehead 1-3 mm,
+    the cheek 4-5, the eye, its lids and the bags under it 7-11 (the nose stood out much less beside that eye, its lid
+    looked puffed up). Over the forehead, brows, eyes and cheeks (FACE_RELIEF_X / _Z; not the nose, mouth or beard)
+    his left goes back to the right's mirror image's depth, never forward. The vertices move along the portrait's view
+    axis only, so the picture on them stays where it was."""
+    img = img_points(gbm)
+    gbm.normal_update()
+    front = [v for v in gbm.verts if v.normal.dot(FWD) > 0.3]
+    c = min(front, key=lambda v: (img[v][0] - FACE_RELIEF_EYE[0]) ** 2 + (img[v][1] - FACE_RELIEF_EYE[1]) ** 2).co
+    own = BVHTree.FromBMesh(gbm)
+    mirrored = BVHTree.FromPolygons([Vector((-v.co.x, v.co.y, v.co.z)) for v in gbm.verts],
+                                    [[v.index for v in f.verts][::-1] for f in gbm.faces])
+    x0, x0n, x1, xf = FACE_RELIEF_X
+    z0, zn, z1 = (c.z + q for q in FACE_RELIEF_Z[:3])
+    zf = FACE_RELIEF_Z[3]
+    step = 0.001
+    xs = np.arange(x0 - xf, x1 + xf + step / 2, step)
+    zs = np.arange(z0 - zf, z1 + zf + step / 2, step)
+    diff = np.zeros((len(zs), len(xs)), np.float32)  # m his left stands forward of the right's mirror image
+    ok = np.zeros_like(diff)
+    for i, z in enumerate(zs):
+        for j, x in enumerate(xs):
+            a, na = own.ray_cast(Vector((x, -0.5, z)), Vector((0, 1, 0)), 1.0)[:2]
+            b, nb = mirrored.ray_cast(Vector((x, -0.5, z)), Vector((0, 1, 0)), 1.0)[:2]
+            # only where both face forward (rays through the generation's flakes and folds edge-on gave spikes:
+            # small dents and cracks over the cheek)
+            if a is not None and b is not None and na.y < -0.4 and nb.y < -0.4:
+                diff[i, j] = min(max(b.y - a.y, 0.0), FACE_RELIEF_MAX)  # back only
+                ok[i, j] = 1.0
+    r = max(1, int(round(FACE_RELIEF_BLUR / step)))
+    diff = blur(blur(diff, r), r) / np.maximum(blur(blur(ok, r), r), 1e-3)  # the gaps from round them
+    X, Z = np.meshgrid(xs, zs)
+    inner = np.where(Z < zn, x0n, x0)
+    w = (np_smooth(X, inner - xf, inner) * (1 - np_smooth(X, x1, x1 + xf))
+         * np_smooth(Z, z0 - zf, z0) * (1 - np_smooth(Z, z1, z1 + zf)))
+    shift = diff * w
+    an, ax, az, fn, fx = FACE_RELIEF_EYE_ZONE
+    i0, j0 = int(round((c.z - zs[0]) / step)), int(round((c.x - xs[0]) / step))
+    d_eye = float(shift[i0, j0])
+    nose = X < c.x
+    e = np.hypot((X - c.x) / np.where(nose, an, ax), (Z - c.z) / az)
+    we = 1 - np.where(nose, np_smooth(e, 1.0, fn), np_smooth(e, 1.0, fx))
+    shift = blur(blur((shift * (1 - we) + d_eye * we).astype(np.float32), r), r)
+
+    def at(p):
+        fx, fz = (p.x - xs[0]) / step, (p.z - zs[0]) / step
+        if not (0 <= fx < len(xs) - 1 and 0 <= fz < len(zs) - 1):
+            return 0.0
+        j, i = int(fx), int(fz)
+        tx, tz = fx - j, fz - i
+        return float((shift[i, j] * (1 - tx) + shift[i, j + 1] * tx) * (1 - tz)
+                     + (shift[i + 1, j] * (1 - tx) + shift[i + 1, j + 1] * tx) * tz)
+    moved, most = 0, 0.0
+    back = FWD / -FWD.y  # along the view axis, 1 m back per 1 m of depth
+    for v in gbm.verts:
+        d = at(v.co)
+        if d < 1e-5:
+            continue
+        v.co -= back * float(d)
+        moved += 1
+        most = max(most, float(d))
+    gbm.normal_update()
+    print('face relief: his left upper face %d vertices back to the mirrored right (most %.4f m, the eye %.4f)'
+          % (moved, most, d_eye))
+
+
 def img_points(bm):
     """vert -> its point in head_input.png (px)."""
     p = bm.loops.layers.uv['proj']
     return {l.vert: (l[p].uv.x * 1024, (1 - l[p].uv.y) * 1024) for f in bm.faces for l in f.loops}
 
 
+face_relief()
 IMG = img_points(gbm)
 
 
@@ -584,15 +682,6 @@ def raster(res, vals):
     return acc, hit
 
 
-def blur(a, r):
-    for ax in (0, 1):
-        pad = [(r + 1, r) if i == ax else (0, 0) for i in range(a.ndim)]
-        c = np.cumsum(np.pad(a, pad, mode='edge'), axis=ax)
-        n = c.shape[ax]
-        a = (np.take(c, range(2 * r + 1, n), axis=ax) - np.take(c, range(0, n - 2 * r - 1), axis=ax)) / (2 * r + 1)
-    return a
-
-
 def portrait_at(ppx, ix, iy):
     """head_input.png bilinearly at (ix, iy) px, and where it may be used: the head (alpha), not its uniform collar."""
     hh, ww = ppx.shape[:2]
@@ -643,11 +732,6 @@ def delight_portrait(ppx):
     out[..., :3] = clean_lids(clean_under_eyes(np.clip(lit * (1 - k) + even * k, 0, 1)))
     print('portrait light: skin to %.2f, gain %.2f..%.2f' % (target, gain[skin > 0].min(), gain[skin > 0].max()))
     return out
-
-
-def np_smooth(x, a, b):
-    t = np.clip((x - a) / (b - a), 0, 1)
-    return t * t * (3 - 2 * t)
 
 
 def clean_under_eyes(rgb):
