@@ -41,9 +41,11 @@ CLAVICLE_DROP = {'l': 7.0, 'r': 7.0}  # degrees the shoulders are let down, both
 # back, the forearm round the hip to the small of the back, the hand on the belt's middle over the spine, its back
 # against the belt (hidden, as in the portrait). The wrist is reached by IK (aimed only, the forearm's own length put
 # the hand 5 cm past the spine, under the belt and off the back).
+# (his left elbow out at 0.37 across, the arm lay ~2.5 cm inside the portrait's outline from the shoulder to the cuff,
+# no gap between it and the side)
 # elbow: where the upper arm points (else a two-bone IK with the pole decides it); palm: the side the palm turns to.
 ARM = {
-    'l': dict(wrist=(0.255, -0.10, 1.205), elbow=(0.37, 0.04, 1.30), hand_to=(0.19, -0.17, 1.16), palm=(-0.3, 0.3, -1.0)),
+    'l': dict(wrist=(0.255, -0.10, 1.205), elbow=(0.395, 0.04, 1.30), hand_to=(0.19, -0.17, 1.16), palm=(-0.3, 0.3, -1.0)),
     'r': dict(wrist=(-0.07, 0.15, 1.21), elbow=(-0.33, 0.11, 1.24), hand_to=(0.06, 0.13, 1.21), palm=(0, 1, 0)),
 }
 # Right leg in front, carrying the weight; the left a step behind, its toe turned further out. twist: degrees the leg

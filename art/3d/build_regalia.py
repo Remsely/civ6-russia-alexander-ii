@@ -60,6 +60,16 @@ STRAP_X, STRAP_W = 0.085, 0.038   # strap from the field to this |x|, by the col
 STRAP_SHORT = 0.006               # ... ending this far short of the collar's foot
 STRAP_T, STRAP_GAP = 0.006, 0.002  # its thickness (a stiff padded galloon, not a ribbon); off the cloth
 STRAP_REPEATS = 3                # the galloon picture along the strap
+STRAP_END = 0.6                  # its end by the collar rounded: a half-round of this share of its width's half ... (a
+                                 # square-cut board, it read as a stick)
+STRAP_PIPING = 0.0026            # ... red piping round its sides and end, a cord of this radius, as the portrait's
+STRAP_WRAPS, STRAP_WRAP_R = 3, 0.003  # ... and bound where it comes out from under the rim: turns of gold cord round it
+STRAP_BUTTON = 0.0065            # the button's radius by its rounded end
+SASH_HELD = (0.145, 0.16, 1.70, 0.0035)  # on his right shoulder from the collar out to this |x| (fading out by the
+                                 # second, over this height) the band lies on the shoulder's own cloth this far off it,
+                                 # held down by the strap: on the tightened cloth it stood 1.7 cm over the shoulder by
+                                 # the collar, the strap on it standing up at its end (its thickness goes in from
+                                 # there: at 2 mm it lay on the tunic)
 FRINGE_ARC = 290.0               # the fringe hangs round this arc of the rim, centred on the outer end: none on the
                                  # quarter by the collar, where the strap is (round 316 deg the strands there were buried
                                  # in the collar and the sash, stuck out level like sticks and drew their neighbours out)
@@ -213,17 +223,6 @@ for o in list(bpy.data.objects):  # previous run
     if o.get('regalia'):
         bpy.data.objects.remove(o)
 bones = {b.name for b in rig.data.bones}
-
-
-def upper_hull(pts):
-    """Upper convex envelope of (t, f) points sorted by t, as (ts, fs)."""
-    hull = []
-    for q in pts:
-        while len(hull) >= 2 and ((hull[-1][0] - hull[-2][0]) * (q[1] - hull[-2][1])
-                                  - (hull[-1][1] - hull[-2][1]) * (q[0] - hull[-2][0])) >= 0:
-            hull.pop()
-        hull.append(q)
-    return [q[0] for q in hull], [q[1] for q in hull]
 
 
 def smoothstep(x, a, b):
@@ -877,6 +876,33 @@ def build_sash():
                 lifted += 1
     print('sash: %d vertices lifted over the belt' % lifted)
     relax(SASH_SETTLE)  # the lifted part folds nowhere
+    # on top of his right shoulder by the collar, under the epaulette's strap, the band lies on the shoulder itself (the
+    # tightened cloth bridges the hollow between the neck and the shoulder there): pulled onto it and evened, by turns
+    raw = bvh_of([uni])
+    x0, x1, z0, held_gap = SASH_HELD
+    held = [(v, (1 - smoothstep(-v.co.x, x0, x1)) * smoothstep(v.co.z, z0, z0 + 0.02))
+            for row in grid for v in row[:-1] if v.co.x < 0]
+    held = [(v, w) for v, w in held if w > 0]
+    nbs = {}
+    for i, row in enumerate(grid):
+        for j in range(SASH_N):
+            nbs[row[j]] = [row[j - 1], row[(j + 1) % SASH_N]] + ([grid[i - 1][j]] if i else []) + (
+                [grid[i + 1][j]] if i < rows - 1 else [])
+    for _ in range(30):  # (12: a crease where the hold fades out)
+        for v, w in held:
+            loc, nrm, _, _ = raw.find_nearest(v.co, 0.08)
+            gap_ = SASH_GAP + (held_gap - SASH_GAP) * w
+            if loc is not None and (v.co - loc).dot(nrm) > gap_:
+                v.co = v.co.lerp(loc + nrm * gap_, w)
+        new = {v: v.co.lerp(sum((n.co for n in nbs[v]), Vector()) / len(nbs[v]), 0.5 * w) for v, w in held}
+        for v, co in new.items():
+            v.co = co
+        for v, w in held:  # nothing of the cloth through it
+            loc, nrm, _, _ = raw.find_nearest(v.co, 0.08)
+            gap_ = SASH_GAP + (held_gap - SASH_GAP) * w
+            if loc is not None and (v.co - loc).dot(nrm) < gap_:
+                v.co = loc + nrm * gap_
+    print('sash: %d vertices held on the shoulder' % len(held))
     # its edges for the cords that go in under it and the pencil by it: the last row lies towards his right and down
     # (sides[] point that way) - the lower edge
     SASH_EDGES.update(upper=[v.co.copy() for v in grid[0][:-1]], lower=[v.co.copy() for v in grid[-1][:-1]],
@@ -1347,9 +1373,10 @@ def build_epaulette(side):
         x, y = EP_R * math.cos(a), EP_R * math.sin(a)
         rim.append(L(x, y, U(x, y) + EP_THICK * 0.5))
     _, u = tube(bm, rim, EP_RIM_R, 12, 'bullion', uv_len=BULLION_UV_LEN * 3, cap=False); uvs.update(u)
-    # strap to the collar, from under the field, a button on its end: a stiff board - flat across, bent along its
-    # length in one smooth curve (a parabola) resting on the highest points of the cloth (and the sash) under it (laid
-    # on the cloth point by point it followed every fold and came out crumpled); top, bottom and side faces
+    # strap to the collar, from under the field: a padded galloon tongue, flat across, its end by the collar rounded,
+    # red piping round its sides and end, a button by the end, bound in gold cord where it comes out from under the
+    # rim (as the portrait's); along its length it lies on the cloth (and the sash) under it, evened - a stiff board
+    # over their highest points stood off the shoulder at its end, over the sash's edge
     x_end = sign * STRAP_X - C.x
     strap_len = abs(x_end / XS.x) if abs(XS.x) > 1e-3 else 0.1
 
@@ -1361,49 +1388,97 @@ def build_epaulette(side):
         if not over_collar(-strap_len - STRAP_SHORT):  # before it, 1 cm off the shoulder)
             break
         strap_len -= 0.002
-    top_rows, bot_rows = [], []
-    n_rows = 16
-    xs = [-EP_R * 0.6 - (strap_len - EP_R * 0.6) * i / n_rows for i in range(n_rows + 1)]
-    hs = []
-    for i, x in enumerate(xs):
-        hh = []
-        for y in np.linspace(-STRAP_W / 2, STRAP_W / 2, 7):
-            hit = FIELD_CLOTH.ray_cast(LS(x, y * (1 - 0.15 * i / n_rows), 0.0) + Z * 0.15, -Z, 0.4)[0]
-            if hit is not None:
-                hh.append((hit - C).dot(Z))
-        hs.append(max(hh) if hh else 0.0)
-    # the line a stiff band takes over them: their upper convex envelope (it bridges only hollows), smoothed, kept
-    # on them (a parabola through them stood 1.5 cm off the shoulder in its middle)
-    order = np.argsort(xs)
-    ex, eh = upper_hull([(xs[i], hs[i]) for i in order])
-    line = np.interp(xs, ex, eh)
-    for _ in range(4):
-        line[1:-1] = np.maximum((line[:-2] + line[1:-1] * 2 + line[2:]) / 4, np.array(hs[1:-1]))
-    line = np.maximum(line, hs)
-    gaps = line - np.array(hs)
-    print('strap %s: %.3f long, off the cloth %.4f..%.4f: %s' % (side, strap_len, gaps.min(), gaps.max(), ' '.join('%.0f' % (g * 1000) for g in gaps)))
-    for i in range(n_rows + 1):
-        f = i / n_rows
-        x = xs[i]
-        trow, brow = [], []
-        for y in (-STRAP_W / 2, STRAP_W / 2):
-            p = LS(x, y * (1 - 0.15 * f), float(line[i]) + STRAP_GAP)
-            b = bm.verts.new(p); t = bm.verts.new(p + Z * STRAP_T)
-            uvs[b] = uvs[t] = uv_in('strap', f, 0.5 + y / STRAP_W * 0.9)
-            brow.append(b); trow.append(t)
-        top_rows.append(trow); bot_rows.append(brow)
-    for r0, r1 in zip(top_rows, top_rows[1:]):
-        bm.faces.new((r0[0], r0[1], r1[1], r1[0]))
-    for r0, r1 in zip(bot_rows, bot_rows[1:]):
-        bm.faces.new((r1[0], r1[1], r0[1], r0[0]))
-    for k in (0, 1):  # the long sides
-        for i in range(n_rows):
-            q = (bot_rows[i][k], bot_rows[i + 1][k], top_rows[i + 1][k], top_rows[i][k])
-            bm.faces.new(q if k == 0 else q[::-1])
-    bm.faces.new((top_rows[-1][1], top_rows[-1][0], bot_rows[-1][0], bot_rows[-1][1]))
-    btn_at = (top_rows[-2][0].co + top_rows[-2][1].co) / 2
+    s0 = EP_R * 0.6
+    hw0 = STRAP_W / 2
+    hw = lambda d: hw0 * (1 - 0.15 * (d - s0) / (strap_len - s0))  # noqa: E731  (narrowing a little to the collar)
+    re = hw(strap_len) * STRAP_END                                 # the rounded end's radius
+    ds = [s0 + (strap_len - re - s0) * i / 20 for i in range(21)]   # along it, then round the end
+    ends = [(strap_len - re + re * math.sin(math.radians(a_)), math.cos(math.radians(a_))) for a_ in (20, 40, 60, 75, 88)]
+    # each row laid on what is under it, across as well (flat across and tilted with the field, it stood 2 mm off the
+    # shoulder at one edge and 7 at the other): its height and its slope across, fitted to the cloth there - on the
+    # sash where it is under most of the strap's width, else on the tunic (over the band's edge, which crosses under its
+    # end, it stood 1 cm off the tunic beyond it)
+    a_raw, k_raw = [], []
+    for d in ds:
+        hh, hu = [], []
+        for y in np.linspace(-hw(d), hw(d), 7):
+            hit = STRAP_CLOTH.ray_cast(LS(-d, y, 0.0) + Z * 0.15, -Z, 0.4)[0]
+            bare = STRAP_UNI.ray_cast(LS(-d, y, 0.0) + Z * 0.15, -Z, 0.4)[0]
+            if hit is not None and bare is not None:
+                hh.append((y, (hit - C).dot(Z))); hu.append((y, (bare - C).dot(Z)))
+        if not hh:
+            a_raw.append(a_raw[-1] if a_raw else 0.0); k_raw.append(k_raw[-1] if k_raw else 0.0)
+            continue
+        on_sash = sum(a_[1] - b_[1] > 0.003 for a_, b_ in zip(hh, hu))
+        pts = np.array(hh if on_sash * 2 > len(hh) else hu)
+        k_ = float(np.polyfit(pts[:, 0], pts[:, 1], 1)[0]) if len(pts) > 2 else 0.0
+        k_raw.append(k_); a_raw.append(float((pts[:, 1] - k_ * pts[:, 0]).max()))
+        if DEBUG_FRINGE:
+            print('  strap %s d %.3f on sash %d/%d: %s | %s' % (side, d, on_sash, len(hh), ' '.join('%.1f' % (1000 * h) for _, h in hh), ' '.join('%.1f' % (1000 * h) for _, h in hu)))
+    a_raw, k_raw = np.array(a_raw), np.array(k_raw)
+    line, slope = a_raw.copy(), k_raw.copy()
+    for _ in range(4):  # even along it, never into what is under it
+        line[1:-1] = (line[:-2] + line[1:-1] * 2 + line[2:]) / 4
+        slope[1:-1] = (slope[:-2] + slope[1:-1] * 2 + slope[2:]) / 4
+    line = np.maximum(line, a_raw)
+    surf = lambda d, y: float(np.interp(d, ds, line)) + float(np.interp(d, ds, slope)) * y + STRAP_GAP  # noqa: E731
+    print('strap %s: %.3f long, lifted over the cloth by evening it 0..%.1f mm, slope across %.2f..%.2f' % (
+        side, strap_len, 1000 * float((line - a_raw).max()), float(slope.min()), float(slope.max())))
+    cols = np.linspace(-1.0, 1.0, 7)
+    rows_ = [(d, hw(d)) for d in ds] + [(d, (hw(strap_len) - re) + re * c) for d, c in ends]  # (along, half-width)
+
+    def top_h(c):  # padded: a little rounded across
+        return STRAP_T * (0.7 + 0.3 * (1 - c * c))
+    tops, bots = [], []
+    for d, w in rows_:
+        tr, br = [], []
+        for c in cols:
+            p = LS(-d, w * c, surf(d, w * c))
+            b = bm.verts.new(p); t = bm.verts.new(p + Z * top_h(c))
+            uvs[b] = uvs[t] = uv_in('strap', 0.5 * d / strap_len, 0.40 + 0.03 * c)  # a plain gold band of the galloon
+            br.append(b); tr.append(t)
+        tops.append(tr); bots.append(br)
+    m = len(cols)
+    for r0, r1 in zip(tops, tops[1:]):
+        for k in range(m - 1):
+            bm.faces.new((r0[k], r0[k + 1], r1[k + 1], r1[k]))
+    for r0, r1 in zip(bots, bots[1:]):
+        for k in range(m - 1):
+            bm.faces.new((r1[k], r1[k + 1], r0[k + 1], r0[k]))
+    for r0, r1, b0, b1 in zip(tops, tops[1:], bots, bots[1:]):  # the long sides
+        bm.faces.new((b0[0], b1[0], r1[0], r0[0]))
+        bm.faces.new((r0[-1], r1[-1], b1[-1], b0[-1]))
+    for k in range(m - 1):  # across its rounded end, and under the field
+        bm.faces.new((tops[-1][k], tops[-1][k + 1], bots[-1][k + 1], bots[-1][k]))
+        bm.faces.new((bots[0][k], bots[0][k + 1], tops[0][k + 1], tops[0][k]))
+    # the piping: along one side from under the rim, round the end, back along the other
+    side_pts = lambda c: [LS(-d, (w + STRAP_PIPING * 0.4) * c, surf(d, w * c) + STRAP_T * 0.5)  # noqa: E731
+                          for d, w in rows_[:len(ds)] if d > EP_R * 0.8]
+    def end_pt(c, a_):
+        d = strap_len - re + (re + STRAP_PIPING * 0.4) * math.sin(math.radians(a_))
+        y = (hw(strap_len) - re + (re + STRAP_PIPING * 0.4) * math.cos(math.radians(a_))) * c
+        return LS(-d, y, surf(d, y) + STRAP_T * 0.5)
+    tip = [end_pt(c, a_) for c, aa in ((-1, range(0, 91, 15)), (1, range(90, -1, -15))) for a_ in aa]
+    pipe = side_pts(-1) + tip + side_pts(1)[::-1]
+    vs, u = tube(bm, catmull(pipe, 0.003), STRAP_PIPING, 8, 'strap', cap=True, cap0=True)
+    for v in vs:
+        u[v] = uv_in('strap', 0.5, 0.04)  # the galloon picture's red border
+    uvs.update(u)
+    # the binding: closed turns of cord round it just outside the rim
+    for k in range(STRAP_WRAPS):
+        d = EP_R + EP_RIM_R * 0.8 + STRAP_WRAP_R * (1 + 2.1 * k)
+        w, h = hw(d) + STRAP_PIPING + STRAP_WRAP_R * 0.6, STRAP_T * 0.5 + STRAP_WRAP_R * 0.8
+        h_low = STRAP_T * 0.5 + STRAP_GAP - STRAP_WRAP_R - 0.0005  # under it flat on the cloth (round, it went in)
+        loop = []
+        for j in range(25):
+            t_ = 2 * math.pi * j / 24
+            ct, st = math.cos(t_), math.sin(t_)
+            y = w * math.copysign(abs(ct) ** 0.4, ct)
+            loop.append(LS(-d, y, surf(d, y) + STRAP_T * 0.5 + (h if st > 0 else h_low) * math.copysign(abs(st) ** 0.4, st)))
+        _, u = tube(bm, loop, STRAP_WRAP_R, 8, 'cord', cap=False); uvs.update(u)
+    btn_at = LS(-(strap_len - re), 0.0, surf(strap_len - re, 0.0) + top_h(0.0))
     b2 = bmesh.new()
-    bmesh.ops.create_uvsphere(b2, u_segments=12, v_segments=6, radius=0.008)
+    bmesh.ops.create_uvsphere(b2, u_segments=12, v_segments=6, radius=STRAP_BUTTON)
     bmesh.ops.delete(b2, geom=[v for v in b2.verts if v.co.z < -1e-4], context='VERTS')
     for v in b2.verts:
         v.co.z *= 0.6
@@ -1605,7 +1680,7 @@ pencils = build_pencil(bvh_of([uni, O['Belt'], O['Buckle'], O['Buttons']]),
 CLOTH = bvh_of([uni, sash, loops] + [O[n] for n in ('Belt', 'Buckle', 'Buttons', 'Collar')])
 FRINGE_CLOTH, SASH_TOP = bvh_of([uni, loops] + [O[n] for n in ('Belt', 'Buckle', 'Buttons', 'Collar')]), bvh_of([sash], outer=True)
 FIELD_CLOTH = bvh_of([uni, sash, O['Collar']])
-STRAP_CLOTH = bvh_of([uni, sash])
+STRAP_CLOTH, STRAP_UNI = bvh_of([uni, sash]), bvh_of([uni])
 eps = [build_epaulette(s) for s in 'lr']
 
 rig.data.pose_position = 'POSE'

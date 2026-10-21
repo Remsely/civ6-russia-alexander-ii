@@ -37,6 +37,8 @@ JOINT_ROUNDS, JOINT_CLEAR = 12, 0.006   # Taubin rounds; the cloth at least this
 SLEEVE_MIN_R, ELBOW_PASSES = 0.05, 4    # the sleeve this far at least from the arm bones round the elbow; rounds
 UNTANGLE_TRIES, UNTANGLE_RINGS = 6, 4      # rounds of smoothing round the sheet's self-crossings; rings of neighbours
 SKIRT_BACK_ROUNDS = 30                  # smooth_skirt_back: Taubin rounds over the skirt's back
+SKIRT_FRONT = (0.05, 0.10, 60)          # smooth_skirt_front: within the first of the closure fully, fading out by the
+                                        # second; rounds of smoothing the cloth's move off the skinned sheet
 TORSO_ROUNDS = 40                       # smooth_torso: Taubin rounds over the tunic's body above the belt
 SHOULDER_FIT_OFF = 0.008               # fit_shoulders: the tunic this far off the body over the shoulders' top ...
 SHOULDER_FIT_FROM = 0.03                # ... fading in over this much beyond the collar's foot
@@ -371,7 +373,8 @@ def untangle():
         for i, j in t.overlap(t):
             if i < j and not set(faces[i]) & set(faces[j]):
                 bad.update(faces[i]); bad.update(faces[j])
-        print('untangle: %d vertices in crossing faces' % len(bad))
+        print('untangle: %d vertices in crossing faces%s' % (len(bad), (' round (%.3f %.3f %.3f)' % tuple(co[sorted(bad)].mean(0)))
+                                                              if 0 < len(bad) < 100 else ''))
         if not bad:
             break
         zone = set(bad)
@@ -386,6 +389,24 @@ def untangle():
     me.update()
 
 
+def skinned_co(ob):
+    """ob's vertices as its armature alone puts them (a copy without the cloth: switching the cloth off would drop
+    its simulated frames)."""
+    tmp = ob.copy()
+    for m in list(tmp.modifiers):
+        if m.type != 'ARMATURE':
+            tmp.modifiers.remove(m)
+    sc.collection.objects.link(tmp)
+    dg = bpy.context.evaluated_depsgraph_get()
+    e = tmp.evaluated_get(dg)
+    me = e.to_mesh()
+    co = np.array([v.co[:] for v in me.vertices])
+    e.to_mesh_clear()
+    bpy.data.objects.remove(tmp)
+    return co
+
+
+UNI_SKINNED = skinned_co(uni)
 skinned = [o for o in sc.objects if o.type == 'MESH' and any(m.type == 'ARMATURE' for m in o.modifiers)]
 for o in skinned:
     bake(o)
@@ -487,6 +508,51 @@ def smooth_skirt_back():
 
 
 smooth_skirt_back()
+
+
+def smooth_skirt_front():
+    """The skirt's front by the closure, from under the belt to the hem: the closure's strip, held harder than the
+    skirt beside it, came out of the simulation with creases running down along it, bunched up at the hem. There the
+    cloth's move off the sheet as the armature alone puts it is smoothed (SKIRT_FRONT), and added back to that sheet:
+    the creases go, the closure's step and the skirt's fall stay. Then kept JOINT_CLEAR off the body."""
+    from mathutils.bvhtree import BVHTree
+    me = uni.data
+    co = np.array([v.co[:] for v in me.vertices])
+    if len(co) != len(UNI_SKINNED):
+        print('skirt front: the skinned sheet does not match, left as it is')
+        return
+    nb = [[] for _ in range(len(co))]
+    for e in me.edges:
+        a, b = e.vertices
+        nb[a].append(b); nb[b].append(a)
+    near, far, rounds = SKIRT_FRONT
+    low = P['HEM_Z'] - 0.02
+    top = P['BELT_ZC'] - P['BELT_H'] / 2 - 0.01
+    cy = P['BELT_C'][1]
+    arm = arm_w(uni)
+    k = np.array([(1 - smoothstep(abs(c[0] - P['FLAP_X']), near, far)) * (1 - smoothstep(c[2], top - 0.03, top))
+                  * smoothstep(c[2], low - 0.03, low) * (1 - smoothstep(c[1] - cy, -0.04, 0.0))
+                  * (1 - smoothstep(a, 0.15, 0.5)) for c, a in zip(co, arm)])
+    zone = np.where(k > 0)[0]
+    d = co - UNI_SKINNED
+    for _ in range(rounds):
+        lap = np.array([d[nb[i]].mean(0) - d[i] if nb[i] else np.zeros(3) for i in zone])
+        d[zone] += lap * (0.5 * k[zone])[:, None]
+    co[zone] = UNI_SKINNED[zone] + d[zone]
+    tree = BVHTree.FromPolygons([v.co.copy() for v in h.data.vertices], [tuple(p.vertices) for p in h.data.polygons])
+    pushed = 0
+    for i in zone:
+        q = Vector(co[i])
+        loc, nrm, _, _ = tree.find_nearest(q, 0.05)
+        if loc is not None and (q - loc).dot(nrm) < JOINT_CLEAR:
+            co[i] = loc + nrm * JOINT_CLEAR
+            pushed += 1
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel())
+    me.update()
+    print('skirt front: %d cloth vertices evened, %d kept off the body' % (len(zone), pushed))
+
+
+smooth_skirt_front()
 
 
 def fit_shoulders():
