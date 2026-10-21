@@ -55,6 +55,10 @@ NECK_IN, NECK_EASE, NECK_ROUNDS = 0.006, 0.03, 12  # the head inside the collar'
 UNI_FOOT_ONLY = 0.012                   # uniform_in_collar(foot_only): up to this over the foot (higher, the settled
                                         # stand pulled in onto the neck at the nape)
 UNI_FOOT_TRIES = 8                      # uniform_in_collar: rays 2 mm apart up from under the foot
+UNI_OPENING_DROP = (0.008, 0.25, 0.40)  # uniform_under_shirt: in the collar's opening (to the first angle from the
+                                        # front, faded out by the second, rad) its top this much lower still - the
+                                        # shirt there stands out at the collar's radius, ~7 mm off the neck, and from
+                                        # above its ragged top and red piping showed in the gap behind the white
 NECK_CLEAR = 0.002                      # uniform_off_neck: the tunic's inside at least this off the neck
 NECK_OVER = 0.004                       # ... or this far up over its top edge
 NECK_OUT = 0.003                        # ... or (the beard and whiskers, nearer its outside) this far out of it
@@ -176,7 +180,7 @@ def pin_weights():
             part_v[i] = max(part_v[i], pt)
     bones = {b.name: (b.head_local.copy(), b.tail_local.copy()) for b in rig.data.bones}
     w = np.zeros(len(me.vertices))
-    zc, top = P['BELT_ZC'], P['STAND_TOP_FRONT']
+    zc = P['BELT_ZC']
     for v in me.vertices:
         c = v.co
         g = {names[x.group]: x.weight for x in v.groups}
@@ -410,7 +414,7 @@ def smooth_torso():
         for i, v in enumerate(btn.data.vertices):
             kd.insert(btn.matrix_world @ v.co, i)
     kd.balance()
-    top = P['STAND_TOP_FRONT'] - 0.06
+    top = P['STAND_TOP_BACK'] - 0.06
     low = P['BELT_ZC'] + P['BELT_H'] / 2 + 0.01
     arm = arm_w(uni)
     k = np.zeros(len(co))
@@ -803,16 +807,19 @@ def uniform_under_shirt():
     co = np.array([v.co[:] for v in me.vertices])
     d = co[:, :2] - ax
     k = np.floor((np.arctan2(d[:, 0], -d[:, 1]) + np.pi) / (2 * np.pi) * nb).astype(int) % nb
-    lim = cap[k]
+    a, a0, a1 = UNI_OPENING_DROP
+    front = np.abs(np.arctan2(d[:, 0], -d[:, 1]))
+    lim = cap[k] - a * (1 - np.clip((front - a0) / (a1 - a0), 0, 1))
     over = ~np.isnan(lim) & (np.hypot(d[:, 0], d[:, 1]) < 0.12) & (co[:, 2] > lim)
     co[over, 2] = lim[over]
     me.vertices.foreach_set('co', co.astype(np.float32).ravel()); me.update()
     print('tunic under the shirt collar: %d vertices lowered' % int(over.sum()))
 
 
-uniform_in_collar(foot_only=True)  # again by the collar's foot on the settled cloth: settled, a crease over the
-# shoulder stood up through the foot at his right in a black knob
-uniform_under_shirt()
+UNI_CAP = uniform_in_collar(foot_only=True) or UNI_CAP  # again by the collar's foot on the settled cloth: settled,
+# a crease over the shoulder stood up through the foot at his right in a black knob
+uniform_under_shirt()  # (to the shirt as it stands now: by the one before the stance, the tunic's top stood over the
+# shirt in the opening in red and black jags)
 h.hide_set(True); h.hide_render = True
 h.modifiers.remove(h.modifiers['ColliderMask'])
 h.vertex_groups.remove(h.vertex_groups['collider'])

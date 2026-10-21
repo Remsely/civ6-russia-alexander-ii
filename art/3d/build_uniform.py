@@ -49,11 +49,11 @@ BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-hori
 # Heights from alexander_ii_full.png scaled to the 2.07 m MPFB figure (feet 0, crown 2.07).
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs level round the neck under the jaw. Set from the chin once the head is on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.031, 0.0  # the collar's top level all round, as a shirt collar's band: no
-                                  # rise up the nape and no drop to the front (level round the back and sides and
-                                  # running 3 cm down to the front corners, it read as tilted forward; rising 2.5 cm up
-                                  # the nape, as standing up at the back) - the white shirt's edge over it ~2 cm under
-                                  # the chin, as in the portrait (head_shape.collar_top)
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.041, 0.010  # the collar's top level round the back and sides, as a shirt
+                                  # collar's band, 3.1 cm under the chin (the white shirt's edge over it ~2 cm under
+                                  # it, as in the portrait); only by the opening its corners 1 cm lower (no rise up the
+                                  # nape: rising 2.5 cm up it, as standing up at the back; running 3 cm down over the
+                                  # whole front, as tilted forward) - head_shape.collar_top
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
 STAND_OFF = 0.002                 # off the neck at the top: its narrowest outline over NECK_OUTLINE_ZS (the chin widens
                                   # the top) - the portrait's collar is narrow at the top, close round the neck (at 1.6 cm
@@ -1005,7 +1005,8 @@ print('uniform verts', len(uni.data.vertices), 'faces', len(uni.data.polygons))
 # Measurements the details (build_details.py) are fitted to.
 sc['uniform'] = dict(WAIST_Z=WAIST_Z, HEM_Z=HEM_Z, SLEEVE_T=SLEEVE_T, CUFF_T=CUFF_T, FLAP_X=FLAP_X, BOOT_TOP=BOOT_TOP,
                      ANKLE_Z=ANKLE_Z, STAND_TOP_FRONT=STAND_TOP_FRONT, STAND_TOP_BACK=STAND_TOP_BACK,
-                     COLLAR_DROP_SIN=head_shape.COLLAR_DROP_SIN, STAND_LEAN=STAND_LEAN,
+                     COLLAR_DROP_SIN=head_shape.COLLAR_DROP_SIN,
+                     COLLAR_CORNER_SIN=head_shape.COLLAR_CORNER_SIN, STAND_LEAN=STAND_LEAN,
                      NECK_AXIS=tuple(NECK_AXIS), **BELT)
 print('body under verts', len(under.data.vertices))
 bpy.ops.outliner.orphans_purge(do_recursive=True)

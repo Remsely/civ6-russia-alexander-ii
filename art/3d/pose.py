@@ -26,8 +26,10 @@ LID_DROP = {'l': 18.0, 'r': 4.0}   # degrees the upper lids are let down from th
                                    # taller (painted on the side turned to the viewer) - at 10 deg it still showed a
                                    # third more of the eye (seen square to the face: 50 px mean height against 40; at
                                    # 18 deg, 41 against 40)
-EYE_GAZE = {'l': (4.2, 1.7), 'r': (-1.9, -6.4)}  # each eyeball turned from the face's forward (degrees towards his
-                                   # left, up): seen square to the face, both irises alike in their openings
+EYE_GAZE = {'l': (2.6, 1.7), 'r': (-0.5, -6.4)}  # each eyeball turned from the face's forward (degrees towards his
+                                   # left, up): both irises alike in their openings seen from ~1 m in front of
+                                   # the face (parallel, alike seen square to it from afar, they looked a little
+                                   # apart from close by: converged ~1.5 deg each)
 CLAVICLE_DROP = {'l': 7.0, 'r': 7.0}  # degrees the shoulders are let down, both alike: the tunic's top from the collar's
                                    # foot to over the shoulder joint falls ~15 deg, as the portrait's straps and fields
                                    # (1.77 -> 1.73 m) - square shoulders (let down 11-12 deg over a 21 deg trapezius,

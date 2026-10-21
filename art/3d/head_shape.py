@@ -404,19 +404,21 @@ SHOULDER_Z, SHOULDER_K = 1.74, 0.15  # trapezius above SHOULDER_Z is pulled down
 SHOULDER_R0, SHOULDER_R1 = 0.12, 0.30  # ... most at the neck, fading out towards the shoulder joints (keeps a slope)
 
 
-COLLAR_DROP_SIN = 0.41          # the collar's top: level round the back and sides, running down to the front corners
-                                 # (sin of their angle from the front, ~0.42 rad) when they are set lower - straight
-                                 # across them as seen from the front (build_uniform.py sets both alike: level all round)
+COLLAR_DROP_SIN = 0.6           # the collar's top: level round the back and sides, from here (sin of the angle from
+COLLAR_CORNER_SIN = 0.28         # the front) curving down to the front corners at the opening (here): as the
+                                 # portrait's, its edges at the opening a little lower (run straight down from the
+                                 # sides over the whole front, it read as tilted forward; level to the corners, as
+                                 # set straight up)
 
 
 def collar_top(dx, dy, top_front, top_side):
-    """The collar's top over the direction (dx, dy) round the neck: top_side round the back and at the sides, falling
-    to top_front at the front corners (straight down as seen from the front: linear in the sideways reach)."""
+    """The collar's top over the direction (dx, dy) round the neck: top_side round the back and at the sides, curving
+    down to top_front at the front corners (COLLAR_DROP_SIN to COLLAR_CORNER_SIN, eased in and out)."""
     l = math.hypot(dx, dy) or 1e-9
     if dy > 0:  # the back half
         return top_side
-    u = max(0.0, (abs(dx) / l - COLLAR_DROP_SIN) / (1 - COLLAR_DROP_SIN))
-    return top_front + (top_side - top_front) * u
+    u = min(1.0, max(0.0, (abs(dx) / l - COLLAR_CORNER_SIN) / (COLLAR_DROP_SIN - COLLAR_CORNER_SIN)))
+    return top_front + (top_side - top_front) * u * u * (3 - 2 * u)
 
 
 def neck_radius(dx, dy):
