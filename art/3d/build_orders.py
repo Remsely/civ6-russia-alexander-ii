@@ -765,9 +765,14 @@ def build_orders():
     col = obj('Collar')
     me = col.data
     front = min(v.co.y for v in me.vertices)
-    edge = [v.co for v in me.vertices if v.co.y < front + 0.012]
-    x = sum(p.x for p in edge) / len(edge) + 0.006
-    z_open = min(v.co.z for v in me.vertices if abs(v.co.x - x) < 0.05 and v.co.y < front + 0.03)  # the halves' corners
+    edge = [v.co for v in me.vertices if v.co.y < front + 0.03]
+    x = sum(p.x for p in edge) / len(edge)
+    z_open = min(p.z for p in edge if abs(p.x - x) < 0.05)  # the halves' corners
+    # across the middle of the opening: the widest gap between the halves' vertices over their corners (the mean of
+    # the front's vertices lay 1.2 cm to his right - the halves come forward unevenly with the turned neck)
+    xs = sorted(p.x for p in edge if z_open < p.z < z_open + 0.04 and abs(p.x - x) < 0.05)
+    x = max(zip(xs, xs[1:]), key=lambda g: g[1] - g[0])
+    x = (x[0] + x[1]) / 2
     z_open += col.get('dip', 0.0)  # ... a little over their foot (the portrait's cross hangs between them)
     cs = NECK_CROWN_S
     notch = 0.74  # the top arm's notch, where the crown stands (MALTESE: its points at 1.0, the notch at 0.72)
