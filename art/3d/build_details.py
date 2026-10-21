@@ -58,10 +58,12 @@ COLLAR_THICK = 0.0035             # (at 4 mm and no rolled edge its top read as 
 STAND_ROWS, STAND_COLS = 7, 13    # the dark stand between the halves: rows up it, columns across
 SHIRT_SHOW = 0.0145                # the shirt collar's edge this far over the bottom of its band (~6 mm over the red
                                   # collar's top: the portrait's white line is 5-8 px)
-SHIRT_IN = 0.013                  # the white shirt collar this far inside the tunic collar's outside: inside the red
-                                  # collar's rolled top edge and its thickness (the neck, built after it, fills it), its
-                                  # edge a white line along the collar's top, as in the portrait (4.5 mm in, it ran
-                                  # through the rolled edge and showed over it in ragged white flecks)
+SHIRT_IN = 0.006                  # the white shirt collar this far inside the tunic collar's outside: just inside the
+                                  # red collar's rolled top edge (COLLAR_ROLL_IN) and the tunic's own inside (the neck,
+                                  # built after it, fills it), its edge a white line along the collar's top, as in the
+                                  # portrait (4.5 mm in, it ran through the rolled edge and showed over it in ragged
+                                  # white flecks; 13 mm in, the neck in it was ~7 mm thinner than the body's: a stalk)
+COLLAR_ROLL_IN = 0.003            # the rolled top edge turns in over the tunic collar's edge to this far inside it
 # Buttons down the closure, on the wearer's right of the piped edge; some hide under the sash.
 # Measured on alexander_ii_full.png (rows of the 'ref' view: z ~ (1510 - row) * 1.397 mm): on his left of the piping
 # the pencil's crook comes from a button at row 385 and the last one over the belt is at 540; on his right the one
@@ -510,7 +512,7 @@ def build_collar(nu=64, nv=7):
         rings.append(ring)
     # the piped top edge rolls over the tunic collar's edge to its inside
     rings.append([Vector((c0.x, c0.y, p.z + 0.003)) + (Vector((p.x, p.y, 0)) - c0.to_3d()).normalized()
-                  * ((p.xy - c0).length - COLLAR_LIFT - 0.004) for p in rings[-1]])
+                  * ((p.xy - c0).length - COLLAR_LIFT - COLLAR_ROLL_IN) for p in rings[-1]])
     print('collar: bottom z %.3f..%.3f, top z %.3f..%.3f' % (min(bots), max(bots), min(tops), max(tops)))
     bm, grid = loft(rings, closed=False)
     outward_normals(bm, lambda p: Vector((c0.x, c0.y, p.z)))

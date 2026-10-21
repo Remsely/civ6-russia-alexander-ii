@@ -82,7 +82,7 @@ UNDER_JAW = (0.15, 0.5, 0.012)    # hair_detail: surfaces facing down (normal z 
 UNDER_JAW_SHADE = 1.0             # ... to no brighter than the skin's (hair's) own colour: the picture's white shirt
                                   # projected there taken out, no shadow painted in (the lighting shades it)
 NECK_INSET, NECK_SEGS, NECK_RINGS = 0.004, 48, 32  # top ring this far inside the cut's outline; segments, rings
-NECK_COLLAR_GAP = 0.004           # inside the collar the neck fills it to this far inside it (inside the shirt
+NECK_COLLAR_GAP = 0.001           # inside the collar the neck fills it to this far inside it (inside the shirt
                                   # collar, the innermost layer), as a shirt's collar sits round the neck (the collar's
                                   # ellipse alone stood 2-3 cm inside it at the back and the sides: a thin neck in a broad
                                   # ring - a horse collar); not at the front (the dark stand fills the opening there, and

@@ -44,16 +44,18 @@ SHOULDER_FIT_Z = (1.57, 1.63)           # ... above the armpits
 SHOULDER_FIT_NZ = (0.0, 0.3)            # ... where the body faces up (fading out down the arm's outside)
 SHOULDER_FIT_ROUNDS = 8                 # ... the move smoothed out into the cloth round
 TORSO_KEEP = (0.012, 0.03)              # ... none within the first of a button or the closure's edge, fully past the second
-UNI_IN, UNI_IN_BELOW, UNI_IN_SHIRT = 0.003, 0.004, 0.003  # uniform_in_collar: inside the collar by; from under
-                                        # its foot; up to over the shirt collar's lower edge
+UNI_IN, UNI_IN_BELOW, UNI_IN_SHIRT = 0.003, 0.004, -0.001  # uniform_in_collar: inside the collar by; from under
+                                        # its foot; up to just under the shirt collar's lower edge (the shirt lies as
+                                        # far out as the tunic's inside: up over its edge, the tunic went through it)
 COLLIDE = dict(distance_min=0.004, self_distance_min=0.003, collision_quality=4)
 LEADER_CM, LEADER_CAMERA = 150.0, (320.0, 0.0, 137.741)  # the export's height and the leader camera (leader space, cm)
-NECK_IN, NECK_EASE, NECK_ROUNDS = 0.008, 0.03, 12
+NECK_IN, NECK_EASE, NECK_ROUNDS = 0.006, 0.03, 12  # the head inside the collar's inner side by this (the shirt
+                                        # collar lies between; at 8 mm it pulled the neck in off the shirt); eased out
+                                        # over this much above its top edge; smoothing rounds
 NECK_CLEAR = 0.002                      # uniform_off_neck: the tunic's inside at least this off the neck
 NECK_OVER = 0.004                       # ... or this far up over its top edge
 NECK_OUT = 0.003                        # ... or (the beard and whiskers, nearer its outside) this far out of it
-NECK_UP_DEPTH = (0.012, 0.025)          # from under the edge: up only down to the first, in only from the second  # the head inside the collar's inner side by this (the shirt collar
-                                        # lies between); eased out over this much above its top edge; smoothing rounds
+NECK_UP_DEPTH = (0.012, 0.025)          # from under the edge: up only down to the first, in only from the second
 
 sc = bpy.context.scene
 rig, h, uni = bpy.data.objects['HumanRig'], bpy.data.objects['Human'], bpy.data.objects['Uniform']
@@ -589,6 +591,9 @@ def uniform_in_collar():
     ob, sb = bins(O), bins(S_)
     bot = np.array([O[ob == k, 2].min() if (ob == k).any() else np.nan for k in range(nb)])
     s_bot = np.array([S_[sb == k, 2].min() if (sb == k).any() else np.nan for k in range(nb)])
+    while np.isnan(s_bot).any() and not np.isnan(s_bot).all():  # bins between its vertices (fewer than the bins: the
+        # tunic there was left up through the shirt) from their neighbours
+        s_bot = np.where(np.isnan(s_bot), np.fmin(np.roll(s_bot, 1), np.roll(s_bot, -1)), s_bot)
     me = uni.data
     co = np.array([v.co[:] for v in me.vertices])
     ub = bins(co)
@@ -615,9 +620,10 @@ def uniform_in_collar():
     me.vertices.foreach_set('co', co.astype(np.float32).ravel())
     me.update()
     print('tunic stand collar: %d vertices taken in under the collar' % moved)
+    return ax, s_bot + UNI_IN_SHIRT
 
 
-uniform_in_collar()
+UNI_CAP = uniform_in_collar()
 activate(rig)
 bpy.ops.object.mode_set(mode='POSE')
 bpy.ops.pose.select_all(action='SELECT')
@@ -788,6 +794,27 @@ thick.material_offset = thick.material_offset_rim = 1
 activate(uni)
 bpy.ops.object.modifier_move_to_index(modifier='Thick', index=0)
 bpy.ops.object.modifier_apply(modifier='Thick')
+
+
+def uniform_under_shirt():
+    """The tunic stand's thickness kept under the shirt collar too: its top, flattened under it (uniform_in_collar),
+    faces down there, and the thickness laid inwards along that went up through the shirt in black jags."""
+    if UNI_CAP is None:
+        return
+    ax, cap = UNI_CAP
+    nb = len(cap)
+    me = uni.data
+    co = np.array([v.co[:] for v in me.vertices])
+    d = co[:, :2] - ax
+    k = np.floor((np.arctan2(d[:, 0], -d[:, 1]) + np.pi) / (2 * np.pi) * nb).astype(int) % nb
+    lim = cap[k]
+    over = ~np.isnan(lim) & (np.hypot(d[:, 0], d[:, 1]) < 0.12) & (co[:, 2] > lim)
+    co[over, 2] = lim[over]
+    me.vertices.foreach_set('co', co.astype(np.float32).ravel()); me.update()
+    print('tunic under the shirt collar: %d vertices lowered' % int(over.sum()))
+
+
+uniform_under_shirt()
 h.hide_set(True); h.hide_render = True
 h.modifiers.remove(h.modifiers['ColliderMask'])
 h.vertex_groups.remove(h.vertex_groups['collider'])
