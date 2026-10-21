@@ -899,10 +899,12 @@ def build_orders():
     # one straight above the other on the chest (the same x: cast at the same column of the portrait, the lower one
     # landed further round the chest's turn and the pair ran diagonally), each on the cloth's turn under it, a little
     # further towards the viewer
-    px = min(cols)
-    hits = [ref_hit(NO_SASH, px, py)[0] for _, py, _ in STARS]
+    # (each cast at its own column, where it meets the cloth: the line of sight is level, so its height is the
+    # portrait's either way; cast at the leftmost, the lower one's missed the cloth)
+    hits = [ref_hit(NO_SASH, c, py)[0] for c, (_, py, _) in zip(cols, STARS)]
     x = STAR_X
-    print('stars: the column of the portrait lands at x %.3f, the badge at %.3f' % (sum(p.x for p in hits) / len(hits), badge_x))
+    print('stars: the column of the portrait lands at x %.3f, the badge at %.3f' % (
+        sum(p.x for p in hits) / len(hits), badge_x))
 
     def placed(xs, z, r):  # on the cloth's turn under it, a little further towards the viewer, down onto the cloth
         o, _, _, Nc = seat(xs, z, r * 0.8, r * 0.8, NO_SASH, STAR_LIFT)

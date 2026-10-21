@@ -403,8 +403,8 @@ SHOULDER_R0, SHOULDER_R1 = 0.12, 0.30  # ... most at the neck, fading out toward
 
 
 COLLAR_DROP_SIN = 0.41          # the collar's top: level round the back and sides, running down to the front corners
-                                 # (sin of their angle from the front, ~0.42 rad) - straight across them as the
-                                 # portrait's halves' top edges, seen from the front
+                                 # (sin of their angle from the front, ~0.42 rad) when they are set lower - straight
+                                 # across them as seen from the front (build_uniform.py sets both alike: level all round)
 
 
 def collar_top(dx, dy, top_front, top_side):

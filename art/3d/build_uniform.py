@@ -48,18 +48,20 @@ BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-hori
 
 # Heights from alexander_ii_full.png scaled to the 2.07 m MPFB figure (feet 0, crown 2.07).
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
-# over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
-# on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.048, 0.032  # in the portrait the collar's top is level round the back and
-                                  # sides (the white shirt's edge over it ~1.6 cm under the chin) and runs straight
-                                  # down to the halves' front corners, ~3 cm lower (px 222-228 in the 'ref' view
-                                  # against the sides' 203): the top of a shirt's collar, tilted to the front
-                                  # (head_shape.collar_top). (Level at the front, rising 2.5 cm up the nape, it read
-                                  # as untilted and standing up at the back.)
+# over it): its top runs level round the neck under the jaw. Set from the chin once the head is on (shape_body).
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.02, 0.0  # the collar's top level all round, as a shirt collar's band: no
+                                  # rise up the nape and no drop to the front (level round the back and sides and
+                                  # running 3 cm down to the front corners, it read as tilted forward; rising 2.5 cm up
+                                  # the nape, as standing up at the back) - the white shirt's edge over it ~2 cm under
+                                  # the chin, as in the portrait (head_shape.collar_top)
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
-STAND_OFF = 0.016                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top) -
-                                  # the portrait's collar stands off the neck, ~17 cm across at the top (6 mm: a tube
-                                  # round the neck, a third narrower than the portrait's)
+STAND_OFF = 0.002                 # off the neck at the top: its narrowest outline over NECK_OUTLINE_ZS (the chin widens
+                                  # the top) - the portrait's collar is narrow at the top, close round the neck (at 1.6 cm
+                                  # it was ~20% wider there than the portrait's; the neck itself, wider than this
+                                  # outline, now sets most of the top's width) ...
+STAND_LEAN = 0.3                  # ... and wider down to its foot by this much a unit of height: its walls lean out to the
+                                  # sides (~17 deg), a cone as the portrait's (its outline 110 px across at the top, 145 at
+                                  # the foot in the 'ref' view); upright, it read as a straight pipe round the neck
 NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
 WAIST_Z = 1.325                   # belt line (its centre 3 cm below: 1.295 in the portrait): the torso part of the tunic ends just below, the skirt starts just above
 BELT_H, BELT_N = 0.058, 96        # belt over the waist seam (WAIST_Z - 0.03): height; directions of its profile
@@ -494,8 +496,8 @@ def fit_neckline(bm):
 
 
 def stand_collar(bm):
-    """Above the shoulders the tunic stands up as a collar: a smooth tube STAND_OFF round the neck, never inside the
-    body where the shoulders rise into it."""
+    """Above the shoulders the tunic stands up as a collar: a smooth cone STAND_OFF round the neck at the top, widening
+    down (STAND_LEAN), never inside the body where the shoulders rise into it."""
     for v in bm.verts:
         w = smoothstep(v.co.z, 1.70, 1.75)
         d = v.co.xy - NECK_AXIS
@@ -503,7 +505,8 @@ def stand_collar(bm):
             continue
         dd = Vector((d.x, d.y, 0.0)).normalized()
         hit = BODY_BVH.ray_cast(Vector((NECK_AXIS.x, NECK_AXIS.y, v.co.z)), dd, 0.25)  # neck or shoulder, from inside
-        target = max(NECK_RS[neck_sector(d)] + STAND_OFF, (hit[3] + SKIN_GAP) if hit[0] else 0.0)
+        lean = STAND_LEAN * max(0.0, stand_top(v.co) - v.co.z)  # the cone out to its foot
+        target = max(NECK_RS[neck_sector(d)] + STAND_OFF + lean, (hit[3] + SKIN_GAP) if hit[0] else 0.0)
         v.co.xy = NECK_AXIS + d.normalized() * (d.length + (target - d.length) * w)
     # a straight top edge: the ring under it is spread evenly between the edge and the cloth below
     edge = [v for v in bm.verts if v.is_boundary and v.co.z > 1.70]
@@ -996,7 +999,7 @@ print('uniform verts', len(uni.data.vertices), 'faces', len(uni.data.polygons))
 # Measurements the details (build_details.py) are fitted to.
 sc['uniform'] = dict(WAIST_Z=WAIST_Z, HEM_Z=HEM_Z, SLEEVE_T=SLEEVE_T, CUFF_T=CUFF_T, FLAP_X=FLAP_X, BOOT_TOP=BOOT_TOP,
                      ANKLE_Z=ANKLE_Z, STAND_TOP_FRONT=STAND_TOP_FRONT, STAND_TOP_BACK=STAND_TOP_BACK,
-                     COLLAR_DROP_SIN=head_shape.COLLAR_DROP_SIN,
+                     COLLAR_DROP_SIN=head_shape.COLLAR_DROP_SIN, STAND_LEAN=STAND_LEAN,
                      NECK_AXIS=tuple(NECK_AXIS), **BELT)
 print('body under verts', len(under.data.vertices))
 bpy.ops.outliner.orphans_purge(do_recursive=True)

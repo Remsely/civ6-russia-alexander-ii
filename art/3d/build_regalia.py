@@ -76,15 +76,15 @@ FRINGE_TILT = (22.0, 6.0, 4.0)   # degrees off the upright at the outer end, at 
                                  # below level they stood out like a sunburst; hanging nearly straight, a narrow tube)
 FRINGE_TILT_MAX = 36.0           # ... out to this at most to clear what is under it (then shortened)
 FRINGE_ENDS_TILT = 28.0          # ... but at the front and back (over the chest and the shoulder blade) out to this at
-                                 # most, clearing them by curling further out over the rim instead: out to 36 deg the
-                                 # bell's ends splayed up, its strands there standing out from the rest
+                                 # most: out to 36 deg the bell's ends splayed up, its strands there standing out from
+                                 # the rest. Past that a strand lies on what is under it, hanging on down along it
+                                 # (drape(); curled out over the rim first to clear it, the ends stood up over the
+                                 # chest and the shoulder blade in a lifted lip)
 FRINGE_TILT_SPREAD = 0.4         # ... its neighbours tilted as far, less this many degrees a degree round the rim
 FRINGE_START, FRINGE_BEND = 40.0, 0.035  # ... coming out from under the rim this far off the upright, turning down to it over this
                                  # (at 55 the strands came out level over the tilted field: the fringe splayed up)
-FRINGE_KNEE_SPREAD = 0.0005      # ... its neighbours curled as far, less this (m) a degree round the rim
-FRINGE_KNEE = 0.03               # ... or curled out over the rim by up to this first (see course())
-FRINGE_MIN_LEN = 0.03            # a strand that clears less than this is left out
-FRINGE_SAMPLES, FRINGE_SMOOTH = 14, 6  # points down a strand checked; rounds of evening the tilts and lengths
+DRAPE_ROUNDS = 12                # drape(): rounds of pushing a strand out and evening it
+FRINGE_SAMPLES, FRINGE_SMOOTH = 14, 6  # points down a strand checked; rounds of evening the tilts
 FRINGE_CLEAR = 0.002             # a strand's surface off the cloth (and the sash, the cords) under it
 FRINGE_STEP = 0.006              # path sampling along a strand (straight: few rings)
 FRINGE_TIP = 0.32                # the bright wire end in each strand's rounded tip (x the radius)
@@ -1453,6 +1453,28 @@ def build_epaulette(side):
     def gap(q):  # the strand's surface at q off what is under it
         return under(q)[0] - FRINGE_R - FRINGE_CLEAR
 
+    def drape(pts, push):
+        """The strand lying on what is under it where it would go into it (FRINGE_CLEAR off it): its points pushed
+        out and evened along it by turns, its steps kept - one smooth bend (pushed out point by point, the strands
+        over the cords came out kinked and crossing). Pushed out along its own push only (straight out from the field):
+        along the normals of the cords under them, they were pushed aside across their neighbours."""
+        step = (pts[1] - pts[0]).length
+
+        def out_of(q):
+            h, loc, nrm = under(q)
+            g = h - FRINGE_R - FRINGE_CLEAR
+            if loc is None or g >= 0:
+                return q
+            d = push if nrm.dot(push) > 0.6 else (push + nrm).normalized()  # (along the surface, the push flung
+            return q - d * (g / max(nrm.dot(d), 0.6))                          # the end strands out in a hook)
+        out = [p.copy() for p in pts]
+        for _ in range(DRAPE_ROUNDS):
+            out = [out[0]] + [out_of(q) for q in out[1:]]
+            out = [out[0]] + [out[i].lerp((out[i - 1] + out[i + 1]) / 2, 0.5) for i in range(1, len(out) - 1)] + [out[-1]]
+            for i in range(1, len(out)):  # its length kept
+                out[i] = out[i - 1] + (out[i] - out[i - 1]).normalized() * step
+        return [out[0]] + [out_of(out_of(q)) for q in out[1:]]  # and nowhere into what is under it
+
     def line(start, push, t, ln):
         """A strand's line from start, ns steps: out from under the rim FRINGE_START off the upright, turning down at
         an even rate over FRINGE_BEND of its length to its own tilt t, straight on from there - every strand bent
@@ -1491,70 +1513,42 @@ def build_epaulette(side):
         if nb is not None and Vector((nb.x, nb.y, 0.0)).length > 0.2:
             push = (flat + Vector((nb.x, nb.y, 0.0)).normalized()).normalized()
         # straight and stiff, as the portrait's: a bell of rods. Tilted off the upright at least by its own
-        # (FRINGE_TILT) and as far as it must to clear what is under it, up to FRINGE_TILT_MAX; past that it is
-        # shortened to where it still clears (by the strap, over the chest - the portrait's are shorter there). Laid
-        # over the body and hanging on from it, the bell hugged the arm - a narrow tube, not the portrait's wide fan;
-        # bent over it down their length one by one, the strands came out crooked
-        def clear_len(t, knee):
-            for j, q in enumerate(line(knee, push, t, length)):
+        # (FRINGE_TILT) and as far as it must to clear what is under it, up to FRINGE_TILT_MAX (FRINGE_ENDS_TILT at the
+        # front and back); past that it lies on what is under it from where it reaches it (drape). Laid over the body
+        # from the root, the bell hugged the arm - a narrow tube, not the portrait's wide fan
+        def clear_len(t):
+            for j, q in enumerate(line(root, push, t, length)):
                 if length * j / ns > FRINGE_R * 1.5 and gap(q) < 0:
                     return length * (j - 1) / ns
             return length
-        # where the field lies on the shoulder (its front and back by the strap) the strand first curls out over the
-        # rim's padded edge - its straight part starts FRINGE_KNEE at most out from the root (along the cloth's
-        # normal and out from the field): straight from the root, those by the strap could not clear the chest at
-        # any tilt and were left out, and the cords' tops showed under the field
-        _, _, nr = under(root)
-        lift = ((nr if nr is not None else push) + push).normalized()
         t_max = FRINGE_TILT_MAX + (FRINGE_ENDS_TILT - FRINGE_TILT_MAX) * smoothstep(abs(flat.y), 0.2, 0.6)
-        t, e = t0, 0.0
-        while clear_len(t, root + lift * e) < length:
-            if t < math.radians(t_max):
-                t += math.radians(1.0)
-            elif e < FRINGE_KNEE:
-                t, e = t0, e + 0.003
-            else:
-                break
+        t = t0
+        while clear_len(t) < length and t < math.radians(t_max):
+            t += math.radians(1.0)
         if DEBUG_FRINGE:
-            print('  a %4.0f root h %.3f tilt %.0f -> %.0f knee %.3f, clear %.3f of %.3f' % (
-                math.degrees(a), h, math.degrees(t0), math.degrees(t), e, clear_len(t, root + lift * e), length))
-        return dict(a=a, root=root + lift * e, base=root, push=push, tilt=t, length=length, lift=lift, knee=e)
+            print('  a %4.0f root h %.3f tilt %.0f -> %.0f, clear %.3f of %.3f' % (
+                math.degrees(a), h, math.degrees(t0), math.degrees(t), clear_len(t), length))
+        return dict(a=a, root=root, push=push, tilt=t, length=length)
     # the bell round the rim, finely; the tilt evened round it (each at least its neighbours' less FRINGE_TILT_SPREAD
-    # a degree round the rim, then smoothed): a neat bell, no strand standing out from the next; each as long as it
-    # clears what is under it at that tilt
+    # a degree round the rim, then smoothed): a neat bell, no strand standing out from the next
     dense = [c for c in (course(-half + 2 * half * k / (FRINGE_DENSE - 1), 1.0, 1.0) for k in range(FRINGE_DENSE)) if c]
     tilts = [max(o['tilt'] - math.radians(FRINGE_TILT_SPREAD) * math.degrees(abs(o['a'] - c['a'])) for o in dense)
              for c in dense]
     for _ in range(FRINGE_SMOOTH):
         tilts = [max(tilts[j], (tilts[max(j - 1, 0)] + 2 * tilts[j] + tilts[min(j + 1, len(tilts) - 1)]) / 4)
                  for j in range(len(tilts))]
-    # ... and the curl out over the rim the same way: each at least its neighbours' less FRINGE_KNEE_SPREAD a degree
-    # (where it set in from one strand to the next, the curled ones stood apart from the rest - a break in the bell
-    # at its front and back)
-    knees = [max(o['knee'] - FRINGE_KNEE_SPREAD * math.degrees(abs(o['a'] - c['a'])) for o in dense) for c in dense]
+    for c, t in zip(dense, tilts):  # as long as it is, lying on what is under it where it reaches it
+        c['tilt'] = t
+        c['path'] = drape(line(c['root'], c['push'], t, c['length']), c['push'])
+    # ... each evened with its neighbours round the rim, then out of what is under it again: the strands lying over
+    # the cords one way and the next another came out crossing in a heap at the front
     for _ in range(FRINGE_SMOOTH):
-        knees = [max(knees[j], (knees[max(j - 1, 0)] + 2 * knees[j] + knees[min(j + 1, len(knees) - 1)]) / 4)
-                 for j in range(len(knees))]
-    for c, e in zip(dense, knees):
-        c['root'] = c['base'] + c['lift'] * e
-    for c, t in zip(dense, tilts):
-        ln = c['length']
-        for j, q in enumerate(line(c['root'], c['push'], t, c['length'])):
-            if c['length'] * j / ns > FRINGE_R * 1.5 and gap(q) < 0:
-                ln = c['length'] * (j - 1) / ns
-                break
-        c['tilt'], c['len'] = t, ln
-    lens = [c['len'] for c in dense]  # lengths evened too: no single short one in a row of long ones
-    for _ in range(FRINGE_SMOOTH):
-        lens = [min(lens[j], (lens[max(j - 1, 0)] + 2 * lens[j] + lens[min(j + 1, len(lens) - 1)]) / 4)
-                for j in range(len(lens))]
-    dense = [c for c, ln in zip(dense, lens) if ln > FRINGE_MIN_LEN]
-    for c, ln in zip(dense, [ln for ln in lens if ln > FRINGE_MIN_LEN]):
-        c['path'] = line(c['root'], c['push'], c['tilt'], ln)
-        d = (c['path'][1] - c['path'][0]).normalized()
-        if (c['root'] - c['base']).length > 1e-4:  # the curl over the rim: from the root out to the strand's line
-            k_ = c['root'] - c['base']
-            c['path'] = [c['base'], c['base'] + k_ * 0.6 + d * (k_.length * 0.15)] + c['path'][1:]
+        paths = [c['path'] for c in dense]
+        for j, c in enumerate(dense):
+            p0, p1 = paths[max(j - 1, 0)], paths[min(j + 1, len(paths) - 1)]
+            c['path'] = [c['path'][0]] + [(a_ + b_ + q * 2) / 4 for a_, b_, q in zip(p0[1:], p1[1:], c['path'][1:])]
+    for c in dense:
+        c['path'] = drape(c['path'], c['push'])
         c['tip'] = c['path'][-1]
     # strands side by side along the bell's lower edge, touching there (spaced along the rim, they stood apart below
     # with the cloth between them); their roots crowd under the rim
@@ -1569,8 +1563,6 @@ def build_epaulette(side):
         t = (target - run[i]) / max(run[i + 1] - run[i], 1e-9)
         c0, c1 = dense[i], dense[i + 1]
         p0, p1 = c0['path'], c1['path']
-        if len(p0) != len(p1):  # one curls over the rim, the other not: both without the curl's point
-            p0, p1 = [p0[0]] + p0[-ns:], [p1[0]] + p1[-ns:]
         specs.append(dict(a=c0['a'] + (c1['a'] - c0['a']) * t, path=[p.lerp(q, t) for p, q in zip(p0, p1)]))
     print('fringe %s: %d strands, the bell %.2f m round at the tips' % (side, len(specs), run[-1]))
     for i, sp in enumerate(specs):
