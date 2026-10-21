@@ -490,6 +490,13 @@ SHOULDER_DEG = 10.0                # slope of the top line, down outwards, at re
                                    # splayed out)
 SHOULDER_TIP_X = 0.36              # ... fading out by here (the deltoid)
 SHOULDER_DEPTH = 0.12              # vertices this far under the top move less and less
+# The trapezius between the neck's foot and the shoulder's point falls in a hollow curve, steepest by the neck and
+# levelling out over the acromion before the deltoid rounds down: the top lowered by this much (m) over these |x|
+# (level from the collar to the shoulder's end - the trapezius pressed flat under the collar by fit_neck, then the
+# clavicles' turn - it read as a coat hanger from behind and a shelf from the front; the portrait's straps fall ~23 deg
+# from the collar)
+TRAPEZIUS_DIP = ((0.10, 0.12, 0.14, 0.16, 0.18, 0.20), (0.0, 0.010, 0.014, 0.012, 0.006, 0.0))
+TRAPEZIUS_Y = (0.10, 0.16)         # ... over the shoulder's top front to back, fading out by the second (|y|)
 
 
 def _rest_co(h, skip=()):
@@ -600,6 +607,16 @@ def slope_shoulders(h):
                                                                                 SHOULDER_ROOT_X + 0.02)
         w *= 1 - smoothstep(ax[k], SHOULDER_TIP_X - 0.06, SHOULDER_TIP_X)
         disp[k, 2] = (want - top) * w
+    xs_, dips = TRAPEZIUS_DIP
+    n_dip, m_dip = 0, 0.0
+    for k in np.nonzero(near & (ax > xs_[0]) & (ax < xs_[-1]))[0]:
+        top = bins.get(int(ax[k] / 0.01))
+        if top is None:
+            continue
+        w = (1 - smoothstep(top - co[k, 2], 0.02, SHOULDER_DEPTH)) * (1 - smoothstep(abs(co[k, 1]), *TRAPEZIUS_Y))
+        disp[k, 2] -= float(np.interp(ax[k], xs_, dips)) * w
+        n_dip, m_dip = n_dip + (w > 0), max(m_dip, float(np.interp(ax[k], xs_, dips)) * w)
+    print('trapezius: %d vertices lowered, %.1f mm at most' % (n_dip, 1000 * m_dip))
     _set_key(h, 'ShoulderFit', disp)
 
 

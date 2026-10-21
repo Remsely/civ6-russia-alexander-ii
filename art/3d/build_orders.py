@@ -89,10 +89,11 @@ STARS = [(666, 400, 0.042), (666, 468, 0.042)]  # px of the portrait (cast onto 
                                      # other between the sash and the arm, as there (~8.5 cm across, ~1 cm apart, the
                                      # lower one by the sash's edge - over it, it stood 1.6 cm off the cloth; seen at a
                                      # slant on the turning chest: at 7 cm they were specks)
-STAR_X = 0.165                       # both stars' middles at this x: one straight over the other on the chest (matched
-                                     # in the portrait's view only, the lower one sits deeper on the chest's turn and
-                                     # stood 2.6 cm further out - a diagonal pair seen from the front or below); between
-                                     # the badge (the upper one's top under its lower right edge) and the sash's edge
+STAR_X = (0.165, 0.155)              # the stars' middles at these x: one over the other on the chest (matched in the
+                                     # portrait's view only, the lower one sits deeper on the chest's turn and stood 2.6
+                                     # cm further out - a diagonal pair seen from the front or below; at the same x it
+                                     # still looked further out from in front, a little from his left); between the
+                                     # badge (the upper one's top under its lower right edge) and the sash's edge
 STAR_LIFT = 0.0015                   # off the cloth at the nearest
 STAR_FACING = 60.0                   # degrees: the cloth under a star faces the viewer at least this squarely
 STAR_TURN = 0.1                      # ... and the star turned this much further towards the viewer (pinned on the
@@ -902,7 +903,6 @@ def build_orders():
     # (each cast at its own column, where it meets the cloth: the line of sight is level, so its height is the
     # portrait's either way; cast at the leftmost, the lower one's missed the cloth)
     hits = [ref_hit(NO_SASH, c, py)[0] for c, (_, py, _) in zip(cols, STARS)]
-    x = STAR_X
     print('stars: the column of the portrait lands at x %.3f, the badge at %.3f' % (
         sum(p.x for p in hits) / len(hits), badge_x))
 
@@ -912,7 +912,7 @@ def build_orders():
         Y = (Vector((0, 0, 1)) - N * N.z).normalized()
         X = Y.cross(N).normalized()
         return lifted(o - N * 0.03, X, Y, N, r * 0.75, r * 0.75, STAR_LIFT), X, Y, N
-    for p, (_, _, r) in zip(hits, STARS):
+    for p, (_, _, r), x in zip(hits, STARS, STAR_X):
         xs = x
         for _ in range(8):  # seated afresh at each try (only lifted after a move, it stood 1.5 cm off the cloth)
             o, X, Y, N = placed(xs, p.z, r)

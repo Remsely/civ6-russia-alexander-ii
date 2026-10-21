@@ -95,6 +95,9 @@ BUCKLE_CLOSURE = 0.8               # the closure runs through the buckle this fa
 CUFF_RAISE, CUFF_THICK, CUFF_LIP, CUFF_BEAD = 0.002, 0.003, 0.012, 0.003
 SHIRT_CUFF_CLEAR = 0.006
 FLAP_ACROSS, FLAP_ALONG, FLAP_RAISE = 0.068, 0.074, 0.003
+FLAP_TURN = {'l': 75.0, 'r': 0.0}  # degrees the flap is turned on round the forearm from its outer side: the stance
+                                  # turns the forearm only by aiming it, so his left one's flap came out on the far
+                                  # side of the wrist, under it - the portrait's is on top, facing the viewer
 # Riding boots up to BOOT_TOP, wider than the tucked-in trousers; sole with a welt, heel, accordion folds over the
 # ankle, a spur at the heel.
 BOOT_EASE, BOOT_FOOT_OFF, BOOT_THICK = 0.010, 0.006, 0.003  # (the portrait's shafts are slim: ~11.5 cm across
@@ -739,7 +742,9 @@ def build_cuffs(nu=40):
         # Flap on the outer side (back of the forearm), curved with the cuff, three buttons along the arm.
         outer = Vector((sign, -0.6, 0.0)).normalized()
         jc = max(range(nu), key=lambda j: dirs[j].dot(outer))
-        tc, rc = thetas[jc], rs[jc] + CUFF_BEAD
+        tc = thetas[jc] + math.radians(FLAP_TURN[s])
+        rc = float(np.interp((tc - phase) % (2 * math.pi), [t - phase for t in thetas], rs)) + CUFF_BEAD
+        dc = e1 * math.cos(tc) + e2 * math.sin(tc)
         k = 6
         pts, uv = [], []
         for i in range(k):
@@ -756,12 +761,12 @@ def build_cuffs(nu=40):
         bm, grid = loft(pts, closed=False)
         outward_normals(bm, lambda p, a=a, b=b: a + (b - a) * ((p - a).dot(b - a) / (b - a).length_squared))
         uvs = {v: uv[i][j] for i, row in enumerate(grid) for j, v in enumerate(row)}
-        ws = UNI_W.at(axis(0.5) + dirs[jc] * rs[jc])
+        ws = UNI_W.at(axis(0.5) + dc * (rc - CUFF_BEAD))
         out.append(new_detail('CuffFlap_' + s, bm, uvs, rigid(ws), 0.003))
         spots = []
         for fa in (0.2, 0.5, 0.8):
             c = axis(0.5) + ax * (fa - 0.5) * FLAP_ALONG * 0.85
-            spots.append((c + dirs[jc] * (rc + FLAP_RAISE), dirs[jc], ws))
+            spots.append((c + dc * (rc + FLAP_RAISE), dc, ws))
         out.append(buttons_detail('CuffButtons_' + s, spots, r=0.0068, hgt=0.0048))
     return out
 

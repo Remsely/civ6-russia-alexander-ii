@@ -41,7 +41,8 @@ SKIRT_FRONT = (0.05, 0.10, 60)          # smooth_skirt_front: within the first o
                                         # second; rounds of smoothing the cloth's move off the skinned sheet
 TORSO_ROUNDS = 40                       # smooth_torso: Taubin rounds over the tunic's body above the belt
 SHOULDER_FIT_OFF = 0.008               # fit_shoulders: the tunic this far off the body over the shoulders' top ...
-SHOULDER_FIT_FROM = 0.03                # ... fading in over this much beyond the collar's foot
+SHOULDER_FIT_FROM = 0.015               # ... fading in over this much beyond the collar's foot (over 3 cm, the
+                                        # trapezius' fall by the collar was bridged in a level shelf)
 SHOULDER_FIT_Z = (1.57, 1.63)           # ... above the armpits
 SHOULDER_FIT_NZ = (0.0, 0.3)            # ... where the body faces up (fading out down the arm's outside)
 SHOULDER_FIT_ROUNDS = 8                 # ... the move smoothed out into the cloth round
@@ -628,6 +629,14 @@ def fit_shoulders():
     me.update()
     print('shoulders: %d cloth vertices laid on them (moved %.4f m at most), %d eased round, %d kept off the body' % (
         int(fixed.sum()), float(np.linalg.norm(need, axis=1).max()), len(ring), pushed))
+    tu = BVHTree.FromPolygons([tuple(c) for c in co], [tuple(p.vertices) for p in me.polygons])
+    for sg in (-1, 1):
+        row = []
+        for x in (0.10, 0.11, 0.12, 0.13, 0.14, 0.16, 0.18, 0.20, 0.22):
+            a_ = tree.ray_cast(Vector((sg * x, 0.0, 2.2)), Vector((0, 0, -1)), 2)[0]
+            b_ = tu.ray_cast(Vector((sg * x, 0.0, 2.2)), Vector((0, 0, -1)), 2)[0]
+            row.append('%.2f:%s/%s' % (x, '%.1f' % ((a_.z - 1.6) * 100) if a_ else '-', '%.1f' % ((b_.z - 1.6) * 100) if b_ else '-'))
+        print('  shoulder line skin/tunic', ' '.join(row))
 
 
 fit_shoulders()

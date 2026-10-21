@@ -48,9 +48,10 @@ EP_TO_VIEWER = 8.0               # ... and tilted this much towards the viewer (
 EP_TURN = {'r': 0.0, 'l': 22.0}   # degrees the field is turned about the upright towards the front: in the portrait his
                                  # left one shows its face nearly square to the viewer as the right one does (the
                                  # shoulder turned away from the camera with the figure, it showed its edge)
-EP_PAD = {'r': 0.008, 'l': 0.0}  # the field stands on its padding this far over where it would rest on the shoulder
+EP_PAD = {'r': 0.018, 'l': 0.004}  # the field stands on its padding this far over where it would rest on the shoulder
                                  # (resting on it, his right one looked pressed into the shoulder: the portrait's top
-                                 # is ~1 cm higher; his left one's matches)
+                                 # is ~1 cm higher; with the trapezius falling from the neck in its hollow curve, both
+                                 # sank 0.4-1 cm under the portrait's outline)
 EP_RIM_R = 0.008                 # the rim's radius: a thick padded roll of bullion, as in the portrait
 EP_PRESS = (0.004, 0.008)       # the rim pressed this far into the padded shoulder, its outer and inner (towards the
                                  # neck) half (resting on it on square shoulders, the field stood 5 cm over the
