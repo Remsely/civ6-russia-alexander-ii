@@ -37,23 +37,24 @@ CLOTH = (0.0034, 0.0037, 0.0058)    # the tunic's wool (build_uniform.CLOTH_RGB)
 # down to its foot); as in the portrait the halves stand apart at the front, their edges nearly parallel, the tunic's
 # dark collar between them up to the top (the white shirt collar's edge over it); the neck stays behind it
 # (build_pose.neck_in_collar).
-COLLAR_LIFT = 0.0025
-COLLAR_H = 0.08                   # the band's height, the same all round as a shirt's collar band: its foot as low as
+COLLAR_LIFT = 0.001               # off the tunic's stand; its thickness goes outwards (at 2.5 mm and 6 mm the collar stood
+                                  # 8.5 mm out of the tunic, ~1.5 cm out of the neck at the top: too wide, a bulky ring)
+COLLAR_H = 0.068                  # the band's height, the same all round as a shirt's collar band: its foot as low as
                                   # the portrait's (at 6.8 cm the collar stood ~10 px higher on the neck than the
                                   # portrait's, a small ring under the chin). (Down to where the cloth turned out, at most
                                   # 8.5 cm, the band stood tall up the nape and its foot lay out on the shoulders.)
 COLLAR_TUCK = 0.004               # ... its foot this far into the cloth where the shoulder rises into it
-CROSS_OVER_FOOT = 0.0             # the neck cross hangs from this far over the corners' foot (build_orders.py): its
+CROSS_OVER_FOOT = 0.0               # the neck cross hangs from this far over the corners' foot (build_orders.py): its
                                   # crown over the foot, the cross under the collar, as in the portrait
 COLLAR_FRONT_GAP = 0.032          # the opening at the front, at the top (x the radius / 0.08 m: ~3.2 cm half-width; the
                                   # portrait's halves stand ~6 cm apart, the dark tunic and the cross between them) ...
-COLLAR_FRONT_GAP_BOTTOM = 0.012   # ... and at the bottom edge: the portrait's opening is a V, ~7.4 cm across at the top
+COLLAR_FRONT_GAP_BOTTOM = 0.008   # ... and at the bottom edge: the portrait's opening is a V, ~7.4 cm across at the top
                                   # and ~3.5 cm at the foot (at 2.6 cm half-width there the halves stood apart as two
                                   # upright panels with a broad black strip between them)
 STAND_DROP = 0.0                # the dark stand between the halves ends this far under their top: the shirt's white
                                   # edge shows over it (up to the top, it read as a black strip down the front)
 COLLAR_REPEATS, CUFF_REPEATS, BELT_REPEATS = 2, 2, 4  # mirrored repeats of the generated pictures (textures/gen)
-COLLAR_THICK = 0.006              # (at 4 mm its top edge read as a thin sheet)
+COLLAR_THICK = 0.0035             # (at 4 mm and no rolled edge its top read as a thin sheet; the rolled edge makes it ~8 mm)
 STAND_ROWS, STAND_COLS = 7, 13    # the dark stand between the halves: rows up it, columns across
 SHIRT_SHOW = 0.0145                # the shirt collar's edge this far over the bottom of its band (~6 mm over the red
                                   # collar's top: the portrait's white line is 5-8 px)
