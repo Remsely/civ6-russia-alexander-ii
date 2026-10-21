@@ -394,7 +394,9 @@ def fit(h):
 # Hidden under the tunic, the body is reshaped so the tunic and its collar come out like that: the neck squeezed from
 # the sides into an ellipse round NECK_C, the trapezius flattened towards SHOULDER_Z outside it.
 NECK_C_DY = -0.012               # ellipse centre: in front of the neck bone by this much
-NECK_A, NECK_B = 0.06, 0.052     # semi-axes: front-back, sides
+NECK_A, NECK_B = 0.06, 0.066     # semi-axes: front-back, sides (at 5.2 cm at the sides the neck over the collar was
+                                 # 11.4 cm across, the collar's top 95 px in the 'ref' view against the portrait's ~110:
+                                 # a thin stalk the turned head hung off to one side; now 12.9 cm and 109 px)
 NECK_SQ_Z0, NECK_SQ_Z1 = 1.72, 1.77  # the squeeze fades in from Z0 to full at Z1 (and out again round the jaw)
 SHOULDER_Z, SHOULDER_K = 1.74, 0.15  # trapezius above SHOULDER_Z is pulled down to this fraction of its height
                                  # (at half, the tunic beside the collar stood 1.5-2 cm over the portrait's: a mound

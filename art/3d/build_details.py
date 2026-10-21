@@ -496,7 +496,7 @@ def build_collar(nu=64, nv=7):
                 break
             z -= 0.002
         bots.append(max(z - COLLAR_TUCK, zt - COLLAR_H))
-    bots = circ_smooth(bots, 3)
+    bots = circ_smooth(bots, 12)  # (at 3, the wider collar's foot stepped up where the shoulder rises into it)
     rings = []
     gap_b = COLLAR_FRONT_GAP_BOTTOM / 0.08
     for i in range(nv):
