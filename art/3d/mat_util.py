@@ -2,6 +2,7 @@
 # PNG next to the model, a Principled material wired to albedo + metal/roughness + normal (+ AO multiplied into the
 # colour for the preview; the game takes AO as its own map).
 # Arrays are Blender's pixel order: row 0 = bottom, values 0..1; normal maps OpenGL (green = +V).
+import math
 import os
 import bpy
 import numpy as np
@@ -10,6 +11,12 @@ LUM = np.array([0.2126, 0.7152, 0.0722], np.float32)
 # One gold for everything (embroidery, belt, epaulettes, cords, orders, sabre): the portrait's, sRGB - the median of its
 # gold pixels is (183, 118, 52) in the light it is painted in, the highlights (238, 188, 118).
 GOLD_SRGB = (225, 150, 62)
+
+
+def belt_z(P, x, y):
+    """The belt's middle height over (x, y): its plane through BELT_ZC tilted by BELT_TILT (build_uniform.py)."""
+    side, front = (math.tan(math.radians(a)) for a in P.get('BELT_TILT', (0.0, 0.0)))
+    return P['BELT_ZC'] - side * (x - P['BELT_C'][0]) + front * (y - P['BELT_C'][1])
 
 
 def gold_grade(rgb, mask):

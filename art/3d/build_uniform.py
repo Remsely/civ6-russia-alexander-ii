@@ -68,6 +68,8 @@ STAND_SKIN_GAP = 0.003            # ... and off the skin up its top 3 cm (the po
 NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
 WAIST_Z = 1.325                   # belt line (its centre 3 cm below: 1.295 in the portrait): the torso part of the tunic ends just below, the skirt starts just above
 BELT_H, BELT_N = 0.058, 96        # belt over the waist seam (WAIST_Z - 0.03): height; directions of its profile
+BELT_TILT = (3.0, 3.0)            # degrees its plane goes down to his left (the sabre hangs from it there) and to the
+                                  # front (over the belly), as the portrait's (level all round, it read as a hoop)
 BELT_TAPER = 0.14                 # under the belt the skirt runs out to its own width in a straight line over this
                                   # height (let go within 3 cm, it sprang out over the seat in a round bulge)
 HEM_Z = 0.905                     # tunic hem, mid-thigh (the portrait's, row 855 in the 'ref' view)
@@ -653,12 +655,14 @@ def belt_band(bm):
     zc = WAIST_Z - 0.03
     hull = hull_at(zc)
     c = sum(hull, Vector((0.0, 0.0))) / len(hull)
+    belt = dict(BELT_ZC=zc, BELT_H=BELT_H, BELT_C=(c.x, c.y), BELT_TILT=BELT_TILT)
+    z_at = lambda p: mat_util.belt_z(belt, p.x, p.y)  # noqa: E731 - its plane is tilted
     dirs = [Vector((math.sin(2 * math.pi * k / BELT_N), -math.cos(2 * math.pi * k / BELT_N))) for k in range(BELT_N)]
     body = [ray_hull(hull, c, d) for d in dirs]
     sector = lambda d: (math.atan2(d.x, -d.y) % (2 * math.pi)) / (2 * math.pi) * BELT_N
     cloth = [0.0] * BELT_N
     for v in bm.verts:
-        if abs(v.co.z - zc) < 0.01 and abs(v.co.x) < 0.35:
+        if abs(v.co.z - z_at(v.co)) < 0.01 and abs(v.co.x) < 0.35:
             d = v.co.xy - c
             k = int(round(sector(d))) % BELT_N
             cloth[k] = max(cloth[k], d.length)
@@ -668,10 +672,9 @@ def belt_band(bm):
         prof = [prof[k] * 0.5 + (prof[k - 1] + prof[(k + 1) % BELT_N]) * 0.25 for k in range(BELT_N)]
     half = BELT_H / 2 + 0.004
     # the skirt's width BELT_TAPER under the belt, per direction (where the straight taper meets it)
-    zr = zc - half - BELT_TAPER
     reach = [0.0] * BELT_N
     for v in bm.verts:
-        if abs(v.co.z - zr) < 0.012 and abs(v.co.x) < 0.35:
+        if abs(v.co.z - (z_at(v.co) - half - BELT_TAPER)) < 0.012 and abs(v.co.x) < 0.35:
             d = v.co.xy - c
             k = int(round(sector(d))) % BELT_N
             reach[k] = max(reach[k], d.length)
@@ -688,8 +691,9 @@ def belt_band(bm):
         f = sector(d); k0 = int(f) % BELT_N
         lerp = lambda a: a[k0] + (a[(k0 + 1) % BELT_N] - a[k0]) * (f - int(f))  # noqa: E731
         target = lerp(prof)
-        if zc - v.co.z > half:  # under the belt: straight out to the skirt, never into the body
-            t = (zc - v.co.z - half) / BELT_TAPER
+        zv = z_at(v.co)
+        if zv - v.co.z > half:  # under the belt: straight out to the skirt, never into the body
+            t = (zv - v.co.z - half) / BELT_TAPER
             if t >= 1:
                 continue
             hull = hull_at(v.co.z)
@@ -697,13 +701,13 @@ def belt_band(bm):
                          ray_hull(hull, c, d.normalized()) + TUNIC_OFF if hull else 0.0)
             w = 1.0
         else:
-            w = 1 - smoothstep(v.co.z - zc, half, half + 0.03)
+            w = 1 - smoothstep(v.co.z - zv, half, half + 0.03)
         if w <= 0:
             continue
         if d.length > target:
             v.co.xy = c + d.normalized() * (d.length + (target - d.length) * w)
     print('belt fit %.3f, profile %.3f..%.3f' % (fit, min(prof), max(prof)))
-    return dict(BELT_ZC=zc, BELT_H=BELT_H, BELT_C=(c.x, c.y), BELT_PROFILE=prof)
+    return dict(belt, BELT_PROFILE=prof)
 
 
 def extract(name, keep, offset, smooth):

@@ -655,8 +655,9 @@ def build_buttons():
 # ---------------------------------------------------------------- belt with buckle
 def build_belt(nu=96, nv=4):
     """Belt on the profile build_uniform.py took the tunic in to (BELT_PROFILE, directions from the front round
-    through the wearer's left), buckle placed on the closure as in the picture."""
-    zc, hb = P['BELT_ZC'], P['BELT_H']
+    through the wearer's left) and in its tilted plane (mat_util.belt_z), buckle placed on the closure as in the
+    picture, tilted with it."""
+    hb = P['BELT_H']
     c = Vector(P['BELT_C'])
     prof = list(P['BELT_PROFILE'])
     n = len(prof)
@@ -667,8 +668,12 @@ def build_belt(nu=96, nv=4):
         return prof[k] + (prof[(k + 1) % n] - prof[k]) * (f - int(f)) + BELT_EASE
 
     thetas = [math.pi + 2 * math.pi * j / nu for j in range(nu + 1)]  # j = 0 at the back; seam vertices duplicated
-    rings = [[(c + Vector((math.sin(t), -math.cos(t))) * radius(t)).to_3d() + Vector((0, 0, zc - hb / 2 + hb * i / (nv - 1)))
-              for t in thetas] for i in range(nv)]
+
+    def at(t, r, dz):  # the point round the belt at theta t, radius r, dz over its middle
+        p = c + Vector((math.sin(t), -math.cos(t))) * r
+        return Vector((p.x, p.y, mat_util.belt_z(P, p.x, p.y) + dz))
+
+    rings = [[at(t, radius(t), -hb / 2 + hb * i / (nv - 1)) for t in thetas] for i in range(nv)]
     bm, grid = loft(rings, closed=False)
     outward_normals(bm, lambda p: Vector((c.x, c.y, p.z)))
     uvs = {v: uv_in('belt', j / nu, i / (nv - 1)) for i, row in enumerate(grid) for j, v in enumerate(row)}
@@ -689,13 +694,13 @@ def build_belt(nu=96, nv=4):
                 x *= 1 - into * BUCKLE_CUT_X / (BUCKLE_W / 2)
             t = t0 + x / radius(t0)
             r = radius(t) + BELT_THICK + BUCKLE_RAISE
-            row.append((c + Vector((math.sin(t), -math.cos(t))) * r).to_3d() + Vector((0, 0, zc + (b - 0.5) * BUCKLE_H)))
+            row.append(at(t, r, (b - 0.5) * BUCKLE_H))
             urow.append(uv_in('buckle', x / BUCKLE_W + 0.5, b))
         pts.append(row); uv.append(urow)
     bm, grid = loft(pts, closed=False)
     outward_normals(bm, lambda p: Vector((c.x, c.y, p.z)))
     uvs = {v: uv[i][j] for i, row in enumerate(grid) for j, v in enumerate(row)}
-    mid = (c + Vector((math.sin(t0), -math.cos(t0))) * radius(t0)).to_3d() + Vector((0, 0, zc))
+    mid = at(t0, radius(t0), 0.0)
     buckle = new_detail('Buckle', bm, uvs, rigid(UNI_W.at(mid)), 0.003)
     return belt, buckle
 

@@ -185,6 +185,7 @@ BRAID_AMP = 0.12                 # the strands stand this much of the radius pro
 AIG_AREA = (330, 300, 560, 540)  # px of the portrait the cords lie over (their layer: build_loops)
 AIG_BRIDGE = 12                  # px (~1.7 cm): the layer takes the nearest cloth this far round, then is smoothed as far
 AIG_STIFF = 10                   # rounds of straightening the cords over the cloth's folds
+AIG_SNUG = (1.56, 1.62)          # m up: from the first to the second the cords come down onto the shoulder's cloth
 PENCIL_L = 0.185
 # The pencil (the aiguillette's cast tip), top to point: (t along it, radius m, fluted) - a cup the cord goes into, a
 # knob, a fluted shaft between ring mouldings, a vase-shaped boss, a second fluted shaft down to a ball (as the portrait's)
@@ -784,7 +785,7 @@ def build_sash(cords=None):
         d = -Y * math.cos(th) + U * math.sin(th)
         loc, nrm = outer(CLOTH, c, d)
         p = (loc + nrm * SASH_GAP) if loc is not None else c + d * 0.2
-        zf, ease = P['BELT_ZC'] + P['BELT_H'] / 2 + SASH_W / 2 + SASH_FLOOR[0], SASH_FLOOR[1]
+        zf, ease = mat_util.belt_z(P, p.x, p.y) + P['BELT_H'] / 2 + SASH_W / 2 + SASH_FLOOR[0], SASH_FLOOR[1]
         xs, (y0, y1) = SASH_BACK
         z_back = zf + (xs - p.x) * (SASH_SHOULDER.z - zf) / (xs - SASH_SHOULDER.x)
         p.z = p.z + max(0.0, z_back - p.z) * smoothstep(p.y, y0, y1) * (1 - smoothstep(p.x, xs, xs + 0.06))
@@ -814,11 +815,11 @@ def build_sash(cords=None):
             row.append(v)
         row.append(row[0])
         grid.append(row)
-    zc = P['BELT_ZC']
+    zc = lambda p: mat_util.belt_z(P, p.x, p.y)  # noqa: E731 - the belt's middle there (its plane is tilted)
 
     def off_cloth(v):  # at least SASH_GAP outside the cloth: in the belt's zone out from the torso's axis (pushed to
         # the nearest surface, it slid onto the belt's top edge and dimpled in a row over it)
-        if abs(v.co.z - zc) < BRIDGE_DZ:
+        if abs(v.co.z - zc(v.co)) < BRIDGE_DZ:
             ax, r = Vector((0.0, 0.0, v.co.z)), Vector((v.co.x, v.co.y, 0.0))
             loc = outer(CLOTH, ax, r.normalized())[0]
             if loc is not None and r.length < (loc - ax).length + SASH_GAP:
@@ -879,13 +880,13 @@ def build_sash(cords=None):
     for i, row in enumerate(grid):
         for j in range(SASH_N):
             p = row[j].co
-            if abs(p.z - zc) < BRIDGE_DZ:
+            if abs(p.z - zc(p)) < BRIDGE_DZ:
                 ax = Vector((0.0, 0.0, p.z))
                 d = Vector((p.x, p.y, 0.0)).normalized()
                 loc = outer(CLOTH, ax, d)[0]
                 if loc is not None:
                     need[i][j] = max(0.0, (loc - ax).length + SASH_GAP + 0.001 - Vector((p.x, p.y, 0.0)).length) * (
-                        1 - smoothstep(abs(p.z - zc), BRIDGE_DZ * 0.55, BRIDGE_DZ))
+                        1 - smoothstep(abs(p.z - zc(p)), BRIDGE_DZ * 0.55, BRIDGE_DZ))
     need = spread(need)
     lifted = 0
     for i, row in enumerate(grid):
@@ -1059,12 +1060,12 @@ def stack_lift(path, below, frames):
     return out
 
 
-def build_loops(under):
+def build_loops(under, snug):
     """The cords of AIG_REF on the cloth 'under' (tightened: they lie over its folds): each cast from the portrait
     onto it (begun AIG_UP px higher, in under the field), the sash cords carried on along their last direction to AIG_UNDER
     in under the sash (SASH_EDGES of the band laid without them) - or cut there - and thinned under it; lifted off the
     cloth by their radius, straightened (a thick cord bridges the cloth's folds), laid over the ones before where
-    they cross."""
+    they cross; up by the shoulder (AIG_SNUG) on 'snug', the cloth itself."""
     bm = bmesh.new()
     uvs = {}
     laid = []
@@ -1147,6 +1148,28 @@ def build_loops(under):
                     short = lift[j] - (path[j] - loc).dot(nn)
                     if short > 0:
                         path[j] = path[j] - view * (short * toward(nn))
+        # up by the shoulder, under the fringe, on the cloth itself (the layer bridged the shoulder's turn there: they
+        # stood up to 1.8 cm off it by the rim, and the fringe's front, over them, was carried out in a flare): moved
+        # along the line of sight as the layer, the move evened along the cord (moved to the nearest cloth, one bent in
+        # a hook by the armpit's crease, where the nearest cloth jumps from the sleeve to the chest)
+        def snug_depth(p, l):
+            hit, nn, _, _ = snug.ray_cast(p - view * 0.3, view, 0.6)
+            return None if hit is None else hit.dot(view) - l * toward(nn)
+        move = []
+        for j, p in enumerate(path):
+            t = snug_depth(p, lift[j]) if p.z > AIG_SNUG[0] - 0.04 else None
+            move.append(0.0 if t is None else (t - p.dot(view)) * smoothstep(p.z, *AIG_SNUG))
+        for _ in range(int(0.04 / AIG_STEP) ** 2 // 2):  # over ~4 cm
+            move = [(move[max(j - 1, 0)] + move[j] * 2 + move[min(j + 1, n - 1)]) / 4 for j in range(n)]
+        path = [p + view * m for p, m in zip(path, move)]
+        # nowhere into the cloth, the push out spread along the cord
+        push = []
+        for j, p in enumerate(path):
+            t = snug_depth(p, lift[j]) if p.z > AIG_SNUG[0] - 0.04 else None
+            push.append(0.0 if t is None else max(p.dot(view) - t, 0.0))
+        for _ in range(int(0.02 / AIG_STEP)):
+            push = [max(push[j], (push[max(j - 1, 0)] + push[min(j + 1, n - 1)]) * 0.45) for j in range(n)]
+        path = [p - view * q for p, q in zip(path, push)]
         laid.append((path, AIG_R))
         _, u = tube(bm, path, AIG_R, 12, 'cord', cap=not into, taper=lambda t, th=thin: th[round(t * (len(th) - 1))],
                     relief=braid_relief, u0=0.13 * k, cap0=True)
@@ -1663,6 +1686,11 @@ def build_epaulette(side):
         t = t0
         while clear_len(t) < length and t < math.radians(t_max):
             t += math.radians(1.0)
+        # ... but no further than it helps: one stopped right under its root (over the cords' and the sash's tops)
+        # clears no more tilted (all the way out, those over the cords stood out over the chest in a flare)
+        best = clear_len(t)
+        while t > t0 and clear_len(t - math.radians(1.0)) >= best - FRINGE_STEP:
+            t -= math.radians(1.0)
         if DEBUG_FRINGE:
             print('  a %4.0f root %s h %.3f tilt %.0f -> %.0f, clear %.3f of %.3f' % (
                 math.degrees(a), tuple(round(v_, 3) for v_ in root), h, math.degrees(t0), math.degrees(t), clear_len(t), length))
@@ -1690,9 +1718,16 @@ def build_epaulette(side):
         c['tip'] = c['path'][-1]
     # strands side by side along the bell's lower edge, touching there (spaced along the rim, they stood apart below
     # with the cloth between them); their roots crowd under the rim
+    # (along the edge: a tip further out than the next one does not part them - counted in, the tips' in and out over
+    # the sash's edge and the cords on his right gave it strands more, crowded by the strap)
     run = [0.0]
     for c0, c1 in zip(dense, dense[1:]):
-        run.append(run[-1] + ((c1['tip'] - c0['tip']).length if abs(c1['a'] - c0['a']) < 0.2 else FRINGE_R * 2))
+        out = (c0['push'] + c1['push']).normalized()
+        step = c1['tip'] - c0['tip']
+        run.append(run[-1] + ((step - out * step.dot(out)).length if abs(c1['a'] - c0['a']) < 0.2 else FRINGE_R * 2))
+        if DEBUG_FRINGE:
+            print('  tip a %4.0f %s +%.3f' % (math.degrees(c1['a']), tuple(round(v_, 3) for v_ in c1['tip']),
+                                             run[-1] - run[-2]))
     count = max(2, int(run[-1] / (FRINGE_R * 2 * FRINGE_TOUCH)))
     specs = []
     for k in range(count):
@@ -1732,7 +1767,8 @@ O = bpy.data.objects
 # portrait they go under it), whatever of them still comes through it pressed in under it
 CLOTH = bvh_of([uni, O['Belt'], O['Buckle'], O['Buttons']], torso=True, tighten=SASH_TIGHTEN)
 O.remove(build_sash())
-loops = build_loops(bvh_of([uni, O['Buttons']], torso=True, tighten=SASH_TIGHTEN, arm_z=AIG_ARM_Z))
+loops = build_loops(bvh_of([uni, O['Buttons']], torso=True, tighten=SASH_TIGHTEN, arm_z=AIG_ARM_Z),
+                    bvh_of([uni], torso=True, arm_z=AIG_ARM_Z))
 sash = build_sash(bvh_of([loops]))
 UNDER_SASH, SASH_BVH = bvh_of([uni], torso=True), bvh_of([sash])
 press_under(loops, UNDER_SASH, SASH_BVH)

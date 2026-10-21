@@ -16,6 +16,7 @@ from mathutils import Quaternion, Vector
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import pose  # noqa: E402
+from mat_util import belt_z  # noqa: E402
 
 OUT = os.path.join(HERE, 'alexander_leader.blend')
 POSE_FRAMES, SETTLE_FRAMES = 24, 24
@@ -183,9 +184,9 @@ def pin_weights():
             part_v[i] = max(part_v[i], pt)
     bones = {b.name: (b.head_local.copy(), b.tail_local.copy()) for b in rig.data.bones}
     w = np.zeros(len(me.vertices))
-    zc = P['BELT_ZC']
     for v in me.vertices:
         c = v.co
+        zc = belt_z(P, c.x, c.y)
         g = {names[x.group]: x.weight for x in v.groups}
         arm = sum(x for n, x in g.items() if n.startswith(('upperarm', 'lowerarm', 'hand')))
         if part_v[v.index] == 2:  # trousers: the waistband and inside the boot shafts
@@ -437,10 +438,10 @@ def smooth_torso():
             kd.insert(btn.matrix_world @ v.co, i)
     kd.balance()
     top = P['STAND_TOP_BACK'] - 0.06
-    low = P['BELT_ZC'] + P['BELT_H'] / 2 + 0.01
     arm = arm_w(uni)
     k = np.zeros(len(co))
     for i, c in enumerate(co):
+        low = belt_z(P, c[0], c[1]) + P['BELT_H'] / 2 + 0.01
         if not low < c[2] < top + 0.03:
             continue
         w = smoothstep(c[2], low, low + 0.03) * (1 - smoothstep(c[2], top, top + 0.03))
@@ -485,11 +486,12 @@ def smooth_skirt_back():
         a, b = e.vertices
         nb[a].append(b); nb[b].append(a)
     low = P['HEM_Z']
-    top = P['BELT_ZC'] - P['BELT_H'] / 2 - 0.01
+    top = np.array([belt_z(P, c[0], c[1]) for c in co]) - P['BELT_H'] / 2 - 0.01  # its lower edge over each
     cy = P['BELT_C'][1]
     arm = arm_w(uni)
-    k = np.array([smoothstep(c[2], low + 0.01, low + 0.05) * (1 - smoothstep(c[2], top - 0.03, top))
-                  * smoothstep(c[1] - cy, -0.02, 0.04) * (1 - smoothstep(a, 0.15, 0.5)) for c, a in zip(co, arm)])
+    k = np.array([smoothstep(c[2], low + 0.01, low + 0.05) * (1 - smoothstep(c[2], t - 0.03, t))
+                  * smoothstep(c[1] - cy, -0.02, 0.04) * (1 - smoothstep(a, 0.15, 0.5))
+                  for c, a, t in zip(co, arm, top)])
     zone = np.where(k > 0)[0]
     for _ in range(SKIRT_BACK_ROUNDS):
         for f in (0.6, -0.63):
@@ -528,12 +530,12 @@ def smooth_skirt_front():
         nb[a].append(b); nb[b].append(a)
     near, far, rounds = SKIRT_FRONT
     low = P['HEM_Z'] - 0.02
-    top = P['BELT_ZC'] - P['BELT_H'] / 2 - 0.01
+    top = np.array([belt_z(P, c[0], c[1]) for c in co]) - P['BELT_H'] / 2 - 0.01  # its lower edge over each
     cy = P['BELT_C'][1]
     arm = arm_w(uni)
-    k = np.array([(1 - smoothstep(abs(c[0] - P['FLAP_X']), near, far)) * (1 - smoothstep(c[2], top - 0.03, top))
+    k = np.array([(1 - smoothstep(abs(c[0] - P['FLAP_X']), near, far)) * (1 - smoothstep(c[2], t - 0.03, t))
                   * smoothstep(c[2], low - 0.03, low) * (1 - smoothstep(c[1] - cy, -0.04, 0.0))
-                  * (1 - smoothstep(a, 0.15, 0.5)) for c, a in zip(co, arm)])
+                  * (1 - smoothstep(a, 0.15, 0.5)) for c, a, t in zip(co, arm, top)])
     zone = np.where(k > 0)[0]
     d = co - UNI_SKINNED
     for _ in range(rounds):

@@ -1048,7 +1048,6 @@ def build_sabre():
     # suspension rings lying flat on the bands' back edge, and the slings from the belt down onto that edge and along
     # it to them, the long one (to the lower ring) over the short one (hung straight from the belt to rings 3 cm off
     # the scabbard, the long one ran down beside it like a loose rod)
-    belt_lo = min(v.co.z for v in obj('Belt').data.vertices if v.co.x > 0.1)
 
     def at(s):
         return min(range(len(acc)), key=lambda j: abs(acc[j] - s))
@@ -1060,6 +1059,10 @@ def build_sabre():
     ring_off = 0.0018  # the flat ring's wire (r 1.6 mm) on the surface
     strap_off = (ring_off + 0.0021 + SLING_T / 2, ring_off + 0.0021 + SLING_T * 1.5 + 0.0008)
     top_at = edge(SLING_JOIN, strap_off[1])
+    # the belt's lower edge over there (it goes down to his left and to the front: its lowest point on that side is
+    # further round, in front)
+    belt_lo = min(v.co.z for v in obj('Belt').data.vertices
+                  if v.co.x > 0.1 and (v.co.xy - top_at.xy).length < (top_at.xy.length - v.co.xy.length) + 0.03)
     q = Vector((top_at.x, top_at.y, belt_lo - SLING_TOP_Z))
     loc, nrm, _, _ = LOWER.find_nearest(q, 0.3)
     top = loc + nrm * (SLING_T + 0.002) if loc is not None else q
