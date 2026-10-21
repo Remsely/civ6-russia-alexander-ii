@@ -658,7 +658,15 @@ def belt_band(bm):
     belt = dict(BELT_ZC=zc, BELT_H=BELT_H, BELT_C=(c.x, c.y), BELT_TILT=BELT_TILT)
     z_at = lambda p: mat_util.belt_z(belt, p.x, p.y)  # noqa: E731 - its plane is tilted
     dirs = [Vector((math.sin(2 * math.pi * k / BELT_N), -math.cos(2 * math.pi * k / BELT_N))) for k in range(BELT_N)]
-    body = [ray_hull(hull, c, d) for d in dirs]
+    half = BELT_H / 2 + 0.004
+    # the body's widest over the belt's whole height in its own plane (taken at its middle on the level, the belly
+    # under its lowered front stood out past it and the tunic there rose over its lower edge: the belt pressed in)
+    body = []
+    for d in dirs:
+        p = c + d * ray_hull(hull, c, d)
+        zd = z_at(p)
+        body.append(max(ray_hull(hull_at(zd + s * half), c, d) if hull_at(zd + s * half) else 0.0
+                        for s in (-1.0, -0.5, 0.0, 0.5, 1.0)))
     sector = lambda d: (math.atan2(d.x, -d.y) % (2 * math.pi)) / (2 * math.pi) * BELT_N
     cloth = [0.0] * BELT_N
     for v in bm.verts:
@@ -670,7 +678,6 @@ def belt_band(bm):
     prof = [b + fit for b in body]
     for _ in range(4):
         prof = [prof[k] * 0.5 + (prof[k - 1] + prof[(k + 1) % BELT_N]) * 0.25 for k in range(BELT_N)]
-    half = BELT_H / 2 + 0.004
     # the skirt's width BELT_TAPER under the belt, per direction (where the straight taper meets it)
     reach = [0.0] * BELT_N
     for v in bm.verts:
@@ -696,9 +703,9 @@ def belt_band(bm):
             t = (zv - v.co.z - half) / BELT_TAPER
             if t >= 1:
                 continue
-            hull = hull_at(v.co.z)
-            target = max(target + (lerp(reach) - target) * t,
-                         ray_hull(hull, c, d.normalized()) + TUNIC_OFF if hull else 0.0)
+            hull = hull_at(v.co.z)  # (off it by the belt's own fit by the belt, the tunic's further down: at the
+            target = max(target + (lerp(reach) - target) * t,  # tunic's right under it, it stood out over the belt)
+                         ray_hull(hull, c, d.normalized()) + fit + (TUNIC_OFF - fit) * t if hull else 0.0)
             w = 1.0
         else:
             w = 1 - smoothstep(v.co.z - zv, half, half + 0.03)

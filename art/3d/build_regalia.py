@@ -99,6 +99,9 @@ FRINGE_TILT_SPREAD = 0.4         # ... its neighbours tilted as far, less this m
 FRINGE_START, FRINGE_BEND = 40.0, 0.035  # ... coming out from under the rim this far off the upright, turning down to it over this
                                  # (at 55 the strands came out level over the tilted field: the fringe splayed up)
 DRAPE_ROUNDS = 12                # drape(): rounds of pushing a strand out and evening it
+DRAPE_HANG = 0.3                 # ... and of turning each step this share back to the strand's own line: past the
+                                 # shoulder's turn it hangs down onto the cords (pushed out on the shoulder's slope under
+                                 # the field's front, it ran straight on along it, standing 2 cm off the chest)
 FRINGE_SAMPLES, FRINGE_SMOOTH = 14, 6  # points down a strand checked; rounds of evening the tilts
 FRINGE_CLEAR = 0.002             # a strand's surface off the cloth (and the sash, the cords) under it
 FRINGE_STEP = 0.006              # path sampling along a strand (straight: few rings)
@@ -1612,12 +1615,13 @@ def build_epaulette(side):
     def gap(q):  # the strand's surface at q off what is under it
         return under(q)[0] - FRINGE_R - FRINGE_CLEAR
 
-    def drape(pts, push):
+    def drape(pts, push, ln):
         """The strand lying on what is under it where it would go into it (FRINGE_CLEAR off it): its points pushed
         out and evened along it by turns, its steps kept - one smooth bend (pushed out point by point, the strands
         over the cords came out kinked and crossing). Pushed out along its own push only (straight out from the field):
         along the normals of the cords under them, they were pushed aside across their neighbours."""
-        step = (pts[1] - pts[0]).length
+        step = ln / (len(pts) - 1)  # (its first step's length: evened with its neighbours', a strand whose root is
+                                    # higher than theirs came out twice as long, standing out far over the chest)
 
         def out_of(q):
             h, loc, nrm = under(q)
@@ -1626,12 +1630,13 @@ def build_epaulette(side):
                 return q
             d = push if nrm.dot(push) > 0.6 else (push + nrm).normalized()  # (along the surface, the push flung
             return q - d * (g / max(nrm.dot(d), 0.6))                          # the end strands out in a hook)
+        own = [(pts[i] - pts[i - 1]).normalized() for i in range(1, len(pts))]
         out = [p.copy() for p in pts]
         for _ in range(DRAPE_ROUNDS):
             out = [out[0]] + [out_of(q) for q in out[1:]]
             out = [out[0]] + [out[i].lerp((out[i - 1] + out[i + 1]) / 2, 0.5) for i in range(1, len(out) - 1)] + [out[-1]]
-            for i in range(1, len(out)):  # its length kept
-                out[i] = out[i - 1] + (out[i] - out[i - 1]).normalized() * step
+            for i in range(1, len(out)):  # its length kept, hanging back to its own line where nothing holds it out
+                out[i] = out[i - 1] + (out[i] - out[i - 1]).normalized().lerp(own[i - 1], DRAPE_HANG).normalized() * step
         return [out[0]] + [out_of(out_of(q)) for q in out[1:]]  # and nowhere into what is under it
 
     def line(start, push, t, ln):
@@ -1705,16 +1710,17 @@ def build_epaulette(side):
                  for j in range(len(tilts))]
     for c, t in zip(dense, tilts):  # as long as it is, lying on what is under it where it reaches it
         c['tilt'] = t
-        c['path'] = drape(line(c['root'], c['push'], t, c['length']), c['push'])
+        c['path'] = drape(line(c['root'], c['push'], t, c['length']), c['push'], c['length'])
     # ... each evened with its neighbours round the rim, then out of what is under it again: the strands lying over
     # the cords one way and the next another came out crossing in a heap at the front
     for _ in range(FRINGE_SMOOTH):
         paths = [c['path'] for c in dense]
         for j, c in enumerate(dense):
             p0, p1 = paths[max(j - 1, 0)], paths[min(j + 1, len(paths) - 1)]
-            c['path'] = [c['path'][0]] + [(a_ + b_ + q * 2) / 4 for a_, b_, q in zip(p0[1:], p1[1:], c['path'][1:])]
+            r0, r1, r = p0[0], p1[0], c['path'][0]  # their shapes off their roots (the roots stay put)
+            c['path'] = [r] + [r + ((a_ - r0) + (b_ - r1) + (q - r) * 2) / 4 for a_, b_, q in zip(p0[1:], p1[1:], c['path'][1:])]
     for c in dense:
-        c['path'] = drape(c['path'], c['push'])
+        c['path'] = drape(c['path'], c['push'], c['length'])
         c['tip'] = c['path'][-1]
     # strands side by side along the bell's lower edge, touching there (spaced along the rim, they stood apart below
     # with the cloth between them); their roots crowd under the rim
