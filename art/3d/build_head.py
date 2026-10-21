@@ -119,6 +119,8 @@ EYE_RIMS = {
     'r': {'upper': [(323, 437), (335, 431), (350, 427), (365, 424), (380, 427), (390, 432), (395, 439)],
           'lower': [(323, 437), (335, 444), (350, 447), (365, 446), (380, 443), (390, 441), (395, 439)]},
 }
+EYE_IRIS_PX = {'l': (558, 427), 'r': (365, 436)}  # the painted irises' middles: both off their openings' middles to
+                                                 # our right (build_pose.py turns the balls to show them there)
 UNDER_EYE = ((3, 9), (28, 46))    # px under the lower rim: the band clean_under_eyes() evens out fades in, fades out
 UNDER_EYE_AMOUNT = 0.9
 LID_FADE = 22                     # px: the upper lid's skin above the rim follows less and less up to the brow
@@ -827,7 +829,6 @@ MOUTH_C = sum((at_img(q).co for q in MOUTH_LINE), Vector()) / len(MOUTH_LINE)
 
 # ---------------------------------------------------------------- the sources as objects
 body = set(members('body'))
-HEADISH = {'head', 'neck_01'} | set(head_shape.FACE_BONES)
 src_head = new_object('_SrcHead', gbm, [material('_SrcHead', SRC_IMG, 0.55), material('_SrcSkin', None, 0.55, SKIN_LIN, 'col')],
                       part=False)
 GEN_BVH = BVHTree.FromBMesh(gbm)
@@ -1506,13 +1507,15 @@ def fit_eyes():
         poly = EYE_POLY[EYE_FROM[s_]]
         near = [hv for hv in hb.verts if (hv.co - e['pivot']).length < 0.035 and hv.normal.dot(FWD) > -0.2]
         ins = {hv for hv in near if in_poly(eye_img(hv, s_), poly)}
-        rim, edge_of = [], {}
+        rim, rim_img, edge_of = [], [], {}
         for hv in ins:
             for ed in hv.link_edges:
                 o = ed.other_vert(hv)
                 if o not in ins:
                     da, db = edge_dist(eye_img(hv, s_), poly), edge_dist(eye_img(o, s_), poly)
-                    rim.append(hv.co.lerp(o.co, da / max(da + db, 1e-9)))
+                    f = da / max(da + db, 1e-9)
+                    rim.append(hv.co.lerp(o.co, f))
+                    rim_img.append([a + (b - a) * f for a, b in zip(eye_img(hv, s_), eye_img(o, s_))] + [1.0])
                     edge_of.setdefault(hv, []).append(rim[-1])
         P = np.array([q[:] for q in rim])
         cen = P.mean(0)
@@ -1548,7 +1551,10 @@ def fit_eyes():
             me.vertices[hv.index].co = c + (q - c).normalized() * R
         U3, L3 = (e['U3'], e['L3']) if EYE_FROM[s_] == s_ else (mirror(EYE[EYE_FROM[s_]]['U3']), mirror(EYE[EYE_FROM[s_]]['L3']))
         ang = lambda q: math.atan2((q - c).z, (q - c).dot(FWD))  # noqa: E731
-        e.update(pivot=c, R=R, h=(U3 - L3).length, deg=math.degrees(ang(U3) - ang(L3)), open=Vector(cen.tolist()))
+        # the painted iris's middle on the opening: the rim's picture to its place, affine (least squares)
+        A = np.linalg.lstsq(np.array(rim_img), P, rcond=None)[0]
+        iris = Vector((np.array(list(EYE_IRIS_PX[EYE_FROM[s_]]) + [1.0]) @ A).tolist())
+        e.update(pivot=c, R=R, h=(U3 - L3).length, deg=math.degrees(ang(U3) - ang(L3)), open=iris)
         print('eye %s: r %.4f at %s, rim %d pts off the sphere %.4f..%.4f; %d sunk, %d lids lifted (most %.4f)'
               % (s_, R, tuple(round(x, 3) for x in c), len(rim), L.min() - R, L.max() - R, sunk, lifted, worst))
     me.update()
@@ -1679,10 +1685,9 @@ neck_weights()
 # ---------------------------------------------------------------- the body no longer carries the head
 under = bpy.data.objects['BodyUnder']
 ub = bmesh.new(); ub.from_mesh(under.data)
-udl = ub.verts.layers.deform.active
-ugn = [g.name for g in under.vertex_groups]
-gone = [f for f in ub.faces if all(v.co.z > HEAD_Z + 0.01 and sum(w for g, w in v[udl].items() if ugn[g] in HEADISH) > 0.5
-                                   for v in f.verts)]
+# nor its neck: the head brings its own down into the collar (a ring of the body's neck left under HEAD_Z sat inside
+# the collar, through it at the back) - all that stays of the body is the hands
+gone = [f for f in ub.faces if all(v.co.z > HEAD_Z - 0.1 for v in f.verts)]
 bmesh.ops.delete(ub, geom=gone, context='FACES')
 bmesh.ops.delete(ub, geom=[v for v in ub.verts if not v.link_faces], context='VERTS')
 ub.to_mesh(under.data); ub.free()

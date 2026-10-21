@@ -68,7 +68,7 @@ for o in list(bpy.data.objects):  # regalia are built on the posed uniform after
     if o.get('regalia'):
         bpy.data.objects.remove(o)
 names = [g.name for g in uni.vertex_groups]
-# the eye openings' middles in their eye bones' frames (the bones' rest changes when the stance is applied)
+# the painted irises' middles on the eye openings, in their eye bones' frames (the bones' rest changes when the stance is applied)
 EYE_OPEN = {s: rig.data.bones['eye_' + s].matrix_local.inverted() @ Vector(p)
             for s, p in sc['head'].get('EYE_OPEN', {}).items()}
 
@@ -647,8 +647,9 @@ for pb in rig.pose.bones:
 def aim_eyes():
     """The eyeballs (build_head.py) turned in the stance to look into the leader camera - where the diplomacy screen's
     camera stands in front of the figure (as tools/blender/render_leader.py places it: the export turns the model by
-    90 + YAW_DEG and scales it to 150 cm). Each iris goes where the camera sees its opening's middle (the generated
-    openings are not alike: both balls turned straight at the camera, one iris sat by the nose - a squint). The eye
+    90 + YAW_DEG and scales it to 150 cm). Each iris goes where the camera sees the portrait's painted one (both balls
+    turned straight at the camera, one iris sat by the nose - a squint; to their openings' middles, his left one still
+    sat nearer the nose than the right, both off to our right in the portrait). The eye
     bones keep their rest; the eyeballs' mesh turns about them."""
     from mathutils import Matrix, Vector
     eyes = bpy.data.objects.get('Eyes')
@@ -663,7 +664,7 @@ def aim_eyes():
         b = rig.data.bones['eye_' + s]
         c = b.head_local
         aim = cam
-        if s in EYE_OPEN:  # the ray from the camera through the opening's middle, where it meets the ball
+        if s in EYE_OPEN:  # the ray from the camera through the painted iris, where it meets the ball
             o = b.matrix_local @ EYE_OPEN[s]
             R = sc['head']['EYE_R'][s]
             u = (o - cam).normalized()
