@@ -75,6 +75,9 @@ FRINGE_TILT = (22.0, 6.0, 4.0)   # degrees off the upright at the outer end, at 
                                  # portrait's fringe is a stiff bell, ~40 deg out over the arm (fanned out at 38-50 deg
                                  # below level they stood out like a sunburst; hanging nearly straight, a narrow tube)
 FRINGE_TILT_MAX = 36.0           # ... out to this at most to clear what is under it (then shortened)
+FRINGE_ENDS_TILT = 28.0          # ... but at the front and back (over the chest and the shoulder blade) out to this at
+                                 # most, clearing them by curling further out over the rim instead: out to 36 deg the
+                                 # bell's ends splayed up, its strands there standing out from the rest
 FRINGE_TILT_SPREAD = 0.4         # ... its neighbours tilted as far, less this many degrees a degree round the rim
 FRINGE_START, FRINGE_BEND = 40.0, 0.035  # ... coming out from under the rim this far off the upright, turning down to it over this
                                  # (at 55 the strands came out level over the tilted field: the fringe splayed up)
@@ -1503,9 +1506,10 @@ def build_epaulette(side):
         # any tilt and were left out, and the cords' tops showed under the field
         _, _, nr = under(root)
         lift = ((nr if nr is not None else push) + push).normalized()
+        t_max = FRINGE_TILT_MAX + (FRINGE_ENDS_TILT - FRINGE_TILT_MAX) * smoothstep(abs(flat.y), 0.2, 0.6)
         t, e = t0, 0.0
         while clear_len(t, root + lift * e) < length:
-            if t < math.radians(FRINGE_TILT_MAX):
+            if t < math.radians(t_max):
                 t += math.radians(1.0)
             elif e < FRINGE_KNEE:
                 t, e = t0, e + 0.003

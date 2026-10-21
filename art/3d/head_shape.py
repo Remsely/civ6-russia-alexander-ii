@@ -402,6 +402,21 @@ SHOULDER_Z, SHOULDER_K = 1.74, 0.15  # trapezius above SHOULDER_Z is pulled down
 SHOULDER_R0, SHOULDER_R1 = 0.12, 0.30  # ... most at the neck, fading out towards the shoulder joints (keeps a slope)
 
 
+COLLAR_DROP_SIN = 0.41          # the collar's top: level round the back and sides, running down to the front corners
+                                 # (sin of their angle from the front, ~0.42 rad) - straight across them as the
+                                 # portrait's halves' top edges, seen from the front
+
+
+def collar_top(dx, dy, top_front, top_side):
+    """The collar's top over the direction (dx, dy) round the neck: top_side round the back and at the sides, falling
+    to top_front at the front corners (straight down as seen from the front: linear in the sideways reach)."""
+    l = math.hypot(dx, dy) or 1e-9
+    if dy > 0:  # the back half
+        return top_side
+    u = max(0.0, (abs(dx) / l - COLLAR_DROP_SIN) / (1 - COLLAR_DROP_SIN))
+    return top_front + (top_side - top_front) * u
+
+
 def neck_radius(dx, dy):
     """Radius of the neck ellipse in the direction (dx, dy) from its centre."""
     l = math.hypot(dx, dy) or 1e-9
@@ -441,7 +456,7 @@ def fit_neck(h, axis_xy, chin_z, top_front, top_back):
             disp[v.index][2] = -(z - SHOULDER_Z) * (1 - SHOULDER_K) * wr * wz * (1 - head_w[v.index])  # not the jaw
         # neck: squeezed into the ellipse (only the neck itself, not the shoulders round it)
         if r > R:
-            zt = top_front + (top_back - top_front) * (1 + dy / r) / 2  # the collar's top in this direction
+            zt = collar_top(dx, dy, top_front, top_back)  # the collar's top in this direction
             w = smoothstep(z, NECK_SQ_Z0, NECK_SQ_Z1) * (1 - smoothstep(z, zt, zt + 0.035))
             w *= 1 - smoothstep(r, R + 0.06, R + 0.1)
             nr = R + (r - R) * 0.2

@@ -61,13 +61,20 @@ MIRROR_JAW = (0.035, 0.04, 0.015)  # mirror_jaw: his left's block |x| over the f
                                   # under the ear lobe: at 0.05 / 0.02 the lobe was torn, a pale ragged seam under it)
 SIDE_CLASS = (0.05, 2.0, 0.006)   # side_class: |x| over the first, up to the second height, the ears (and this round
                                   # them) kept
+THROAT_SKIN = (0.004, 0.003)      # the throat: skin this far under the chin and this close to the neck's tube
 CHIN_SKIN_X = 0.04                # under the jaw this near the middle: skin (the chin is shaved; whiskers beside it)
 NOSE_UNDER = (0.024, 0.035, 0.03)  # under the nose: plain skin this far to the sides, back, down from the tip
 NECK_Z0, NECK_INTO = 1.70, 0.03   # the neck tube: from inside the tunic up to this far into the head over the cut
 UNDER_JOIN, UNDER_STEP = 0.014, 0.007  # the neck's column made anew from this far under the cut down, rings this far
                                   # apart (under_jaw)
+THROAT_SMOOTH = (0.075, 0.004, 40)  # the throat over the collar's lowered front smoothed (Taubin): from this far under
+                                  # the cut, up to this far under the chin at the front (only to the cut at the back,
+                                  # the hair's edge), rounds - the neck's column rebuilt from the jaw's ragged rim had a
+                                  # zigzag crack down it and a ledge under the jaw (hidden in the collar while its front
+                                  # stood up under the chin)
 JOIN_PLAIN = (0.012, 0.02)        # ... and where it meets the jaw: plain up to this far over the cut, fading out by this
-NECK_PLAIN = 0.006                # the neck's skin plain up to this far over the cut (fully at the cut)
+NECK_PLAIN = 0.012                # the neck's skin plain up to this far over the cut (fully at the cut; at 6 mm the beard's
+                                  # colour lay in streaks on the throat the collar's lowered front shows)
 NECK_SHADE = (1.0, 1.0)          # the neck's skin this bright at the collar and under the jaw: its own colour - no
                                   # shadow is painted in, the lighting puts the beard's and the chin's shade on it
 UNDER_JAW = (0.15, 0.5, 0.012)    # hair_detail: surfaces facing down (normal z under -first, fully by -second) up to the
@@ -86,6 +93,7 @@ NECK_COLLAR_EASE = (0.004, 0.016)  # ... and over the collar as wide all round, 
 NECK_TWIST_ZS = (1.84, 1.90)       # the neck's turn spreads between these heights (head bone above, chest below): over
                                   # the collar's front top - inside it the neck stays with the chest (the collar does
                                   # not turn: the oval neck turned in it came out through it)
+NECK_W_SMOOTH = 30               # rounds the head's share of the neck is evened over the mesh under the chin
 NECK_FIT = 0.97                   # the tube to the collar's ellipse (the tunic's stand collar lies on that): it fills
                                   # the collar, no gap round a thin neck
 EAR_SMOOTH, EAR_PROUD = 80, 0.004  # head_ears: the ear's flap stands this far out of the head smoothed so many rounds
@@ -972,6 +980,33 @@ def under_jaw(b):
     print('neck column: rim of %d vertices (rims %s), %d rings' % (n, [len(l) for l in loops], len(rings_z)))
 
 
+def smooth_throat(b):
+    """The throat between the collar's front and the chin smoothed (THROAT_SMOOTH): Taubin rounds (no shrinking), the
+    weight fading in over a centimetre at either end; at the back only up to the cut (the hair's edge stays)."""
+    cut = CHIN_Z - NECK_CUT
+    ax = sc['uniform']['NECK_AXIS']
+    cy = ax[1] + head_shape.NECK_C_DY
+    b.verts.index_update()
+    co = np.array([v.co[:] for v in b.verts])
+    ed = np.array([[e.verts[0].index, e.verts[1].index] for e in b.edges])
+    deg = np.bincount(ed.ravel(), minlength=len(co)).astype(float)
+    lo = cut - THROAT_SMOOTH[0]
+    w = np.zeros(len(co))
+    for i, (x, y, z) in enumerate(co):
+        d = math.hypot(x - ax[0], y - cy) or 1e-9
+        front = smoothstep(-(y - cy) / d, -0.2, 0.3)
+        top = cut - 0.004 + (CHIN_Z - THROAT_SMOOTH[1] - cut + 0.004) * front
+        w[i] = smoothstep(z, lo, lo + 0.01) * (1 - smoothstep(z, top - 0.008, top))
+    for _ in range(THROAT_SMOOTH[2]):
+        for f in (0.5, -0.53):
+            s_ = np.zeros_like(co)
+            np.add.at(s_, ed[:, 0], co[ed[:, 1]]); np.add.at(s_, ed[:, 1], co[ed[:, 0]])
+            co = co + (s_ / np.maximum(deg, 1)[:, None] - co) * (f * w)[:, None]
+    for v, c in zip(b.verts, co):
+        v.co = c
+    print('throat: %d vertices smoothed' % int((w > 0.5).sum()))
+
+
 def build_head():
     b = bmesh.new()
     for o in (src_head, src_neck):
@@ -1049,6 +1084,7 @@ def build_head():
             bmesh.ops.triangulate(b, faces=b.faces[:])
         print('head: %d folded faces removed, %d edges of holes closed' % (len(fins), len(holes)))
     under_jaw(b)
+    smooth_throat(b)
     b.to_mesh(ob.data); b.free()
     for p in ob.data.polygons:
         p.use_smooth = True
@@ -1155,6 +1191,7 @@ def bake():
 bake()
 
 
+NECK_TUBE = BVHTree.FromObject(src_neck, bpy.context.evaluated_depsgraph_get())  # (throat_skin)
 bpy.data.objects.remove(src_head)
 bpy.data.objects.remove(src_neck)
 
@@ -1182,6 +1219,10 @@ for v in hb.verts:
     # under the jaw between the whiskers: the shaved chin's underside and the throat (generated and capped as hair, it
     # was a dark brown sheet from the chin to the collar)
     if v.normal.z < -0.3 and v.co.z < CHIN_Z + 0.015 and abs(v.co.x - SYM_M.x) < CHIN_SKIN_X:
+        HCLS[v] = head_shape.SKIN
+    # ... and the throat under the chin, on the neck's tube (the whiskers hang out from it): generated as hair, the
+    # beard's ends ran down it in thin dark tongues, shown now the collar's front is lowered
+    if v.co.z < CHIN_Z - THROAT_SKIN[0] and NECK_TUBE.find_nearest(v.co, THROAT_SKIN[1])[0] is not None:
         HCLS[v] = head_shape.SKIN
     if HIMG[v] is None:
         HIMG[v] = (-1e4, -1e4)
@@ -1587,14 +1628,35 @@ def neck_weights():
     # its girth over the straight stretch (decimated, a straight tube has few vertices: a thin slice missed most)
     sl = [c for c in co if NECK_Z0 + 0.003 < c.z < CHIN_Z - NECK_CUT - 0.012]
     rx = max(abs(c.x - ax.x) for c in sl); ry = max(abs(c.y - ax.y) for c in sl)
+    ups, chests, jaws = [], [], []
     for v in head.data.vertices:
         c = v.co
         d = math.hypot((c.x - ax.x) / rx, (c.y - ax.y) / ry)  # 1 on the neck tube
-        up = max(smoothstep(c.z, *NECK_TWIST_ZS), smoothstep(d, 1.08, 1.35))
-        chest = 1 - smoothstep(c.z, NECK_TWIST_ZS[0] - 0.02, NECK_TWIST_ZS[0])
+        ups.append(max(smoothstep(c.z, *NECK_TWIST_ZS), smoothstep(d, 1.08, 1.35)))
+        chests.append(1 - smoothstep(c.z, NECK_TWIST_ZS[0] - 0.02, NECK_TWIST_ZS[0]))
+        # the throat is no jaw: MPFB's jaw weight (transferred, 0.03-0.9 from one vertex to the next) kept only on the
+        # chin and outside the tube
+        jaws.append(max(smoothstep(c.z, CHIN_Z - 0.01, CHIN_Z), smoothstep(d, 1.08, 1.35)))
+    # ... evened over the mesh under the chin (NECK_W_SMOOTH): where the throat runs into the jaw its vertices stand
+    # out of the tube by a little more or less, one by one, and the head (or the jaw) took some and not their
+    # neighbours - turned, the throat tore in a zigzag crack
+    ups, jaws = np.array(ups), np.array(jaws)
+    ed = np.array([e.vertices[:] for e in head.data.edges])
+    deg = np.bincount(ed.ravel(), minlength=len(ups)).astype(float)
+    zone = np.array([1 - smoothstep(v.co.z, CHIN_Z, CHIN_Z + 0.01) for v in head.data.vertices])
+    for _ in range(NECK_W_SMOOTH):
+        s_ = np.zeros_like(ups)
+        np.add.at(s_, ed[:, 0], ups[ed[:, 1]]); np.add.at(s_, ed[:, 1], ups[ed[:, 0]])
+        ups = ups + (s_ / np.maximum(deg, 1) - ups) * 0.5 * zone
+        s_ = np.zeros_like(jaws)
+        np.add.at(s_, ed[:, 0], jaws[ed[:, 1]]); np.add.at(s_, ed[:, 1], jaws[ed[:, 0]])
+        jaws = jaws + (s_ / np.maximum(deg, 1) - jaws) * 0.5 * zone
+    for v, up, chest, jk in zip(head.data.vertices, ups, chests, jaws):
         w = {names[g.group]: g.weight for g in v.groups if g.weight > 0}
         face = {k: x for k, x in w.items() if k not in ('head', 'neck_01', 'spine_03', 'spine_02', 'clavicle_l',
                                                          'clavicle_r')}
+        if 'jaw' in face:
+            face['jaw'] *= jk
         fsum = sum(face.values())
         body = 1 - fsum
         new = dict(face)

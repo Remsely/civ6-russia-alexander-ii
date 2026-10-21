@@ -50,14 +50,12 @@ BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-hori
 # The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
 # over it): its top runs round the neck under the jaw, a little higher at the back. Set from the chin once the head is
 # on (shape_body).
-STAND_BELOW_CHIN, STAND_BACK_RISE = 0.027, 0.025  # in the portrait the collar's top corners at the front are ~2.5 cm
-                                  # under the chin's underside (in its 'ref' view, px 214 against the chin's 195): only
-                                  # the shirt's white edge between them (4.6 cm down, a bare neck stood out of it; 2.6
-                                  # cm, the collar came up to the chin; 3.3 cm with the front dipped, it read as slid
-                                  # down) - and it rises towards the back, tilted as a shirt's collar (3.5 cm, its back
-                                  # stood up the nape like a horse collar; 1.2 cm, too little tilt)
-STAND_RISE_POW = 1.2              # ... soon from the front (the portrait's top edge climbs along the side behind the
-                                  # whiskers; rising as (1 - cos) / 2, the sides stood 3.5 cm up over the whole neck)
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.048, 0.032  # in the portrait the collar's top is level round the back and
+                                  # sides (the white shirt's edge over it ~1.6 cm under the chin) and runs straight
+                                  # down to the halves' front corners, ~3 cm lower (px 222-228 in the 'ref' view
+                                  # against the sides' 203): the top of a shirt's collar, tilted to the front
+                                  # (head_shape.collar_top). (Level at the front, rising 2.5 cm up the nape, it read
+                                  # as untilted and standing up at the back.)
 STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
 STAND_OFF = 0.016                 # off the neck: its narrowest outline over NECK_OUTLINE_ZS (the chin widens the top) -
                                   # the portrait's collar stands off the neck, ~17 cm across at the top (6 mm: a tube
@@ -160,7 +158,7 @@ def shape_body():
     chin = float(head_shape.LAST['landmarks']['chin'][2])
     STAND_TOP_FRONT = chin - STAND_BELOW_CHIN
     STAND_TOP_BACK = STAND_TOP_FRONT + STAND_BACK_RISE
-    print('stand collar: top %.3f front, %.3f back' % (STAND_TOP_FRONT, STAND_TOP_BACK))
+    print('stand collar: top %.3f front, %.3f sides and back' % (STAND_TOP_FRONT, STAND_TOP_BACK))
     neck = rig.data.bones['neck_01'].head_local
     head_shape.fit_neck(h, (neck.x, neck.y), chin, STAND_TOP_FRONT, STAND_TOP_BACK)
     head_shape.slope_shoulders(h)
@@ -279,8 +277,7 @@ def neck_sector(d):
 def stand_top(c):
     """Top of the tunic's standing collar above c (by direction round the neck)."""
     d = c.xy - NECK_AXIS
-    back = max(0.0, (1 + d.y / max(d.length, 1e-6)) / 2)  # 0 front .. 1 back (rounded under 0: a complex power)
-    return STAND_TOP_FRONT + (STAND_TOP_BACK - STAND_TOP_FRONT) * back ** STAND_RISE_POW
+    return head_shape.collar_top(d.x, d.y, STAND_TOP_FRONT, STAND_TOP_BACK)
 
 
 freg = [region(p) for p in cut_me.polygons]
@@ -999,7 +996,7 @@ print('uniform verts', len(uni.data.vertices), 'faces', len(uni.data.polygons))
 # Measurements the details (build_details.py) are fitted to.
 sc['uniform'] = dict(WAIST_Z=WAIST_Z, HEM_Z=HEM_Z, SLEEVE_T=SLEEVE_T, CUFF_T=CUFF_T, FLAP_X=FLAP_X, BOOT_TOP=BOOT_TOP,
                      ANKLE_Z=ANKLE_Z, STAND_TOP_FRONT=STAND_TOP_FRONT, STAND_TOP_BACK=STAND_TOP_BACK,
-                     STAND_RISE_POW=STAND_RISE_POW,
+                     COLLAR_DROP_SIN=head_shape.COLLAR_DROP_SIN,
                      NECK_AXIS=tuple(NECK_AXIS), **BELT)
 print('body under verts', len(under.data.vertices))
 bpy.ops.outliner.orphans_purge(do_recursive=True)
