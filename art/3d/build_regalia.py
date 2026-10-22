@@ -130,6 +130,9 @@ SASH_V = (0.2, 0.0)             # ... that floor rising this much a metre to the
 SASH_BACK = (0.17, (-0.03, 0.08))  # on the back it runs straight from his left side (this x, at the floor's height) up
                                  # to the shoulder, fading in from the side over these y: held over the belt, the plane
                                  # (15 cm under the belt round the side) ran level round the waist like a cummerbund
+SASH_NECK = (1.60, 1.72, 0.018)  # over the shoulder its middle line in towards the neck by the third, fading in between the
+                                 # heights: in the portrait its edge runs along the collar's foot (1.5-2.6 cm of the tunic
+                                 # showed between them, and the strap's end ran off its edge onto the tunic in a kink)
 SASH_W, SASH_GAP, SASH_THICK, SASH_N = 0.12, 0.005, 0.002, 320  # the portrait's band: ~12.5 cm wide
 SASH_RELAX = 40                  # rounds of smoothing the band and pushing it out of the cloth
 SASH_TIGHTEN = 25                # rounds of envelope() of the cloth the sash lies on
@@ -788,6 +791,7 @@ def build_sash(cords=None):
         d = -Y * math.cos(th) + U * math.sin(th)
         loc, nrm = outer(CLOTH, c, d)
         p = (loc + nrm * SASH_GAP) if loc is not None else c + d * 0.2
+        p.x += SASH_NECK[2] * smoothstep(p.z, SASH_NECK[0], SASH_NECK[1])
         zf, ease = mat_util.belt_z(P, p.x, p.y) + P['BELT_H'] / 2 + SASH_W / 2 + SASH_FLOOR[0], SASH_FLOOR[1]
         xs, (y0, y1) = SASH_BACK
         z_back = zf + (xs - p.x) * (SASH_SHOULDER.z - zf) / (xs - SASH_SHOULDER.x)
@@ -1476,14 +1480,6 @@ def build_epaulette(side):
             break
         strap_len -= 0.002
 
-    def on_sash(d):  # the share of the strap's width at d over the sash
-        ys = np.linspace(-STRAP_W / 2, STRAP_W / 2, 7)
-        hits = [(STRAP_CLOTH.ray_cast(LS(-d, y, 0.0) + Z * 0.15, -Z, 0.4)[0],
-                 STRAP_UNI.ray_cast(LS(-d, y, 0.0) + Z * 0.15, -Z, 0.4)[0]) for y in ys]
-        return sum(a_ is not None and b_ is not None and (a_ - b_).dot(Z) > 0.003 for a_, b_ in hits) / len(ys)
-    if on_sash(strap_len - 0.03) > 0.5:  # ... and on the sash, as far as the sash goes (past its edge its end dropped
-        while on_sash(strap_len) <= 0.5 and strap_len > EP_R:  # off it onto the tunic in a kink)
-            strap_len -= 0.002
     s0 = EP_R * 0.6
     hw0 = STRAP_W / 2
     hw = lambda d: hw0 * (1 - 0.15 * (d - s0) / (strap_len - s0))  # noqa: E731  (narrowing a little to the collar)
