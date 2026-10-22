@@ -21,15 +21,27 @@ HEAD_PITCH = 0.0                   # head bent forward (degrees about X): none -
 HEAD_ROLL = -1.75                  # ... and tilted about its forward line (towards his left shoulder +): a little to his
                                    # right, as in the portrait
 LID_DROP = {'l': 18.0, 'r': 4.0}   # degrees the upper lids are let down from the generated head's (of a ~59 deg
-                                   # blink): in the portrait they cover the irises' tops; wide open, the eyes stared
-                                   # (16 deg on both hid half the iris: sleepy). His left one more: its opening is the
-                                   # taller (painted on the side turned to the viewer) - at 10 deg it still showed a
-                                   # third more of the eye (seen square to the face: 50 px mean height against 40; at
-                                   # 18 deg, 41 against 40)
-EYE_GAZE = {'l': (2.6, 1.7), 'r': (-0.5, -6.4)}  # each eyeball turned from the face's forward (degrees towards his
-                                   # left, up): both irises alike in their openings seen from ~1 m in front of
-                                   # the face (parallel, alike seen square to it from afar, they looked a little
-                                   # apart from close by: converged ~1.5 deg each)
+                                   # blink) while the cloth settles - the MPFB body's face, lids and all, is part of its
+                                   # collider: lids let down otherwise, the settled tunic came out up to 4 mm otherwise
+                                   # over the shoulders, and the sash and epaulettes on it
+LID_TRIM = {'l': -3.0, 'r': -1.0}  # ... and then the generated head's own lids turned on by this (+ down): both openings
+                                   # as tall seen from the camera (45-46 px in a close shot), each lid over the top of
+                                   # its iris as in the portrait, the eyes looking into the camera (his left one let
+                                   # down 18 deg in all hung heavy over the iris, swollen-looking; 10, it was a third
+                                   # taller than the right one, staring)
+EYE_OFF = {'l': (0.0, 0.0), 'r': (0.0, -3.0)}  # each eyeball turned onto the leader camera, then by this (degrees
+                                   # towards his left, up): his right opening sits lower on its ball than the left
+                                   # one, and its iris, on the camera, stood under the upper lid with white below it.
+                                   # (Turned from the face's forward so both irises sat alike in their openings, the
+                                   # eyes looked 7-12 deg past the camera and 8.5 deg apart: a squint.) The generated
+                                   # head's left eye sits 5.6 mm lower than its right one: its iris is the lower
+                                   # whatever they look at
+EYE_RAISE = {'l': 0.0033, 'r': 0.0}  # metres each eye is raised, ball, lids and the face round it (all of it within
+                                   # EYE_RAISE_R[0] of the ball's centre, nothing past EYE_RAISE_R[1]): the generated
+                                   # head's left eye sat 5.6 mm under its right one, the line between them leaning 4.4
+                                   # deg from the camera against the mouth's 1.8 (the head's own tilt) - the left eye
+                                   # looked much the lower; raised so, the eyes lean as the mouth does
+EYE_RAISE_R = (0.018, 0.040)
 CLAVICLE_DROP = {'l': 7.0, 'r': 7.0}  # degrees the shoulders are let down, both alike: the tunic's top from the collar's
                                    # foot to over the shoulder joint falls ~15 deg, as the portrait's straps and fields
                                    # (1.77 -> 1.73 m) - square shoulders (let down 11-12 deg over a 21 deg trapezius,

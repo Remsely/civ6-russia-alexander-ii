@@ -38,7 +38,10 @@ ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>,
                 'at REF_SOLES px) for an overlay on it; each goes to <out stem>_<view>.png')
 ap.add_argument('--motion', help='a motion from tools/blender/motion.py (idle, test) keyed on the rig, the loose pieces '
                 'simulated over it; with --frames')
-ap.add_argument('--frames', help='comma list of frames: the views shot at each (<out stem>_f<frame>_<view>.png)')
+ap.add_argument('--frames', help='comma list of frames (or first-last[:step]): the views shot at each '
+                '(<out stem>_f<frame>_<view>.png); view game = the leader camera\'s shot')
+ap.add_argument('--movie', help='with --motion: the whole motion rendered to this .mp4 (the leader camera, or the one view '
+                'given in --views), 24 fps')
 ap.add_argument('--spot', action='append', default=[], help='name=x,y,z,span: a close view of a point in the scene (metres, '
                 'model space) span wide, shot as view <name><yaw>[@elev], e.g. --spot eye=0.03,-0.1,1.66,0.06 --views eye0,eye30@10')
 ap.add_argument('--hide', help='comma list of objects (name prefixes) left out of the render, e.g. Collar,Uniform')
@@ -166,9 +169,18 @@ for sp in args.spot:
     n, _, v = sp.partition('=')
     x, y, z, w_ = (float(t) for t in v.split(','))
     spots[n] = (Vector((x, y, z)), w_)
+def frame_list(spec):
+    out = []
+    for part in spec.split(','):
+        rng, _, step = part.partition(':')
+        a, _, b = rng.partition('-')
+        out += list(range(int(a), int(b or a) + 1, int(step or 1)))
+    return out
+
+
 print('RENDER_BEGIN')
-frames = [int(f) for f in args.frames.split(',')] if args.frames else [None]
-for frame in frames if args.views else []:
+frames = frame_list(args.frames) if args.frames else [None]
+for frame in frames if args.views and not args.movie else []:
     # turntable views: the camera goes round the model (leader space: faces +X, crown at target_cm), lights stay
     stem = os.path.splitext(args.out)[0]
     if frame is not None:
@@ -182,6 +194,10 @@ for frame in frames if args.views else []:
         if kind != 'ref':
             yaw += math.radians(YAW)  # turntable views go round the figure itself: 0 is square to its torso
         pitch = math.radians(float(pitch or 3))
+        if kind == 'game':
+            aim(EYE, TARGET)
+            print(shoot('%s_game.png' % stem, w, h))
+            continue
         if kind == 'ref':
             px = args.target_cm / (REF_SOLES - REF_CROWN)  # cm per pixel
             cam_data.type = 'ORTHO'
@@ -206,7 +222,30 @@ for frame in frames if args.views else []:
         eye = target + Vector((math.cos(yaw) * math.cos(pitch), math.sin(yaw) * math.cos(pitch), math.sin(pitch))) * d
         aim(eye, target)
         print(shoot('%s_%s.png' % (stem, view.replace('@', 'e')), *size))
-if not args.views:
+if args.movie:
+    if args.views and args.views != 'game':  # one turntable view (full, bust, head or a close one), framed as above
+        name, _, pitch = args.views.split(',')[0].partition('@')
+        kind = name.rstrip('0123456789-')
+        yaw = math.radians(float(name[len(kind):] or 0) + YAW)
+        pitch = math.radians(float(pitch or 3))
+        span = {'full': 1.1, 'bust': 0.42}.get(kind, ZOOMS.get(kind, (0, 0.19))[1]) * args.target_cm
+        cz = {'full': 0.5, 'bust': 0.72}.get(kind, ZOOMS.get(kind, (0.925,))[0]) * args.target_cm
+        target = Vector((0, 0, cz))
+        d = span / 2 / math.tan(math.radians(VFOV_DEG) / 2)
+        aim(target + Vector((math.cos(yaw) * math.cos(pitch), math.sin(yaw) * math.cos(pitch), math.sin(pitch))) * d,
+            target)
+        w, h = 700, 700
+    sc.render.resolution_x, sc.render.resolution_y = w, h
+    sc.render.fps = 24
+    sc.render.image_settings.file_format = 'FFMPEG'
+    sc.render.ffmpeg.format = 'MPEG4'
+    sc.render.ffmpeg.codec = 'H264'
+    sc.render.ffmpeg.constant_rate_factor = 'HIGH'
+    sc.render.filepath = os.path.abspath(args.movie)
+    os.makedirs(os.path.dirname(sc.render.filepath), exist_ok=True)
+    bpy.ops.render.render(animation=True)
+    print(sc.render.filepath)
+elif not args.views:
     print(shoot(args.out, w, h))
 top = max(pts, key=lambda p: p.z)
 bottom = min(pts, key=lambda p: p.z)

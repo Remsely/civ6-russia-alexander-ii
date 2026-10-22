@@ -7,13 +7,15 @@
 # 2. The neck opening goes with the chest: the uniform round it (and the collars on it, the head's neck inside) is
 #    carried by spine_03 and the clavicles only - MPFB's upper arm reached in to the collar's foot, and an arm raised
 #    pulled the collar 2.6 times as long on that side. The sleeves' ends go with the forearm only.
-# 3. The belt is a stiff band: it and the cloth under it carried alike over its height (BELT_*).
+# 3. The belt is a stiff band: it and the cloth under it carried alike over its height (BELT_*); under it the skirt
+#    goes a little with the trousers it lies on (SKIRT_*).
 # 4. What lies on the uniform follows the cloth under it: each vertex takes the cloth's weights at the nearest point of
 #    it (MPFB's, transferred to the uniform) - the pieces built with their own weights slid over it and through it as
 #    soon as the chest or a shoulder moved (the sash and the aiguillettes 4-6 mm into the chest breathing, the orders
 #    through it with an arm raised). A rigid piece (an order, a button, the buckle) takes its pieces' mean, so it moves
 #    whole; an epaulette's field the cloth's evened out a little over it (SMOOTH_ROUNDS); a loose piece keeps its swing
-#    bone's share and takes the cloth's for the rest; the aiguillettes' cords from under the epaulette go with it.
+#    bone's share and takes the cloth's for the rest; the aiguillettes' cords from under the epaulette go with it, the
+#    sabre's slings with their tops on the belt.
 # 5. The fringe rides the shoulder: down each strand from the rim the epaulette's weights give way to the cloth's under
 #    it, so when the arm rises the strands on the sleeve rise with it (they hung from the shoulder strap, the arm came
 #    up through them); its swing bone is the upper arm's child and has a smaller share.
@@ -48,6 +50,8 @@ for _s in 'lr':
 SLEEVE = 0.5                       # a vertex of the uniform is a sleeve's where its arm bones carry more than this
 BELT_BIN, BELT_SMOOTH = 5.0, 6     # 3: degrees round the waist per sector; rounds evening the sectors out
 BELT_EASE = 0.035                  # ... the cloth eased back from the band's weights to its own over this above / below
+SKIRT_THIGH = 0.4                  # 3: the share of the trousers' weights the skirt takes where it lies on them ...
+SKIRT_GAP = (0.02, 0.05)           # ... all of it within the first (metres off them), none past the second
 SMOOTH_ROUNDS = 8                  # 4, 'smooth': rounds of evening the cloth's weights over the piece (an epaulette's
                                    # field: whole, the shoulder's cloth and the sash over it bent up through it, 2-4 cm
                                    # with an arm raised or the shoulder shrugged; evened out over 40 rounds, the deltoid
@@ -245,6 +249,32 @@ if belt:
     t = t * t * (3 - 2 * t)
     WU = WU * (1 - t[:, None]) + band[ku] * t[:, None]
     print('belt: the cloth under it and %.0f%% round it as one band (%d vertices)' % (100 * (t > 0).mean(), int((t > 0).sum())))
+    # the skirt under the band over the trousers takes a share of their weights (SKIRT_THIGH, by the gap between them):
+    # a thigh coming forward carries the cloth over it on (carried by the pelvis and its own swing bones, the skirt
+    # stayed, and the left thigh came out through it 3 mm as he stepped)
+    if 'part' in uni.data.attributes:
+        from mathutils.kdtree import KDTree
+        part = np.zeros(len(uni.data.polygons), np.int32); uni.data.attributes['part'].data.foreach_get('value', part)
+        tro = np.zeros(len(CU), bool)
+        for p in uni.data.polygons:
+            if part[p.index] != 0:
+                tro[list(p.vertices)] = True
+        ti = np.where(tro)[0]
+        kd = KDTree(len(ti))
+        for n, i in enumerate(ti):
+            kd.insert(CU[i], n)
+        kd.balance()
+        skirt = ~tro & (CU[:, 2] < lo[ku]) & (WU[:, ARMS].sum(1) < SLEEVE)
+        n = 0
+        for i in np.where(skirt)[0]:
+            hits = kd.find_n(CU[i], 6)
+            g = min(h[2] for h in hits)
+            u = min(max((g - SKIRT_GAP[0]) / (SKIRT_GAP[1] - SKIRT_GAP[0]), 0.0), 1.0)
+            k = SKIRT_THIGH * (1 - t[i]) * (1 - u * u * (3 - 2 * u))
+            if k > 1e-4:
+                WU[i] = WU[i] * (1 - k) + WU[ti[[h[1] for h in hits]]].mean(0) * k
+                n += 1
+        print('skirt: %d vertices over the trousers take a share of their weights' % n)
 put(uni, WU)
 head = bpy.data.objects.get('Head')
 if head:
@@ -262,6 +292,13 @@ TRI = TRI.reshape(-1, 3)
 side_arm = {s: WU[:, is_bone(tuple(p + s for p in ARM))].sum(1) for s in 'lr'}
 REGION = {'all': np.ones(len(CU), bool), 'torso': (side_arm['l'] + side_arm['r']) < SLEEVE,
           'sleeve_l': side_arm['l'] >= SLEEVE, 'sleeve_r': side_arm['r'] >= SLEEVE}
+if 'part' in me.attributes:  # the tunic's body (its skirt, no trousers)
+    _part = np.zeros(len(me.polygons), np.int32); me.attributes['part'].data.foreach_get('value', _part)
+    _tun = np.zeros(len(CU), bool)
+    for _p in me.polygons:
+        if _part[_p.index] == 0:
+            _tun[list(_p.vertices)] = True
+    REGION['tunic'] = REGION['torso'] & _tun
 TREES = {}
 
 
@@ -309,6 +346,24 @@ for name, (how, region) in FOLLOW.items():
         W = np.where(DANGLE, W, 0) + WC * (1 - d)
     put(ob, W)
 print('following the cloth:', ', '.join(n for n in FOLLOW if bpy.data.objects.get(n)))
+
+# the sabre's slings run down under the skirt and out below its hem: what of a sling the sabre does not carry goes as
+# the skirt over it does, below the hem as the hem (taken from the nearest cloth of the uniform's, the long one past
+# the hem took the thigh's weights there and kinked at the hem as the knee came forward; taken from its top on the
+# belt, the skirt swung through the slings)
+sabre = bpy.data.objects.get('Sabre')
+if sabre and 'tunic' in REGION:
+    W, co = weights(sabre), coords(sabre)
+    own = np.arange(len(BONES)) == B['dangle_sabre']  # (the skirt's swing bones are the cloth's here)
+    d = W[:, own].sum(1)
+    n = 0
+    for idx in islands(sabre.data):
+        if d[idx].min() < 0.999 and d[idx].max() > 0.001:
+            WC = cloth_weights(co[idx], 'tunic') * ~own
+            W[idx] = W[idx] * own + WC / np.maximum(WC.sum(1, keepdims=True), 1e-12) * (1 - d[idx, None])
+            n += 1
+    put(sabre, W)
+    print('sabre: %d slings go with the skirt over them' % n)
 
 # the aiguillettes' cords where they come from under the epaulette go with it (from the cloth under them, they and the
 # fringe over them went apart as soon as the shoulder moved, 2-4 cm through each other with a shrug)

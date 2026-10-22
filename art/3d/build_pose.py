@@ -11,7 +11,7 @@
 # 3. Every mesh is baked as it is at the last frame, the pose applied as the rig's rest, the armature put back.
 import bpy, math, os, sys
 import numpy as np
-from mathutils import Quaternion, Vector
+from mathutils import Matrix, Quaternion, Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -721,30 +721,79 @@ for pb in rig.pose.bones:
     pb.matrix_basis.identity()
 
 
+def raise_eyes():
+    """Each eye raised pose.EYE_RAISE (metres, straight up) after the cloth has settled (the MPFB body's face is not
+    touched, so the collider is as it was): its ball and its bones whole, the generated head's skin round it all of it
+    within EYE_RAISE_R[0] of the ball's centre, easing to none at EYE_RAISE_R[1]."""
+    raise_ = {s: pose.EYE_RAISE.get(s, 0.0) for s in 'lr'}
+    if not any(raise_.values()):
+        return
+    B = rig.data.bones
+    r0, r1 = pose.EYE_RAISE_R
+    centres = {s: B['eye_' + s].head_local.copy() for s in 'lr'}
+    head, eyes = bpy.data.objects.get('Head'), bpy.data.objects.get('Eyes')
+    if head:
+        mw, inv = head.matrix_world, head.matrix_world.inverted()
+        n = 0
+        for v in head.data.vertices:
+            p = mw @ v.co
+            dz = sum(raise_[s] * (1 - smoothstep((p - c).length, r0, r1)) for s, c in centres.items())
+            if dz:
+                v.co = inv @ (p + Vector((0, 0, dz)))
+                n += 1
+        head.data.update()
+        print('eyes raised l %.1f, r %.1f mm (%d head vertices)' % (raise_['l'] * 1000, raise_['r'] * 1000, n))
+    if eyes:
+        names = [g.name for g in eyes.vertex_groups]
+        mw, inv = eyes.matrix_world, eyes.matrix_world.inverted()
+        for s in 'lr':
+            gi = names.index('eye_' + s)
+            for v in eyes.data.vertices:
+                if any(gr.group == gi and gr.weight > 0.5 for gr in v.groups):
+                    v.co = inv @ (mw @ v.co + Vector((0, 0, raise_[s])))
+        eyes.data.update()
+    activate(rig)
+    bpy.ops.object.mode_set(mode='EDIT')
+    for s in 'lr':
+        for b in ('eye_', 'lid_upper_', 'lid_lower_'):
+            eb = rig.data.edit_bones.get(b + s)
+            if eb:
+                eb.matrix = Matrix.Translation((0, 0, raise_[s])) @ eb.matrix
+    bpy.ops.object.mode_set(mode='OBJECT')
+
+
+raise_eyes()
+
+
 def aim_eyes():
-    """The eyeballs (build_head.py) turned in the stance: each from the face's own forward (its eye bone's) by
-    pose.EYE_GAZE - set so that, seen square to the face, both irises sit alike in their openings (turned to the
-    camera, through the openings' middles or the portrait's painted irises, the generated openings and balls being
-    unalike, one iris sat by the nose or under the upper lid: a squint). The eye bones keep their rest; the eyeballs'
-    mesh turns about them."""
+    """The eyeballs (build_head.py; the iris round each sphere's pole, its first vertex) turned in the stance onto the
+    leader camera, then by pose.EYE_OFF. The eye bones keep their rest; the eyeballs' mesh turns about them."""
     eyes = bpy.data.objects.get('Eyes')
     if eyes is None:
         return
+    sys.path.insert(0, os.path.join(HERE, '..', '..', 'tools', 'blender'))
+    import motion
+    cam = motion.camera(sc, rig, pose.YAW_DEG)
+    print('leader camera at (%.3f, %.3f, %.3f)' % tuple(cam))
     names = [g.name for g in eyes.vertex_groups]
     bones = {s: rig.data.bones['eye_' + s] for s in 'lr'}
     lat = (bones['l'].head_local - bones['r'].head_local).normalized()  # towards his left
+    gaze = {}
     for s, b in bones.items():
         c = b.head_local
-        f = (b.tail_local - c).normalized()
-        yaw, pitch = (math.radians(a) for a in pose.EYE_GAZE[s])
-        g = Quaternion(f.cross(lat).normalized(), yaw) @ f   # + towards his left
-        g = Quaternion(lat, -pitch) @ g                      # + up
-        q = f.rotation_difference(g)
         gi = names.index('eye_' + s)
-        for v in eyes.data.vertices:
-            if any(gr.group == gi and gr.weight > 0.5 for gr in v.groups):
-                v.co = c + q @ (v.co - c)
-        print('eye %s: turned %.1f deg to his left, %.1f up' % (s, *pose.EYE_GAZE[s]))
+        vs = [v for v in eyes.data.vertices if any(gr.group == gi and gr.weight > 0.5 for gr in v.groups)]
+        pole = eyes.data.vertices[min(v.index for v in vs)].co
+        yaw, pitch = (math.radians(a) for a in pose.EYE_OFF[s])
+        to = (cam - c).normalized()
+        g = Quaternion(to.cross(lat).normalized(), yaw) @ to   # + towards his left
+        g = Quaternion(lat, -pitch) @ g                        # + up
+        q = (pole - c).normalized().rotation_difference(g)
+        for v in vs:
+            v.co = c + q @ (v.co - c)
+        gaze[s] = g
+        print('eye %s: onto the camera, then %.1f deg to his left, %.1f up' % (s, *pose.EYE_OFF[s]))
+    print('eyes %.1f deg apart' % math.degrees(gaze['l'].angle(gaze['r'])))
     eyes.data.update()
 
 aim_eyes()
@@ -897,13 +946,53 @@ UNI_CAP = uniform_in_collar(foot_only=True) or UNI_CAP  # again by the collar's 
 # a crease over the shoulder stood up through the foot at his right in a black knob
 uniform_under_shirt()  # (to the shirt as it stands now: by the one before the stance, the tunic's top stood over the
 # shirt in the opening in red and black jags)
+
+
+def trim_lids():
+    """The generated head's upper lids turned on by pose.LID_TRIM now the cloth has settled (as the stance turns them,
+    about the line between the eyes at the eyeballs' centres: each vertex by its share of the lid's bone), the lids'
+    bones with them."""
+    head = bpy.data.objects.get('Head')
+    if head is None or not any(pose.LID_TRIM.values()):
+        return
+    B = rig.data.bones
+    ax = (B['eye_l'].head_local - B['eye_r'].head_local).normalized()
+    names = [g.name for g in head.vertex_groups]
+    bone = {i for i, n in enumerate(names) if n in B}
+    mw = head.matrix_world
+    inv = mw.inverted()
+    turns = {}
+    for s in 'lr':
+        p = B['lid_upper_' + s].head_local.copy()
+        turns[s] = (names.index('lid_upper_' + s), Matrix.Translation(p) @ Matrix.Rotation(
+            math.radians(pose.LID_TRIM[s]), 4, ax) @ Matrix.Translation(-p))
+    n = 0
+    for v in head.data.vertices:
+        tot = sum(g.weight for g in v.groups if g.group in bone)
+        for gi, m in turns.values():
+            w = sum(g.weight for g in v.groups if g.group == gi) / tot if tot else 0.0
+            if w > 0:
+                p = mw @ v.co
+                v.co = inv @ (p + ((m @ p) - p) * w)
+                n += 1
+    head.data.update()
+    activate(rig)
+    bpy.ops.object.mode_set(mode='EDIT')
+    for s in 'lr':
+        eb = rig.data.edit_bones['lid_upper_' + s]
+        eb.matrix = turns[s][1] @ eb.matrix
+    bpy.ops.object.mode_set(mode='OBJECT')
+    print('lids turned on by l %.1f, r %.1f deg (%d vertices)' % (pose.LID_TRIM['l'], pose.LID_TRIM['r'], n))
+
+
+trim_lids()
 h.hide_set(True); h.hide_render = True
 h.modifiers.remove(h.modifiers['ColliderMask'])
 h.vertex_groups.remove(h.vertex_groups['collider'])
 sc.frame_set(1)
 sc['pose'] = dict(YAW_DEG=pose.YAW_DEG)
 if 'BLINK_DEG' in sc['head'] and not sc['head'].get('LIDS_LOWERED'):  # the stance's lids are part closed
-    hd = dict(sc['head']); hd['BLINK_DEG'] = hd['BLINK_DEG'] - min(pose.LID_DROP.values()); hd['LIDS_LOWERED'] = True; sc['head'] = hd
+    hd = dict(sc['head']); hd['BLINK_DEG'] = hd['BLINK_DEG'] - min(pose.LID_DROP[s] + pose.LID_TRIM[s] for s in 'lr'); hd['LIDS_LOWERED'] = True; sc['head'] = hd
 bpy.ops.outliner.orphans_purge(do_recursive=True)
 bpy.ops.wm.save_as_mainfile(filepath=OUT, compress=True)
 print('saved', OUT, os.path.getsize(OUT))
