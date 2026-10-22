@@ -58,10 +58,12 @@ STAND_OFF = 0.002                 # off the neck at the top: its narrowest outli
                                   # the top) - the portrait's collar is narrow at the top, close round the neck (at 1.6 cm
                                   # it was ~20% wider there than the portrait's; the neck itself, wider than this
                                   # outline, now sets most of the top's width) ...
-STAND_LEAN = 0.45                 # ... and wider down to its foot by this much a unit of height: its walls lean out to the
-                                  # sides (~24 deg), a cone as the portrait's (its outline ~103 px across at the top, ~130
-                                  # at the foot in the 'ref' view, his right side 22 px out over its 47 px height; at 0.3
-                                  # it was 13 px); upright, it read as a straight pipe round the neck
+STAND_WIDEN = 0.008               # ... and this much more at the sides (fading to none at the front and back): the neck
+                                  # fills the collar, so it is as wide (round the thin MPFB neck it came out a stalk
+                                  # under the head, 13 cm across against the jaw's 17)
+STAND_LEAN = 0.33                 # ... and wider down to its foot by this much a unit of height: its walls lean out to the
+                                  # sides (~18 deg), a cone as the portrait's (at 0.45 its flare under the thin neck made
+                                  # the neck stand out thinner still); upright, it read as a straight pipe round the neck
 STAND_SKIN_GAP = 0.003            # ... and off the skin up its top 3 cm (the pose step keeps the neck inside it): the
                                   # portrait's collar is as wide as the neck at its top (at SKIN_GAP, with the red
                                   # collar over it, it stood ~1.5 cm out of the neck at the sides, ~15 px too wide)
@@ -513,7 +515,8 @@ def stand_collar(bm):
         top = stand_top(v.co)
         lean = STAND_LEAN * max(0.0, top - v.co.z)  # the cone out to its foot
         gap = STAND_SKIN_GAP + (SKIN_GAP - STAND_SKIN_GAP) * (1 - smoothstep(v.co.z, top - 0.06, top - 0.03))
-        target = max(NECK_RS[neck_sector(d)] + STAND_OFF + lean, (hit[3] + gap) if hit[0] else 0.0)
+        side = STAND_WIDEN * (d.x / max(d.length, 1e-6)) ** 2
+        target = max(NECK_RS[neck_sector(d)] + STAND_OFF + side + lean, (hit[3] + gap) if hit[0] else 0.0)
         v.co.xy = NECK_AXIS + d.normalized() * (d.length + (target - d.length) * w)
     # a straight top edge: the ring under it is spread evenly between the edge and the cloth below
     edge = [v for v in bm.verts if v.is_boundary and v.co.z > 1.70]
@@ -706,13 +709,14 @@ def belt_band(bm):
             hull = hull_at(v.co.z)  # (off it by the belt's own fit by the belt, the tunic's further down: at the
             target = max(target + (lerp(reach) - target) * t,  # tunic's right under it, it stood out over the belt)
                          ray_hull(hull, c, d.normalized()) + fit + (TUNIC_OFF - fit) * t if hull else 0.0)
-            w = 1.0
+            w, w_out = 1.0, 1 - smoothstep(zv - v.co.z, half, half + 0.03)
         else:
-            w = 1 - smoothstep(v.co.z - zv, half, half + 0.03)
+            w = w_out = 1 - smoothstep(v.co.z - zv, half, half + 0.03)
+        if d.length < target:  # ... and out to it on its height, wherever the body is narrower there than at its
+            w = w_out          # widest (only taken in, the cloth left a gap under the belt's top on his right)
         if w <= 0:
             continue
-        if d.length > target:
-            v.co.xy = c + d.normalized() * (d.length + (target - d.length) * w)
+        v.co.xy = c + d.normalized() * (d.length + (target - d.length) * w)
     print('belt fit %.3f, profile %.3f..%.3f' % (fit, min(prof), max(prof)))
     return dict(belt, BELT_PROFILE=prof)
 
