@@ -134,7 +134,11 @@ SLING_RING_R = 0.007                 # the suspension rings, lying flat on the b
 KNOT_BALL_Z, KNOT_CORD_R = 0.70, 0.0042
 BELT_KNOT_X, BELT_KNOT_BALL_Z, BELT_KNOT_R = 0.075, 0.97, 0.0048  # (at x 0.13 it ran into the fist on the hilt, at 0.112
                                     # it pressed into its thumb side, at 0.088 still touched it: the fist reaches in to 0.095)
-HAND_CLEAR = 0.003                 # the hanger's cord this far off the skin of the hand it passes
+HAND_CLEAR = 0.003                 # the hanger's cord this far off the skin of the hand it passes: the whole cord moved in
+                                    # towards the buckle till it does, 3 mm a step (pushed off the skin point by point,
+                                    # it bent in a hook round the little finger)
+BELT_KNOT_TUCK = 0.003             # its top on the tunic this far up in under the belt's lower edge (on the belt's face 6
+                                    # mm over the edge, its cut end showed there)
 TASSEL_LEN, TASSEL_R, TASSEL_STRANDS = 0.07, 0.0125, 40
 # build_regalia.py's atlas (TEX 2048) and its texture lengths: the cords' braid and the fringe's bullion
 REG_ATLAS = {'cord': (0.0, 0.75, 1.0, 0.875), 'bullion': (0.0, 0.875, 1.0, 1.0)}  # build_regalia.py's ATLAS
@@ -187,6 +191,7 @@ def obj(name):
 CHEST = bvh_of([o for o in (uni, obj('Sash'), obj('Belt'), obj('Buttons'), obj('Aiguillettes')) if o])
 NO_SASH = bvh_of([o for o in (uni, obj('Belt'), obj('Buttons')) if o])  # the cloth's own slope under the stars
 LOWER = bvh_of([o for o in (uni, obj('Belt'), obj('Boot_l'), obj('Boot_r'), obj('Buckle')) if o])
+UNI = bvh_of([uni])
 
 
 def hand_bvh(side):
@@ -1165,13 +1170,25 @@ def build_sabre():
     rope(part, kp, KNOT_CORD_R, w)
     tassel(part, kp[-1], w)
     knot = part.build('SwordKnot')
-    # the hanger's cord: from under the belt in front of the left hip down to its own tassel
+    # the hanger's cord: from under the belt in front of the left hip down to its own tassel, straight, in past the
+    # fist on the hilt
     part = Part(bpy.data.materials.get('Regalia'))
     belt = obj('Belt')
-    bz = min(v.co.z for v in belt.data.vertices if abs(v.co.x - BELT_KNOT_X) < 0.02 and v.co.y < 0) + 0.006
-    top = LOWER.ray_cast(Vector((BELT_KNOT_X, -1.0, bz)), Vector((0, 1, 0)), 2.0)[0] + Vector((0, -BELT_KNOT_R, 0))
-    ball = clear_tassel(Vector((BELT_KNOT_X + 0.008, top.y - 0.012, BELT_KNOT_BALL_Z)), Vector((0.35, -1.0, 0.0)))
-    bp = clear_path([top.lerp(ball, j / 24) for j in range(25)], BELT_KNOT_R + 0.003)
+
+    def hanger(x):
+        bz = min(v.co.z for v in belt.data.vertices if abs(v.co.x - x) < 0.006 and v.co.y < 0) + BELT_KNOT_TUCK
+        top = UNI.ray_cast(Vector((x, -1.0, bz)), Vector((0, 1, 0)), 2.0)[0] + Vector((0, -BELT_KNOT_R, 0))
+        ball = clear_tassel(Vector((x + 0.008, top.y - 0.012, BELT_KNOT_BALL_Z)), Vector((0.35, -1.0, 0.0)))
+        return clear_path([top.lerp(ball, j / 24) for j in range(25)], BELT_KNOT_R + 0.003)
+
+    def off_hand(path):
+        return min((p - loc).dot(nrm) for p in path for loc, nrm, _, _ in [HAND_L.find_nearest(p)]) if HAND_L else 1.0
+    x = BELT_KNOT_X
+    bp = hanger(x)
+    while off_hand(bp) < BELT_KNOT_R + HAND_CLEAR and x > BELT_KNOT_X - 0.04:
+        x -= 0.003
+        bp = hanger(x)
+    top = bp[0]
     bp = clear_hand(bp, BELT_KNOT_R + HAND_CLEAR)
     wb = TORSO_W.at(top)
     rope(part, bp, BELT_KNOT_R, wb)
