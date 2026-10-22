@@ -1,9 +1,10 @@
 """The whole 3D leader from art/3d/alexander_assembly.blend: build_uniform.py, build_details.py, build_head.py (in the
 rest pose, into alexander_rest.blend), build_pose.py (the portrait's stance, cloth settled: alexander_leader.blend),
 build_regalia.py (epaulettes, sash, aiguillettes on the posed uniform, hanging as they would), build_orders.py
-(orders, medals, the sabre), build_dangles.py (bones for what swings loose), build_bake.py (the uniform's ambient occlusion) in background Blender (env BLENDER or
+(orders, medals, the sabre), build_dangles.py (bones for what swings loose), build_skin.py (weights mended for motion),
+build_bake.py (the uniform's ambient occlusion) in background Blender (env BLENDER or
 the default 4.5 install), each one's last lines printed; stops on the first error.
-    python art/3d/build_all.py [--from uniform|details|head|pose|regalia|orders|dangles|bake] [--to <step>]
+    python art/3d/build_all.py [--from uniform|details|head|pose|regalia|orders|dangles|skin|bake] [--to <step>]
 """
 import os, subprocess, sys
 
@@ -11,7 +12,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 BLENDER = os.environ.get('BLENDER', r'C:\Program Files\Blender Foundation\Blender 4.5\blender.exe')
 STEPS = [('uniform', 'alexander_assembly.blend'), ('details', 'alexander_rest.blend'), ('head', 'alexander_rest.blend'),
          ('pose', 'alexander_rest.blend'), ('regalia', 'alexander_leader.blend'), ('orders', 'alexander_leader.blend'),
-         ('dangles', 'alexander_leader.blend'), ('bake', 'alexander_leader.blend')]
+         ('dangles', 'alexander_leader.blend'), ('skin', 'alexander_leader.blend'), ('bake', 'alexander_leader.blend')]
 start = sys.argv[sys.argv.index('--from') + 1] if '--from' in sys.argv else 'uniform'
 stop = sys.argv[sys.argv.index('--to') + 1] if '--to' in sys.argv else 'bake'
 order = [s for s, _ in STEPS]

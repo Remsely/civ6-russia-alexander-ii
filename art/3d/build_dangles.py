@@ -1,6 +1,6 @@
 # Bones for what hangs loose - the sword knot's tassel, the aiguillettes' loops and their pencils, the epaulettes'
 # fringe, the skirt of the tunic - so they can swing after the body when it moves (the game has no cloth physics: the
-# idle animation carries their motion, simulated by tools/blender/motion_test.py's springs and baked into it).
+# idle animation carries their motion, simulated by tools/blender/motion.py's springs and baked into it).
 # blender -b art/3d/alexander_leader.blend --python art/3d/build_dangles.py   (after build_orders.py; in place)
 #
 # Each chain is parented to the bone that carries the piece; the piece's vertices are moved onto the chain by how far
@@ -11,12 +11,14 @@ import numpy as np
 from mathutils import Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, 'alexander_leader.blend')
+OUT = sys.argv[sys.argv.index('--') + 1] if '--' in sys.argv else os.path.join(HERE, 'alexander_leader.blend')
 # (stiffness, damping) of the springs, per second squared and per second: a hanging piece swings like a pendulum of its
 # length (stiffness ~ g / L), lightly damped; the thick twisted cords of the aiguillettes are heavier and stiffer than
-# a pendulum (they sway, never flap), the bullion fringe is stiff wire and the wool skirt stops soonest
-SPRING = {'knot': (45.0, 2.0), 'loop': (95.0, 5.0), 'pencil': (85.0, 4.5), 'fringe': (260.0, 12.0),
-          'skirt': (150.0, 8.0)}
+# a pendulum (they sway, never flap) and lie on the cloth (it rubs them still: nearly critically damped), the bullion
+# fringe is stiff wire and the wool skirt stops soonest
+SPRING = {'knot': (45.0, 2.0), 'loop': (95.0, 14.0), 'pencil': (85.0, 4.5), 'fringe': (260.0, 12.0),
+          'skirt': (150.0, 8.0), 'sabre': (60.0, 9.0)}  # the sabre: held in the fist and by its slings, heavy
+LOOP_PIN = 0.3                     # the aiguillettes' loops: this share of the way from each end to the middle stays put
 SKIRT_BONES = 4                    # round the skirt: front left / right, back left / right
 SKIRT_SHARE = 0.6                  # at the hem the skirt bones carry this much (the thighs and pelvis the rest)
 
@@ -84,6 +86,32 @@ def chain(ob, idx, name, parent, head, tail, kind, start=0.0):
     put_on(ob, idx, name, [smoothstep(x, start, start + 0.6) for x in t])
 
 
+# ---------------------------------------------------------------- the sabre: about the pommel in his fist
+# A leg stepping forward pushes the scabbard on (it hung from the pelvis and the thigh went through it): the whole
+# sabre is one rigid piece on its own bone from the pommel to the scabbard's tip; its slings run from the sword belt
+# under the skirt (their tops, and the clips there, stay with the cloth) down to the rings on it.
+sabre = bpy.data.objects.get('Sabre')
+if sabre:
+    co = coords(sabre)
+    parts = islands(sabre.data)
+    scab = max(parts, key=len)
+    tip = co[scab][np.argmin(co[scab][:, 2])]
+    slings = [ix for ix in parts if co[ix, 2].max() > co[scab, 2].max() + 0.15 and co[ix, 2].min() < co[scab, 2].max()]
+    clips = [ix for ix in parts if co[ix, 2].min() > co[scab, 2].max() + 0.15]
+    hilt = [ix for ix in parts if co[ix, 2].min() > co[scab, 2].max() - 0.02 and co[ix, 2].max() < co[scab, 2].max() + 0.2]
+    pommel = co[max(hilt, key=lambda ix: co[ix, 2].max())].mean(0) if hilt else co[np.argmax(co[:, 2])]
+    head, tail = Vector(pommel), Vector(tip)
+    added.append(('dangle_sabre', 'pelvis', head, tail, 'sabre'))
+    ring_z = {}
+    for ix in slings:
+        top_z = co[ix, 2].max(); low_z = co[ix, 2].min()
+        put_on(sabre, ix, 'dangle_sabre', [smoothstep(top_z - z, 0.0, top_z - low_z) for z in co[ix, 2]])
+    rest_ = np.ones(len(co), bool)
+    for ix in slings + clips:
+        rest_[ix] = False
+    put_on(sabre, np.where(rest_)[0], 'dangle_sabre', np.ones(int(rest_.sum())))
+    print('sabre: %d slings, %d clips stay on the belt' % (len(slings), len(clips)))
+
 # ---------------------------------------------------------------- sword knot and the belt's cord: down to the tassels
 for name, bone in (('SwordKnot', 'dangle_knot'), ('BeltKnot', 'dangle_beltknot')):
     knot = bpy.data.objects.get(name)
@@ -91,26 +119,69 @@ for name, bone in (('SwordKnot', 'dangle_knot'), ('BeltKnot', 'dangle_beltknot')
         co = coords(knot)
         top = co[np.argmax(co[:, 2])]; bottom = co[np.argmin(co[:, 2])]
         idx = np.arange(len(co))
-        chain(knot, idx, bone, dominant_bone(knot, idx), top, bottom, 'knot', 0.05)
+        parent = dominant_bone(knot, idx)
+        if name == 'SwordKnot' and sabre:  # it hangs from the hilt: what does not swing goes with the sabre
+            put_on(knot, idx, 'dangle_sabre', np.ones(len(idx)))
+            parent = 'dangle_sabre'
+        chain(knot, idx, bone, parent, top, bottom, 'knot', 0.05)
 
 # ---------------------------------------------------------------- aiguillettes: each loop swings about its two ends
+def along(ob, idx, start):
+    """Lengths along ob's edges from the vertices start to each of idx (Dijkstra)."""
+    import heapq
+    co = coords(ob)
+    nb = {}
+    for e in ob.data.edges:
+        a_, b_ = e.vertices
+        l_ = float(np.linalg.norm(co[a_] - co[b_]))
+        nb.setdefault(a_, []).append((b_, l_)); nb.setdefault(b_, []).append((a_, l_))
+    dist = {int(i): 0.0 for i in start}
+    heap = [(0.0, int(i)) for i in start]
+    while heap:
+        d, i = heapq.heappop(heap)
+        if d > dist.get(i, 1e9):
+            continue
+        for j, l_ in nb.get(i, ()):
+            if d + l_ < dist.get(j, 1e9):
+                dist[j] = d + l_
+                heapq.heappush(heap, (d + l_, j))
+    return np.array([dist.get(int(i), 0.0) for i in idx])
+
+
 aig = bpy.data.objects.get('Aiguillettes')
 if aig:
     co = coords(aig)
     loops = [ix for ix in islands(aig.data) if co[ix, 2].max() - co[ix, 2].min() > 0.05]  # not the cords under the sash
     for k, idx in enumerate(sorted(loops, key=lambda ix: -co[ix, 2].min())):
+        # pinned at both ends - on the shoulder and under the sash on the chest (weighted down its length from the
+        # top only, the far end swung out from under the sash through it): along the cord from each end, the bone
+        # from between them to the bottom of the loop
         pts = co[idx]
-        low = pts[np.argmin(pts[:, 2])]
-        top = pts[np.argmax(pts[:, 2])]
-        head = Vector(((pts[:, 0].max() + pts[:, 0].min()) / 2, top[1], top[2] - 0.01))
-        chain(aig, idx, 'dangle_loop_%d' % k, 'spine_03', head, low, 'loop', 0.0)
+        top = idx[pts[:, 2] > pts[:, 2].max() - 0.004]
+        from_top = along(aig, idx, top)
+        far = idx[from_top > from_top.max() - 0.004]
+        from_far = along(aig, idx, far)
+        u = np.minimum(from_top, from_far)
+        u = u / max(u.max(), 1e-6)
+        head = Vector((co[top].mean(0) + co[far].mean(0)) / 2)
+        # the bone to where the swinging part hangs, as long as it reaches (the middle of the cord's length could lie
+        # 3 cm off the ends' midpoint: a bone that short swung its 15 cm loop 40 degrees at a jolt)
+        swung = pts[u > 0.5]
+        reach = float(np.linalg.norm(swung - np.array(head), axis=1).max())
+        tail = head + (Vector(swung.mean(0)) - head).normalized() * reach
+        name = 'dangle_loop_%d' % k
+        added.append((name, 'spine_03', head, tail, 'loop'))
+        # (each end still for a stretch: under the sash and the fringe they run on out of sight to their cut ends)
+        put_on(aig, idx, name, [smoothstep(x, LOOP_PIN, 0.8) for x in u])
 # the pencil: one piece with its crook and knob (three islands), hanging from the knob at the end of its cord
 tips = bpy.data.objects.get('AiguilletteTips')
 if tips:
     tc = coords(tips)
     idx = np.arange(len(tc))
     top = Vector(tc[np.argmax(tc[:, 2])]); low = Vector(tc[np.argmin(tc[:, 2])])
-    chain(tips, idx, 'dangle_pencil_0', 'spine_03', top + Vector((0, 0, 0.005)), low, 'pencil', 0.0)
+    # rigid, all of it on the bone (weighted down its length, the crook came away from the pencil's top swung)
+    added.append(('dangle_pencil_0', 'spine_03', top + Vector((0, 0, 0.005)), low, 'pencil'))
+    put_on(tips, idx, 'dangle_pencil_0', np.ones(len(idx)))
 
 # ---------------------------------------------------------------- epaulette fringe: swings from the rim
 for s in 'lr':
