@@ -1475,6 +1475,15 @@ def build_epaulette(side):
         if not over_collar(-strap_len - STRAP_SHORT):  # before it, 1 cm off the shoulder)
             break
         strap_len -= 0.002
+
+    def on_sash(d):  # the share of the strap's width at d over the sash
+        ys = np.linspace(-STRAP_W / 2, STRAP_W / 2, 7)
+        hits = [(STRAP_CLOTH.ray_cast(LS(-d, y, 0.0) + Z * 0.15, -Z, 0.4)[0],
+                 STRAP_UNI.ray_cast(LS(-d, y, 0.0) + Z * 0.15, -Z, 0.4)[0]) for y in ys]
+        return sum(a_ is not None and b_ is not None and (a_ - b_).dot(Z) > 0.003 for a_, b_ in hits) / len(ys)
+    if on_sash(strap_len - 0.03) > 0.5:  # ... and on the sash, as far as the sash goes (past its edge its end dropped
+        while on_sash(strap_len) <= 0.5 and strap_len > EP_R:  # off it onto the tunic in a kink)
+            strap_len -= 0.002
     s0 = EP_R * 0.6
     hw0 = STRAP_W / 2
     hw = lambda d: hw0 * (1 - 0.15 * (d - s0) / (strap_len - s0))  # noqa: E731  (narrowing a little to the collar)
