@@ -3,7 +3,7 @@
 Верхнеуровневый план разработки мода «Remsely's Alexander II» — альтернативного лидера России для Civilization VI.
 Дизайн-документ: `docs/remselys-alexander-ii.md`.
 
-Один репозиторий = один мод. Корень репозитория = ModBuddy-проект мода.
+Один репозиторий = один мод. Мод лежит в `mod/` (проект ModBuddy), решение `RemselysAlexanderII.civ6sln` — в корне.
 
 Условные обозначения:
 - 🤖 — шаг, который может сделать Claude Code (текстовые файлы, скрипты, проверки).
@@ -86,13 +86,16 @@
 │   └── terms.md                 # русские термины
 ├── .claude/skills/              # скиллы проекта (грабли и правила, без дублей docs/)
 ├── workshop/                    # страница, настройки и превью Steam Workshop
-├── RemselysAlexanderII.modinfo
-├── RemselysAlexanderII.dep      # арт-зависимости (для Asset Editor и UpdateArt)
-├── Data/                        # SQL геймплея, иконки, цвета
-├── Text/                        # en_US.xml, ru_RU.xml
-├── Lua/
-├── ArtDefs/  XLPs/  Textures/   # DDS/TEX/XLP/artdef: генерирует tools/make_art.py
-├── Platforms/{Windows,MacOS}/BLPs/ # собранные в Asset Editor BLP
+├── RemselysAlexanderII.civ6sln  # решение ModBuddy (генерирует tools/make_modbuddy.py)
+├── mod/                         # сам мод = проект ModBuddy и pantry Asset Editor
+│   ├── RemselysAlexanderII.modinfo  .civ6proj  .Art.xml
+│   ├── RemselysAlexanderII.dep  # арт-зависимости (для Asset Editor и UpdateArt)
+│   ├── Data/                    # SQL геймплея, иконки, цвета
+│   ├── Text/                    # en_US.xml, ru_RU.xml
+│   ├── Lua/
+│   ├── ArtDefs/  XLPs/  Textures/  # DDS/TEX/XLP/artdef: генерирует tools/make_art.py
+│   ├── Platforms/{Windows,MacOS}/BLPs/  # собранные в Asset Editor BLP
+│   └── Geometries/  Animations/  Assets/  # 3D-лидер (Asset Editor)
 ├── art/
 │   ├── source/                  # исходники из нейросетей
 │   └── prompts.md               # промпты для нейросетей
@@ -103,7 +106,7 @@
 └── reference/                   # в .gitignore: файлы игры, sqlite, образцы
 ```
 
-Точная раскладка папок мода — по образцу из `reference/samples/` [проверить, как ModBuddy хочет видеть проект].
+Мод не лежит в корне: Asset Editor и cooker сканируют всю папку проекта, и `reference/` (junction на игру и SDK) их ломает.
 
 ---
 
@@ -177,7 +180,7 @@
 - Префикс `REMSELY_`, ключи текста `LOC_..._REMSELY_...`.
 - Любая правка текста — сразу в оба языка.
 - После любой правки — `python tools/validate.py`.
-- Claude Code не может сам запустить игру, ModBuddy и Asset Editor. На этих шагах он останавливается, пишет, что сделать вручную и какой лог прислать.
+- Claude Code не может сам запустить игру. На этом шаге он останавливается и пишет, что сделать вручную; логи читает сам. ModBuddy и Asset Editor заменены скриптами (`tools/build.py`, `tools/fbx_to_fgx.ps1`), Asset Editor нужен только для создания новой сущности `.geo`.
 
 ---
 

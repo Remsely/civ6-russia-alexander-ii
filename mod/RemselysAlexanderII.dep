@@ -453,7 +453,9 @@
 		</Element>
 		<Element>
 			<LibraryName text="Leader"/>
-			<PackageDependencies/>
+			<PackageDependencies>
+				<Element text="leaders/leader_remsely_alexander_ii.blp"/>
+			</PackageDependencies>
 		</Element>
 		<Element>
 			<LibraryName text="LeaderFallback"/>

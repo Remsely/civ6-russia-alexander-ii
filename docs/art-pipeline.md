@@ -5,7 +5,7 @@
 ## Что генерируется скриптами
 
 1. `.venv\Scripts\python.exe tools\slice_art.py` - из исходников в `art/build/`: портрет 827x1024 (из полного роста, кадр до бёдер) и круглые иконки 256/80/64/55/50/48/45/32 (из версии по пояс).
-2. `.venv\Scripts\python.exe tools\make_art.py` - из `art/build/` в корень мода:
+2. `.venv\Scripts\python.exe tools\make_art.py` - из `art/build/` в мод (`mod/`):
    - `Textures/*.dds` + `*.tex` (несжатый RGBA, формат как у JFD Elisabeth; у fallback 11 mip-уровней);
    - `XLPs/Icons.xlp` (иконки и портрет), `XLPs/LeaderFallbacks.xlp`;
    - `ArtDefs/{FallbackLeaders,Leaders,UserInterface}.artdef`;
@@ -16,7 +16,7 @@
 
 ## Что нельзя сгенерировать
 
-`.blp` собирает только Asset Editor / ModBuddy (cooking). Без них не работают портрет (экран выбора лидера и загрузки) и fallback (дипломатия). Иконки лидера грузятся прямо из `.dds` через `Data/Icons.sql` и работают без BLP.
+`.blp` собирает cooker SDK: `tools/build.py` (то же, что cooking в ModBuddy). Без них не работают портрет (экран выбора лидера и загрузки) и fallback (дипломатия). Иконки лидера грузятся прямо из `.dds` через `Data/Icons.sql` и работают без BLP.
 
 Нужные результаты:
 - `Platforms/{Windows,MacOS}/BLPs/UI/Icons.blp` (из `XLPs/Icons.xlp`)

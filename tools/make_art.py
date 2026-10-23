@@ -1,6 +1,6 @@
 """Генерирует арт-файлы мода по образцу JFD Russia - Elisabeth (reference/samples/JFD-Russia-Elisabeth).
 
-Берёт art/build/* (результат tools/slice_art.py) и пишет в корень мода:
+Берёт art/build/* (результат tools/slice_art.py) и пишет в мод (mod/):
   Textures/*.dds, Textures/*.tex   - несжатый RGBA DDS (заголовок как в образце) и описание текстуры для Asset Editor
   XLPs/Icons.xlp, XLPs/LeaderFallbacks.xlp
   ArtDefs/FallbackLeaders.artdef, ArtDefs/Leaders.artdef, ArtDefs/UserInterface.artdef
@@ -17,7 +17,8 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 BUILD = ROOT / "art" / "build"
-TEXTURES = ROOT / "Textures"
+MOD = ROOT / "mod"
+TEXTURES = MOD / "Textures"
 
 LEADER = "LEADER_REMSELY_ALEXANDER_II"
 ICON_SIZES = (256, 80, 64, 55, 50, 48, 45, 32)
@@ -329,8 +330,8 @@ def write_dep() -> str:
 
 def main() -> None:
     TEXTURES.mkdir(exist_ok=True)
-    (ROOT / "XLPs").mkdir(exist_ok=True)
-    (ROOT / "ArtDefs").mkdir(exist_ok=True)
+    (MOD / "XLPs").mkdir(exist_ok=True)
+    (MOD / "ArtDefs").mkdir(exist_ok=True)
 
     portrait = Image.open(BUILD / "portrait_827x1024.png")
     write_texture(portrait, PORTRAIT)
@@ -341,15 +342,15 @@ def main() -> None:
         write_texture(Image.open(BUILD / f"icon_{size}.png"), icon_name(size))
 
     icon_entries = [icon_name(s) for s in ICON_SIZES] + [PORTRAIT, PORTRAIT_SELECT, BACKGROUND_LOADING]
-    (ROOT / "XLPs" / "Icons.xlp").write_text(xlp("UITexture", "UI/Icons", icon_entries, (4, 0, 315, 805)), encoding="utf-8", newline="\n")
-    (ROOT / "XLPs" / "LeaderFallbacks.xlp").write_text(xlp("LeaderFallback", "LeaderFallbacks", [FALLBACK], (4, 0, 260, 754)), encoding="utf-8", newline="\n")
-    (ROOT / "ArtDefs" / "FallbackLeaders.artdef").write_text(FALLBACK_ARTDEF, encoding="utf-8", newline="\n")
-    (ROOT / "ArtDefs" / "Leaders.artdef").write_text(LEADERS_ARTDEF, encoding="utf-8", newline="\n")
-    (ROOT / "ArtDefs" / "UserInterface.artdef").write_text(UI_ARTDEF, encoding="utf-8", newline="\n")
-    (ROOT / "Data" / "Icons.sql").write_text(ICONS_SQL, encoding="utf-8", newline="\n")
+    (MOD / "XLPs" / "Icons.xlp").write_text(xlp("UITexture", "UI/Icons", icon_entries, (4, 0, 315, 805)), encoding="utf-8", newline="\n")
+    (MOD / "XLPs" / "LeaderFallbacks.xlp").write_text(xlp("LeaderFallback", "LeaderFallbacks", [FALLBACK], (4, 0, 260, 754)), encoding="utf-8", newline="\n")
+    (MOD / "ArtDefs" / "FallbackLeaders.artdef").write_text(FALLBACK_ARTDEF, encoding="utf-8", newline="\n")
+    (MOD / "ArtDefs" / "Leaders.artdef").write_text(LEADERS_ARTDEF, encoding="utf-8", newline="\n")
+    (MOD / "ArtDefs" / "UserInterface.artdef").write_text(UI_ARTDEF, encoding="utf-8", newline="\n")
+    (MOD / "Data" / "Icons.sql").write_text(ICONS_SQL, encoding="utf-8", newline="\n")
 
-    (ROOT / "RemselysAlexanderII.dep").write_text(write_dep(), encoding="utf-8", newline="\n")
-    print("Готово: Textures/, XLPs/, ArtDefs/, Data/Icons.sql, RemselysAlexanderII.dep")
+    (MOD / "RemselysAlexanderII.dep").write_text(write_dep(), encoding="utf-8", newline="\n")
+    print("Готово: mod/Textures/, mod/XLPs/, mod/ArtDefs/, mod/Data/Icons.sql, mod/RemselysAlexanderII.dep")
 
 
 if __name__ == "__main__":

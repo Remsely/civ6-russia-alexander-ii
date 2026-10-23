@@ -14,7 +14,8 @@ from pathlib import Path
 from lxml import etree
 
 ROOT = Path(__file__).resolve().parent.parent
-MODINFO = ROOT / "RemselysAlexanderII.modinfo"
+MOD = ROOT / "mod"  # the mod itself (ModBuddy project); reference/ stays outside its pantry
+MODINFO = MOD / "RemselysAlexanderII.modinfo"
 MODS_DIR = Path(os.environ.get("CIV6_MODS_DIR") or Path.home() / "Documents" / "My Games" / "Sid Meier's Civilization VI" / "Mods")
 TARGET = MODS_DIR / "RemselysAlexanderII"
 
@@ -31,7 +32,7 @@ def main() -> int:
     for rel in [MODINFO.name, *files]:
         dst = TARGET / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(ROOT / rel, dst)
+        shutil.copy2(MOD / rel, dst)
     print(f"installed {len(files) + 1} files to {TARGET}")
     return 0
 

@@ -1,0 +1,2930 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<AssetObjects..AssetInstance>
+  <m_BehaviorData>
+    <m_behaviorDataSets>
+      <m_animationBindings>
+        <m_Bindings>
+          <Element>
+            <m_SlotName text="HAPPY_IDLE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_NEGATIVE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_NEGATIVE_B"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_POSITIVE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_POSITIVE_B"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_TO_NEUTRAL"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_IDLE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_NEGATIVE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_POSITIVE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_TO_HAPPY"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_TO_UNHAPPY"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_IDLE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_NEGATIVE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_POSITIVE_A"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_TO_NEUTRAL"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_POSITIVE_B"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_NEGATIVE_B"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_NEGATIVE_B"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_POSITIVE_B"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_TO_ENRAGED"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_TO_ENRAGED"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_TO_ENRAGED"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="01_FIRST_MEET"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="02_DECLARE_WAR_FROM_HUMAN"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="03_DECLARE_WAR_FROM_AI"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="04_KUDOS"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="05_WARNING"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+          <Element>
+            <m_SlotName text="06_DEFEAT"/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+          </Element>
+        </m_Bindings>
+      </m_animationBindings>
+      <m_timelineBindings>
+        <m_Bindings>
+          <Element>
+            <m_SlotName text="NEUTRAL_IDLE_A"/>
+            <m_TimelineName text="NEUTRAL_IDLE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_IDLE_A"/>
+            <m_TimelineName text="HAPPY_IDLE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_IDLE_A"/>
+            <m_TimelineName text="UNHAPPY_IDLE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_POSITIVE_A"/>
+            <m_TimelineName text="NEUTRAL_POSITIVE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_POSITIVE_B"/>
+            <m_TimelineName text="NEUTRAL_POSITIVE_B"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_NEGATIVE_A"/>
+            <m_TimelineName text="NEUTRAL_NEGATIVE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_NEGATIVE_B"/>
+            <m_TimelineName text="NEUTRAL_NEGATIVE_B"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_POSITIVE_A"/>
+            <m_TimelineName text="HAPPY_POSITIVE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_POSITIVE_B"/>
+            <m_TimelineName text="HAPPY_POSITIVE_B"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_NEGATIVE_A"/>
+            <m_TimelineName text="HAPPY_NEGATIVE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_NEGATIVE_B"/>
+            <m_TimelineName text="HAPPY_NEGATIVE_B"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_POSITIVE_A"/>
+            <m_TimelineName text="UNHAPPY_POSITIVE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_POSITIVE_B"/>
+            <m_TimelineName text="UNHAPPY_POSITIVE_B"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_NEGATIVE_A"/>
+            <m_TimelineName text="UNHAPPY_NEGATIVE_A"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_NEGATIVE_B"/>
+            <m_TimelineName text="UNHAPPY_NEGATIVE_B"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_TO_HAPPY"/>
+            <m_TimelineName text="NEUTRAL_TO_HAPPY"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_TO_UNHAPPY"/>
+            <m_TimelineName text="NEUTRAL_TO_UNHAPPY"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_TO_NEUTRAL"/>
+            <m_TimelineName text="HAPPY_TO_NEUTRAL"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_TO_NEUTRAL"/>
+            <m_TimelineName text="UNHAPPY_TO_NEUTRAL"/>
+          </Element>
+          <Element>
+            <m_SlotName text="HAPPY_TO_ENRAGED"/>
+            <m_TimelineName text="HAPPY_TO_ENRAGED"/>
+          </Element>
+          <Element>
+            <m_SlotName text="NEUTRAL_TO_ENRAGED"/>
+            <m_TimelineName text="NEUTRAL_TO_ENRAGED"/>
+          </Element>
+          <Element>
+            <m_SlotName text="UNHAPPY_TO_ENRAGED"/>
+            <m_TimelineName text="UNHAPPY_TO_ENRAGED"/>
+          </Element>
+          <Element>
+            <m_SlotName text="01_FIRST_MEET"/>
+            <m_TimelineName text="01_FIRST_MEET"/>
+          </Element>
+          <Element>
+            <m_SlotName text="02_DECLARE_WAR_FROM_HUMAN"/>
+            <m_TimelineName text="02_DECLARE_WAR_FROM_HUMAN"/>
+          </Element>
+          <Element>
+            <m_SlotName text="03_DECLARE_WAR_FROM_AI"/>
+            <m_TimelineName text="03_DECLARE_WAR_FROM_AI"/>
+          </Element>
+          <Element>
+            <m_SlotName text="04_KUDOS"/>
+            <m_TimelineName text="04_KUDOS"/>
+          </Element>
+          <Element>
+            <m_SlotName text="05_WARNING"/>
+            <m_TimelineName text="05_WARNING"/>
+          </Element>
+          <Element>
+            <m_SlotName text="06_DEFEAT"/>
+            <m_TimelineName text="06_DEFEAT"/>
+          </Element>
+        </m_Bindings>
+      </m_timelineBindings>
+      <m_timelines>
+        <m_Timelines>
+          <Element>
+            <m_Name text="NEUTRAL_IDLE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers/>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="HAPPY_IDLE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers/>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="UNHAPPY_IDLE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers/>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="NEUTRAL_POSITIVE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="62"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.493827</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="63"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.901235</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="134"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Hmm_NeutralPositive"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.244444</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="NEUTRAL_POSITIVE_B"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="64"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.901235</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="65"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.493827</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="135"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Hmm_NeutralPositive"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.244444</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="NEUTRAL_NEGATIVE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="56"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.271605</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="57"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.666667</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="58"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.000000</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="119"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.823755</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="120"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.882629</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="121"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Cloth_Grab_Soft"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.881226</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="132"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Ha_NeutralToNegative"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.185185</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="NEUTRAL_NEGATIVE_B"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="59"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.000000</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="60"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.271605</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="61"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.666667</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="116"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.882629</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="117"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.823755</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="118"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Cloth_Grab_Soft"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.881226</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="133"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Ha_NeutralToNegative"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.185185</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="HAPPY_POSITIVE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="46"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.703704</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="47"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.086420</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="102"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.849766</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="103"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.889158</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="104"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.174433</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="108"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Hmm_HappyPositive"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.561111</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="HAPPY_POSITIVE_B"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="48"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.703704</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="49"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.086420</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="105"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.197183</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="106"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.849766</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="107"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.944038</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="110"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Hmm_HappyPositive"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.561111</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="HAPPY_NEGATIVE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="87"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.009390</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="90"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.075117</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="91"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.480469</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="92"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.442910</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="9"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Ha_HappyNegative"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.477778</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="HAPPY_NEGATIVE_B"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="93"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.009390</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="99"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.480469</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="100"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.075117</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="101"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.442910</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="11"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Ha_HappyNegative"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.477778</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="UNHAPPY_POSITIVE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="12"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.863078</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="14"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.405670</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="UNHAPPY_POSITIVE_B"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="23"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.863078</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="25"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.405670</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="UNHAPPY_NEGATIVE_A"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="7"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.124189</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="124"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.707308</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="UNHAPPY_NEGATIVE_B"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="10"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.124189</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="125"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.707308</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="NEUTRAL_TO_HAPPY"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="75"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.148148</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="76"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.135802</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="77"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.074074</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="78"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.012348</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="79"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.580246</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="NEUTRAL_TO_UNHAPPY"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="80"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Hard"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.629629</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="81"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.271605</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="82"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Fast"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.172836</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="83"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Slow"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.938269</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="84"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Hard"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.567901</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="85"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_HandSlap"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.172839</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="122"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.243863</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="123"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.331156</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="HAPPY_TO_NEUTRAL"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="53"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.382714</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="54"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.222222</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="55"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.876543</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="114"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>4.510160</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="115"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>4.585278</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="131"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Breath_HappyToNeutral"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.174074</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="UNHAPPY_TO_NEUTRAL"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="94"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Slow"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>6.456797</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="95"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Slow"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.098765</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="96"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Slow"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.209881</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="97"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Slow"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>4.716058</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="98"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>6.419761</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="127"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.486590</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="128"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Light_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.923372</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="129"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Light_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>4.638342</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="130"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>6.255582</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="HAPPY_TO_ENRAGED"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="50"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Hard"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.555555</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="51"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.493828</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="52"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.172840</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="109"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.394366</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="111"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Gilgamesh_Bracer_Stretch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.168638</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="112"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.248826</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="113"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.032864</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="NEUTRAL_TO_ENRAGED"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="66"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Hard"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.444444</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="67"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.691357</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="68"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.308642</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="70"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.234570</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="71"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Fast"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.296298</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="72"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.061727</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="73"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.049383</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="74"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Fast"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.950617</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="137"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Breath_NeutralToEnraged"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>2.668634</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="UNHAPPY_TO_ENRAGED"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="26"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Fist_Punch"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.603703</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="69"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.360984</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="86"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Hard"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.500000</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="88"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Fast"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.657409</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="89"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Slow"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.144444</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="126"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.400391</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="138"/>
+                <m_Description text=""/>
+                <m_FXName text="RUSS_PA_Breath_UnhappyToEnraged"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.793427</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="01_FIRST_MEET"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="1"/>
+                <m_Description text=""/>
+                <m_FXName text="Play_RUSS_PA_FIRST_MEET_J_Edited"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.500000</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="8"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.039063</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="13"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.257813</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="15"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>6.371429</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="16"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>6.526788</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="17"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>9.088617</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="18"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>5.916742</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="28"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>9.717448</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="02_DECLARE_WAR_FROM_HUMAN"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="2"/>
+                <m_Description text=""/>
+                <m_FXName text="Play_RUSS_PA_DECLARE_WAR_FROM_HUMAN_B_Edited"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.400000</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="19"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>4.546875</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="20"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.750000</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="21"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Hard"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>4.937500</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="22"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>10.167969</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="29"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.375000</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="30"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.203125</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="31"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.757813</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="32"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>9.621095</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="33"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>10.425782</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="03_DECLARE_WAR_FROM_AI"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="3"/>
+                <m_Description text=""/>
+                <m_FXName text="Play_RUSS_PA_DECLARE_WAR_FROM_AI_Edited"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.466667</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="24"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Hard"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.687500</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="27"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>1.335938</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="34"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>8.474219</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="35"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Very_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>5.685157</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="36"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Light_Short"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>5.919532</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="04_KUDOS"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="4"/>
+                <m_Description text=""/>
+                <m_FXName text="Play_RUSS_PA_KUDOS_A"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.466667</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="37"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>5.630691</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="38"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Phillip_Footstep_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>5.320986</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="39"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>5.075134</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="40"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.320992</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="05_WARNING"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="5"/>
+                <m_Description text=""/>
+                <m_FXName text="Play_RUSS_PA_WARNING_F_1"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.533333</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="41"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Hard"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>7.160492</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="42"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Cloth_Grab_Soft"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>7.358026</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>2</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="43"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>6.567905</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+          <Element>
+            <m_Name text="06_DEFEAT"/>
+            <m_Description text=""/>
+            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_fDuration>0.000000</m_fDuration>
+            <m_Triggers>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="6"/>
+                <m_Description text=""/>
+                <m_FXName text="Play_RUSS_PA_DEFEAT_C"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>0.366667</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>0</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="44"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.395062</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+              <Element>
+                <m_eType>SOUND</m_eType>
+                <m_Name text="45"/>
+                <m_Description text=""/>
+                <m_FXName text="Leader_Foley_Cloth_Silkier_Medium"/>
+                <m_CollectionName text=""/>
+                <m_AttachmentPointName text=""/>
+                <m_fStartTime>3.753086</m_fStartTime>
+                <m_fDuration>0.000000</m_fDuration>
+                <m_nTrackIndex>1</m_nTrackIndex>
+              </Element>
+            </m_Triggers>
+            <m_Tracks>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Asset VFX"/>
+                <m_Type>ASSET_FX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Transfer"/>
+                <m_Type>TRANSFER</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Action"/>
+                <m_Type>ACTION</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="ArtDef VFX"/>
+                <m_Type>ARTDEF_VFX</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Light"/>
+                <m_Type>LIGHT</m_Type>
+              </Element>
+              <Element>
+                <m_Name text="Sound"/>
+                <m_Type>SOUND</m_Type>
+              </Element>
+            </m_Tracks>
+          </Element>
+        </m_Timelines>
+      </m_timelines>
+      <m_attachmentPoints>
+        <m_Points/>
+      </m_attachmentPoints>
+      <m_stateSet/>
+    </m_behaviorDataSets>
+    <m_behaviorInstances/>
+    <m_dsgName text="Standard_Leader"/>
+    <m_referenceGeometryNames/>
+  </m_BehaviorData>
+  <m_GeometrySet>
+    <m_ModelInstances>
+      <Element>
+        <m_Name text="LEAD_RUSS_Peter_Camera"/>
+        <m_GeoName text="LEAD_RUSS_Peter_Camera"/>
+        <m_GroupStates/>
+      </Element>
+      <Element>
+        <m_Name text="Root"/>
+        <m_GeoName text="AlexanderII"/>
+        <m_GroupStates>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_RUSS_Peter_Skin"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_TEST_Skin"/>
+            <m_MeshName text="Body"/>
+            <m_StateName text="Default"/>
+          </Element>
+        </m_GroupStates>
+      </Element>
+      <Element>
+        <m_Name text="pCube1"/>
+        <m_GeoName text="LEAD_RUSS_Peter_ShadowBox"/>
+        <m_GroupStates>
+          <Element>
+            <m_Values>
+              <m_Values/>
+            </m_Values>
+            <m_GroupName text="lambert1"/>
+            <m_MeshName text="pCubeShape1"/>
+            <m_StateName text="Default"/>
+          </Element>
+        </m_GroupStates>
+      </Element>
+    </m_ModelInstances>
+  </m_GeometrySet>
+  <m_SplineSet>
+    <m_Splines/>
+  </m_SplineSet>
+  <m_CookParams>
+    <m_Values>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>0.000000</m_fValue>
+        <m_ParamName text="EnvironmentRotationX"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>-28.200001</m_fValue>
+        <m_ParamName text="EnvironmentRotationY"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>28.200001</m_fValue>
+        <m_ParamName text="EnvironmentRotationZ"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>5.000000</m_fValue>
+        <m_ParamName text="AOPower"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>1.000000</m_fValue>
+        <m_ParamName text="AOScale"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>8.000000</m_fValue>
+        <m_ParamName text="AORadius"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>0.280000</m_fValue>
+        <m_ParamName text="BloomStrength"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>0.900000</m_fValue>
+        <m_ParamName text="BloomThreshold"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>1.500000</m_fValue>
+        <m_ParamName text="ExtraExposureRange"/>
+      </Element>
+      <Element class="AssetObjects..ObjectValue">
+        <m_ObjectName text="leader_filmgrain"/>
+        <m_eObjectType>TEXTURE</m_eObjectType>
+        <m_ParamName text="GrainTexture"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>0.150000</m_fValue>
+        <m_ParamName text="GrainStrength"/>
+      </Element>
+      <Element class="AssetObjects..FloatValue">
+        <m_fValue>1.000000</m_fValue>
+        <m_ParamName text="VelocityScale"/>
+      </Element>
+    </m_Values>
+  </m_CookParams>
+  <m_Version>
+    <major>4</major>
+    <minor>0</minor>
+    <build>385</build>
+    <revision>613</revision>
+  </m_Version>
+  <m_ParticleEffects/>
+  <m_Geometries/>
+  <m_Animations/>
+  <m_Materials/>
+  <m_ClassName text="Leader"/>
+  <m_DataFiles/>
+  <m_Name text="AlexanderII"/>
+  <m_Description text=""/>
+  <m_Tags>
+    <Element text="Leader"/>
+  </m_Tags>
+</AssetObjects..AssetInstance>

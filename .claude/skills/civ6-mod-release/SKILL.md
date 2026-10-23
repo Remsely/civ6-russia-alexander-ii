@@ -13,7 +13,7 @@ description: Выпуск мода Civilization VI - архив для GitHub Re
 - Имя в игре красится цветом из Civ6_ColorAtlas.xml (цвета палитры игроков в тексте невидимы); текущий выбор - в `civ6-leader-texts`. Описание и тизер - ключи `LOC_REMSELY_*_MOD_DESCRIPTION/TEASER` в обоих языках, абзацы через `[NEWLINE]`, списки через `[ICON_BULLET]`.
 - Страница Workshop: `workshop/description.bbcode` (`[h1] [h2] [list] [olist]`), `workshop/workshop.json` (`visibility` 2 = скрытый), превью из `tools\make_preview.py`.
 - GUID мода (`id` в `.modinfo`) между версиями не меняй: по нему игра узнаёт мод.
-- BLP для macOS скриптом не пересобираются: бери оба набора из `Platforms/` проекта ModBuddy. Работу на macOS не проверяли - не обещай её.
+- BLP для обеих платформ собирает `tools/build.py` (cooker SDK, `--platform MacOS`). Работу на macOS не проверяли - не обещай её.
 - Числа в описании (города, реплики, бонусы) сверяй с данными (`CityNames`, число тегов), а не с дизайн-документом: в первом релизе мы написали «список из 11 городов», хотя в моде 11 новых названий, а список России ванильный.
 - README, описание и CHANGELOG должны совпадать с реальной механикой (числа из `docs/remselys-alexander-ii.md` и текста способности).
 

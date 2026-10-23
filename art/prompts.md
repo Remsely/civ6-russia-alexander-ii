@@ -69,3 +69,21 @@ warm golden glow behind the center-right, shallow depth of field, no objects in 
 ## Журнал результатов
 
 Сюда записывать, какой сервис и промпт дал хороший результат, и имя файла в `art/source/`.
+
+## Материалы 3D-лидера (`art/3d/textures/gen/`)
+
+Сделаны GPT по портрету (картинка-референс прикреплена к каждому промпту), 2026-10-16. Общее правило: плоский ровный свет без теней и бликов, ортогонально — свет даёт игра; полосы и ткани бесшовные. Обрезка и выбор — в истории коммита; используются в `build_uniform.py` (сукно), `build_details.py` (воротник, обшлага, пояс, пряжка), `build_regalia.py` (лента, шнур, поле эполеты).
+
+| Файл | Промпт (суть) | Примечание |
+|---|---|---|
+| `wool.png` | seamless black-navy wool broadcloth, flat, orthographic | бесшовная; фактура поверх цвета мундира |
+| `collar_oak.png` | tileable strip of gold oak-leaf embroidery on red wool (collar) | не бесшовная — кладётся зеркальными повторами |
+| `cuff_oak.png` | gold oak-leaf embroidery panel on red wool with a gold border (cuffs) | зеркальные повторы |
+| `belt_galloon.png` | tileable gold galloon belt with red edges | из двух вариантов выбран более богатый |
+| `buckle.png` | front view of a gold buckle plate with a double-headed eagle | серый фон в срезанных углах заменяется золотом |
+| `sash_damask.png` | tileable light-blue watered silk moire with faint damask | узор усилен в скрипте (`SASH_CONTRAST`) |
+| `epaulette_field.png` | top view of a round gold epaulette field with an emblem | |
+| `gold_cord.png` | tileable twisted gold 3-ply cord | обрезана по 8 виткам, стык сведён — бесшовная по длине |
+| `boot_leather.png` | seamless polished black boot leather | пока не используется: у сапог нет развёртки, в кадр игры не попадают |
+
+Не пригодились: второй вариант пояса (беднее), два бледных варианта ленты, уменьшенная копия шнура.

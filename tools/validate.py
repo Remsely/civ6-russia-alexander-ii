@@ -19,7 +19,8 @@ from lxml import etree
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_DIR = ROOT / "reference" / "game-db"
-MODINFO = ROOT / "RemselysAlexanderII.modinfo"
+MOD = ROOT / "mod"  # the mod itself (ModBuddy project); reference/ stays outside its pantry
+MODINFO = MOD / "RemselysAlexanderII.modinfo"
 
 # Which database each modinfo action type is applied to (front end uses the config DB).
 CONFIG_ACTIONS = {"FrontEndActions": "DebugConfiguration.sqlite"}
@@ -49,7 +50,7 @@ def load_modinfo():
 
 def check_files(files, actions):
     for rel in sorted(files):
-        if not (ROOT / rel).is_file():
+        if not (MOD / rel).is_file():
             err(f"modinfo: file listed but missing on disk: {rel}")
     for section, tag, rel in actions:
         if rel not in files:
@@ -101,7 +102,7 @@ def check_sql(actions):
         mem.create_function("Make_Hash", 1, lambda s: zlib.crc32(str(s).encode()))
         mem.execute("PRAGMA foreign_keys = ON")
         try:
-            mem.executescript((ROOT / rel).read_text(encoding="utf-8"))
+            mem.executescript((MOD / rel).read_text(encoding="utf-8"))
         except sqlite3.Error as e:
             err(f"sql: {rel} ({section}/{tag}) failed against {db_name}: {e}")
             continue
@@ -130,7 +131,7 @@ def check_text(files):
     by_lang = {}
     for rel in text_files:
         lang = Path(rel).stem
-        by_lang[lang] = read_text_file(ROOT / rel)
+        by_lang[lang] = read_text_file(MOD / rel)
     en, ru = by_lang.get("en_US", {}), by_lang.get("ru_RU", {})
     for tag in sorted(en.keys() - ru.keys()):
         err(f"text: {tag} has no ru_RU translation")
@@ -181,7 +182,7 @@ def check_loc_refs(actions, mod_tags):
         return
     known = sqlite3.connect(loc_db)
     for rel in sorted({r for _, t, r in actions if t == "UpdateDatabase"}):
-        for ref in sorted(set(LOC_REF.findall((ROOT / rel).read_text(encoding="utf-8")))):
+        for ref in sorted(set(LOC_REF.findall((MOD / rel).read_text(encoding="utf-8")))):
             if ref in mod_tags:
                 continue
             if known.execute("SELECT 1 FROM LocalizedText WHERE Tag=? LIMIT 1", (ref,)).fetchone():
@@ -199,7 +200,7 @@ def check_text_colors(files):
     if not COLOR_ATLAS.is_file():
         return
     known = {e.get("Name") for e in etree.parse(str(COLOR_ATLAS)).iter("Color", "ColorSet")}
-    sources = [MODINFO, *(ROOT / f for f in files if f.endswith(".xml"))]
+    sources = [MODINFO, *(MOD / f for f in files if f.endswith(".xml"))]
     for path in sources:
         for name in sorted(set(COLOR_TAG.findall(path.read_text(encoding="utf-8")))):
             if f"COLOR_{name}" not in known:

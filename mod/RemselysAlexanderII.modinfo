@@ -9,7 +9,7 @@
     <CompatibleVersions>1.2,2.0</CompatibleVersions>
   </Properties>
   <Dependencies>
-    <Mod id="1B28771A-C749-434B-9053-D1380C553DE9" title="LOC_EXPANSION1_MOD_TITLE" />
+    <Mod id="1B28771A-C749-434B-9053-D1380C553DE9" title="LOC_EXPANSION1_MOD_TITLE"/>
   </Dependencies>
   <FrontEndActions>
     <UpdateDatabase id="REMSELY_FrontEnd_Config">
@@ -101,5 +101,8 @@
     <File>Textures/LEADER_REMSELY_ALEXANDER_II_SELECT.dds</File>
     <File>Textures/LEADER_REMSELY_ALEXANDER_II_BACKGROUND.tex</File>
     <File>Textures/LEADER_REMSELY_ALEXANDER_II_BACKGROUND.dds</File>
+    <File>XLPs/Leader_AlexanderII.xlp</File>
+    <File>Platforms/Windows/BLPs/leaders/leader_remsely_alexander_ii.blp</File>
+    <File>Platforms/MacOS/BLPs/leaders/leader_remsely_alexander_ii.blp</File>
   </Files>
 </Mod>
