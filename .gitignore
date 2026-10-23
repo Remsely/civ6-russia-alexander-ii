@@ -7,6 +7,9 @@ reference/
 .mcp.json
 .claude/settings.local.json
 
+# Z Code: локальный конфиг MCP (машинные пути), скиллы (.zcode/skills/) — в git
+.zcode/config.json
+
 # Python
 __pycache__/
 .venv/
