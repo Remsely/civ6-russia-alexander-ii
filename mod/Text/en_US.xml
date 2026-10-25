@@ -8,7 +8,7 @@
       <Text>The Great Reforms</Text>
     </Replace>
     <Replace Tag="LOC_TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS_DESCRIPTION" Language="en_US">
-      <Text>Emancipation of the Serfs: Builders have +1 [ICON_Charges] charge. Pastures get +1 [ICON_Production] Production. Farms get +1 [ICON_Production] Production for every 2 adjacent Farms.[NEWLINE][NEWLINE]Zemstvo Reform: Cities with an assigned [ICON_Governor] Governor get +2 [ICON_Culture] Culture and +4 [ICON_PressureUp] Loyalty. Starting with the Medieval Era, the bonus grows by +1 [ICON_Culture] Culture and +2 [ICON_PressureUp] Loyalty with every new era.[NEWLINE][NEWLINE]Military Reform: Unit upgrades cost 50% less [ICON_Gold] Gold.</Text>
+      <Text>Emancipation of the Serfs: Builders have +1 [ICON_Charges] charge. Pastures get +1 [ICON_Production] Production. Farms get +1 [ICON_Food] Food for every 2 adjacent Farms.[NEWLINE][NEWLINE]Zemstvo Reform: Cities with an assigned [ICON_Governor] Governor get +2 [ICON_Culture] Culture and +4 [ICON_PressureUp] Loyalty. Starting with the Medieval Era, the bonus grows by +1 [ICON_Culture] Culture and +2 [ICON_PressureUp] Loyalty with every new era.[NEWLINE][NEWLINE]Military Reform: Unit upgrades cost 50% less [ICON_Gold] Gold.</Text>
     </Replace>
     <Replace Tag="LOC_AGENDA_REMSELY_LIBERATOR_NAME" Language="en_US">
       <Text>The Liberator</Text>
@@ -29,7 +29,7 @@
       <Text>(You recently declared war)</Text>
     </Replace>
     <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_DESCRIPTION" Language="en_US">
-      <Text>Adds Alexander II as an alternate leader of Russia: the Tsar-Liberator who abolished serfdom.[NEWLINE][NEWLINE]THE GREAT REFORMS[NEWLINE][ICON_BULLET] Emancipation of the Serfs: Builders have +1 charge, Pastures get +1 Production, Farms get +1 Production for every 2 adjacent Farms.[NEWLINE][ICON_BULLET] Zemstvo Reform: Cities with an assigned Governor get +2 Culture and +4 Loyalty; starting with the Medieval Era the bonus grows by +1 Culture and +2 Loyalty with every new era.[NEWLINE][ICON_BULLET] Military Reform: Unit upgrades cost 50% less Gold.[NEWLINE][NEWLINE]AGENDA: THE LIBERATOR[NEWLINE]Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.[NEWLINE][NEWLINE]INCLUDED[NEWLINE][ICON_BULLET] 11 new Russian city names, the capital is Saint Petersburg[NEWLINE][ICON_BULLET] Portrait, icon, loading screen and diplomacy backgrounds[NEWLINE][ICON_BULLET] 31 diplomacy lines and a Civilopedia page[NEWLINE][ICON_BULLET] English and Russian text[NEWLINE][NEWLINE]Requires Rise and Fall; Gathering Storm is recommended (the Future Era). The leader plays as Russia.[NEWLINE][NEWLINE]Author: Remsely. Made with Claude Code (Anthropic).</Text>
+      <Text>Adds Alexander II as an alternate leader of Russia: the Tsar-Liberator who abolished serfdom.[NEWLINE][NEWLINE]THE GREAT REFORMS[NEWLINE][ICON_BULLET] Emancipation of the Serfs: Builders have +1 charge, Pastures get +1 Production, Farms get +1 Food for every 2 adjacent Farms.[NEWLINE][ICON_BULLET] Zemstvo Reform: Cities with an assigned Governor get +2 Culture and +4 Loyalty; starting with the Medieval Era the bonus grows by +1 Culture and +2 Loyalty with every new era.[NEWLINE][ICON_BULLET] Military Reform: Unit upgrades cost 50% less Gold.[NEWLINE][NEWLINE]AGENDA: THE LIBERATOR[NEWLINE]Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.[NEWLINE][NEWLINE]INCLUDED[NEWLINE][ICON_BULLET] 14 new Russian city names, the capital is Saint Petersburg[NEWLINE][ICON_BULLET] Portrait, icon, loading screen and diplomacy backgrounds[NEWLINE][ICON_BULLET] 31 diplomacy lines and a Civilopedia page[NEWLINE][ICON_BULLET] English and Russian text[NEWLINE][NEWLINE]Requires Rise and Fall; Gathering Storm is recommended (the Future Era). The leader plays as Russia.[NEWLINE][NEWLINE]Author: Remsely. Made with Claude Code (Anthropic).</Text>
     </Replace>
     <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_TEASER" Language="en_US">
       <Text>Alexander II, the Tsar-Liberator, for Russia: Great Reforms, agenda, cities, diplomacy lines and art.</Text>
@@ -132,6 +132,9 @@
     <Replace Tag="LOC_CITY_NAME_REMSELY_ODESSA" Language="en_US">
       <Text>Odessa</Text>
     </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_KHARKOV" Language="en_US">
+      <Text>Kharkov</Text>
+    </Replace>
     <Replace Tag="LOC_CITY_NAME_REMSELY_SEVASTOPOL" Language="en_US">
       <Text>Sevastopol</Text>
     </Replace>
@@ -147,14 +150,20 @@
     <Replace Tag="LOC_CITY_NAME_REMSELY_TASHKENT" Language="en_US">
       <Text>Tashkent</Text>
     </Replace>
-    <Replace Tag="LOC_CITY_NAME_REMSELY_SAMARKAND" Language="en_US">
-      <Text>Samarkand</Text>
-    </Replace>
     <Replace Tag="LOC_CITY_NAME_REMSELY_VERNY" Language="en_US">
       <Text>Verny</Text>
     </Replace>
     <Replace Tag="LOC_CITY_NAME_REMSELY_NOVOROSSIYSK" Language="en_US">
       <Text>Novorossiysk</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_ROSTOV_ON_DON" Language="en_US">
+      <Text>Rostov-on-Don</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_BAKU" Language="en_US">
+      <Text>Baku</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_RIGA" Language="en_US">
+      <Text>Riga</Text>
     </Replace>
     <Replace Tag="LOC_CITY_NAME_REMSELY_NOVO_ARKHANGELSK" Language="en_US">
       <Text>Novo-Arkhangelsk</Text>
@@ -172,10 +181,10 @@
       <Text>Emperor and Autocrat of All Russia, Tsar of Poland, Grand Duke of Finland</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_CAPSULE_BODY" Language="en_US">
-      <Text>Alexander's Russia is a patient builder of the home front. His Builders do more, his Farms and Pastures grow productive, and every Governor brings Culture and Loyalty to the city they serve.</Text>
+      <Text>Alexander's Russia is a patient builder of the home front. His Builders do more, his Pastures grow productive, his grouped Farms grow fertile, and every Governor brings Culture and Loyalty to the city they serve.</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_DETAILED_BODY" Language="en_US">
-      <Text>Alexander's bonuses reward a wide, well-governed empire. Builders get an extra [ICON_Charges] charge, Pastures yield more [ICON_Production] Production, and Farms grouped together add still more. Assign a [ICON_Governor] Governor to a city and the Zemstvo reform gives it [ICON_Culture] Culture and [ICON_PressureUp] Loyalty that grow with every era from the Medieval Era on, so even frontier cities stay stable. Upgrading units costs half as much [ICON_Gold] Gold, which keeps an old army modern without ruining the treasury. His agenda, The Liberator, makes other leaders like rulers who keep the peace and dislike those who recently declared war.</Text>
+      <Text>Alexander's bonuses reward a wide, well-governed empire. Builders get an extra [ICON_Charges] charge, Pastures yield more [ICON_Production] Production, and Farms grouped together yield [ICON_Food] Food. Assign a [ICON_Governor] Governor to a city and the Zemstvo reform gives it [ICON_Culture] Culture and [ICON_PressureUp] Loyalty that grow with every era from the Medieval Era on, so even frontier cities stay stable. Upgrading units costs half as much [ICON_Gold] Gold, which keeps an old army modern without ruining the treasury. His agenda, The Liberator, makes other leaders like rulers who keep the peace and dislike those who recently declared war.</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_HISTORY_PARA_1" Language="en_US">
       <Text>Alexander II (1818-1881) became Emperor of Russia in 1855, in the middle of the Crimean War. The defeat showed that the empire, vast but backward, could not keep its place in Europe without deep change. The reforms that followed earned him the name of the Tsar Liberator.</Text>

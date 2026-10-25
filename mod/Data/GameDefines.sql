@@ -151,7 +151,8 @@ INSERT INTO TraitModifiers (TraitType, ModifierId) VALUES
 		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_ZEMSTVO_FUTURE_LOYALTY');
 
 --------------------------------------------------------------------------------------------------------------------------
--- 3.1 Farm adjacency: +1 Production per 2 adjacent Farms (max +2 at 4). Counted by Lua/RemselysAlexanderII_Farms.lua, which sets the
+-- 3.1 Farm adjacency: +1 Food per 2 adjacent Farms (max +2 at 4). Food, not Production: Russia's civ ability already gives
+-- tundra Production, so stacked Production made the trait too strong. Counted by Lua/RemselysAlexanderII_Farms.lua, which sets the
 -- plot properties below; the modifiers only read them. Pattern: Sukritact's Al-Hasan (Jahazi) plot property + MODIFIER_PLAYER_ADJUST_PLOT_YIELD.
 --------------------------------------------------------------------------------------------------------------------------
 INSERT INTO Requirements (RequirementId, RequirementType) VALUES
@@ -171,16 +172,16 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 		('REMSELY_PLOT_FARM_ADJ_4_REQUIREMENTS', 'REQUIRES_PLOT_HAS_FARM'),
 		('REMSELY_PLOT_FARM_ADJ_4_REQUIREMENTS', 'REMSELY_REQUIRES_FARM_ADJ_4');
 INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId) VALUES
-		('REMSELY_REFORMS_FARM_ADJ_2_PRODUCTION', 'MODIFIER_PLAYER_ADJUST_PLOT_YIELD', 'REMSELY_PLOT_FARM_ADJ_2_REQUIREMENTS'),
-		('REMSELY_REFORMS_FARM_ADJ_4_PRODUCTION', 'MODIFIER_PLAYER_ADJUST_PLOT_YIELD', 'REMSELY_PLOT_FARM_ADJ_4_REQUIREMENTS');
+		('REMSELY_REFORMS_FARM_ADJ_2_FOOD', 'MODIFIER_PLAYER_ADJUST_PLOT_YIELD', 'REMSELY_PLOT_FARM_ADJ_2_REQUIREMENTS'),
+		('REMSELY_REFORMS_FARM_ADJ_4_FOOD', 'MODIFIER_PLAYER_ADJUST_PLOT_YIELD', 'REMSELY_PLOT_FARM_ADJ_4_REQUIREMENTS');
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
-		('REMSELY_REFORMS_FARM_ADJ_2_PRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
-		('REMSELY_REFORMS_FARM_ADJ_2_PRODUCTION', 'Amount',    '1'),
-		('REMSELY_REFORMS_FARM_ADJ_4_PRODUCTION', 'YieldType', 'YIELD_PRODUCTION'),
-		('REMSELY_REFORMS_FARM_ADJ_4_PRODUCTION', 'Amount',    '1');
+		('REMSELY_REFORMS_FARM_ADJ_2_FOOD', 'YieldType', 'YIELD_FOOD'),
+		('REMSELY_REFORMS_FARM_ADJ_2_FOOD', 'Amount',    '1'),
+		('REMSELY_REFORMS_FARM_ADJ_4_FOOD', 'YieldType', 'YIELD_FOOD'),
+		('REMSELY_REFORMS_FARM_ADJ_4_FOOD', 'Amount',    '1');
 INSERT INTO TraitModifiers (TraitType, ModifierId) VALUES
-		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_REFORMS_FARM_ADJ_2_PRODUCTION'),
-		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_REFORMS_FARM_ADJ_4_PRODUCTION');
+		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_REFORMS_FARM_ADJ_2_FOOD'),
+		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_REFORMS_FARM_ADJ_4_FOOD');
 
 --==========================================================================================================================
 -- AGENDA: The Liberator (docs/remselys-alexander-ii.md, 4)
@@ -229,21 +230,33 @@ INSERT INTO TraitModifiers (TraitType, ModifierId) VALUES
 		('TRAIT_AGENDA_REMSELY_LIBERATOR', 'REMSELY_LIBERATOR_PEACE'),
 		('TRAIT_AGENDA_REMSELY_LIBERATOR', 'REMSELY_LIBERATOR_WAR');
 --==========================================================================================================================
--- CITY NAMES (docs/remselys-alexander-ii.md, 5): only the names the vanilla Russia list lacks (the 19th-century foundations);
--- the capital is the vanilla St. Petersburg (CivilizationLeaders). Leader-specific list via CityNames.LeaderType (the column exists in the
--- schema; no vanilla row uses it, but published mods do: Sukritact's Senusret III for vanilla Egypt, Italy Lorenzo, Leopold II).
--- SortIndex -1 puts the leader's names ahead of the civilization-wide list, as in those mods.
+-- CITY NAMES (docs/remselys-alexander-ii.md, 5): the leader's list in the design-doc order (#2-#21 there; the capital #1 is
+-- set in CivilizationLeaders above). 14 new names the vanilla Russia list lacks + 6 vanilla names (Moscow, Nizhny Novgorod,
+-- Kazan, Yekaterinburg, Irkutsk, Omsk) repeated as leader rows so they keep their designed priority instead of sinking below
+-- the new names. SortIndex -1 puts leader rows ahead of the civilization-wide list (the Sukritact pattern: Senusret III,
+-- Italy Lorenzo, Leopold II); the later duplicate vanilla rows are skipped by the game as already used. Other Russian
+-- leaders see only LeaderType IS NULL rows and are unaffected. Samarkand is NOT in the list: in-game it is a city-state
+-- (CIVILIZATION_SAMARKAND, StandardCityStates on TSL maps).
 -- Verify in game that other Russian leaders are unaffected.
 --==========================================================================================================================
 INSERT INTO CityNames (CivilizationType, LeaderType, SortIndex, CityName) VALUES
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_MOSCOW'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_NIZHNIY_NOVGOROD'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_KAZAN'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_ODESSA'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_KHARKOV'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_SEVASTOPOL'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_VLADIVOSTOK'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_KHABAROVSK'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_BLAGOVESHCHENSK'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_TASHKENT'),
-		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_SAMARKAND'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_VERNY'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_NOVOROSSIYSK'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_ROSTOV_ON_DON'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_BAKU'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_RIGA'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_NOVO_ARKHANGELSK'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_YEKATERINBURG'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_IRKUTSK'),
+		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_OMSK'),
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', -1, 'LOC_CITY_NAME_REMSELY_TOMSK');

@@ -1,6 +1,6 @@
 --==========================================================================================================================
 -- Remsely's Alexander II: Great Reforms, Farm adjacency (docs/remselys-alexander-ii.md, 3.1)
--- Farms get +1 Production per 2 adjacent Farms (max +2 at 4). Only Farms count as neighbours.
+-- Farms get +1 Food per 2 adjacent Farms (max +2 at 4). Only Farms count as neighbours.
 --
 -- XML cannot count adjacent improvements, so this script keeps two plot properties up to date and the XML modifiers
 -- (Data/GameDefines.sql) read them: one for "2+ adjacent Farms", one for "4+ adjacent Farms". The properties are set for

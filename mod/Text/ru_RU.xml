@@ -10,7 +10,7 @@
       <Text>Великие реформы</Text>
     </Replace>
     <Replace Tag="LOC_TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS_DESCRIPTION" Language="ru_RU">
-      <Text>Освобождение крестьян: строители получают +1 [ICON_Charges] заряд. Пастбища дают +1 [ICON_Production] производства. Фермы дают +1 [ICON_Production] производства за каждые 2 соседние фермы.[NEWLINE][NEWLINE]Земства: города с назначенным [ICON_Governor] губернатором получают +2 [ICON_Culture] культуры и +4 [ICON_PressureUp] лояльности. Начиная со Средневековья с каждой новой эпохой бонус растет на +1 [ICON_Culture] культуры и +2 [ICON_PressureUp] лояльности.[NEWLINE][NEWLINE]Военная реформа: улучшение юнитов стоит на 50% меньше [ICON_Gold] золота.</Text>
+      <Text>Освобождение крестьян: строители получают +1 [ICON_Charges] заряд. Пастбища дают +1 [ICON_Production] производства. Фермы дают +1 [ICON_Food] пищи за каждые 2 соседние фермы.[NEWLINE][NEWLINE]Земства: города с назначенным [ICON_Governor] губернатором получают +2 [ICON_Culture] культуры и +4 [ICON_PressureUp] лояльности. Начиная со Средневековья с каждой новой эпохой бонус растет на +1 [ICON_Culture] культуры и +2 [ICON_PressureUp] лояльности.[NEWLINE][NEWLINE]Военная реформа: улучшение юнитов стоит на 50% меньше [ICON_Gold] золота.</Text>
     </Replace>
     <Replace Tag="LOC_AGENDA_REMSELY_LIBERATOR_NAME" Language="ru_RU">
       <Text>Освободитель</Text>
@@ -31,7 +31,7 @@
       <Text>(Вы недавно объявили войну)</Text>
     </Replace>
     <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_DESCRIPTION" Language="ru_RU">
-      <Text>Добавляет Александра II как альтернативного лидера России: Императора-Освободителя, отменившего крепостное право.[NEWLINE][NEWLINE]ВЕЛИКИЕ РЕФОРМЫ[NEWLINE][ICON_BULLET] Освобождение крестьян: строители получают +1 заряд, пастбища дают +1 производства, фермы дают +1 производства за каждые 2 соседние фермы.[NEWLINE][ICON_BULLET] Земства: города с назначенным губернатором получают +2 культуры и +4 лояльности; со Средневековья с каждой новой эпохой бонус растет на +1 культуры и +2 лояльности.[NEWLINE][ICON_BULLET] Военная реформа: улучшение юнитов стоит на 50% меньше золота.[NEWLINE][NEWLINE]ПОВЕСТКА «ОСВОБОДИТЕЛЬ»[NEWLINE]Ему нравятся цивилизации, давно не объявлявшие войн, и не нравятся те, что объявили войну недавно.[NEWLINE][NEWLINE]В МОДЕ[NEWLINE][ICON_BULLET] 11 новых названий городов России, столица Санкт-Петербург[NEWLINE][ICON_BULLET] Портрет, иконка, фон загрузки и фон дипломатии[NEWLINE][ICON_BULLET] 31 реплика дипломатии и страница в Цивилопедии[NEWLINE][ICON_BULLET] Тексты на английском и русском языках[NEWLINE][NEWLINE]Требуется Rise and Fall; Gathering Storm рекомендуется (эпоха «Будущее»). Лидер доступен за Россию.[NEWLINE][NEWLINE]Автор: Remsely. Создан при помощи Claude Code (Anthropic).</Text>
+      <Text>Добавляет Александра II как альтернативного лидера России: Императора-Освободителя, отменившего крепостное право.[NEWLINE][NEWLINE]ВЕЛИКИЕ РЕФОРМЫ[NEWLINE][ICON_BULLET] Освобождение крестьян: строители получают +1 заряд, пастбища дают +1 производства, фермы дают +1 пищи за каждые 2 соседние фермы.[NEWLINE][ICON_BULLET] Земства: города с назначенным губернатором получают +2 культуры и +4 лояльности; со Средневековья с каждой новой эпохой бонус растет на +1 культуры и +2 лояльности.[NEWLINE][ICON_BULLET] Военная реформа: улучшение юнитов стоит на 50% меньше золота.[NEWLINE][NEWLINE]ПОВЕСТКА «ОСВОБОДИТЕЛЬ»[NEWLINE]Ему нравятся цивилизации, давно не объявлявшие войн, и не нравятся те, что объявили войну недавно.[NEWLINE][NEWLINE]В МОДЕ[NEWLINE][ICON_BULLET] 14 новых названий городов России, столица Санкт-Петербург[NEWLINE][ICON_BULLET] Портрет, иконка, фон загрузки и фон дипломатии[NEWLINE][ICON_BULLET] 31 реплика дипломатии и страница в Цивилопедии[NEWLINE][ICON_BULLET] Тексты на английском и русском языках[NEWLINE][NEWLINE]Требуется Rise and Fall; Gathering Storm рекомендуется (эпоха «Будущее»). Лидер доступен за Россию.[NEWLINE][NEWLINE]Автор: Remsely. Создан при помощи Claude Code (Anthropic).</Text>
     </Replace>
     <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_TEASER" Language="ru_RU">
       <Text>Александр II, Император-Освободитель, для России: Великие реформы, повестка, города, реплики и арт.</Text>
@@ -136,6 +136,11 @@
       <Gender>feminine</Gender>
       <Plurality>1</Plurality>
     </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_KHARKOV" Language="ru_RU">
+      <Text>Харьков|Харькова|Харькову|Харьков|Харьковом|Харькове</Text>
+      <Gender>masculine</Gender>
+      <Plurality>1</Plurality>
+    </Replace>
     <Replace Tag="LOC_CITY_NAME_REMSELY_SEVASTOPOL" Language="ru_RU">
       <Text>Севастополь|Севастополя|Севастополю|Севастополь|Севастополем|Севастополе</Text>
       <Gender>masculine</Gender>
@@ -161,11 +166,6 @@
       <Gender>masculine</Gender>
       <Plurality>1</Plurality>
     </Replace>
-    <Replace Tag="LOC_CITY_NAME_REMSELY_SAMARKAND" Language="ru_RU">
-      <Text>Самарканд|Самарканда|Самарканду|Самарканд|Самаркандом|Самарканде</Text>
-      <Gender>masculine</Gender>
-      <Plurality>1</Plurality>
-    </Replace>
     <Replace Tag="LOC_CITY_NAME_REMSELY_VERNY" Language="ru_RU">
       <Text>Верный|Верного|Верному|Верный|Верным|Верном</Text>
       <Gender>masculine</Gender>
@@ -174,6 +174,21 @@
     <Replace Tag="LOC_CITY_NAME_REMSELY_NOVOROSSIYSK" Language="ru_RU">
       <Text>Новороссийск|Новороссийска|Новороссийску|Новороссийск|Новороссийском|Новороссийске</Text>
       <Gender>masculine</Gender>
+      <Plurality>1</Plurality>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_ROSTOV_ON_DON" Language="ru_RU">
+      <Text>Ростов-на-Дону|Ростова-на-Дону|Ростову-на-Дону|Ростов-на-Дону|Ростовом-на-Дону|Ростове-на-Дону</Text>
+      <Gender>masculine</Gender>
+      <Plurality>1</Plurality>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_BAKU" Language="ru_RU">
+      <Text>Баку|Баку|Баку|Баку|Баку|Баку</Text>
+      <Gender>masculine</Gender>
+      <Plurality>1</Plurality>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_RIGA" Language="ru_RU">
+      <Text>Рига|Риги|Риге|Ригу|Ригой|Риге</Text>
+      <Gender>feminine</Gender>
       <Plurality>1</Plurality>
     </Replace>
     <Replace Tag="LOC_CITY_NAME_REMSELY_NOVO_ARKHANGELSK" Language="ru_RU">
@@ -196,10 +211,10 @@
       <Text>Император и самодержец Всероссийский, царь Польский, великий князь Финляндский</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_CAPSULE_BODY" Language="ru_RU">
-      <Text>Россия Александра терпеливо строит свой тыл. Его строители делают больше, фермы и пастбища растут в производительности, а каждый губернатор приносит городу культуру и лояльность.</Text>
+      <Text>Россия Александра терпеливо строит свой тыл. Его строители делают больше, пастбища наращивают производство, сгруппированные фермы — пищу, а каждый губернатор приносит городу культуру и лояльность.</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_DETAILED_BODY" Language="ru_RU">
-      <Text>Бонусы Александра награждают широкую, хорошо управляемую империю. Строители получают лишний [ICON_Charges] заряд, пастбища дают больше [ICON_Production] производства, а сгруппированные фермы добавляют еще. Назначьте в город [ICON_Governor] губернатора, и Земства дадут ему [ICON_Culture] культуру и [ICON_PressureUp] лояльность, которые растут с каждой эпохой, начиная со Средневековья, так что даже пограничные города остаются устойчивыми. Улучшение юнитов стоит вдвое меньше [ICON_Gold] золота: старая армия остается современной, и казна не страдает. Его повестка, «Освободитель», заставляет других лидеров любить правителей, хранящих мир, и не любить тех, кто недавно объявлял войну.</Text>
+      <Text>Бонусы Александра награждают широкую, хорошо управляемую империю. Строители получают лишний [ICON_Charges] заряд, пастбища дают больше [ICON_Production] производства, а сгруппированные фермы — больше [ICON_Food] пищи. Назначьте в город [ICON_Governor] губернатора, и Земства дадут ему [ICON_Culture] культуру и [ICON_PressureUp] лояльность, которые растут с каждой эпохой, начиная со Средневековья, так что даже пограничные города остаются устойчивыми. Улучшение юнитов стоит вдвое меньше [ICON_Gold] золота: старая армия остается современной, и казна не страдает. Его повестка, «Освободитель», заставляет других лидеров любить правителей, хранящих мир, и не любить тех, кто недавно объявлял войну.</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_HISTORY_PARA_1" Language="ru_RU">
       <Text>Александр II (1818-1881) взошел на престол в 1855 году, в разгар Крымской войны. Поражение показало, что огромная, но отсталая империя не сможет удержать свое место в Европе без глубоких перемен. Последовавшие реформы принесли ему имя Царя-Освободителя.</Text>
