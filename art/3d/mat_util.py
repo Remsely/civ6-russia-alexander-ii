@@ -93,9 +93,10 @@ def save(name, data, path, colorspace):
 
 
 def material(name, albedo, mr=None, normal=None, ao=None, ao_strength=0.85, sheen=0.0, rough=None, normal_strength=1.0,
-             sheen_tint=(1, 1, 1)):
+             sheen_tint=(1, 1, 1), spec=0.5):
     """Principled material from images: albedo; mr (R metal, G roughness) or a constant rough; normal; ao multiplied
-    into the colour; sheen (wool's fuzz) in sheen_tint (linear)."""
+    into the colour; sheen (wool's fuzz) in sheen_tint (linear); spec: the non-metal's white specular (Specular IOR
+    Level; 0.5 = glass-like 4 %)."""
     mat = bpy.data.materials.get(name) or bpy.data.materials.new(name)
     mat.use_nodes = True
     nt = mat.node_tree
@@ -124,6 +125,7 @@ def material(name, albedo, mr=None, normal=None, ao=None, ao_strength=0.85, shee
         nm.inputs['Strength'].default_value = normal_strength
         nt.links.new(tex(normal).outputs['Color'], nm.inputs['Color'])
         nt.links.new(nm.outputs['Normal'], bsdf.inputs['Normal'])
+    bsdf.inputs['Specular IOR Level'].default_value = spec
     bsdf.inputs['Sheen Weight'].default_value = sheen
     bsdf.inputs['Sheen Roughness'].default_value = 0.6
     bsdf.inputs['Sheen Tint'].default_value = (*sheen_tint, 1)

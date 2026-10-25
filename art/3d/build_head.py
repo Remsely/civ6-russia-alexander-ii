@@ -112,10 +112,14 @@ NECK_W_SMOOTH = 30               # rounds the head's share of the neck is evened
 NECK_FIT = 0.97                   # the tube to the collar's ellipse (the tunic's stand collar lies on that): it fills
                                   # the collar, no gap round a thin neck
 EAR_SMOOTH, EAR_PROUD = 80, 0.004  # head_ears: the ear's flap stands this far out of the head smoothed so many rounds
+EAR_CORE = 0.8                    # head_ears: the ellipsoid's core (share of its radii) is all ear (the ear ~3.5 cm
+                                  # across in its 5.2: the hair starts at ~0.7)
 EAR_RING = (0.002, 0.005)         # ear_surroundings: within the first of an ear its skin colour, fading by the second
 EAR_AT = [((0.098, 0.003, 1.932), (0.024, 0.026, 0.034)),   # the generated ears (rest pose): middle, radii (m)
           ((-0.096, -0.005, 1.926), (0.024, 0.026, 0.034))]
-HAIR_KEEP = 0.15                  # ... of the hair's own colour variation (its red and orange blotches)
+BACK_Y = (0.025, 0.04)            # hair_detail: behind the ears from this far back of them (y; they sit at ~0), fully
+                                  # by the second: only the hair's and the skin's hues
+HAIR_KEEP = 0.0                   # ... of the hair's own colour variation (red and orange blotches: none)
 HAIR_MAX_L = 1.15                 # hair no brighter than this times the portrait's (pale patches of the generation)
 DELIGHT_IT = 6                    # smoothing rounds over the mesh for the baked light (~4 mm per round)
 DELIGHT_CLAMP = (0.7, 2.2)        # the light taken out at most / at least
@@ -142,8 +146,8 @@ LID_FADE = 22                     # px: the upper lid's skin above the rim follo
 EYE_DEPTH = 0.011                 # eyeball centre (the lids' pivot) this far behind the eye opening
 EYE_R = (0.0148, 0.0148)          # the eyeballs' radius (the opening's half-width, within these): both alike - each
                                   # its own opening's (16 and 14.4 mm) and his left eye, iris and all, looked bigger
-EYE_IRIS, EYE_PUPIL = 0.66, 0.4   # iris radius / the opening's height (the lids cover its top and bottom, as in the
-                                  # portrait; touching it, the eyes stared), pupil / iris
+EYE_IRIS, EYE_PUPIL = 0.66, 0.34  # iris radius / the opening's height (the lids cover its top and bottom, as in the
+                                  # portrait; touching it, the eyes stared), pupil / iris (the portrait's: a third)
 EYE_IRIS_RGB = (0.42, 0.46, 0.52)  # sRGB: the portrait's cool grey irises
 EYE_SCLERA_RGB = (0.78, 0.73, 0.69)  # sRGB: the portrait's whites are dull (paper white, they stared out of the face)
 EYE_SCLERA_SHADE = 0.0            # ... darker by this much towards the corners (none: the lids' shade comes from the
@@ -1235,10 +1239,12 @@ def _hull(pts):
 
 def head_ears():
     """The ears on the head: inside EAR_AT's ellipsoids (measured on the generated head - MPFB's ears, which the
-    generated ones were found by, sit ~3 cm off), facing sideways, and seen from the side within the outline of the
-    flap - what stands out of the head (EAR_PROUD over the head smoothed EAR_SMOOTH rounds). (The whole ellipsoid took
-    in the hair round the ear: a ring of skin colour ~1 cm wide on the hair.) Returns their points and each ear's
-    middle."""
+    generated ones were found by, sit ~3 cm off) and seen from the side within the outline of the flap - what stands
+    out of the head (EAR_PROUD over the head smoothed EAR_SMOOTH rounds), its bowl too whichever way it faces; and
+    whatever faces sideways in the ellipsoid's core (EAR_CORE of its radii: the bowl in front, which the rim's outline
+    - it stands out at the back - left out with the generation's dark shade and red streaks in it). (The whole
+    ellipsoid took in the hair round the ear: a ring of skin colour ~1 cm wide on the hair.) Returns their points and
+    each ear's middle."""
     me = head.data
     co = np.array([v.co[:] for v in me.vertices]); nrm = np.array([v.normal[:] for v in me.vertices])
     ed = np.array([e.vertices[:] for e in me.edges])
@@ -1258,7 +1264,8 @@ def head_ears():
         ok = np.ones(len(co), bool)
         for a, b in zip(hull, hull[1:] + hull[:1]):  # inside the (counter-clockwise) outline: left of every edge
             ok &= (b[0] - a[0]) * (co[:, 2] - a[1]) - (b[1] - a[1]) * (co[:, 1] - a[0]) >= 0
-        sel = side & ok
+        core = (((co - np.array(c)) / np.array(r)) ** 2).sum(1) < EAR_CORE ** 2
+        sel = (inside & ok) | (core & side)
         pts += [Vector(q) for q in co[sel]]
         print('ear at %s: %d vertices of %d in the ellipsoid (%d standing out)' % (
             tuple(round(x, 3) for x in c), sel.sum(), side.sum(), flap.sum()))
@@ -1521,6 +1528,12 @@ def hair_detail():
     plain = (skin_hue[None, None, :] * skin_lum) * (1 - hk) + (target[None, None, :] * hair_lum) * hk
     rgb = rgb + (plain - rgb) * zw[..., None]
     print('neck join: %d texels plain' % int((zw > 0.5).sum()))
+    # behind the ears there is only the hair and the nape's skin: their hues by the hair weight, the light and the
+    # strands kept (a red-brown patch of the generation's on his left nape came through everything else)
+    bw = (np.clip((p[..., 1] - BACK_Y[0]) / (BACK_Y[1] - BACK_Y[0]), 0, 1) * cov)[..., None]
+    back_hue = target[None, None, :] * hk + skin_hue[None, None, :] * (1 - hk)
+    rgb = rgb + (back_hue * (rgb @ mat_util.LUM)[..., None] - rgb) * bw
+    print('behind the ears: %d texels to the hair and skin hues' % int((bw[..., 0] > 0.5).sum()))
     px[..., :3] = np.clip(rgb * (1 + HAIR_CONTRAST * s[..., None] * k), 0, 1)
     # the islands padded out over the background and the bake's own margin (no dark rims on the small ones; the
     # margin kept the bake's raw colours, which the cleaning above never saw - pale dotted lines along the seams
@@ -1541,14 +1554,18 @@ def ear_surroundings():
     """The ears cleaned in the baked texture: the generation's ear sits a little elsewhere than the portrait's and the
     bake picked between the sources face by face - flakes of hair colour on the ear's rim. Within EAR_RING[0] of the
     ear (head_ears) it is the portrait's skin a little redder (its fine light and dark kept a little), fading into
-    what is there by EAR_RING[1]; those vertices count as skin (where the generation coloured them hair-dark,
-    hair_detail() drew strands on the ear). The hair round the ears is left as it is."""
+    what is there by EAR_RING[1] - per texel, and per vertex carried over its faces (the vertices are 2-4 mm apart:
+    by the texel's distance to them alone, the middles of the bowl's faces kept the generation's dark shade and red
+    streaks); those vertices count as skin (where the generation coloured them hair-dark, hair_detail() drew strands
+    on the ear). The hair round the ears is left as it is."""
     kd = KDTree(len(HEAD_EAR_PTS))
     for i, q in enumerate(HEAD_EAR_PTS):
         kd.insert(q, i)
     kd.balance()
     me = head.data
-    data, cov = mat_util.raster(me, TEX)
+    ring = lambda d: np.clip(1 - (d - EAR_RING[0]) / (EAR_RING[1] - EAR_RING[0]), 0, 1)  # noqa: E731
+    wv = np.array([ring(kd.find(v.co)[2]) for v in me.vertices], np.float32)
+    data, cov = mat_util.raster(me, TEX, wv[:, None])
     img = bpy.data.images['head_albedo']
     w_, hh = img.size
     px = np.array(img.pixels[:], np.float32).reshape(hh, w_, 4)
@@ -1563,7 +1580,7 @@ def ear_surroundings():
     lum = rgb @ LUM
     detail = np.clip(lum / np.maximum(blur(lum, 4), 1e-4), 0.93, 1.07)[..., None]
     ear_col = np.clip(np.array(SKIN_SRGB) * np.array(EAR_TINT), 0, 1)  # the bake there is half hair-dark
-    k = np.clip(1 - (dist - EAR_RING[0]) / (EAR_RING[1] - EAR_RING[0]), 0, 1)[..., None] * cov[..., None]
+    k = np.maximum(ring(dist), data[..., 6])[..., None] * cov[..., None]
     px[..., :3] = rgb * (1 - k) + np.clip(ear_col * detail, 0, 1) * k
     img.pixels.foreach_set(px.ravel()); mat_util.write(img)
     n = 0
@@ -1870,6 +1887,7 @@ eyeballs()
 hd = dict(sc['head']); hd['BLINK_DEG'] = BLINK_DEG
 # for build_pose.py's aim_eyes: each opening's middle (its rim's) and the eyeball's radius, rest pose
 hd['EYE_R'] = {s: e['R'] for s, e in EYE.items()}
+hd['SKIN_SRGB'] = [float(c) for c in SKIN_SRGB]  # the portrait's skin colour: the hands take it too
 sc['head'] = hd
 print('head: %d verts, %d faces' % (len(head.data.vertices), len(head.data.polygons)))
 bpy.ops.outliner.orphans_purge(do_recursive=True)

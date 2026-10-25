@@ -22,6 +22,8 @@ TEX = 2048
 ALBEDO_OUT = os.path.join(TEXDIR, 'details_albedo.png')
 MR_OUT = os.path.join(TEXDIR, 'details_mr.png')  # R metal, G roughness
 NORMAL_OUT = os.path.join(TEXDIR, 'details_normal.png')
+DETAILS_SPEC = 0.2                # the cloth's and leather's white specular (Specular IOR Level): at 0.5 a white veil
+                                  # over the scarlet, pink in the light (the portrait's reds stay deep)
 EMBROIDERY_H, THREAD_H = 3.0, 4.0  # px: the gold embroidery raised off the cloth; its threads' relief per unit of light
 
 # Flat colours (linear RGB).
@@ -85,12 +87,31 @@ BUTTON_R, BUTTON_H = 0.0115, 0.0065  # the portrait's are big gilt domes, ~2.5 c
 BUTTON_SPOTS = [(-0.030, 1.614), (-0.030, 1.542), (-0.030, 1.470), (-0.030, 1.397),  # (dx from the flap edge, z)
                 (0.055, 1.572), (0.047, 1.500), (0.039, 1.428), (0.031, 1.356)]  # his left row slants in to the
                                   # belt as the portrait's does (its pencil button 33 px off the piping, the last 13 px)
-# Belt over the waist seam of the tunic; buckle plate taller than the belt, top corners cut off.
+# Belt over the waist seam of the tunic; buckle plate taller than the belt, its left end an arrow (both corners cut).
 BELT_THICK, BELT_EASE = 0.004, 0.001
-BELT_RED, BELT_EDGE = 0.24, 0.05  # across the belt: red borders to this, a gold edge outside them   # height and profile come from build_uniform.py (it takes the tunic in)
+BELT_RED, BELT_EDGE = 0.12, 0.025  # across the belt: red borders to this, a gold edge outside them (the portrait's
+                                  # belt: 40 px high, its red borders 4 px each, the rest the galloon)   # height and profile come from build_uniform.py (it takes the tunic in)
 BUCKLE_W, BUCKLE_H, BUCKLE_RAISE = 0.112, 0.074, 0.004  # a little over the belt's height (larger, it dominated the waist)
-BUCKLE_CUT_X, BUCKLE_CUT_Z = 0.018, 0.027  # cut-off top corners, measured on the plate in the picture
+BUCKLE_CUT_X, BUCKLE_CUT_Z = 0.015, 0.031  # its left corners (the picture's) cut off steeply, top and bottom alike: the
+                                  # end an arrow pointing round the waist (the portrait's top cut 7-10 x 21 of its
+                                  # 84 x 46 px plate); the right corners square
 BUCKLE_CLOSURE = 0.8               # the closure runs through the buckle this far across it (from the picture's left)
+BUCKLE_RIM, BUCKLE_FRAME = 3.0, 5.5  # mm, from the plate's edge in: the red enamel rim, the gold frame (a polished
+                                  # moulding, twisted; at 4.6 mm chased on a matted ground it read as a thin line)
+BUCKLE_EAGLE, BUCKLE_EAGLE_AT = 0.86, (0.0, 0.0)  # the eagle this share of the field's height, its middle here (m)
+BUCKLE_EAGLE_GROUND = (64, 66, 71)  # sRGB: the dark grey ground round the bird, hugging its outline (the portrait's)
+BUCKLE_EAGLE_EDGE = (2.4, 4.0)    # mm: that ground's width round the bird, and the gaps in it it closes over
+BUCKLE_STAFF = (5.5, 4.6, 11.5, 2.0)  # mm: the crossed lances behind the bird, corner to corner on the red field: the
+                                  # shaft as wide as the frame, the spearhead's half width and length, its point this
+                                  # far in from the frame (balls and trefoils on staves read as bones)
+BUCKLE_TROPHY = ((1.2, 0.9), 7.0, (11.0, 7.0, 0.9), (17.0, 2.4))  # mm: the arms of the trophy round the bird, all
+                                  # gold as the portrait's: a fine line inside the frame (this far in, this wide); a
+                                  # round shield either side of the bird (radius); a banner on each upper lance under
+                                  # its head (along it, out from it, its wave); a pile of three balls either side of
+                                  # its tail (x off the middle, a ball's radius) - with the lances alone the red field
+                                  # read bare
+BUCKLE_RELIEF = 1.0               # the relief's heights times their true millimetres
+BUCKLE_GUILLOCHE = 240            # the field's engine-turned rays under the red enamel, round the whole turn
 # Cuffs: a band over the end of the sleeve with piped (beaded) edges; a gold flap with three buttons outside.
 CUFF_RAISE, CUFF_THICK, CUFF_LIP, CUFF_BEAD = 0.002, 0.003, 0.012, 0.003
 SHIRT_CUFF_CLEAR = 0.006
@@ -102,7 +123,8 @@ FLAP_TURN = {'l': 75.0, 'r': 0.0}  # degrees the flap is turned on round the for
 # ankle, a spur at the heel.
 BOOT_EASE, BOOT_FOOT_OFF, BOOT_THICK = 0.010, 0.006, 0.003  # (the portrait's shafts are slim: ~11.5 cm across
                                   # at the top, narrowing to the ankle)
-BOOT_ROUGH = 0.24                 # polished calf: the portrait's boots shine in bright highlights along the shaft and toe
+BOOT_ROUGH = 0.38                 # polished calf: the portrait's boots shine in soft broad highlights along the shaft and
+                                  # toe (at 0.24 small mirror-sharp ones: rubber)
 # The foot of the boot: a last lofted along the foot (cross-sections round on top, flat underneath), as wide as the body's
 # foot plus BOOT_FOOT_OFF at every point along it; its top line (z over the sole, by the share of the length from the
 # toe tip) - a low rounded toe box rising over the instep into the shaft; the bottom on the sole in front, on the heel
@@ -125,7 +147,7 @@ ATLAS = {
     'collar': (0.0, 0.0, 0.5, 0.125),
     'cuff': (0.5, 0.0, 1.0, 0.125),
     'belt': (0.0, 0.125, 1.0, 0.1875),
-    'buckle': (0.0, 0.1875, 0.125, 0.3125),
+    'buckle': (0.0, 0.3125, 0.5, 0.640625),  # 1024 x 672 px, the plate's 112 x 74 mm: the eagle's detail reads
     'flap': (0.125, 0.1875, 0.1875, 0.3125),
     'gold': (0.1875, 0.1875, 0.25, 0.25),
     'leather': (0.25, 0.1875, 0.3125, 0.25),
@@ -138,10 +160,15 @@ ATLAS = {
 sc = bpy.context.scene
 P = sc['uniform'].to_dict()
 rig = bpy.data.objects['HumanRig']
+POSE_POSITION = rig.data.pose_position
+TEXTURES_ONLY = 'textures' in (sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else [])  # (-- textures)
+BUCKLE_ONLY = 'buckle' in (sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else [])  # (-- buckle: on the rest
+# file; the atlas, and the buckle's shape and UVs made afresh in place there and in the leader - the plate posed there
+# as the old one was, a rigid piece: everything else as it is)
 rig.data.pose_position = 'REST'
 uni, under, h = bpy.data.objects['Uniform'], bpy.data.objects['BodyUnder'], bpy.data.objects['Human']
 bones = {b.name: (rig.matrix_world @ b.head_local, rig.matrix_world @ b.tail_local) for b in rig.data.bones}
-for o in list(bpy.data.objects):  # previous run
+for o in [] if TEXTURES_ONLY or BUCKLE_ONLY else list(bpy.data.objects):  # previous run
     if o.get('detail'):
         bpy.data.objects.remove(o)
 
@@ -343,12 +370,209 @@ def belt_tex(w, hh):
     return c
 
 
-def buckle_tex(w, hh):
-    """The generated buckle plate; its grey background in the cut corners becomes the plate's gold edge."""
-    c = sample(load_gen('buckle'), *np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh)))
-    grey = (c.max(2) - c.min(2) < 0.06) & (c.max(2) > 0.6)
-    c[grey] = np.array(mat_util.GOLD_SRGB, np.float32) / 255 * 0.85
-    return c
+def buckle_outline():
+    """The plate's outline (metres over it, x to the picture's right, y up), anticlockwise: a rectangle with both its
+    left corners cut off steeply, an arrow, as the portrait's."""
+    w, h = BUCKLE_W / 2, BUCKLE_H / 2
+    return [(-w + BUCKLE_CUT_X, -h), (w, -h), (w, h), (-w + BUCKLE_CUT_X, h), (-w, h - BUCKLE_CUT_Z),
+            (-w, -h + BUCKLE_CUT_Z)]
+
+
+def inset_of(poly, X, Y):
+    """mm in from the outline (positive inside) and, for patterns along it, the length along it of the nearest edge."""
+    inset = np.full(np.shape(X), 1e9, np.float32)
+    along = np.zeros(np.shape(X), np.float32)
+    run = 0.0
+    for i, (ax, ay) in enumerate(poly):
+        bx, by = poly[(i + 1) % len(poly)]
+        L = math.hypot(bx - ax, by - ay)
+        tx, ty = (bx - ax) / L, (by - ay) / L
+        d = (-(X - ax) * ty + (Y - ay) * tx) * 1000  # in from this edge (the outline runs anticlockwise)
+        t = ((X - ax) * tx + (Y - ay) * ty) * 1000
+        near = d < inset
+        inset = np.where(near, d, inset)
+        along = np.where(near, run + t, along)
+        run += L * 1000
+    return inset, along
+
+
+def grow(a, r):
+    """a (0..1) dilated r pixels, near round (square and cross steps in turn)."""
+    for k in range(int(r)):
+        b = np.maximum(np.roll(a, 1, 0), np.roll(a, -1, 0))
+        b = np.maximum(b, np.maximum(np.roll(a, 1, 1), np.roll(a, -1, 1)))
+        if k % 2:
+            b = np.maximum.reduce([b, np.roll(np.roll(a, 1, 0), 1, 1), np.roll(np.roll(a, 1, 0), -1, 1),
+                                   np.roll(np.roll(a, -1, 0), 1, 1), np.roll(np.roll(a, -1, 0), -1, 1)])
+        a = np.maximum(a, b)
+    return a
+
+
+def buckle_parts(w, hh):
+    """The plate as the portrait's, drawn over the plate's own millimetres (u along it, v up it): a red enamel rim
+    round the edge; inside it a thick polished gold frame following the outline (a twisted moulding); inside the
+    frame a red enamel field over engine turning, a fine gold line round it, and a gold trophy: two lances crossed
+    corner to corner behind the bird (as wide as the frame, a spearhead at each end, a banner under the upper heads),
+    a round shield either side, a pile of balls either side of the tail, and in the middle the empire's double-headed eagle in gold
+    on a dark grey ground hugging its outline (textures/gen/eagle_imperial.png: the lesser arms of 1883, public domain,
+    after Wikimedia Commons; its colours give the gold's relief). Returns albedo, metal, roughness, relief (pixels)."""
+    u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
+    X, Y = (u - 0.5) * BUCKLE_W, (v - 0.5) * BUCKLE_H
+    mm = (w - 1) / (BUCKLE_W * 1000)  # pixels per millimetre
+    poly = buckle_outline()
+    inset, along = inset_of(poly, X, Y)
+    gold = np.array(mat_util.GOLD_SRGB, np.float32) / 255
+    red = np.array(to_srgb(RED), np.float32) * 1.12
+    r0, r1 = BUCKLE_RIM, BUCKLE_RIM + BUCKLE_FRAME  # mm: the rim, then the frame
+    aa = 0.12
+
+    def band(a, b):
+        return np.clip((inset - a) / aa + 0.5, 0, 1) * np.clip((b - inset) / aa + 0.5, 0, 1)
+
+    frame = band(r0, r1)
+    field = np.clip((inset - r1) / aa + 0.5, 0, 1)
+    # the frame: a rounded moulding, twisted (grooves slanting across it), a fine fillet each side
+    acr = np.clip((inset - r0) / BUCKLE_FRAME, 0, 1)  # 0..1 across it
+    dome = np.sin(acr * math.pi) ** 0.5
+    twist = 0.5 + 0.5 * np.cos((along + (inset - r0) * 1.1) / 2.2 * 2 * math.pi)
+    fil = np.maximum(band(r0, r0 + 0.5), band(r1 - 0.5, r1))
+    frame_h = frame * (0.6 * dome + 0.18 * dome * twist + 0.15 * fil)
+    # the eagle: centred in the field, as tall as the field leaves room for
+    eimg = bpy.data.images.load(os.path.join(TEXDIR, 'gen', 'eagle_imperial.png'), check_existing=False)
+    ew_, eh_ = eimg.size
+    e = np.array(eimg.pixels[:], np.float32).reshape(eh_, ew_, 4)
+    bpy.data.images.remove(eimg)
+    e[..., :3] *= e[..., 3:]  # premultiplied: no dark fringe where it is sampled between the bird and the clear
+    EH = (BUCKLE_H - 2 * r1 / 1000) * BUCKLE_EAGLE
+    EW = EH * ew_ / eh_
+    ex, ey = BUCKLE_EAGLE_AT
+    eu, ev = (X - ex) / EW + 0.5, (Y - ey) / EH + 0.5
+    inside = (eu >= 0) & (eu <= 1) & (ev >= 0) & (ev <= 1)
+    es = sample(e, eu, ev) * inside[..., None]
+    ea = np.clip(es[..., 3], 0, 1) * field
+    ec = es[..., :3] / np.maximum(es[..., 3:], 1e-4)
+    lum = ec @ np.array([0.3, 0.55, 0.15], np.float32)  # the arms' light and dark: the feathers' lines, the crowns
+    # its ground: the bird's outline grown, the gaps in it closed (grown further, then shrunk back)
+    gw, gc = BUCKLE_EAGLE_EDGE
+    solid = (ea > 0.5).astype(np.float32)
+    closed = 1 - grow(1 - grow(solid, round((gw + gc) * mm)), round(gc * mm))
+    ground = np.clip(mat_util.blur(closed, max(1, round(0.3 * mm))) * 2 - 0.5, 0, 1) * field
+    # the lances: crossed corner to corner through the middle behind the bird, each end a spearhead on a collar
+    sw, hw, hl, s_in = BUCKLE_STAFF
+    staff = np.zeros_like(X)
+    staff_h = np.zeros_like(X)
+    ends = 0
+    for sy in (1.0, -1.0):
+        dx_, dy_ = (BUCKLE_W / 2 - r1 / 1000), sy * (BUCKLE_H / 2 - r1 / 1000)
+        L = math.hypot(dx_, dy_)
+        dx_, dy_ = dx_ / L, dy_ / L
+        t = (X - ex) * dx_ + (Y - ey) * dy_
+        n = (-(X - ex) * dy_ + (Y - ey) * dx_) * 1000
+        for sgn in (1.0, -1.0):  # out along the lance each way: its point s_in short of the frame
+            ts = np.linspace(0.0, L * 1.2, 600)
+            ins, _ = inset_of(poly, ex + sgn * ts * dx_, ey + sgn * ts * dy_)
+            hit = ins < r1 + s_in
+            tip = (ts[np.argmax(hit)] if hit.any() else ts[-1]) * 1000
+            sa = sgn * t * 1000  # mm out along it
+            base = tip - hl
+            shaft = (sa > 0) & (sa < base - 1.6)
+            q = np.abs(n) / (sw / 2)
+            staff = np.maximum(staff, np.clip((1 - q) * sw / 2 / aa, 0, 1) * shaft)
+            staff_h = np.maximum(staff_h, np.sqrt(np.clip(1 - q ** 2, 0, 1)) * shaft)
+            # the collar under the head: a ring a little wider than the shaft
+            col = (sa >= base - 1.6) & (sa < base)
+            qc = np.abs(n) / (sw / 2 + 0.8)
+            staff = np.maximum(staff, np.clip((1 - qc) * (sw / 2 + 0.8) / aa, 0, 1) * col)
+            staff_h = np.maximum(staff_h, 1.15 * np.sqrt(np.clip(1 - qc ** 2, 0, 1)) * col)
+            # the head: a leaf, widest a third of the way up, to a point; a ridge down its middle
+            f = np.clip((sa - base) / hl, 0, 1)
+            half = hw * np.clip(np.where(f < 0.33, np.sin(f / 0.33 * math.pi / 2) ** 0.6, (1 - f) / 0.67), 0, 1)
+            half = np.maximum(half, sw / 2 * (f < 0.12))
+            head = (sa >= base) & (sa <= tip)
+            qh = np.abs(n) / np.maximum(half, 1e-3)
+            staff = np.maximum(staff, np.clip((half - np.abs(n)) / aa, 0, 1) * head)
+            staff_h = np.maximum(staff_h, (0.55 * np.clip(1 - qh, 0, 1) + 0.45 * np.clip(1 - qh, 0, 1) ** 0.3) * head)
+            ends += 1
+    # the trophy: shields either side, banners on the upper lances, piles of balls by the tail, a line inside the frame
+    (li, lw_), shr, (bl, bw_, bwave), (bx_, br_) = BUCKLE_TROPHY
+
+    def add(mask, h):
+        nonlocal staff, staff_h
+        staff = np.maximum(staff, mask)
+        staff_h = np.maximum(staff_h, h * mask)
+    add(band(r1 + li, r1 + li + lw_), 0.7)
+    ins_c, _ = inset_of(poly, np.array([ex]), np.array([ey]))
+    for sx in (-1.0, 1.0):
+        # the shield: half way between the bird's ground and the frame at the middle's height
+        xs = np.linspace(ex, ex + sx * BUCKLE_W / 2, 400)
+        gi = ground[hh // 2, np.clip(((xs / BUCKLE_W + 0.5) * (w - 1)).astype(int), 0, w - 1)]
+        x_g = xs[np.argmax(gi < 0.05)] if (gi < 0.05).any() else ex
+        ins_x, _ = inset_of(poly, xs, np.full_like(xs, ey))
+        x_f = xs[np.argmax(ins_x < r1 + li + lw_)] if (ins_x < r1 + li + lw_).any() else xs[-1]
+        cx_, cy_ = (x_g + x_f) / 2, ey
+        rr = np.hypot(X - cx_, Y - cy_) * 1000
+        th = np.arctan2(Y - cy_, X - cx_)
+        m_ = np.clip((shr - rr) / aa, 0, 1)
+        h_ = np.where(rr > shr - 1.0, 1.0, 0.55 + 0.12 * np.cos(th * 16) * np.clip((rr - 2.2) / 2, 0, 1))
+        h_ = np.maximum(h_, 1.25 * np.sqrt(np.clip(1 - (rr / 2.2) ** 2, 0, 1)))  # the boss
+        add(m_, h_)
+        # the pile of balls by the tail, on the frame's line under it
+        yb = -BUCKLE_H / 2 + (r1 + li + lw_ + 0.6 + br_) / 1000
+        for qx, qy in ((-br_, 0.0), (br_, 0.0), (0.0, br_ * 1.73)):
+            cxb, cyb = ex + sx * bx_ / 1000 + qx / 1000, yb + qy / 1000
+            rb = np.hypot(X - cxb, Y - cyb) * 1000
+            add(np.clip((br_ - rb) / aa, 0, 1), np.sqrt(np.clip(1 - (rb / br_) ** 2, 0, 1)) * 1.1)
+    for sgn_x in (-1.0, 1.0):
+        # the banner: on the upper lance's outer side (towards the top), from under its head back along it, waving
+        dx_, dy_ = sgn_x * (BUCKLE_W / 2 - r1 / 1000), (BUCKLE_H / 2 - r1 / 1000)
+        L = math.hypot(dx_, dy_)
+        dx_, dy_ = dx_ / L, dy_ / L
+        ts = np.linspace(0.0, L * 1.2, 600)
+        ins, _ = inset_of(poly, ex + ts * dx_, ey + ts * dy_)
+        hit = ins < r1 + BUCKLE_STAFF[3]
+        tip = (ts[np.argmax(hit)] if hit.any() else ts[-1]) * 1000
+        a0 = tip - BUCKLE_STAFF[2] - 1.6 - 0.3  # mm out along it: the banner's end under the head
+        nx_, ny_ = -dy_, dx_
+        if ny_ < 0:
+            nx_, ny_ = -nx_, -ny_
+        sa = ((X - ex) * dx_ + (Y - ey) * dy_) * 1000
+        na = ((X - ex) * nx_ + (Y - ey) * ny_) * 1000
+        s0 = np.clip((a0 - sa) / bl, 0, 1)  # 0 at the head's end, 1 back along it
+        wave = bwave * np.sin(s0 * 2 * math.pi + na / bw_ * 1.6)
+        sa_w = sa + wave
+        t_ = na - BUCKLE_STAFF[0] / 2  # out from the shaft's edge
+        m_ = (np.clip((a0 - sa_w) / aa, 0, 1) * np.clip((sa_w - (a0 - bl)) / aa, 0, 1)
+              * np.clip(t_ / aa + 0.5, 0, 1) * np.clip((bw_ - t_) / aa, 0, 1))
+        folds = 0.5 + 0.5 * np.cos((sa_w - a0) / bl * 3 * 2 * math.pi + t_ * 0.35)
+        fringe = (t_ > bw_ - 1.3) * (0.5 + 0.5 * np.cos(sa_w * 2 * math.pi / 1.2))
+        add(m_, 0.55 + 0.25 * folds + 0.25 * fringe)
+    staff = staff * field * (1 - ground)
+    staff_h = staff_h * staff
+    rays = 0.5 + 0.5 * np.cos(np.arctan2(Y - ey, X - ex) * BUCKLE_GUILLOCHE)  # the engine turning
+    # colours: red; the frame gold; the field red over the turning; the lances gold; the ground dark grey; the bird gold
+    c = np.tile(red, X.shape + (1,))
+    c = c * (1 - field[..., None] * (0.06 * (1 - rays))[..., None])
+    c = c * (1 - frame[..., None]) + (gold * (0.9 + 0.1 * dome * (0.6 + 0.4 * twist))[..., None]) * frame[..., None]
+    c = c * (1 - staff[..., None]) + gold * (0.88 + 0.12 * staff_h)[..., None] * staff[..., None]
+    gr = np.array(BUCKLE_EAGLE_GROUND, np.float32) / 255
+    c = c * (1 - ground[..., None]) + gr * ground[..., None]
+    tone = 0.74 + 0.26 * np.clip(lum * 1.4, 0, 1)  # the arms' dark feathers a deeper gold (fine relief only)
+    c = c * (1 - ea[..., None]) + gold * tone[..., None] * ea[..., None]
+    m = np.maximum.reduce([frame, staff, 0.45 * ground, ea])
+    ro = (0.3 * np.clip(1 - frame - field, 0, 1) + frame * (0.3 - 0.08 * dome)
+          + field * (1 - staff) * (1 - ground) * (0.3 - 0.06 * rays))
+    ro = ro * (1 - staff) + 0.24 * staff
+    ro = ro * (1 - ground) + 0.42 * ground
+    ro = ro * (1 - ea) + (0.32 - 0.08 * np.clip(lum * 1.4, 0, 1)) * ea
+    # relief (mm, true scale; normals() takes pixels): the frame, the lances and the bird raised, the bird's detail by
+    # its picture's light
+    hgt = (0.55 * frame_h + 0.45 * staff_h + 0.1 * ground
+           + 0.3 * mat_util.blur(ea, max(1, round(0.3 * mm))) + 0.22 * ea * np.clip(lum * 1.4, 0, 1)
+           + 0.01 * rays * field)
+    hgt = hgt * mm * BUCKLE_RELIEF
+    print('buckle plate: %d x %d px (%.1f px/mm), rim %.1f mm, frame %.1f mm, the eagle %.0f x %.0f mm gold on dark '
+          'grey, %d spearheads, shields, banners, balls' % (w, hh, mm, r0, BUCKLE_FRAME, EW * 1000, EH * 1000, ends))
+    return c.astype(np.float32), m.astype(np.float32), np.clip(ro, 0.05, 1).astype(np.float32), hgt.astype(np.float32)
 
 
 VIVID_SAT, VIVID_GAMMA, VIVID_GAIN = 1.3, 0.85, 1.08  # the pictures carry the painting's light: rendered under ours
@@ -400,7 +624,8 @@ def build_atlas():
     height[y0:y1, x0:x1] += collar_piping_height(x1 - x0, y1 - y0) * PIPING_H
     put('cuff', cuff_tex, raw=True)
     put('belt', belt_tex, raw=True)
-    put('buckle', buckle_tex, raw=True)
+    x0, y0, x1, y1 = px('buckle')  # a chased plate, not embroidery: its own metal, roughness and relief
+    rgb[y0:y1, x0:x1], metal[y0:y1, x0:x1], rough[y0:y1, x0:x1], height[y0:y1, x0:x1] = buckle_parts(x1 - x0, y1 - y0)
     put('flap', picture('cuff_flap'))
     flat('gold', GOLD, 1.0, 0.3)
     flat('leather', LEATHER, 0.0, BOOT_ROUGH)
@@ -411,12 +636,17 @@ def build_atlas():
     albedo = mat_util.save('Details_Albedo', rgb, ALBEDO_OUT, 'sRGB')
     mr = mat_util.save('Details_MR', np.stack([metal, rough, np.zeros_like(metal)], 2), MR_OUT, 'Non-Color')
     nrm = mat_util.save('Details_Normal', mat_util.normals(height) * 0.5 + 0.5, NORMAL_OUT, 'Non-Color')
-    mat = mat_util.material('Details', albedo, mr, nrm)
+    mat = mat_util.material('Details', albedo, mr, nrm, spec=DETAILS_SPEC)
     print('atlas', ALBEDO_OUT)
     return mat
 
 
 MAT = build_atlas()
+if TEXTURES_ONLY:  # the maps and the material only, saved into the open file (the leader); the meshes as they are
+    rig.data.pose_position = POSE_POSITION
+    bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath, compress=True)
+    print('textures only: saved', bpy.data.filepath)
+    sys.exit(0)
 
 
 def uv_in(region, u, v):
@@ -678,19 +908,21 @@ def build_belt(nu=96, nv=4):
     outward_normals(bm, lambda p: Vector((c.x, c.y, p.z)))
     uvs = {v: uv_in('belt', j / nu, i / (nv - 1)) for i, row in enumerate(grid) for j, v in enumerate(row)}
     belt = new_detail('Belt', bm, uvs, lambda v: UNI_W.at(v.co), -BELT_THICK)
-    # Buckle: a plate curved over the belt, taller than it, the top corners cut off as in the picture.
+    # Buckle: a plate curved over the belt, taller than it, its left corners cut off (an arrow) as in the picture.
     k = 11
     pts, uv = [], []
     dx = P['FLAP_X'] - (BUCKLE_CLOSURE - 0.5) * BUCKLE_W  # buckle centre
     t0 = math.asin(max(-1.0, min(1.0, (dx - c.x) / radius(0.0))))
+    bc = BUCKLE_CUT_Z / BUCKLE_H
     for i in range(k):
-        b = i / (k - 1)  # 0 bottom .. 1 top
+        # rows: 3 spans through the bottom cut, 4 between the cuts' feet, 3 through the top cut
+        b = bc * i / 3 if i <= 3 else bc + (1 - 2 * bc) * (i - 3) / 4 if i <= 7 else 1 - bc + bc * (i - 7) / 3
         row, urow = [], []
         for j in range(k):
             a = j / (k - 1)
             x = (a - 0.5) * BUCKLE_W
-            into = (b - (1 - BUCKLE_CUT_Z / BUCKLE_H)) / (BUCKLE_CUT_Z / BUCKLE_H)  # 0..1 up through the cut
-            if into > 0:
+            into = max((b - (1 - bc)) / bc, (bc - b) / bc)  # 0..1 out through either cut
+            if into > 0 and x < 0:
                 x *= 1 - into * BUCKLE_CUT_X / (BUCKLE_W / 2)
             t = t0 + x / radius(t0)
             r = radius(t) + BELT_THICK + BUCKLE_RAISE
@@ -976,6 +1208,54 @@ def build_boots(nu=48):
     return out
 
 
+
+
+def buckle_in_place():
+    """-- buckle: the new plate's vertices and UVs into the rest file's Buckle and the leader's (the same grid: the
+    vertex count must not change), the leader's carried by the old plate's rigid move from rest to stance."""
+    def grab(ob):
+        me = ob.data
+        co = np.zeros(len(me.vertices) * 3, np.float32); me.vertices.foreach_get('co', co)
+        uv = np.zeros(len(me.loops) * 2, np.float32); me.uv_layers.active.data.foreach_get('uv', uv)
+        return co.reshape(-1, 3), uv
+
+    def put(ob, co, uv):
+        ob.data.vertices.foreach_set('co', co.ravel()); ob.data.uv_layers.active.data.foreach_set('uv', uv)
+        ob.data.update()
+    old = bpy.data.objects['Buckle']
+    new_belt, new = build_belt()
+    was, _ = grab(old)
+    co, uv = grab(new)
+    if co.shape != was.shape or len(uv) != len(old.data.loops) * 2:
+        sys.exit('build_details.py -- buckle: the new plate has %d vertices, the old %d - rebuild the details'
+                 % (len(co), len(was)))
+    for o in (new_belt, new):
+        bpy.data.objects.remove(o)
+    put(old, co, uv)
+    rig.data.pose_position = POSE_POSITION
+    bpy.ops.outliner.orphans_purge(do_recursive=True)
+    bpy.ops.wm.save_as_mainfile(filepath=OUT, compress=True)
+    print('buckle in place: %s (%d vertices moved up to %.1f mm)' % (
+        OUT, (np.abs(co - was).max(1) > 1e-6).sum(), np.abs(co - was).max() * 1000))
+    leader = os.path.join(HERE, 'alexander_leader.blend')
+    bpy.ops.wm.open_mainfile(filepath=leader)
+    ob = bpy.data.objects['Buckle']
+    posed, _ = grab(ob)
+    ca, cb = was.mean(0), posed.mean(0)
+    U_, _, Vt = np.linalg.svd((was - ca).T @ (posed - cb))
+    R = (U_ @ np.diag([1, 1, np.sign(np.linalg.det(U_ @ Vt))]) @ Vt).T
+    res = np.abs((was - ca) @ R.T + cb - posed).max()
+    put(ob, (co - ca) @ R.T + cb, uv)
+    for img in bpy.data.images:
+        if img.name.startswith('Details_'):
+            img.reload()
+    bpy.ops.wm.save_as_mainfile(filepath=leader, compress=True)
+    print('buckle in place: %s (the old plate rest -> stance rigid within %.2f mm)' % (leader, res * 1000))
+
+
+if BUCKLE_ONLY:
+    buckle_in_place()
+    sys.exit(0)
 collar = build_collar()
 buttons = build_buttons()
 belt = build_belt()

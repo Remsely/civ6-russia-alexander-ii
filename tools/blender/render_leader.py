@@ -45,6 +45,10 @@ ap.add_argument('--movie', help='with --motion: the whole motion rendered to thi
 ap.add_argument('--spot', action='append', default=[], help='name=x,y,z,span: a close view of a point in the scene (metres, '
                 'model space) span wide, shot as view <name><yaw>[@elev], e.g. --spot eye=0.03,-0.1,1.66,0.06 --views eye0,eye30@10')
 ap.add_argument('--hide', help='comma list of objects (name prefixes) left out of the render, e.g. Collar,Uniform')
+ap.add_argument('--flat', action='store_true', help='every surface in its own colour (the albedo as the model wears '
+                'it, AO left out), no light: what is painted into the textures, shading included, shows as it is')
+ap.add_argument('--studio', action='store_true', help='lit like the viewport\'s Material Preview (its default HDRI, '
+                'forest.exr, and AgX), not by the key/fill/rim rig: to compare with screenshots of the viewport')
 args = ap.parse_args(argv)
 
 sc = bpy.data.scenes[args.scene] if args.scene else bpy.context.scene
@@ -153,6 +157,45 @@ mix = wnt.nodes.new('ShaderNodeMixShader')
 wnt.links.new(lp.outputs['Is Camera Ray'], mix.inputs['Fac'])
 wnt.links.new(env.outputs[0], mix.inputs[1]); wnt.links.new(seen.outputs[0], mix.inputs[2])
 wnt.links.new(mix.outputs[0], out.inputs['Surface'])
+if args.studio:
+    for o in ('_Key', '_Fill', '_Rim'):
+        bpy.data.objects[o].hide_render = True
+    hdri = os.path.join(os.path.dirname(bpy.app.binary_path), '%d.%d' % bpy.app.version[:2], 'datafiles', 'studiolights',
+                        'world', 'forest.exr')
+    tex = wnt.nodes.new('ShaderNodeTexEnvironment'); tex.image = bpy.data.images.load(hdri)
+    wnt.links.new(tex.outputs['Color'], env.inputs['Color']); env.inputs['Strength'].default_value = 1.0
+    seen.inputs['Color'].default_value = (0.045, 0.045, 0.045, 1)
+    sc.view_settings.view_transform = 'AgX'
+    sc.view_settings.exposure = 0.0
+if args.flat:
+    for o in ('_Key', '_Fill', '_Rim'):
+        bpy.data.objects[o].hide_render = True
+    env.inputs['Strength'].default_value = 0.0
+    sc.view_settings.exposure = 0.0
+    for mat in bpy.data.materials:
+        if not mat.use_nodes:
+            continue
+        nt = mat.node_tree
+        bsdf = next((nd for nd in nt.nodes if nd.type == 'BSDF_PRINCIPLED'), None)
+        mo = next((nd for nd in nt.nodes if nd.type == 'OUTPUT_MATERIAL'), None)
+        if bsdf is None or mo is None:
+            continue
+        em = nt.nodes.new('ShaderNodeEmission')
+        src = bsdf.inputs['Base Color']
+        lk = src.links[0].from_node if src.links else None
+        if lk is not None and lk.type == 'MIX' and lk.blend_type == 'MULTIPLY':  # the preview's AO: left out
+            a = lk.inputs['A']
+            if a.links:
+                nt.links.new(a.links[0].from_socket, em.inputs['Color'])
+            else:
+                em.inputs['Color'].default_value = a.default_value
+        elif src.links:
+            nt.links.new(src.links[0].from_socket, em.inputs['Color'])
+        else:
+            em.inputs['Color'].default_value = src.default_value
+        for l in list(mo.inputs['Surface'].links):
+            nt.links.remove(l)
+        nt.links.new(em.outputs[0], mo.inputs['Surface'])
 
 
 def shoot(path, rw, rh):

@@ -15,6 +15,7 @@ OUT = os.path.join(HERE, 'alexander_rest.blend')  # in the rest pose; build_pose
 sys.path.insert(0, HERE)
 import head_shape  # noqa: E402
 import mat_util  # noqa: E402
+import uniform_paint  # noqa: E402
 
 # Alexander's build (alexander_ii_full.png): a big chest and broad shoulders over a waist the belt can take in, a
 # V rather than a barrel. MPFB macros and extra targets from MPFB's library, applied to the 'Human' basemesh before
@@ -101,21 +102,9 @@ WAIST_GAP, WAIST_TAPER = 0.012, 0.03 # front pulled in from the chest to the bel
 CHEST_GAP = 0.01                  # cloth (wool and lining) over the ironed chest
 SKIN_GAP = 0.008                  # minimum cloth-to-skin distance (skinning moves them apart unevenly)
 FLAP_X, FLAP_STEP = -0.02, 0.003  # closure edge: 2 cm to the wearer's right, flap lifted 3 mm
-# Texture: dark green-black wool of the Imperial uniform, red piping (linear RGB); widths are half-widths in metres.
-TEX = 2048
-TEX_OUT = os.path.join(HERE, 'textures', 'uniform_albedo.png')
-CLOTH_RGB = (0.0034, 0.0037, 0.0058)  # the portrait's near-black broadcloth (at twice this the lit chest read grey)
-PIPING_RGB = (0.50, 0.012, 0.010)
-PIPING_W, STRIPE_W, CUFF_T = 0.007, 0.012, 0.30
-WOOL_REPEATS, WOOL_CONTRAST = 10, 0.07  # textures/gen/wool.png over the UVs (~15 cm a tile), its weave's strength (the
-                                    # portrait's broadcloth is smooth: a stronger weave read as grain)
-NORMAL_OUT = os.path.join(HERE, 'textures', 'uniform_normal.png')
-WOOL_H, PIPING_H = 0.06, 2.5        # px of relief: the weave; the piping, a cord sewn into the seams
-WOOL_SHEEN, SHEEN_TINT = 0.15, (0.04, 0.045, 0.07)  # broadcloth's fuzz at grazing angles: a faint dark blue (the portrait's cloth is near black)
-PLEAT_ANGLE = (66.0, 80.0)        # degrees from the front centre (at the belt, at the hem) to the piped pleats of the skirt: in the portrait (the
-                                  # 'ref' view) the piping runs from x ~435 at the belt out to ~350 at the hem on his
-                                  # right, ~655 on his left - the front panel's edge, the back panel stepping out
-                                  # behind it in a fold
+# Texture: uniform_paint.py (dark wool, red piping, cuffs and stripes); the pleats' piping marks where the skirt steps.
+CUFF_T = 0.30                     # the cuff's share of the forearm (red, uniform_paint.py; the details fit to it)
+PLEAT_ANGLE = uniform_paint.PLEAT_ANGLE
 PLEAT_STEP = 0.0                  # ... by this much at the hem (none at the belt): the piping on the outline there (at
                                   # 1.2 cm the skirt's back was a stepped, fussy hem)
 
@@ -801,110 +790,6 @@ def extract(name, keep, offset, smooth):
     return ob
 
 
-def uniform_colour(pos, part):
-    """Albedo (linear RGB) per surface point of the uniform in the rest pose: dark wool with red piping, cuffs and
-    trouser stripes. Gold, collar and the rest are separate detail meshes, not painted. part: 0 the coat, 2 the
-    trousers, 3 the sleeves (the coat's faces the arms move)."""
-    x, y, z = pos[:, 0], pos[:, 1], pos[:, 2]
-    red = np.zeros(len(pos), bool)
-    coat = part != 2
-    # piping down the front closure, from the collar to the hem
-    red |= coat & (y < -0.03) & (x > FLAP_X - 0.002) & (x < FLAP_X + PIPING_W)  # along the flap edge
-    # cuffs: the last CUFF_T of the forearm
-    for s_ in 'lr':
-        a, b = (np.array(v) for v in bones['lowerarm_' + s_])
-        d = b - a
-        t = (pos - a) @ d / (d @ d)
-        radial = np.linalg.norm(pos - a - np.outer(t, d), axis=1)
-        # (on the sleeves only: the coat is built round the portrait's stance, his right forearm lies across the small
-        # of the back, and the cloth there came out in red patches)
-        red |= (part == 3) & (t > SLEEVE_T - CUFF_T) & (t <= SLEEVE_T + 0.05) & (radial < 0.09)
-    # lampas: a stripe down the outer seam of each trouser leg
-    zs = [bones['thigh_l'][0].z, bones['calf_l'][0].z, bones['calf_l'][1].z][::-1]
-    ys = [bones['thigh_l'][0].y, bones['calf_l'][0].y, bones['calf_l'][1].y][::-1]
-    xs = [bones['thigh_l'][0].x, bones['calf_l'][0].x, bones['calf_l'][1].x][::-1]
-    yc, xc = np.interp(z, zs, ys), np.interp(z, zs, xs)
-    red |= (part == 2) & (np.abs(y - yc) < STRIPE_W) & (np.abs(x) > xc)  # outer side only
-    # piping on the skirt's rear pleats, seen at the sides from the front: from the belt to the hem
-    ang = np.degrees(np.arctan2(np.abs(x), -y))
-    pa = PLEAT_ANGLE[0] + (PLEAT_ANGLE[1] - PLEAT_ANGLE[0]) * np.clip((WAIST_Z - z) / (WAIST_Z - HEM_Z), 0, 1)
-    dist = np.radians(np.abs(ang - pa)) * np.hypot(x, y)
-    red |= coat & (z < WAIST_Z - 0.03) & (dist < PIPING_W)
-    col = np.tile(np.array(CLOTH_RGB, np.float32), (len(pos), 1))
-    col[red] = PIPING_RGB
-    return col
-
-
-def wool_detail():
-    """The weave of the generated broadcloth (textures/gen/wool.png, seamless) as a brightness factor round 1, tiled
-    WOOL_REPEATS times over the uniform's UVs (smart UV keeps the texel density even)."""
-    img = bpy.data.images.load(os.path.join(HERE, 'textures', 'gen', 'wool.png'), check_existing=False)
-    w, hh = img.size
-    a = np.array(img.pixels[:], np.float32).reshape(hh, w, 4)[..., :3] @ np.array([0.2126, 0.7152, 0.0722], np.float32)
-    bpy.data.images.remove(img)
-    a /= a.mean()
-    ys = (np.arange(TEX) * WOOL_REPEATS * hh // TEX) % hh
-    xs = (np.arange(TEX) * WOOL_REPEATS * w // TEX) % w
-    return (1 + (a[np.ix_(ys, xs)] - 1) * WOOL_CONTRAST).astype(np.float32)
-
-
-def paint_uniform(ob, mat):
-    """Smart-UV the uniform and rasterise uniform_colour() into its albedo (supersampled, island edges dilated)."""
-    for o in sc.objects:
-        o.select_set(o == ob)
-    bpy.context.view_layer.objects.active = ob
-    bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
-    bpy.ops.uv.smart_project(angle_limit=math.radians(66), island_margin=0.004)
-    bpy.ops.object.mode_set(mode='OBJECT')
-    me = ob.data
-    me.calc_loop_triangles()
-    n = TEX * 2
-    acc = np.zeros((n, n, 3), np.float32); cov = np.zeros((n, n), bool)
-    uv = np.zeros(len(me.loops) * 2, np.float32); me.uv_layers.active.data.foreach_get('uv', uv); uv = uv.reshape(-1, 2) * n
-    co = np.zeros(len(me.vertices) * 3, np.float32); me.vertices.foreach_get('co', co); co = co.reshape(-1, 3)
-    part = np.zeros(len(me.polygons), np.int32); me.attributes['part'].data.foreach_get('value', part)
-    armg = {g.index for g in ob.vertex_groups if g.name in ARM or g.name in HAND}
-    arm_w = np.array([sum(g.weight for g in v.groups if g.group in armg) for v in me.vertices])
-    sleeve = np.array([arm_w[list(p.vertices)].mean() > 0.5 for p in me.polygons])
-    part[(part == 0) & sleeve] = 3
-    print('uniform painter: %d sleeve faces' % int((part == 3).sum()))
-    for tri in me.loop_triangles:
-        t_uv = uv[list(tri.loops)]; t_co = co[list(tri.vertices)]
-        x0, y0 = np.floor(t_uv.min(0)).astype(int); x1, y1 = np.ceil(t_uv.max(0)).astype(int)
-        xs, ys_ = np.meshgrid(np.arange(max(x0, 0), min(x1 + 1, n)), np.arange(max(y0, 0), min(y1 + 1, n)))
-        px = np.stack([xs.ravel() + 0.5, ys_.ravel() + 0.5], 1)
-        (ax, ay), (bx, by), (cx, cy) = t_uv
-        den = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
-        if abs(den) < 1e-9:
-            continue
-        l1 = ((by - cy) * (px[:, 0] - cx) + (cx - bx) * (px[:, 1] - cy)) / den
-        l2 = ((cy - ay) * (px[:, 0] - cx) + (ax - cx) * (px[:, 1] - cy)) / den
-        l3 = 1 - l1 - l2
-        inside = (l1 >= -0.02) & (l2 >= -0.02) & (l3 >= -0.02)
-        if not inside.any():
-            continue
-        bary = np.stack([l1, l2, l3], 1)[inside]
-        pos = bary @ t_co
-        ix, iy = px[inside, 0].astype(int), px[inside, 1].astype(int)
-        acc[iy, ix] = uniform_colour(pos, np.full(len(pos), part[tri.polygon_index]))
-        cov[iy, ix] = True
-    for _ in range(8):  # dilate islands so mip-mapping and filtering never pull in the empty background
-        for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0)):
-            src = np.roll(np.roll(cov, dy, 0), dx, 1); fill = src & ~cov
-            acc[fill] = np.roll(np.roll(acc, dy, 0), dx, 1)[fill]; cov |= fill
-    acc[~cov] = CLOTH_RGB
-    img_px = acc.reshape(TEX, 2, TEX, 2, 3).mean((1, 3))
-    wool = wool_detail()
-    img_px *= wool[..., None]
-    piping = (img_px[..., 0] > 0.1).astype(np.float32)  # the red (linear) of the piping and stripes
-    height = mat_util.blur(piping, 2) * PIPING_H + (wool - 1) / WOOL_CONTRAST * WOOL_H
-    img_px = np.where(img_px <= 0.0031308, img_px * 12.92, 1.055 * np.power(img_px, 1 / 2.4) - 0.055)  # to sRGB
-    albedo = mat_util.save('Uniform_Albedo', img_px, TEX_OUT, 'sRGB')
-    nrm = mat_util.save('Uniform_Normal', mat_util.normals(height) * 0.5 + 0.5, NORMAL_OUT, 'Non-Color')
-    mat_util.material(mat.name, albedo, None, nrm, rough=0.95, sheen=WOOL_SHEEN, sheen_tint=SHEEN_TINT)
-    print('painted', TEX_OUT)
-
-
 TRUNK_PTS = [v.co.copy() for v in body_me.vertices if ANKLE_Z < v.co.z and wsum(v, ARM | HAND) < 0.3]
 bmb = bmesh.new(); bmb.from_mesh(body_me)
 BODY_BVH = BVHTree.FromBMesh(bmb)
@@ -965,7 +850,8 @@ mat.diffuse_color = (0.04, 0.045, 0.06, 1)
 uni.data.materials.clear(); uni.data.materials.append(mat)
 for p in uni.data.polygons:
     p.use_smooth = True
-paint_uniform(uni, mat)  # on the single sheet: the inner layer added next reuses the same UVs
+uniform_paint.paint(uni, mat, dict(WAIST_Z=WAIST_Z, HEM_Z=HEM_Z, SLEEVE_T=SLEEVE_T, CUFF_T=CUFF_T, FLAP_X=FLAP_X),
+                    bones)  # on the single sheet: the inner layer added next reuses the same UVs
 # thickness stays a modifier: build_pose.py simulates the single sheet as cloth and applies it after
 sol = uni.modifiers.new('Thick', 'SOLIDIFY'); sol.thickness = CLOTH_THICK; sol.offset = -1; sol.use_rim = True
 

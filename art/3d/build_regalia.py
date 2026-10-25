@@ -115,6 +115,8 @@ BULLION_METAL, BULLION_ROUGH = (0.15, 0.75), (0.7, 0.32)  # in the gaps, on the 
 THREAD_SRGB = (228, 156, 38)     # gold thread: the portrait's saturated yellow gold (the gilt's own hue read pale
                                  # peach on matt thread)
 THREAD_SHEEN = (0.6, 0.35)       # thread's sheen (Principled sheen weight, roughness): soft fibre, not metal
+THREAD_HI, THREAD_HI_POW = (242, 192, 112), 3.0  # the crests' tops this pale gold (by height ** the second): the
+                                 # portrait's thread shines pale in its highlights, deep yellow in between
 # Sash: a band 'SASH_W' wide round the torso in the plane through the top of the right shoulder and the left hip.
 SASH_SHOULDER = Vector((-0.193, 0.0, 1.77))  # in the portrait it comes over the shoulder from under the epaulette's
 SASH_HIP = Vector((0.107, 0.0, 1.27))   # inner edge and runs steeply down across the chest (~0.6 px across per px down in
@@ -146,7 +148,7 @@ AIG_ARM_Z = 1.36                 # ... for the cords up to here: they lie on the
                                  # onto the sleeve above 1.5 m and the chest under it, they jumped in depth there and
                                  # twisted together; without the sleeve they fell through the armpit)
 GOLD_FLOOR = 0.55                # gold albedo: the pictures' shading only darkens it down to this (the relief does the rest)
-NORMAL_STRENGTH = {'pole': 2.0, 'sash': 0.05}  # the pictures' light and dark as relief (the fringe's own)
+NORMAL_STRENGTH = {'pole': 2.0, 'sash': 0.02}  # the pictures' light and dark as relief (the fringe's own)
 # Aiguillettes, as the portrait shows them (px of alexander_ii_full.png, cast onto the chest): from under the right
 # epaulette's fringe three cords hang down the front by the arm and sweep across in loops to the sash, going in under
 # its lower edge one below the other (each carried on under the band to AIG_UNDER past the model's own sash edge,
@@ -224,15 +226,21 @@ THREAD_METAL, THREAD_ROUGH = (0.0, 0.0), (0.92, 0.66)  # in the gaps, on the cre
 CAST_METAL, CAST_ROUGH = 0.9, 0.36
 CHASED_TILES = (6, 14)           # the pencil's chased ornament: tiles round it, along it
 # The generated material pictures (textures/gen, see art/prompts.md) and how often they repeat in their regions.
-SASH_CONTRAST = 2.5               # the damask's light and dark, stronger than generated (it is faint on the model)
-SASH_REPEATS = 12                # mirrored, even: the band's ends meet on the same column
+SASH_CONTRAST = 1.3               # the damask's light and dark, a little stronger than generated (the portrait's is a
+                                  # faint lighter outline on smooth blue; at 2.5 the band read mottled, crumpled)
+SASH_REPEATS = 2                 # mirrored, even: the band's ends meet on the same column ...
+SASH_ROWS = (0.3, 0.7)           # ... and across the band this share of the picture's height: its scrolls about as big
+                                  # as the band is wide, as the portrait's, the picture in proportion (the whole height
+                                  # across and 12 repeats squeezed it to half its width: a fine noisy pattern)
 
 sc = bpy.context.scene
 P = sc['uniform'].to_dict()
 rig = bpy.data.objects['HumanRig']
+POSE_POSITION = rig.data.pose_position
+TEXTURES_ONLY = 'textures' in (sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else [])  # (-- textures)
 rig.data.pose_position = 'REST'
 uni = bpy.data.objects['Uniform']
-for o in list(bpy.data.objects):  # previous run
+for o in [] if TEXTURES_ONLY else list(bpy.data.objects):  # previous run
     if o.get('regalia'):
         bpy.data.objects.remove(o)
 bones = {b.name for b in rig.data.bones}
@@ -379,12 +387,12 @@ def grid(w, hh):
 
 
 def sash_tex(w, hh):
-    """The generated damask moire, its height across the band, mirrored repeats along it; toned to the portrait's
+    """The generated damask moire, SASH_ROWS of its height across the band, mirrored repeats along it; toned to the portrait's
     blue."""
     pic = gen_picture('sash_damask')
     u, v = grid(w, hh)
     t = (u * SASH_REPEATS) % 2.0
-    rgb = sample(pic, np.where(t > 1, 2 - t, t), v)
+    rgb = sample(pic, np.where(t > 1, 2 - t, t), SASH_ROWS[0] + (SASH_ROWS[1] - SASH_ROWS[0]) * v)
     med = np.median(pic.reshape(-1, 3), 0)
     return np.clip(srgb(SASH_SRGB) * (1 + (rgb / med - 1) * SASH_CONTRAST), 0, 1)  # the damask shows a little more
 
@@ -412,6 +420,8 @@ def thread_colour(h, fib, tone):
     dark = base * np.array([0.42, 0.33, 0.22], np.float32)
     k = np.clip(h, 0, 1)[..., None]
     c = dark * (1 - k) + base * k
+    top = k ** THREAD_HI_POW
+    c = c * (1 - top) + srgb(THREAD_HI) * top
     return np.clip(c * (0.93 + 0.07 * fib[..., None]) * (0.9 + 0.2 * tone[..., None]), 0, 1)
 
 
@@ -610,6 +620,11 @@ def build_atlas():
 
 
 MAT = build_atlas()
+if TEXTURES_ONLY:  # the maps and the material only, saved into the open file (the leader); the meshes as they are
+    rig.data.pose_position = POSE_POSITION
+    bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath, compress=True)
+    print('textures only: saved', bpy.data.filepath)
+    sys.exit(0)
 
 
 def uv_in(region, u, v):
