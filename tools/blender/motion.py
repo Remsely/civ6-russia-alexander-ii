@@ -7,7 +7,7 @@
 # arms get keyframes here too).
 #   idle - what the leader screen plays (IDLE_* below): he looks into the camera, breathes, blinks and shifts his weight
 #          from one leg onto the other and back (384 frames, 16 s, looping: the springs run the loop twice and the
-#          second pass is keyed, so its end meets its start; frame 1 is the stance itself)
+#          second pass is keyed, so its end meets its start; frame 1 is the stance, the head turned as in the portrait)
 #   test - the same pieces pushed hard: torso turn, the left arm up, a big weight shift, a nod (100 frames)
 #   stress_* - the stress tests (tools/blender/stress.py): one joint or a few taken out to the ends of their range and
 #          back (STRESS below); the frames to look at are in their 'check'
@@ -202,7 +202,8 @@ MOTIONS['test']['plant'] = ('r',)
 # (two-bone IK); the head is held steady over the body's sway (LOOK_HOLD of it taken out, the neck turning
 # LOOK_NECK of that), turned only by a slow drift of its own, and the eyes kept on the camera as in the stance (where
 # it is in each eye then - build_pose.py turned the eyeballs, not their bones, onto it, his right one a little under
-# it: pose.EYE_OFF), but for small shifts of their fixation. Every part comes back to nothing at the loop's end, so frame 1 is the stance.
+# it: pose.EYE_OFF), but for small shifts of their fixation. The head is turned as in the portrait throughout
+# (LOOK_TURN). Every part comes back to nothing at the loop's end, so frame 1 is the stance with the head so turned.
 IDLE_FRAMES = 384
 IDLE_BREATH = (96, 0.4)                # frames per breath (4 s) and the share of it breathing in
 # ... the chest up and the shoulders lifted, the lower back easing forward under it so the head stays where it is (all
@@ -212,11 +213,18 @@ IDLE_BREATH_POSE = {'spine_02': [('x', 0.6)], 'spine_03': [('x', -1.3)],
 # the steps aside: (foot, frames it moves over, where it goes - metres from where it stands at rest, body axes): the
 # right foot out to his right, the left one after it (he stands as before, the whole of him moved over), then the left
 # one back and the right one back (the right one alone brought in under him, the feet stood unnaturally close); each
-# foot rises IDLE_STEP_LIFT (metres) mid-step, its heel with it (degrees about the ball of the foot)
+# foot shuffled over as below
 IDLE_SIDESTEP = 0.05
-IDLE_STEPS = (('r', (60, 78), (-IDLE_SIDESTEP, 0.0, 0.0)), ('l', (96, 114), (-IDLE_SIDESTEP, 0.0, 0.0)),
-              ('l', (236, 254), (0.0, 0.0, 0.0)), ('r', (272, 290), (0.0, 0.0, 0.0)))
-IDLE_STEP_LIFT = (0.012, 5.0)
+IDLE_STEPS = (('r', (60, 71), (-IDLE_SIDESTEP, 0.0, 0.0)), ('l', (96, 107), (-IDLE_SIDESTEP, 0.0, 0.0)),
+              ('l', (236, 247), (0.0, 0.0, 0.0)), ('r', (272, 283), (0.0, 0.0, 0.0)))
+# ... a step as a man standing shuffles a foot over: quick (11 frames, under half a second), the heel peeling up first
+# about the ball while the toe stays down, the foot carried over just clear of the floor and set down with the heel
+# last (lifted whole 12 mm and the heel 5 deg on a smooth arc over 18 frames, the ankle rose 2.5 cm: a slow high
+# march-step; at 7 deg it still rose 2.3 cm); IDLE_STEP_LIFT: how far the ball comes off the floor (metres), how far
+# the heel turns up about it (deg): the ankle up ~1.3 cm
+IDLE_STEP_LIFT = (0.003, 4.0)
+IDLE_STEP_PHASES = ((0.0, 0.3), (0.15, 0.85), (0.6, 1.0))  # of a step: the heel peeling up, the foot carried over
+                                                           # (the ball off the floor over it), the heel set down
 # ... his weight kept off the moving foot: the pelvis a little more over the other one, the moving side let down (over
 # IDLE_STEP_EASE frames before the step and after it); for the right foot, the left one mirrored
 IDLE_STEP_POSE = {'pelvis': ([('y', -1.0)], (0.01, 0.0, 0.0))}
@@ -235,6 +243,10 @@ IDLE_SWAY = (0.002, 0.3)               # the pelvis swaying from side to side tw
 IDLE_BLINKS = (46, 120, 206, 213, 300)  # frames a blink starts: the lids shut over BLINK_SHUT, stay BLINK_HOLD, open
 BLINK_SHUT, BLINK_HOLD, BLINK_OPEN = 3, 1, 5  # over BLINK_OPEN (frames; ~0.4 s in all)
 LOOK_HOLD, LOOK_NECK = 0.85, 0.4
+# the head as in the portrait, all through the loop: turned to his right and leaning to his right shoulder (degrees;
+# the stance's head faces the camera square, the portrait's is turned off it with the eyes on the viewer); the eyes on
+# the camera all the same
+LOOK_TURN = (-13.0, 3.0)
 # the head's own drift: (degrees, cycles per loop) of its turn to his left and its nod up
 LOOK_DRIFT = {'turn': ((0.7, 1), (0.3, 3)), 'up': ((0.5, 2),)}
 # the eyes' fixation: from each frame on, (degrees to his left, up) off the camera; moved over 2 frames (a saccade)
@@ -313,26 +325,29 @@ def _idle_feet(rig, f):
     out = {}
     bones = rig.data.bones
     for s in 'lr':
-        at, up = Vector(), 0.0
+        at, up, peel = Vector(), 0.0, 0.0
+        (p0, p1), (c0, c1), (d0, d1) = IDLE_STEP_PHASES
         for side, (f0, f1), to in IDLE_STEPS:
             if side != s or f < f0:
                 continue
             u = min(1.0, (f - f0) / (f1 - f0))
-            at = at.lerp(Vector(to), _ease(u))
-            up = math.sin(math.pi * u)  # off the floor mid-step
-        if at.length < 1e-9 and up < 1e-9:
+            c = min(1.0, max(0.0, (u - c0) / (c1 - c0)))
+            at = at.lerp(Vector(to), _ease(c))
+            up = math.sin(math.pi * c)  # the ball just off the floor while the foot is carried
+            peel = _ease((u - p0) / (p1 - p0)) - _ease((u - d0) / (d1 - d0))  # the heel up first, down last
+        if at.length < 1e-9 and up < 1e-9 and peel < 1e-9:
             continue
         ankle, ball = bones['foot_' + s].head_local, bones['ball_' + s].head_local
         fwd = Vector((ball.x - ankle.x, ball.y - ankle.y, 0)).normalized()
-        heel = Quaternion(Vector((0, 0, 1)).cross(fwd), math.radians(IDLE_STEP_LIFT[1] * up))  # toe down about the ball
+        heel = Quaternion(Vector((0, 0, 1)).cross(fwd), math.radians(IDLE_STEP_LIFT[1] * peel))  # about the ball
         out[s] = (Matrix.Translation(at + Vector((0, 0, IDLE_STEP_LIFT[0] * up)))
                   @ Matrix.Translation(ball) @ heel.to_matrix().to_4x4() @ Matrix.Translation(-ball))
     return out
 
 
 MOTIONS['idle'] = dict(frames=IDLE_FRAMES, body=True, keys=_idle_keys(), plant=('l', 'r'), feet=('l', 'r'), look=True,
-                       step=_idle_feet, check=[1, 39, 49, 69, 78, 90, 100, 105, 114, 160, 209, 240, 245, 250, 262,
-                                               276, 281, 290, 350, 384], arrive=[78, 102, 114, 254, 278, 290])
+                       step=_idle_feet, check=[1, 39, 49, 64, 69, 71, 90, 100, 102, 107, 160, 209, 240, 242, 247,
+                                               262, 277, 283, 350, 384], arrive=[71, 102, 107, 247, 278, 283])
 
 
 def _axis(rig, sc, pb, name):
@@ -589,8 +604,9 @@ def _turn(pb, q):
 
 
 def _look(rig, look, drift, fix):
-    """The head held steady (LOOK_HOLD of its move since rest taken out, the neck turning LOOK_NECK of that) and turned
-    by drift (degrees to his left, up); the eyes on the camera as at rest, off it by fix (degrees to his left, up)."""
+    """The head held steady (LOOK_HOLD of its move since rest taken out, the neck turning LOOK_NECK of that), turned
+    as in the portrait (LOOK_TURN) and by drift (degrees to his left, up); the eyes on the camera as at rest, off it by
+    fix (degrees to his left, up)."""
     cam, seen = look
     pbs = rig.pose.bones
     for b in LOOKS:
@@ -604,6 +620,8 @@ def _look(rig, look, drift, fix):
     q_want = (Quaternion(up, math.radians(drift[0])) @ Quaternion(left, -math.radians(drift[1]))
               @ head.bone.matrix_local.to_quaternion())
     q_want = q_now.slerp(q_want, LOOK_HOLD)
+    fwd = left.cross(up)
+    q_want = Quaternion(up, math.radians(LOOK_TURN[0])) @ Quaternion(fwd, math.radians(LOOK_TURN[1])) @ q_want
     _turn(neck, Quaternion().slerp(q_want @ q_now.inverted(), LOOK_NECK))
     _turn(head, q_want @ head.matrix.to_quaternion().inverted())
     left = (pbs['eye_l'].head - pbs['eye_r'].head).normalized()

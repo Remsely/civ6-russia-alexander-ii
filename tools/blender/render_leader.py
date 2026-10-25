@@ -20,7 +20,7 @@ TARGET = Vector((0.0, 0.0, 110.39))
 VFOV_DEG = 19.2
 # close views (fraction of the height: centre, span): the shoulders and epaulettes, the chest, the elbows and the waist,
 # the hips (the hand on the hilt, the tassels), the shins (the scabbard's end)
-ZOOMS = {'shoulder': (0.82, 0.2), 'chest': (0.76, 0.22), 'waist': (0.62, 0.26), 'hip': (0.47, 0.3), 'shin': (0.25, 0.3)}
+ZOOMS = {'shoulder': (0.82, 0.2), 'chest': (0.76, 0.22), 'waist': (0.62, 0.26), 'hip': (0.47, 0.3), 'shin': (0.25, 0.3), 'feet': (0.09, 0.3)}
 REF_SIZE, REF_CROWN, REF_SOLES, REF_X = (1024, 1536), 12, 1510, 515  # alexander_ii_full.png: px of the crown, soles, midline
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
@@ -32,7 +32,7 @@ ap.add_argument('--target-cm', type=float, default=150.0, help='model height in 
 ap.add_argument('--res', default='1280x720')
 ap.add_argument('--samples', type=int, default=32)
 ap.add_argument('--transparent', action='store_true')
-ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>, bust<yaw>, head<yaw>, shoulder|chest|waist|hip|shin<yaw> (yaw in degrees round the '
+ap.add_argument('--views', help='comma list instead of the game shot: full<yaw>, bust<yaw>, head<yaw>, shoulder|chest|waist|hip|shin|feet<yaw> (yaw in degrees round the '
                 'model, 0 = front, 90 = his left side, 180 = back; @deg - camera elevation, default 3), e.g. full0,full45,full90,full180,head0,head45,head90; '
                 'ref - orthographic front framed like art/source/alexander_ii_full.png (1024x1536, crown at REF_CROWN px, soles '
                 'at REF_SOLES px) for an overlay on it; each goes to <out stem>_<view>.png')
