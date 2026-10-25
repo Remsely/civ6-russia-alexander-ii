@@ -940,12 +940,12 @@ def build_orders():
             part.face([bot[i], bot[j], top[j], top[i]], [edge] * 4, smooth=False)
         tips.append((P(RIB_W / 2, -H, RIB_T * 0.5), X, N))
     # the medals: each hung by its ring from its mount's point (the ring round, its top there), turned about the bar's
-    # upright to the cloth under it and swung about its top in onto the cloth, MEDAL_LIFT off it at the nearest (moved
-    # flat onto the cloth the ones nearer the arm sank under their mounts and their rings stretched; left on the bar's
-    # plane the ones nearer the middle stood off); as in the portrait each over the one to its left, the cross over
-    # all, each turned about its upright through its top (its left edge out) as little as lies it on that one - none
-    # moved off its ring (in two layers turn about, the front ones stood 3-4 mm off their rings: seen from above the
-    # row came apart)
+    # upright to the cloth under it; as in the portrait each over the one to its left, the cross over all. Each falls
+    # back from its ring onto what lies under it - the one to its left and the cloth: swung about its top and turned
+    # about its upright to stand off them as little as it can without cutting in - none moved off its ring (moved flat
+    # onto the cloth the ones nearer the arm sank under their mounts and their rings stretched; all swung alike, each
+    # turned only as little as cleared the one under it, every second one stood 2-5 mm off it and off the cloth: seen
+    # from the side or above the row came apart in pairs)
     def face_pts(kind, n_):
         """Points over a medal's face (in its own [-1, 1]), its outline's corners included (sampled in a circle, the
         cross's arm tips went through the medal beside it)."""
@@ -961,28 +961,26 @@ def build_orders():
         g = np.linspace(-0.99, 0.99, n_)
         return [(x, y) for x in g for y in g if inside(x, y)] + [(x * 0.98, y * 0.98) for x, y in outline]
 
-    def gaps(mc, X, Y, N, size, kind):
-        out = []
-        for du, dv in face_pts(kind, 7):
+    def rest(mc, X, Y, N, size, kind, under):
+        """Over the face, how far each point stands off what lies under it: the cloth (past MEDAL_LIFT) or, where it is
+        over one, the medal under it (past its face and dome and MEDAL_STEP); < 0 cuts in. Returns the worst cut (<= 0:
+        clear) and the mean standing off."""
+        short, gaps_ = -1.0, []
+        for du, dv in face_pts(kind, 9):
             q = mc + X * (du * size) + Y * (dv * size)
+            g = []
             hit = CHEST.ray_cast(q + N * 0.05, -N, 0.1)[0]
             if hit is not None:
-                out.append((q - hit).dot(N))
-        return out
-
-    def over(mc, X, Y, N, size, kind, under):
-        """How far short of clearing the medals under it the face is (<= 0: clear)."""
-        short = -1.0
-        for sa, ca, Xa, Ya, Na, ka in under:
-            if (ca - mc).length > (sa + size) * 1.15:
-                continue
-            for du, dv in face_pts(kind, 13):
-                rel = mc + X * (du * size) + Y * (dv * size) - ca
+                g.append((q - hit).dot(N) - MEDAL_LIFT)
+            for sa, ca, Xa, Ya, Na, ka in under:
+                rel = q - ca
                 ra = math.hypot(rel.dot(Xa), rel.dot(Ya)) / sa
-                lim = 1.0 if ka != 'wcross' else 1.12
-                if ra < lim:  # over a's face there, its dome included
-                    short = max(short, MEDAL_T + MEDAL_DOME * max(0.0, 1 - ra) + MEDAL_STEP - rel.dot(Na))
-        return short
+                if ra < (1.0 if ka != 'wcross' else 1.12):  # over a's face there, its dome included
+                    g.append(rel.dot(Na) - MEDAL_T - MEDAL_DOME * max(0.0, 1 - ra) - MEDAL_STEP)
+            if g:
+                short = max(short, -min(g))
+                gaps_.append(max(0.0, min(g)))
+        return short, sum(gaps_) / max(len(gaps_), 1)
 
     first = MEDALS.index('wcross')
     order = [k for k in range(len(tips)) if k != first] + [first]  # bottom up: left to right, the cross last
@@ -999,47 +997,32 @@ def build_orders():
             X = Yb.cross(N).normalized()
         frames.append((tip - Yb * (MEDAL_RING * 2) - N * (MEDAL_T / 2), X, N, size))  # its top: the ring round
 
-    def hang(deg):
-        """All swung alike by deg (foot in +), each turned about its upright (left edge out +) as little as clears the
-        cloth and the one it lies on; moved out along its face only if no turn does. Returns the medals, the moves,
-        the turns, how far the faces stand off the cloth over MEDAL_LIFT."""
-        a = math.radians(deg)
-        out, moves, turns, off = [None] * len(tips), [0.0] * len(tips), [0] * len(tips), 0.0
-        for k in order:
-            pivot, X0, N0, size = frames[k]
-            kind = MEDALS[k]
-            on = [k - 1] if 0 < k - 1 != first else ([] if k != first else [first + 1])
-            under = [(out[u][3], out[u][4], out[u][5], out[u][6], out[u][7], out[u][2]) for u in on if out[u] is not None]
-            pick = None
-            for t in sorted(range(-12, 21), key=abs):
-                f_ = math.radians(t)
-                X = X0 * math.cos(f_) - N0 * math.sin(f_)
-                N = N0 * math.cos(f_) + X0 * math.sin(f_)
-                mY = Yb * math.cos(a) + N * math.sin(a)
-                mN = N * math.cos(a) - Yb * math.sin(a)
-                mc = pivot - mY * (size * (1.0 if kind == 'wcross' else 0.98))
-                g = gaps(mc, X, mY, mN, size, kind)
-                short = max(MEDAL_LIFT - min(g or [MEDAL_LIFT]), over(mc, X, mY, mN, size, kind, under))
-                if pick is None or short < pick[0] - 1e-5:
-                    pick = (short, t, mc, X, mY, mN, g)
-                if short <= 0:
-                    break
-            short, t, mc, X, mY, mN, g = pick
-            push = max(0.0, short)
-            mc = mc + mN * push
-            moves[k], turns[k] = push, t
-            if kind != 'wcross':
-                off += max(0.0, sum(g) / max(len(g), 1) - MEDAL_LIFT - 0.004)  # standing off past 4 mm
-            out[k] = [0, k, kind, size, mc, X, mY, mN]
-        return out, moves, turns, off
+    def place(k, s_, t, under):
+        """Medal k swung about its top by s_ degrees (foot in +) and turned about its upright by t (left edge out +)."""
+        pivot, X0, N0, size = frames[k]
+        kind = MEDALS[k]
+        a, f_ = math.radians(s_), math.radians(t)
+        X = X0 * math.cos(f_) - N0 * math.sin(f_)
+        N = N0 * math.cos(f_) + X0 * math.sin(f_)
+        mY = Yb * math.cos(a) + N * math.sin(a)
+        mN = N * math.cos(a) - Yb * math.sin(a)
+        mc = pivot - mY * (size * (1.0 if kind == 'wcross' else 0.98))
+        short, gap = rest(mc, X, mY, mN, size, kind, under)
+        return (max(short, 0.0), gap), short, gap, (s_, t), mc, X, mY, mN
 
-    best = None
-    for deg in range(-30, 31, 2):
-        out, moves, turns, off = hang(deg)
-        cost = 20 * (sum(moves) + max(moves)) + 0.5 * off + 0.00002 * sum(abs(t) for t in turns)
-        if best is None or cost < best[0]:
-            best = (cost, deg, out, moves, turns)
-    _, swing, medals, moves, turns = best
+    medals, moves, turns, offs = [None] * len(tips), [0.0] * len(tips), [None] * len(tips), [0.0] * len(tips)
+    for k in order:  # each hangs from its ring and falls back onto what lies under it: the one to its left, the cloth
+        kind, size = MEDALS[k], frames[k][3]
+        on = [k - 1] if 0 < k - 1 != first else ([] if k != first else [first + 1])
+        under = [tuple(medals[u][i] for i in (3, 4, 5, 6, 7, 2)) for u in on if medals[u] is not None]
+        pick = min(place(k, s_, t, under) for s_ in range(-30, 31, 3) for t in range(-20, 21, 2))
+        s0, t0 = pick[3]
+        pick = min([pick] + [place(k, s_, t, under) for s_ in range(s0 - 2, s0 + 3) for t in range(t0 - 2, t0 + 3)])
+        _, short, gap, st, mc, X, mY, mN = pick
+        push = max(0.0, short)
+        mc = mc + mN * push
+        moves[k], turns[k], offs[k] = push, st, gap
+        medals[k] = [0, k, kind, size, mc, X, mY, mN]
     for k, (tip, X, N) in enumerate(tips):
         _, _, kind, size, mc, mX, mY, mN = medals[k]
         top_pt = mc + mY * (size * (1.0 if kind == 'wcross' else 0.98)) + mN * (MEDAL_T / 2)
@@ -1054,10 +1037,11 @@ def build_orders():
                 for a in (2 * math.pi * q / 16 for q in range(17))]
         tube(part, ring, 0.0007, lambda i, q: pal_uv('gold'), w, sides=6)
     print('ribbon bar: %d mounts %.4f apart from x %.3f to %.3f (px %d..%d), tops at z %.3f, cloth up to %.4f in front '
-          'of a mount plane, medals %.4f off the cloth at the nearest, all swung in %d deg, turned %s deg, moved out '
-          'off their rings %s mm' % (n, step, BAR_X, (mounts[-1][0] + mounts[-1][1] * RIB_W).x, ref_px(corner)[0],
+          'of a mount plane, medals %.4f off the cloth at the nearest, swung and turned %s deg, moved out '
+          'off their rings %s mm, standing off what is under them %s mm on average' % (n, step, BAR_X, (mounts[-1][0] + mounts[-1][1] * RIB_W).x, ref_px(corner)[0],
                                      ref_px(mounts[-1][0] + mounts[-1][1] * RIB_W)[0], BAR_Z, max(lifts), MEDAL_LIFT,
-                                     swing, turns, ' '.join('%.1f' % (m_ * 1000) for m_ in moves)))
+                                     turns, ' '.join('%.1f' % (m_ * 1000) for m_ in moves),
+                                     ' '.join('%.1f' % (g_ * 1000) for g_ in offs)))
     # the gold badge under the bar: the cartouche, scalloped round, its crown standing on it, both on the cloth's plane
     bpx, bpy, bw, bh = BADGE
     hit = ref_hit(CHEST, bpx, bpy)[0]

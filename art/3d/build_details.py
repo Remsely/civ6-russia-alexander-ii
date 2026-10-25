@@ -98,18 +98,28 @@ BUCKLE_CUT_X, BUCKLE_CUT_Z = 0.015, 0.031  # its left corners (the picture's) cu
 BUCKLE_CLOSURE = 0.8               # the closure runs through the buckle this far across it (from the picture's left)
 BUCKLE_RIM, BUCKLE_FRAME = 3.0, 5.5  # mm, from the plate's edge in: the red enamel rim, the gold frame (a polished
                                   # moulding, twisted; at 4.6 mm chased on a matted ground it read as a thin line)
-BUCKLE_EAGLE, BUCKLE_EAGLE_AT = 0.86, (0.0, 0.0)  # the eagle this share of the field's height, its middle here (m)
+BUCKLE_EAGLE, BUCKLE_EAGLE_AT = 0.9, (0.0, 0.0)  # the eagle this share of the field's height, its middle here (m)
 BUCKLE_EAGLE_GROUND = (64, 66, 71)  # sRGB: the dark grey ground round the bird, hugging its outline (the portrait's)
 BUCKLE_EAGLE_EDGE = (2.4, 4.0)    # mm: that ground's width round the bird, and the gaps in it it closes over
 BUCKLE_STAFF = (5.5, 4.6, 11.5, 2.0)  # mm: the crossed lances behind the bird, corner to corner on the red field: the
                                   # shaft as wide as the frame, the spearhead's half width and length, its point this
                                   # far in from the frame (balls and trefoils on staves read as bones)
-BUCKLE_TROPHY = ((1.2, 0.9), 7.0, (11.0, 7.0, 0.9), (17.0, 2.4))  # mm: the arms of the trophy round the bird, all
-                                  # gold as the portrait's: a fine line inside the frame (this far in, this wide); a
-                                  # round shield either side of the bird (radius); a banner on each upper lance under
-                                  # its head (along it, out from it, its wave); a pile of three balls either side of
-                                  # its tail (x off the middle, a ball's radius) - with the lances alone the red field
-                                  # read bare
+BUCKLE_TROPHY = ((1.2, 0.9), 7.5, (17.0, 2.4))  # mm: the arms of the trophy round the bird, all gold as the
+                                  # portrait's: a fine line inside the frame (this far in, this wide); a round shield
+                                  # either side of the bird (radius: at 9-11 mm, rayed, they read as wheels); a pile of
+                                  # balls either side of its tail (x off the middle, a ball's radius)
+BUCKLE_FLAG = ((-29.0, -17.0), (-34.0, 25.5), 2.6)  # mm from the bird's middle (the picture's left half; the right
+                                  # one its mirror): a staff's butt and its finial's point, the staff's width (with
+                                  # flags on them the corners read as gold blocks: the user had them taken off)
+BUCKLE_LAUREL = ((-22.5, -22.5), (-40.0, -19.5), (5.0, 2.2))  # mm: a laurel branch along the foot of the field from
+                                  # the pile of balls out under the lower lance (its root, its tip; a leaf's length and
+                                  # width)
+BUCKLE_HALBERD = ((-21.0, -15.0), (-38.0, 20.0), 2.2, (8.0, 4.0))  # mm: a halberd's butt and point in the upper
+                                  # corner outside the flagstaff, its shaft's width; its axe blade on the outer side
+                                  # (along the shaft, out from it)
+BUCKLE_CANNON = ((-23.0, -7.5), (-44.0, -13.5), (3.0, 2.3))  # mm: a cannon's breech and muzzle (radii at each) in the
+                                  # lower corner (the portrait's trophy: arms packed round the bird, the red showing
+                                  # between them in strips - with lances, banners and shields alone it read bare)
 BUCKLE_RELIEF = 1.0               # the relief's heights times their true millimetres
 BUCKLE_GUILLOCHE = 240            # the field's engine-turned rays under the red enamel, round the whole turn
 # Cuffs: a band over the end of the sleeve with piped (beaded) edges; a gold flap with three buttons outside.
@@ -412,8 +422,9 @@ def buckle_parts(w, hh):
     """The plate as the portrait's, drawn over the plate's own millimetres (u along it, v up it): a red enamel rim
     round the edge; inside it a thick polished gold frame following the outline (a twisted moulding); inside the
     frame a red enamel field over engine turning, a fine gold line round it, and a gold trophy: two lances crossed
-    corner to corner behind the bird (as wide as the frame, a spearhead at each end, a banner under the upper heads),
-    a round shield either side, a pile of balls either side of the tail, and in the middle the empire's double-headed eagle in gold
+    corner to corner behind the bird (as wide as the frame, a spearhead at each end), either side a staff with a
+    finial under the frame, a halberd in the upper corner, a round shield, a cannon below, a pile of balls by the tail and
+    a laurel branch along the foot, packed so the red shows in strips; in the middle the empire's double-headed eagle in gold
     on a dark grey ground hugging its outline (textures/gen/eagle_imperial.png: the lesser arms of 1883, public domain,
     after Wikimedia Commons; its colours give the gold's relief). Returns albedo, metal, roughness, relief (pixels)."""
     u, v = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, hh))
@@ -493,8 +504,9 @@ def buckle_parts(w, hh):
             staff = np.maximum(staff, np.clip((half - np.abs(n)) / aa, 0, 1) * head)
             staff_h = np.maximum(staff_h, (0.55 * np.clip(1 - qh, 0, 1) + 0.45 * np.clip(1 - qh, 0, 1) ** 0.3) * head)
             ends += 1
-    # the trophy: shields either side, banners on the upper lances, piles of balls by the tail, a line inside the frame
-    (li, lw_), shr, (bl, bw_, bwave), (bx_, br_) = BUCKLE_TROPHY
+    # the trophy: a line inside the frame, shields either side, piles of balls by the tail; then staves, laurels,
+    # halberds and cannon
+    (li, lw_), shr, (bx_, br_) = BUCKLE_TROPHY
 
     def add(mask, h):
         nonlocal staff, staff_h
@@ -511,43 +523,111 @@ def buckle_parts(w, hh):
         x_f = xs[np.argmax(ins_x < r1 + li + lw_)] if (ins_x < r1 + li + lw_).any() else xs[-1]
         cx_, cy_ = (x_g + x_f) / 2, ey
         rr = np.hypot(X - cx_, Y - cy_) * 1000
-        th = np.arctan2(Y - cy_, X - cx_)
         m_ = np.clip((shr - rr) / aa, 0, 1)
-        h_ = np.where(rr > shr - 1.0, 1.0, 0.55 + 0.12 * np.cos(th * 16) * np.clip((rr - 2.2) / 2, 0, 1))
-        h_ = np.maximum(h_, 1.25 * np.sqrt(np.clip(1 - (rr / 2.2) ** 2, 0, 1)))  # the boss
+        # a rim, the face domed, a ring half way in, a boss (rayed, it read as a wheel)
+        ring_ = np.clip(1 - np.abs(rr - shr * 0.55) / 0.35, 0, 1)
+        h_ = np.where(rr > shr - 1.0, 1.0, 0.5 + 0.2 * np.sqrt(np.clip(1 - (rr / shr) ** 2, 0, 1)) + 0.2 * ring_)
+        h_ = np.maximum(h_, 1.25 * np.sqrt(np.clip(1 - (rr / 1.8) ** 2, 0, 1)))  # the boss
         add(m_, h_)
-        # the pile of balls by the tail, on the frame's line under it
+        # the pile of balls by the tail (three, two, one), on the frame's line under it
         yb = -BUCKLE_H / 2 + (r1 + li + lw_ + 0.6 + br_) / 1000
-        for qx, qy in ((-br_, 0.0), (br_, 0.0), (0.0, br_ * 1.73)):
+        for qx, qy in ((-2 * br_, 0.0), (0.0, 0.0), (2 * br_, 0.0), (-br_, br_ * 1.73), (br_, br_ * 1.73),
+                       (0.0, br_ * 3.46)):
             cxb, cyb = ex + sx * bx_ / 1000 + qx / 1000, yb + qy / 1000
             rb = np.hypot(X - cxb, Y - cyb) * 1000
             add(np.clip((br_ - rb) / aa, 0, 1), np.sqrt(np.clip(1 - (rb / br_) ** 2, 0, 1)) * 1.1)
-    for sgn_x in (-1.0, 1.0):
-        # the banner: on the upper lance's outer side (towards the top), from under its head back along it, waving
-        dx_, dy_ = sgn_x * (BUCKLE_W / 2 - r1 / 1000), (BUCKLE_H / 2 - r1 / 1000)
-        L = math.hypot(dx_, dy_)
-        dx_, dy_ = dx_ / L, dy_ / L
-        ts = np.linspace(0.0, L * 1.2, 600)
-        ins, _ = inset_of(poly, ex + ts * dx_, ey + ts * dy_)
-        hit = ins < r1 + BUCKLE_STAFF[3]
-        tip = (ts[np.argmax(hit)] if hit.any() else ts[-1]) * 1000
-        a0 = tip - BUCKLE_STAFF[2] - 1.6 - 0.3  # mm out along it: the banner's end under the head
-        nx_, ny_ = -dy_, dx_
-        if ny_ < 0:
-            nx_, ny_ = -nx_, -ny_
-        sa = ((X - ex) * dx_ + (Y - ey) * dy_) * 1000
-        na = ((X - ex) * nx_ + (Y - ey) * ny_) * 1000
-        s0 = np.clip((a0 - sa) / bl, 0, 1)  # 0 at the head's end, 1 back along it
-        wave = bwave * np.sin(s0 * 2 * math.pi + na / bw_ * 1.6)
-        sa_w = sa + wave
-        t_ = na - BUCKLE_STAFF[0] / 2  # out from the shaft's edge
-        m_ = (np.clip((a0 - sa_w) / aa, 0, 1) * np.clip((sa_w - (a0 - bl)) / aa, 0, 1)
-              * np.clip(t_ / aa + 0.5, 0, 1) * np.clip((bw_ - t_) / aa, 0, 1))
-        folds = 0.5 + 0.5 * np.cos((sa_w - a0) / bl * 3 * 2 * math.pi + t_ * 0.35)
-        fringe = (t_ > bw_ - 1.3) * (0.5 + 0.5 * np.cos(sa_w * 2 * math.pi / 1.2))
-        add(m_, 0.55 + 0.25 * folds + 0.25 * fringe)
+    Xm, Ym = (X - ex) * 1000, (Y - ey) * 1000  # mm from the bird's middle
+    inner = np.clip((inset - (r1 + li + lw_ + 0.6)) / aa, 0, 1)  # inside the fine line
+
+    def rod(a, b, r_):
+        """A round rod from a to b (mm from the middle), radius r_ (or one at a, one at b): its mask, its half-round
+        height, and for each pixel how far along it and out from its axis (mm), and its length."""
+        (ax, ay), (bx, by) = a, b
+        L = math.hypot(bx - ax, by - ay)
+        tx, ty = (bx - ax) / L, (by - ay) / L
+        t = (Xm - ax) * tx + (Ym - ay) * ty
+        n = -(Xm - ax) * ty + (Ym - ay) * tx
+        ra, rb = (r_, r_) if np.isscalar(r_) else r_
+        rr = ra + (rb - ra) * np.clip(t / L, 0, 1)
+        on = (t >= 0) & (t <= L)
+        return (np.clip((rr - np.abs(n)) / aa, 0, 1) * on, np.sqrt(np.clip(1 - (n / rr) ** 2, 0, 1)) * on, t, n, L)
+
+    def knob(c, r_, h=1.1):
+        rb = np.hypot(Xm - c[0], Ym - c[1])
+        add(np.clip((r_ - rb) / aa, 0, 1), h * np.sqrt(np.clip(1 - (rb / r_) ** 2, 0, 1)))
+
+    (fb, fh_, fw), (cb, cm, (cr0, cr1)) = BUCKLE_FLAG, BUCKLE_CANNON
+    for sx in (-1.0, 1.0):
+        # the staff: up from behind the bird to a finial (a point over a ball) under the frame
+        a, b = (sx * fb[0], fb[1]), (sx * fh_[0], fh_[1])
+        L = math.hypot(b[0] - a[0], b[1] - a[1])
+        tx, ty = (b[0] - a[0]) / L, (b[1] - a[1]) / L
+        pt = 4.5
+        m_, h_, t, n, _ = rod(a, (b[0] - tx * pt, b[1] - ty * pt), fw / 2)
+        add(m_, 0.9 * h_)
+        bc = (b[0] - tx * (pt + 1.4), b[1] - ty * (pt + 1.4))
+        knob(bc, 1.9)
+        f = np.clip((t - (L - pt)) / pt, 0, 1)
+        half = 2.0 * (1 - f)
+        head = (t >= L - pt) & (t <= L)
+        add(np.clip((half - np.abs(n)) / aa, 0, 1) * head, (0.5 + 0.6 * np.clip(1 - np.abs(n) / np.maximum(half, 1e-3), 0, 1)) * head)
+        knob(a, 1.8)
+        # the laurel branch: a thin stem bowed down a little, leaves in pairs slanting out along it, smaller to its tip
+        (la, lb, (ll, lw2)) = BUCKLE_LAUREL
+        a, b = (sx * la[0], la[1]), (sx * lb[0], lb[1])
+        m_, h_, t, n, L = rod(a, b, 0.7)
+        bow = 1.2 * np.sin(np.clip(t / L, 0, 1) * math.pi)  # the stem bowed down off the straight
+        nb = n + bow * np.sign(sx)
+        stem = np.clip((0.7 - np.abs(nb)) / aa, 0, 1) * (t >= 0) * (t <= L)
+        add(stem * inner, 0.6 * stem)
+        for k_ in range(5):
+            tk = L * (0.05 + 0.19 * k_)
+            sc = 1.0 - 0.3 * k_ / 4
+            for side in (-1.0, 1.0):
+                # a leaf: an ellipse from the stem, slanting 40 deg towards the tip
+                ang = math.radians(40)
+                du_ = t - (tk + math.cos(ang) * ll * sc / 2)
+                dv_ = nb - side * (math.sin(ang) * ll * sc / 2)
+                lu = du_ * math.cos(ang) + dv_ * side * math.sin(ang)
+                lv = -du_ * math.sin(ang) + dv_ * side * math.cos(ang)
+                q = (lu / (ll * sc / 2)) ** 2 + (lv / (lw2 * sc / 2)) ** 2
+                lf = np.clip((1 - q) * 4, 0, 1)
+                add(lf * inner, (0.45 + 0.35 * np.sqrt(np.clip(1 - q, 0, 1))) * (np.abs(lv) > 0.12 * lw2 * sc))
+        # the halberd: a shaft up into the corner outside the flagstaff, a spike on top, an axe blade on the outer side
+        # under it (a crescent edge), a hook on the inner side
+        (ha, hb, hw_, (hbl, hbr)) = BUCKLE_HALBERD
+        a, b = (sx * ha[0], ha[1]), (sx * hb[0], hb[1])
+        L = math.hypot(b[0] - a[0], b[1] - a[1])
+        tx, ty = (b[0] - a[0]) / L, (b[1] - a[1]) / L
+        sp = 4.0
+        m_, h_, t, n, _ = rod(a, (b[0] - tx * sp, b[1] - ty * sp), hw_ / 2)
+        add(m_ * inner, 0.9 * h_)
+        f = np.clip((t - (L - sp)) / sp, 0, 1)
+        half = 1.5 * (1 - f)
+        head = (t >= L - sp) & (t <= L)
+        add(np.clip((half - np.abs(n)) / aa, 0, 1) * head * inner, 0.9 * head)
+        out = n * sx  # mm out from the axis away from the bird
+        s0 = (t - (L - sp - hbl)) / hbl  # 0..1 along the blade
+        reach = hbr * np.sin(np.clip(s0, 0, 1) * math.pi) ** 0.5 + 0.8
+        bl_ = ((s0 > 0) & (s0 < 1) & (out > 0)) * np.clip((reach - out) / aa, 0, 1)
+        edge = np.clip(1 - (reach - out) / 1.2, 0, 1)
+        add(bl_ * inner, 0.75 - 0.35 * edge)
+        hk = (t > L - sp - hbl * 0.55) & (t < L - sp - hbl * 0.3) & (out < 0) & (-out < hw_ / 2 + 2.0)
+        add(hk * inner * 1.0, 0.7 * hk)
+        # the cannon: a barrel from behind the bird down and out, its muzzle by the frame: reinforcing rings, a swelled
+        # muzzle, a knob at the breech
+        a, b = (sx * cb[0], cb[1]), (sx * cm[0], cm[1])
+        m_, h_, t, n, L = rod(a, b, (cr0, cr1))
+        f = t / L
+        rings = sum(((f > c0) & (f < c0 + 0.06)) for c0 in (0.0, 0.3, 0.62, 0.9)) > 0
+        rr = (cr0 + (cr1 - cr0) * np.clip(f, 0, 1)) + 0.6 * rings
+        m2 = np.clip((rr - np.abs(n)) / aa, 0, 1) * (t >= 0) * (t <= L)
+        add(m2 * inner, (0.95 * np.sqrt(np.clip(1 - (n / rr) ** 2, 0, 1)) + 0.15 * rings) * (t >= 0) * (t <= L))
+        tx, ty = (b[0] - a[0]) / L, (b[1] - a[1]) / L
+        knob((a[0] - tx * 2.0, a[1] - ty * 2.0), 1.7)
     staff = staff * field * (1 - ground)
     staff_h = staff_h * staff
+    bare = float((field * (1 - staff) * (1 - ground) * (1 - ea)).sum() / field.sum())
     rays = 0.5 + 0.5 * np.cos(np.arctan2(Y - ey, X - ex) * BUCKLE_GUILLOCHE)  # the engine turning
     # colours: red; the frame gold; the field red over the turning; the lances gold; the ground dark grey; the bird gold
     c = np.tile(red, X.shape + (1,))
@@ -571,7 +651,8 @@ def buckle_parts(w, hh):
            + 0.01 * rays * field)
     hgt = hgt * mm * BUCKLE_RELIEF
     print('buckle plate: %d x %d px (%.1f px/mm), rim %.1f mm, frame %.1f mm, the eagle %.0f x %.0f mm gold on dark '
-          'grey, %d spearheads, shields, banners, balls' % (w, hh, mm, r0, BUCKLE_FRAME, EW * 1000, EH * 1000, ends))
+          'grey, %d spearheads, staves, halberds, cannon, shields, balls, laurels; %.0f%% of the field bare red' % (
+              w, hh, mm, r0, BUCKLE_FRAME, EW * 1000, EH * 1000, ends, bare * 100))
     return c.astype(np.float32), m.astype(np.float32), np.clip(ro, 0.05, 1).astype(np.float32), hgt.astype(np.float32)
 
 
