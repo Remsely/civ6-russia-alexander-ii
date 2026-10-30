@@ -5,8 +5,10 @@ INSERT INTO Types (Type, Kind) VALUES
 		('LEADER_REMSELY_ALEXANDER_II',                'KIND_LEADER'),
 		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS',  'KIND_TRAIT');
 
+-- SceneLayers: the 3D leader's backdrop in diplomacy (UI/LeaderScene.lua draws textures REMSELY_ALEXANDER_II_1..N under
+-- the model; the last one stands still over the whole screen, the ones before slide in). One layer: the dark hall.
 INSERT INTO Leaders (LeaderType, Name, Sex, InheritFrom, SceneLayers) VALUES
-		('LEADER_REMSELY_ALEXANDER_II', 'LOC_LEADER_REMSELY_ALEXANDER_II_NAME', 'Male', 'LEADER_DEFAULT', 4);
+		('LEADER_REMSELY_ALEXANDER_II', 'LOC_LEADER_REMSELY_ALEXANDER_II_NAME', 'Male', 'LEADER_DEFAULT', 1);
 
 INSERT INTO Traits (TraitType, Name, Description) VALUES
 		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'LOC_TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS_NAME', 'LOC_TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS_DESCRIPTION');

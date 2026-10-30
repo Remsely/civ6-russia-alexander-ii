@@ -5,12 +5,17 @@ description: 3D-арт для Civilization VI без Asset Editor - FBX из Ble
 
 # 3D-ассеты без Asset Editor
 
-Asset Editor хрупкий (падает на импорте FBX-анимации, на русской локали, на чужих путях) и запускается только руками. Поэтому файлы `.fgx` делаем сами, а редактор нужен разве что один раз, чтобы создать новую сущность `.geo`.
+Для экспорта лидера и проблем в игре обязательно используй `civ6-3d-import` и `docs/3d-game-import.md`: они содержат последние результаты отладки импортёра. Для движения — `civ6-3d-animation`, художественной проверки — `civ6-3d-review`, головы — `civ6-3d-head`.
+
+Asset Editor хрупкий (падает на импорте FBX-анимации, на русской локали, на чужих путях) и запускается только руками. Поэтому `.fgx` делает импортёр через скрипт, а `.geo` и остальные сущности строятся из фактических данных `.fgx` и образца Петра без Asset Editor.
 
 ## Как устроен 3D-лидер
 - `mod/Geometries/<Имя>.geo` + `.fgx` + `.wig` — тело (класс `Leader`); `<Имя>_Camera.geo` — камера: корень и узел `LeaderCamera`, без сетки.
 - `mod/Animations/<Имя>.anm` + `.fgx` — анимация; одна может стоять во всех ~28 слотах.
-- `mod/Assets/<Имя>.ast` — ассет: DSG `Standard_Leader`, привязки слотов к анимациям, модели и материалы групп треугольников. Собирается скриптом по ассету Петра: `art/3d/test/make_test_ast.py`.
+- `mod/Assets/<Имя>.ast` — ассет: DSG `Standard_Leader`, привязки слотов к анимациям, модели и материалы групп треугольников. Собирается по ассету Петра: `art/3d/make_leader_asset.py` (тестовый — `art/3d/test/make_test_ast.py`).
+- Готовый лидер: `art/3d/export_leader.py -- geometry|animation` (Blender в фоне на `alexander_leader.blend`) → `art/build/export/AlexanderII.fbx`, `AlexanderII_Idle.fbx` и `.json` с тем, что нужно `.geo`; потом `art/3d/make_leader_asset.py` — `.fgx`, `.geo` (пишется по фактическим данным `.fgx` через `tools/fgx_info.ps1`, который подставляет служебные ответы Granny), `.anm`, материалы класса `Leader` (образец `LEAD_RUSS_Peter_Uniform.mtl`; классы ещё `Leader_Skin/Cloth/Hair/Glass/Matte`) и текстуры (настройки как у `LEAD_RUSS_Peter_Uniform_*.tex`: BaseColor RGBA8 gamma 2.2, Normal RGBA8, Metalness/Gloss/AO — `PF_R8_UNORM`; Gloss = 1 − roughness), `.ast`. Корень FBX — `AlexanderII` (кость `Root` в риге уже есть), он же имя модели и группы дорожек.
+- Перенос в пространство лидера (поворот 90° + `YAW_DEG`, масштаб до 150 см) запекается в данные: у анимации поворот и равномерный масштаб рига оставляют собственные повороты костей как были, а их смещения умножаются на масштаб — после `transform_apply` на риге умножить ключи `location` на него. Проверка выгрузки: импортировать оба FBX в чистый Blender и отрендерить кадр игровой камеры против `render --motion idle --frames`; в Blender 4.4+ чужое действие двигает риг, только если назначить и `action_slot`. Импорт FBX сдвигает кадры на +1.
+- Частота: у ванильных анимаций ключи с шагом 1/30 с (`TimeStep` в `.fgx`); импортёр сам строит кривые с шагом 1/60 (oversampling 2). Наше движение считается в 24 к/с и при выгрузке пересчитывается в 30, длительность та же (16 с). Игра рисует с частотой монитора, кривые между ключами гладкие.
 - Подключение в мод (XLP, `Leaders.artdef`, `.dep`, `.modinfo`): `tools/make_leader3d.py` (`--off` — назад к 2D). Сборка — скилл `civ6-mod-build`.
 - Образцы: `...\Sid Meier's Civilization VI SDK Assets\Civ6\pantry\` (`Assets/LEAD_RUSS_Peter.ast`, `Geometries/LEAD_RUSS_Peter*`, `Animations/LEAD_RUSS_Peter_*`).
 
@@ -26,7 +31,7 @@ Asset Editor хрупкий (падает на импорте FBX-анимаци
 - Blender запускать в фоне: `blender -b art/3d/alexander_assembly.blend --python <скрипт>`; в живом Blender — через MCP (MCP for Blender, пакет `mcp-for-blender` в `.mcp.json`; пользователь нажимает Start MCP Server в N-панели).
 
 ## Проверка сцены: числа и кадр игры (после каждого шага сборки)
-Не судить по вьюпорту и не показывать пользователю непроверенное:
+Не ограничиваться вьюпортом и не показывать пользователю непроверенное. Для замечаний по скриншотам обязательно сравнивать также в соответствующем освещении вьюпорта (`--studio`):
 ```
 .venv\Scripts\python.exe tools\blend.py audit art\3d\alexander_leader.blend --scene Human [--json out.json] [--full]
 .venv\Scripts\python.exe tools\blend.py audit --fbx art\3d\test\LEAD_REMSELY_TEST.fbx
@@ -58,7 +63,7 @@ powershell -STA -ExecutionPolicy Bypass -File tools\fbx_to_fgx.ps1 -Fbx <fbx_Ani
 Это тот же FBX-импортёр, что вызывает Asset Editor (`Autodesk_FBXInterface`), результат совпадает. `.geo` при этом не меняется: если поменялись имена мешей, групп или костей, `.geo` нужно обновить (Asset Editor → Import или правкой XML по образцу). В `.anm` поправь `m_fDuration`, если сменилась длина.
 
 ## Проверка .fgx
-`powershell -File tools\dump_fgx.ps1 <прогрев.fgx> <файл.fgx> [-Bones a,b]` — модели, кости (позиция, кватернион, масштаб), дорожки анимации. Первый файл в процессе обёртка не читает — ставь любой прогревочный (например `Animations\LEAD_RUSS_Peter_Neutral_Idle.fgx`). Пути с апострофом («Sid Meier's») не читаются: скопируй файл во временную папку. Тело с сеткой обёртка иногда не открывает (NullReference) — тогда проверяй через FBX в Blender.
+`powershell -File tools\dump_fgx.ps1 <прогрев.fgx> <файл.fgx> [-Bones a,b]` — модели, кости (позиция, кватернион, масштаб), дорожки анимации. Первый файл в процессе обёртка не читает — ставь любой прогревочный (например `Animations\LEAD_RUSS_Peter_Neutral_Idle.fgx`). Пути с апострофом («Sid Meier's») не читаются: скопируй файл во временную папку. Для геометрии используй `tools/fgx_info.ps1`: он обходит отсутствующие сервисы Asset Editor и читает настоящие кости, группы и число вершин.
 
 ## Если всё же нужен Asset Editor
 Запуск — из ModBuddy (сам по себе требует аргументы проекта). Падения на старте:
@@ -71,6 +76,7 @@ powershell -STA -ExecutionPolicy Bypass -File tools\fbx_to_fgx.ps1 -Fbx <fbx_Ani
 
 ## Симптомы в игре
 - Клеопатра вместо лидера — пакет лидера не загрузился (`.dep` без пакетов, нет BLP). Смотри `ArtDef.log`: строка `Loading Package: ...leaders/<пакет>.blp`.
+- Модель видна, а за ней чёрное — нет заднего плана: текстур `<лидер>_1..SceneLayers` (см. скилл `civ6-leader-art`).
 - Чёрный экран, пакет загружен — сначала камера. Камера из нашего FBX (то же положение и кватернион, что у Петра) даёт чёрный экран: `.fgx` Петра из Maya втрое больше, видимо там параметры объектива, которых нет в FBX-экспорте. Поэтому в ассете стоит ванильная `LEAD_RUSS_Peter_Camera` (`make_test_ast.py`, своя — `--our-camera`). Затем модель вне кадра: единицы (метры вместо см), оси (Y вверх), рост. В кадр камеры Петра на x=0 попадает примерно 56..165 см; модель MPFB масштабируется при экспорте до `TARGET_CM` (150, макушка Петра ~158).
 - Модель стоит неподвижно — в `.fgx` анимации нет групп дорожек (см. «FBX → .fgx»).
 - Бисекция без пересборки: временно направить `Leader_BLP_Entry` в установленном `Leaders.artdef` на ванильный пакет (`ART_LEADER_PETER`, `Leader_Peter.xlp`, `leaders/leader_peter`). Виден Пётр — подключение, свет и UI в порядке, сломан наш пакет. `make_test_ast.py --peter` — наш пакет с телом и анимациями Петра.

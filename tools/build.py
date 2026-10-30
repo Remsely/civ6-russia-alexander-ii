@@ -66,6 +66,17 @@ def main() -> int:
         return 1
     if not cook():
         return 1
+    if (MOD / 'Geometries/AlexanderII.fgx').exists():
+        # Validate the cooked palettes, not only the uncooked FGX. A GEO/AST
+        # mesh-order mismatch can cook successfully and attach every part to
+        # unrelated bones. Read the current FGX rather than a stale export JSON.
+        from verify_leader_bindings import verify_current
+
+        try:
+            verify_current()
+        except (ValueError, IndexError, KeyError, StopIteration) as error:
+            print('FAIL: cooked leader bindings:', error)
+            return 1
     if "--no-install" in sys.argv:
         return 0
     return subprocess.call([sys.executable, str(ROOT / "tools" / "install.py")])

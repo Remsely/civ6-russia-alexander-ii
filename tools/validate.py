@@ -8,6 +8,7 @@ Checks:
      have six case forms, placeholders match, no letter "yo".
   4. Every LOC_ tag used in SQL exists in the mod text or in the game's localization.
 Exit code 1 on any error.
+Optional --leader-bindings: use the SDK to check cooked leader bone palettes on both platforms.
 """
 import re
 import sqlite3
@@ -214,6 +215,13 @@ def main() -> int:
     check_sql(actions)
     mod_tags = check_text(files)
     check_loc_refs(actions, mod_tags)
+    if '--leader-bindings' in sys.argv:
+        from verify_leader_bindings import verify_current
+
+        try:
+            verify_current()
+        except (ValueError, IndexError, KeyError, StopIteration) as error:
+            err(f'cooked leader bindings: {error}')
     for e in errors:
         print("ERROR", e)
     print(f"{len(errors)} error(s)" if errors else "OK")

@@ -11,7 +11,7 @@ description: Сборка мода Civilization VI без ModBuddy - cooker SDK 
 .venv\Scripts\python.exe tools\build.py              # cook + install.py (validate, копирование в Mods)
 .venv\Scripts\python.exe tools\build.py --no-install # только cook
 ```
-`build.py` вызывает `...\Civilization VI SDK\AssetModTools\Cooker\Civ6AssetCooker_FinalRelease.exe --mode XLP` для каждого `mod/XLPs/*.xlp` и платформ Windows/MacOS, `--pantry` = `mod/` + пантри SDK Assets по `RequiredGameArtIDs` из `.dep`. Результат в `mod/Platforms/*/BLPs/` совпадает с ModBuddy байт в байт. Потом `install.py` копирует наш `.modinfo` и всё из `<Files>`.
+`build.py` вызывает `...\Civilization VI SDK\AssetModTools\Cooker\Civ6AssetCooker_FinalRelease.exe --mode XLP` для каждого `mod/XLPs/*.xlp` и платформ Windows/MacOS, `--pantry` = `mod/` + пантри SDK Assets по `RequiredGameArtIDs` из `.dep`. Результат в `mod/Platforms/*/BLPs/` совпадает с ModBuddy байт в байт. При наличии FGX лидера после cook проверяются палитры костей BLP обеих платформ; при ошибке установка останавливается. Потом `install.py` копирует наш `.modinfo` и всё из `<Files>`. Отдельная проверка: `python tools/validate.py --leader-bindings`.
 
 ## Что когда запускать
 - Правка картинок: `slice_art.py` → `make_art.py` → `make_leader3d.py` (если включён 3D-лидер: `make_art.py` перезаписывает `Leaders.artdef` и `.dep`) → `build.py`.

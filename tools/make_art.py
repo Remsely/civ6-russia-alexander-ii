@@ -26,6 +26,8 @@ PORTRAIT = f"{LEADER}_NEUTRAL"
 FALLBACK = "FALLBACK_NEUTRAL_REMSELY_ALEXANDER_II"
 PORTRAIT_SELECT = f"{LEADER}_SELECT"  # Players.Portrait (карточка на экране выбора лидера, другой кадр)
 BACKGROUND_LOADING = f"{LEADER}_BACKGROUND"  # LoadingInfo.BackgroundImage
+# Задний план 3D-лидера: LeaderScene.lua берёт текстуры <LeaderType без LEADER_>_1..Leaders.SceneLayers (без них за моделью чёрный экран)
+SCENE_LAYERS = ["REMSELY_ALEXANDER_II_1"]
 ATLAS = "ICON_ATLAS_REMSELY_ALEXANDER_II"
 DEP_GUID = "9c1f5b0e-4a3d-4f7e-8b21-6d5a0c9e7f13"
 DEP_NAME = "Remsely's Alexander II"
@@ -35,9 +37,11 @@ def icon_name(size: int) -> str:
     return f"RemselysAlexanderII_Icon{size}"
 
 
-def write_dds(image: Image.Image, path: Path, mips: bool) -> int:
-    """Несжатый RGBA8 DDS: маски R=ff, G=ff00, B=ff0000, A=ff000000 (как у файлов Firaxis/JFD)."""
-    image = image.convert("RGBA")
+def write_dds(image: Image.Image, path: Path, mips: bool, r8: bool = False) -> int:
+    """Несжатый RGBA8 DDS: маски R=ff, G=ff00, B=ff0000, A=ff000000 (как у файлов Firaxis/JFD).
+    r8 - один канал на пиксель (R=ff, 8 бит), как у текстур с PF_R8_UNORM в .tex (LEAD_RUSS_Peter_*_gloss.dds):
+    RGBA-данные под таким .tex не дают игре загрузить весь пакет."""
+    image = image.convert("L" if r8 else "RGBA")
     levels = [image]
     if mips:
         while levels[-1].width > 1 or levels[-1].height > 1:
@@ -50,7 +54,10 @@ def write_dds(image: Image.Image, path: Path, mips: bool) -> int:
     struct.pack_into("<II", header, 12, image.height, image.width)
     struct.pack_into("<I", header, 24, 0)  # depth
     struct.pack_into("<I", header, 28, len(levels))
-    struct.pack_into("<IIIIIIII", header, 76, 32, 0x41, 0, 32, 0xFF, 0xFF00, 0xFF0000, 0xFF000000)
+    if r8:
+        struct.pack_into("<IIIIIIII", header, 76, 32, 0x40, 0, 8, 0xFF, 0, 0, 0)
+    else:
+        struct.pack_into("<IIIIIIII", header, 76, 32, 0x41, 0, 32, 0xFF, 0xFF00, 0xFF0000, 0xFF000000)
     struct.pack_into("<I", header, 108, 0x401008)  # caps: COMPLEX | TEXTURE | MIPMAP
     path.write_bytes(bytes(header) + b"".join(level.tobytes() for level in levels))
     return len(levels) - 1
@@ -338,10 +345,11 @@ def main() -> None:
     write_texture(Image.open(BUILD / "portrait_select_827x1024.png"), PORTRAIT_SELECT)
     write_texture(Image.open(BUILD / "fallback_827x1024.png"), FALLBACK, fallback=True)
     write_texture(Image.open(BUILD / "background_loading_1920x955.png"), BACKGROUND_LOADING)
+    write_texture(Image.open(BUILD / "scene_1920x1010.png"), SCENE_LAYERS[0])
     for size in ICON_SIZES:
         write_texture(Image.open(BUILD / f"icon_{size}.png"), icon_name(size))
 
-    icon_entries = [icon_name(s) for s in ICON_SIZES] + [PORTRAIT, PORTRAIT_SELECT, BACKGROUND_LOADING]
+    icon_entries = [icon_name(s) for s in ICON_SIZES] + [PORTRAIT, PORTRAIT_SELECT, BACKGROUND_LOADING] + SCENE_LAYERS
     (MOD / "XLPs" / "Icons.xlp").write_text(xlp("UITexture", "UI/Icons", icon_entries, (4, 0, 315, 805)), encoding="utf-8", newline="\n")
     (MOD / "XLPs" / "LeaderFallbacks.xlp").write_text(xlp("LeaderFallback", "LeaderFallbacks", [FALLBACK], (4, 0, 260, 754)), encoding="utf-8", newline="\n")
     (MOD / "ArtDefs" / "FallbackLeaders.artdef").write_text(FALLBACK_ARTDEF, encoding="utf-8", newline="\n")

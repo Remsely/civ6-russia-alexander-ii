@@ -8,6 +8,7 @@
 #  - a skinned vertex with no deform weight stays at the origin when the leader moves.
 import bpy, bmesh, json, os, sys, argparse
 from collections import Counter
+from mathutils import Vector
 
 MAX_INFLUENCES = 8
 WEIGHT_EPS = 1e-4
@@ -71,6 +72,16 @@ def mesh_report(o):
         used_bones = {gname[g.group] for v in me.vertices for g in v.groups
                       if g.weight > WEIGHT_EPS and gname.get(g.group) in deform}
         rep['bones_used'] = len(used_bones)
+        # The procedural Eyes mesh is two spheres. Two-sided Blender materials can hide reversed
+        # winding that makes the eyeballs disappear with the game's back-face culling.
+        if o.name.split('.')[0] == 'Eyes' and {'eye_l', 'eye_r'} <= used_bones:
+            sides = {v.index: max(((g.weight, gname.get(g.group)) for g in v.groups
+                                  if gname.get(g.group) in ('eye_l', 'eye_r')), default=(0, None))[1]
+                     for v in me.vertices}
+            centres = {s: sum((v.co for v in me.vertices if sides[v.index] == s), Vector()) /
+                       sum(sides[v.index] == s for v in me.vertices) for s in ('eye_l', 'eye_r')}
+            rep['inward_eye_faces'] = sum(p.area > 1e-14 and p.normal.dot(
+                p.center - centres[sides[p.vertices[0]]]) < 0 for p in me.polygons)
     return rep
 
 
@@ -118,6 +129,9 @@ for m in report['meshes']:
                                                                     MAX_INFLUENCES))
     if m.get('verts_without_weight'):
         err.append('%s: %d skinned verts without weight' % (n, m['verts_without_weight']))
+    if m.get('inward_eye_faces'):
+        err.append('%s: %d eyeball faces point inward (invisible with back-face culling)' %
+                   (n, m['inward_eye_faces']))
     if m.get('verts_unnormalized'):
         warn.append('%s: %d verts with weights not summing to 1' % (n, m['verts_unnormalized']))
     if m.get('groups_without_bone'):

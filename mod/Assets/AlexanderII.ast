@@ -6,115 +6,115 @@
         <m_Bindings>
           <Element>
             <m_SlotName text="HAPPY_IDLE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="HAPPY_NEGATIVE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="HAPPY_NEGATIVE_B"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="HAPPY_POSITIVE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="HAPPY_POSITIVE_B"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="HAPPY_TO_NEUTRAL"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="NEUTRAL_IDLE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="NEUTRAL_NEGATIVE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="NEUTRAL_POSITIVE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="NEUTRAL_TO_HAPPY"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="NEUTRAL_TO_UNHAPPY"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="UNHAPPY_IDLE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="UNHAPPY_NEGATIVE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="UNHAPPY_POSITIVE_A"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="UNHAPPY_TO_NEUTRAL"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="UNHAPPY_POSITIVE_B"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="UNHAPPY_NEGATIVE_B"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="NEUTRAL_NEGATIVE_B"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="NEUTRAL_POSITIVE_B"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="HAPPY_TO_ENRAGED"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="NEUTRAL_TO_ENRAGED"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="UNHAPPY_TO_ENRAGED"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="01_FIRST_MEET"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="02_DECLARE_WAR_FROM_HUMAN"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="03_DECLARE_WAR_FROM_AI"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="04_KUDOS"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="05_WARNING"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
           <Element>
             <m_SlotName text="06_DEFEAT"/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
           </Element>
         </m_Bindings>
       </m_animationBindings>
@@ -239,7 +239,7 @@
           <Element>
             <m_Name text="NEUTRAL_IDLE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers/>
             <m_Tracks>
@@ -272,7 +272,7 @@
           <Element>
             <m_Name text="HAPPY_IDLE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers/>
             <m_Tracks>
@@ -305,7 +305,7 @@
           <Element>
             <m_Name text="UNHAPPY_IDLE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers/>
             <m_Tracks>
@@ -338,7 +338,7 @@
           <Element>
             <m_Name text="NEUTRAL_POSITIVE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -405,7 +405,7 @@
           <Element>
             <m_Name text="NEUTRAL_POSITIVE_B"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -472,7 +472,7 @@
           <Element>
             <m_Name text="NEUTRAL_NEGATIVE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -587,7 +587,7 @@
           <Element>
             <m_Name text="NEUTRAL_NEGATIVE_B"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -702,7 +702,7 @@
           <Element>
             <m_Name text="HAPPY_POSITIVE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -806,7 +806,7 @@
           <Element>
             <m_Name text="HAPPY_POSITIVE_B"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -910,7 +910,7 @@
           <Element>
             <m_Name text="HAPPY_NEGATIVE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1003,7 +1003,7 @@
           <Element>
             <m_Name text="HAPPY_NEGATIVE_B"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1096,7 +1096,7 @@
           <Element>
             <m_Name text="UNHAPPY_POSITIVE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1152,7 +1152,7 @@
           <Element>
             <m_Name text="UNHAPPY_POSITIVE_B"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1208,7 +1208,7 @@
           <Element>
             <m_Name text="UNHAPPY_NEGATIVE_A"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1264,7 +1264,7 @@
           <Element>
             <m_Name text="UNHAPPY_NEGATIVE_B"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1320,7 +1320,7 @@
           <Element>
             <m_Name text="NEUTRAL_TO_HAPPY"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1413,7 +1413,7 @@
           <Element>
             <m_Name text="NEUTRAL_TO_UNHAPPY"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1543,7 +1543,7 @@
           <Element>
             <m_Name text="HAPPY_TO_NEUTRAL"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1643,7 +1643,7 @@
           <Element>
             <m_Name text="UNHAPPY_TO_NEUTRAL"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1780,7 +1780,7 @@
           <Element>
             <m_Name text="HAPPY_TO_ENRAGED"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -1895,7 +1895,7 @@
           <Element>
             <m_Name text="NEUTRAL_TO_ENRAGED"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -2036,7 +2036,7 @@
           <Element>
             <m_Name text="UNHAPPY_TO_ENRAGED"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -2155,7 +2155,7 @@
           <Element>
             <m_Name text="01_FIRST_MEET"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -2285,7 +2285,7 @@
           <Element>
             <m_Name text="02_DECLARE_WAR_FROM_HUMAN"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -2437,7 +2437,7 @@
           <Element>
             <m_Name text="03_DECLARE_WAR_FROM_AI"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -2545,7 +2545,7 @@
           <Element>
             <m_Name text="04_KUDOS"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -2642,7 +2642,7 @@
           <Element>
             <m_Name text="05_WARNING"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -2728,7 +2728,7 @@
           <Element>
             <m_Name text="06_DEFEAT"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderIIBreathing"/>
+            <m_AnimationName text="AlexanderII_Idle"/>
             <m_fDuration>0.000000</m_fDuration>
             <m_Triggers>
               <Element>
@@ -2822,7 +2822,7 @@
             <m_Values>
               <m_Values>
                 <Element class="AssetObjects..ObjectValue">
-                  <m_ObjectName text="LEAD_RUSS_Peter_Skin"/>
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Details"/>
                   <m_eObjectType>MATERIAL</m_eObjectType>
                   <m_ParamName text="Material"/>
                 </Element>
@@ -2832,8 +2832,170 @@
                 </Element>
               </m_Values>
             </m_Values>
-            <m_GroupName text="LEAD_REMSELY_TEST_Skin"/>
-            <m_MeshName text="Body"/>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Details"/>
+            <m_MeshName text="Details1"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Details"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Details"/>
+            <m_MeshName text="Details2"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Eyes"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Eyes"/>
+            <m_MeshName text="Eyes"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Hands"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Hands"/>
+            <m_MeshName text="Hands"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Head"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Head"/>
+            <m_MeshName text="Head1"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Head"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Head"/>
+            <m_MeshName text="Head2"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Orders"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Orders"/>
+            <m_MeshName text="Orders"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Regalia"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Regalia"/>
+            <m_MeshName text="Regalia1"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Regalia"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Regalia"/>
+            <m_MeshName text="Regalia2"/>
+            <m_StateName text="Default"/>
+          </Element>
+          <Element>
+            <m_Values>
+              <m_Values>
+                <Element class="AssetObjects..ObjectValue">
+                  <m_ObjectName text="LEAD_REMSELY_ALEXANDER_II_Uniform"/>
+                  <m_eObjectType>MATERIAL</m_eObjectType>
+                  <m_ParamName text="Material"/>
+                </Element>
+                <Element class="AssetObjects..BoolValue">
+                  <m_bValue>true</m_bValue>
+                  <m_ParamName text="RecalculateNormals"/>
+                </Element>
+              </m_Values>
+            </m_Values>
+            <m_GroupName text="LEAD_REMSELY_ALEXANDER_II_Uniform"/>
+            <m_MeshName text="Uniform"/>
             <m_StateName text="Default"/>
           </Element>
         </m_GroupStates>

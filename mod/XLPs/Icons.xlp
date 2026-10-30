@@ -53,6 +53,10 @@
 			<m_EntryID text="LEADER_REMSELY_ALEXANDER_II_BACKGROUND"/>
 			<m_ObjectName text="LEADER_REMSELY_ALEXANDER_II_BACKGROUND"/>
 		</Element>
+		<Element>
+			<m_EntryID text="REMSELY_ALEXANDER_II_1"/>
+			<m_ObjectName text="REMSELY_ALEXANDER_II_1"/>
+		</Element>
 	</m_Entries>
 	<m_AllowedPlatforms>
 		<Element>WINDOWS</Element>

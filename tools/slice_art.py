@@ -3,8 +3,9 @@
 Вход:  art/source/alexander_ii_full.png  (в полный рост, прозрачный фон) -> портрет
        art/source/alexander_ii_short.png (по пояс, прозрачный фон)       -> иконка
        art/source/cabinet.png (кабинет, 16:9)                            -> фон экрана загрузки
-       art/source/diplomacy.png (тёмный зал, 16:9)                       -> фон fallback-картинки в дипломатии
-Выход: art/build/portrait_827x1024.png, fallback_827x1024.png, background_loading_1920x955.png, art/build/icon_<размер>.png (круглая иконка лидера, 8 размеров)
+       art/source/diplomacy.png (тёмный зал, 16:9)                       -> фон fallback-картинки и задний план 3D-лидера в дипломатии
+Выход: art/build/portrait_827x1024.png, fallback_827x1024.png, background_loading_1920x955.png, scene_1920x1010.png,
+       art/build/icon_<размер>.png (круглая иконка лидера, 8 размеров)
 
 Запуск: .venv\\Scripts\\python.exe tools\\slice_art.py
 """
@@ -29,6 +30,9 @@ SELECT_CROP = (289, -73, 984, 787)  # left, top, right, bottom; пропорци
 LOADING_SIZE = (1920, 955)  # LoadScreen: StretchMode="Auto" - родной размер по центру; рамка экрана ~1920x955 (по скриншоту)
 LOADING_CROP_TOP = 60  # из кабинета 1672x941 берётся полоса 1672x832 (пропорции 1920x955), отзеркаленная: свет и свечи слева, тёмная часть под портретом
 FALLBACK_SIZE = (2731, 1024)
+# Задний план 3D-лидера (LeaderScene.lua: слои <лидер без LEADER_>_1..SceneLayers, растянуты на весь экран, StretchMode="Fill").
+# Размер ванильного последнего слоя (CLEOPATRA_4: 1920x1010); зал 16:9 сжат в него целиком, на экране 16:9 пропорции свои.
+SCENE_SIZE = (1920, 1010)
 FALLBACK_SHADE_WIDTH = 700  # px слева, где фон затемнён под текст
 FALLBACK_SHADE_MAX = 0.6  # затемнение у самого левого края
 ICON_SIZES = (256, 80, 64, 55, 50, 48, 45, 32)
@@ -77,6 +81,7 @@ def main() -> None:
     leader.save(BUILD / "portrait_827x1024.png")
     Image.open(SOURCE_FULL).convert("RGBA").crop(SELECT_CROP).resize(PORTRAIT_SIZE, Image.LANCZOS).save(BUILD / "portrait_select_827x1024.png")
     fallback(leader, Image.open(SOURCE_DIPLOMACY)).save(BUILD / "fallback_827x1024.png")
+    Image.open(SOURCE_DIPLOMACY).convert("RGBA").resize(SCENE_SIZE, Image.LANCZOS).save(BUILD / "scene_1920x1010.png")
     cabinet = Image.open(SOURCE_CABINET).convert("RGBA")
     strip = cabinet.crop((0, LOADING_CROP_TOP, cabinet.width, LOADING_CROP_TOP + round(cabinet.width * LOADING_SIZE[1] / LOADING_SIZE[0])))
     strip.transpose(Image.FLIP_LEFT_RIGHT).resize(LOADING_SIZE, Image.LANCZOS).save(BUILD / "background_loading_1920x955.png")

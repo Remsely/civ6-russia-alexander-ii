@@ -1865,7 +1865,9 @@ def eyeballs():
         for i in range(lat):
             for k in range(lon):
                 a = base + i * (lon + 1) + k
-                faces.append((a, a + 1, a + lon + 2, a + lon + 1))
+                # The polar basis above needs this winding for OUTWARD normals. Blender's default
+                # two-sided material hid the reversed spheres, but Civ VI culls their front surface.
+                faces.append((a, a + lon + 1, a + lon + 2, a + 1))
     me = bpy.data.meshes.new('Eyes')
     me.from_pydata([tuple(p) for p in co], [], faces)
     uvl = me.uv_layers.new(name='UVMap')

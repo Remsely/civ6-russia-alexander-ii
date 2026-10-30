@@ -45,5 +45,7 @@ cooker.log
 !art/3d/alexander_leader.blend
 !art/3d/head/*.glb
 
-# BLP 3D-лидера: собирает tools/build.py, пока в них временные текстуры Петра
+# BLP 3D-лидера: собирает tools/build.py (сотни МБ)
 mod/Platforms/*/BLPs/leaders/
+# Текстуры 3D-лидера для cooker'а: несжатые DDS (~0,5 ГБ), art/3d/make_leader_asset.py пишет их из art/3d/textures/*.png
+mod/Textures/LEAD_REMSELY_ALEXANDER_II_*.dds
