@@ -1,56 +1,60 @@
+[![English](https://img.shields.io/badge/lang-English-blue)](README.md) [![Русский](https://img.shields.io/badge/lang-Русский-red)](README.ru.md)
+
 # Remsely's Alexander II
 
-Мод для Civilization VI: **Александр II, Император-Освободитель**, как альтернативный лидер России.
+A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate leader of Russia.
 
-![Превью](workshop/preview.png)
+![Preview](workshop/preview.png)
 
-## Что в моде
+## What's in the mod
 
-**Способность «Великие реформы»**
-- *Освобождение крестьян:* строители получают +1 заряд, пастбища дают +1 производства, фермы дают +1 производства за каждые 2 соседние фермы (максимум +2 при 4 соседях).
-- *Земства:* города с назначенным губернатором получают +2 культуры и +4 лояльности. Начиная со Средневековья с каждой новой эпохой бонус растет на +1 культуры и +2 лояльности (Будущее: +9 и +18).
-- *Военная реформа:* улучшение юнитов стоит на 50% меньше золота.
+**Leader ability: The Great Reforms**
+- *Emancipation of the Serfs:* Builders have +1 charge, Pastures get +1 Production, and Farms get +1 Food for every 2 adjacent Farms (max +2 at 4).
+- *Zemstvo Reform:* cities with an assigned Governor get +2 Culture and +4 Loyalty; from the Medieval Era the bonus grows by +1 Culture and +2 Loyalty with every new era (Future Era: +9 and +18).
+- *Military Reform:* unit upgrades cost 50% less Gold.
 
-**Повестка ИИ «Освободитель».** Нравятся цивилизации, давно не объявлявшие войн; не нравятся те, что объявили войну недавно.
+**AI agenda: The Liberator.** Likes civilizations that have kept the peace for a long time; dislikes those that recently declared war.
 
-**Остальное:** 11 новых названий городов России (столица Санкт-Петербург), чёрно-золотые цвета границ, портрет, иконка, фон загрузки и фон дипломатии, 31 реплика дипломатии, страница в Цивилопедии. Языки: русский и английский.
+**A 3D leader on the diplomacy screen** — Alexander stands in his own hall in the portrait's pose and breathes, blinks and shifts his weight in his idle loop.
 
-Требуется Rise and Fall; Gathering Storm рекомендуется (эпоха «Будущее»). Платформы: Windows и macOS (BLP собраны для обеих; на macOS мод не проверялся в игре).
+**Also:** a researched 45-name city list led by Saint Petersburg (Moscow, Odessa, Kharkov, Sevastopol, Vladivostok, Tashkent, Baku, Riga…), black-and-gold border colors, a loading screen background, a diplomacy background, 31 diplomacy lines and a Civilopedia page, in English and Russian.
 
-## Установка
+Requires Rise and Fall; Gathering Storm is recommended (the Future Era). Platforms: Windows and macOS (BLPs are built for both; the mod has not been tested in game on macOS).
 
-**Из GitHub Releases:**
+## Install
 
-1. Скачайте `RemselysAlexanderII-vX.zip` из раздела [Releases](https://github.com/Remsely/civ6-alexander-ii/releases) (рядом лежит `.sha256`).
-2. Распакуйте папку `RemselysAlexanderII` в `Документы\My Games\Sid Meier's Civilization VI\Mods\`.
-3. В игре: «Дополнительно» → «Моды», включите **Remsely's Alexander II**. Лидер появится среди лидеров России в новой партии.
+**From GitHub Releases:**
 
-Цвета и списки городов записываются в сохранение при создании партии, поэтому в старых сохранениях лидер не появится.
+1. Download `RemselysAlexanderII-vX.zip` from the [Releases](https://github.com/Remsely/civ6-russia-alexander-ii/releases) section (a `.sha256` sits next to it).
+2. Unpack the `RemselysAlexanderII` folder into `Documents\My Games\Sid Meier's Civilization VI\Mods\`.
+3. In game: "Additional Content" → "Mods", enable **Remsely's Alexander II**. The leader appears among Russia's leaders in a new game.
 
-## Разработка
+Colors and city lists are written into the save at game creation; start a new game to test changes to them.
 
-Только Windows (SDK Civilization VI). Подробности и правила для Claude Code: [CLAUDE.md](CLAUDE.md).
+## Development
+
+Windows only (the Civilization VI SDK). Rules for the coding agents: [CLAUDE.md](CLAUDE.md) / [AGENTS.md](AGENTS.md).
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r tools\requirements.txt
-.\.venv\Scripts\python.exe tools\validate.py       # проверка мода
-.\.venv\Scripts\python.exe tools\install.py        # проверка и установка в папку модов игры
-.\.venv\Scripts\python.exe tools\slice_art.py      # арт: нарезка портретов, фонов и иконок из art/source
-.\.venv\Scripts\python.exe tools\make_art.py       # арт: DDS, .tex, .xlp, .artdef, .dep (BLP собирает Asset Editor)
-.\.venv\Scripts\python.exe tools\make_preview.py   # превью workshop/preview.png
-.\.venv\Scripts\python.exe tools\package.py        # dist/release/RemselysAlexanderII-v<версия>.zip для GitHub Releases
+.\.venv\Scripts\python.exe tools\validate.py       # validate the mod
+.\.venv\Scripts\python.exe tools\install.py        # validate and install into the game's Mods folder
+.\.venv\Scripts\python.exe tools\build.py          # cook BLPs (SDK cooker, no ModBuddy)
 ```
 
-Документы:
-- [ROADMAP.md](ROADMAP.md) — план работ;
-- [docs/remselys-alexander-ii.md](docs/remselys-alexander-ii.md) — дизайн мода;
-- [docs/art-pipeline.md](docs/art-pipeline.md) — как собирается арт;
-- [docs/TESTING.md](docs/TESTING.md) — проверка в игре;
-- [docs/RELEASING.md](docs/RELEASING.md) — выпуск релиза;
-- [docs/terms.md](docs/terms.md) — русские термины;
-- [CHANGELOG.md](CHANGELOG.md) — история версий.
+Documentation:
+- [ROADMAP.md](ROADMAP.md) — status and plan;
+- [docs/en/design.md](docs/en/design.md) — the mod's design ([Russian](docs/ru/design.md));
+- [docs/en/ideas.md](docs/en/ideas.md) — the ideas bank;
+- [docs/en/art-pipeline.md](docs/en/art-pipeline.md) — how the art is built;
+- [docs/en/TESTING.md](docs/en/TESTING.md) — in-game testing;
+- [docs/en/RELEASING.md](docs/en/RELEASING.md) — the release process;
+- [docs/en/terms.md](docs/en/terms.md) — the game terms glossary;
+- [CHANGELOG.md](CHANGELOG.md) — version history.
 
-Папка `reference/` (в `.gitignore`) состоит из ссылок на файлы игры и выгрузок баз данных, см. раздел «Окружение» в `CLAUDE.md`.
+The current development branch contains v1.5.0 changes; published releases may differ.
 
-Исходники картинок созданы нейросетями по промптам из [art/prompts.md](art/prompts.md).
+The `reference/` folder (in `.gitignore`) consists of links to game files and database dumps — see "Окружение" in [CLAUDE.md](CLAUDE.md).
+
+The art sources were generated by neural networks from the prompts in [art/prompts.md](art/prompts.md).

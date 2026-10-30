@@ -1,230 +1,49 @@
-# Roadmap: Remsely's Alexander II
+# Roadmap: Remsely’s Alexander II
 
-Верхнеуровневый план разработки мода «Remsely's Alexander II» — альтернативного лидера России для Civilization VI.
-Дизайн-документ: `docs/remselys-alexander-ii.md`.
+[Русский](ROADMAP.ru.md) · [Ideas bank](docs/en/ideas.md) · [Release history](CHANGELOG.md)
 
-Один репозиторий = один мод. Корень репозитория = ModBuddy-проект мода.
+The release order reflects the agreed direction. Dates are unset; mechanics that still need design or testing are identified below.
 
-Условные обозначения:
-- 🤖 — шаг, который может сделать Claude Code (текстовые файлы, скрипты, проверки).
-- 🧑 — ручной шаг (GUI-инструменты, игра, генерация картинок, Steam).
-- **[проверить]** — нужно сверить с игрой или образцом.
+## v1.5.0 — 3D leader
 
----
+**Status:** the leader and later idle animation are implemented; the user confirmed the corrected animation works in game.
 
-## 0. Из чего состоит мод лидера
+- [x] Leader model and diplomacy idle animation.
+- [x] Eye and attachment fixes.
+- [ ] Complete in-game checks of the other changes, text review and release preparation.
+- [ ] Finish migrating and updating documentation.
 
-Альтернативный лидер для существующей цивилизации — это в основном база данных и тексты, плюс 2D-арт.
+## v2.0.0 — reforms and voice
 
-| Слой | Что это | Формат | Кто делает |
-|---|---|---|---|
-| Описание мода | `.modinfo`: файлы, действия (UpdateDatabase, UpdateText, UpdateArt, UpdateIcons…), зависимость от Rise and Fall / Gathering Storm | XML | 🤖 |
-| Геймплей | `Types`, `Leaders`, `CivilizationLeaders`, `LeaderTraits`, `Traits`, `Modifiers`, `ModifierArguments`, `RequirementSets`, `Requirements`, `Agendas`, `HistoricalAgendas`, `LoadingInfo`, `PlayerColors`, список городов | SQL или XML | 🤖 |
-| Логика вне XML | Если модификаторов не хватает (смежность ферм только для этого лидера, повестка) | Lua | 🤖 |
-| Тексты | Все `LOC_` ключи в `en_US` и `ru_RU` | XML/SQL | 🤖 черновик + 🧑 вычитка |
-| Иконки | Иконка лидера в нескольких размерах, атласы `IconTextureAtlases` / `IconDefinitions` | DDS + TEX → BLP | 🤖 нарезка, 🧑 Asset Editor |
-| Статичный лидер | «Fallback leader»: портрет на экранах выбора, загрузки, дипломатии | DDS + TEX, класс `LeaderFallback`, `FallbackLeaders.artdef` | 🧑 Asset Editor |
-| Фон | Фон экрана загрузки / выбора | DDS + TEX → BLP | 🧑 |
-| Арт-зависимости | `.artdef`, `.xlp`, `.dep`, `Mod.Art.xml` | XML | 🤖 по образцу |
-| 3D-сцена (*) | Модель, анимации, сцена дипломатии | `.ast`, `.geo`… | отложено |
+- [ ] Rework the ability: from the Industrial Era, +1 Builder charge and +1 Food per two adjacent Farms; remove Pasture Production and the unit upgrade discount.
+- [ ] Test the railway network: +1 Production per connected city of the player's civilization and +2 Gold per connected city of another civilization. Define connection rules and test balance.
+- [ ] Experiment with tundra, river and coastal starting preferences on generated maps; consider true starts, effects on Peter and compatibility.
+- [ ] Produce high-quality voice: loading narration in English and Russian, diplomacy in Russian. Research AI options, including local ones.
 
-Ключевой момент для автоматизации: **всё текстовое Claude Code сделает сам, а cooking картинок (TEX, BLP) делается только через Asset Editor из ModBuddy**. Это ручной шаг, но редкий: `.xlp` настраивается один раз, дальше только пересборка.
+## v2.5.0 — a living leader
 
----
+- [ ] Refine the 3D model based on feedback.
+- [ ] Add movement animations for different diplomacy situations.
+- [ ] Improve the 2D backgrounds on the loading and diplomacy screens.
 
-## 1. Инструменты
+## v3.0.0 — unique district and speech
 
-### 1.1. Обязательные (🧑 установить)
+- [ ] Create a financial unique district and State Bank building; design original mechanics closer to implementation.
+- [ ] Research and implement mouth movement timed to speech; first test synchronization with one line.
 
-| Инструмент | Зачем | Заметки |
-|---|---|---|
-| Civilization VI + Rise and Fall + Gathering Storm | Тесты; губернаторы и лояльность для «Земств» есть только начиная с R&F | |
-| **Sid Meier's Civilization VI Development Tools** (Steam → Библиотека → Инструменты) | ModBuddy (сборка), Asset Editor (cooking текстур), FireTuner (Lua-консоль, отладка) | **Только Windows** |
-| Git + GitHub CLI (`gh`) | Репозиторий, PR | |
-| Python 3.12+ | Валидатор, нарезка иконок, утилиты | Валидатор можно на Kotlin, но для картинок удобнее Python |
-| `sqlite3` CLI | Чтение отладочных баз игры (см. 1.3) | |
-| Claude Code | Основная разработка | Репозиторий держать на диске Windows, чтобы ModBuddy видел проект |
+## v3.5.0 — military reform
 
-### 1.2. Для Claude Code (🤖 ставит сам, фиксирует в `tools/requirements.txt`)
+- [ ] Add a unique unit: a Berdan rifleman is the candidate. Determine bonuses during development.
 
-| Пакет | Зачем |
-|---|---|
-| `Pillow` | Ресайз, нарезка иконок во все размеры, круглые маски, превью |
-| `rembg` | Удаление фона у портрета (локально, бесплатно) |
-| `lxml` | Парсинг `.modinfo`, `.artdef`, `.xlp`, XML-данных для валидатора |
-| `pytest` | Тесты валидатора |
-| (опционально) `texconv` из DirectXTex | PNG → DDS, если Asset Editor не принимает PNG напрямую [проверить] |
+## v3.7.0 — natural wonder
 
-Специального MCP-сервера для модов Civilization VI не нужно. Главное для Claude Code — **реальные файлы игры и образец мода перед глазами**, чтобы не придумывать названия таблиц, колонок и модификаторов.
+- [ ] Add the Lena Pillars; determine mechanics and visual execution during development.
 
-### 1.3. Справочные данные из игры (🧑 один раз)
+## v3.8.0 — city-state
 
-1. **Выгрузка баз игры в SQLite.** В `Documents/My Games/Sid Meier's Civilization VI/AppOptions.txt` поставить `CopyDatabasesToDisk 1` [проверить точное имя опции], запустить игру с включёнными R&F и GS. В `.../Cache/` появятся `DebugGameplay.sqlite`, `DebugLocalization.sqlite` и др.
-   - `DebugGameplay.sqlite` — схема всех таблиц и все ванильные модификаторы и требования. Валидатор сверяет с ней таблицы и колонки.
-   - `DebugLocalization.sqlite` — **официальные русские названия** эпох, технологий, улучшений. Отсюда снимаются пометки [проверить] в дизайн-документе.
-   - Копии в `reference/game-db/` (в `.gitignore`).
-2. **Ванильные XML** в `reference/vanilla/` (в `.gitignore`):
-   - `Base/Assets/Gameplay/Data/*.xml`
-   - `DLC/Expansion1/`, `DLC/Expansion2/` — данные R&F и GS (губернаторы, лояльность, эпохи)
-   - Тексты `en_US` и `ru_RU`
-3. **Образец мода** в `reference/samples/`: исходник альтернативного лидера (Gedemo Catherine или другой мод с открытым ModBuddy-проектом) и шаблон «Custom Civilization ModBuddy Template» с CivFanatics — там все `.xlp`, `.artdef` и размеры иконок.
-4. **Логи**: `Documents/My Games/Sid Meier's Civilization VI/Logs/` (`Database.log`, `Modding.log`, `Lua.log`). Включить логирование в `AppOptions.txt` [проверить опции].
+- [ ] Add a historical city-state from Alexander II's era: choose between Frankfurt and Lübeck during implementation.
+- [ ] Check the name against Germany's city list and compatibility with installed mods.
 
----
+## Earlier release
 
-## 2. Структура репозитория
-
-```
-/
-├── ROADMAP.md
-├── CLAUDE.md                    # правила для Claude Code (раздел 4)
-├── README.md  CHANGELOG.md  VERSION
-├── docs/
-│   ├── remselys-alexander-ii.md # дизайн-документ
-│   ├── art-pipeline.md          # как собирается арт
-│   ├── RELEASING.md  TESTING.md # выпуск релиза, проверка в игре
-│   └── terms.md                 # русские термины
-├── .claude/skills/              # скиллы проекта (грабли и правила, без дублей docs/)
-├── workshop/                    # страница, настройки и превью Steam Workshop
-├── RemselysAlexanderII.modinfo
-├── RemselysAlexanderII.dep      # арт-зависимости (для Asset Editor и UpdateArt)
-├── Data/                        # SQL геймплея, иконки, цвета
-├── Text/                        # en_US.xml, ru_RU.xml
-├── Lua/
-├── ArtDefs/  XLPs/  Textures/   # DDS/TEX/XLP/artdef: генерирует tools/make_art.py
-├── Platforms/{Windows,MacOS}/BLPs/ # собранные в Asset Editor BLP
-├── art/
-│   ├── source/                  # исходники из нейросетей
-│   └── prompts.md               # промпты для нейросетей
-├── tools/
-│   ├── validate.py  install.py  package.py
-│   ├── slice_art.py  make_art.py  make_preview.py
-│   └── requirements.txt
-└── reference/                   # в .gitignore: файлы игры, sqlite, образцы
-```
-
-Точная раскладка папок мода — по образцу из `reference/samples/` [проверить, как ModBuddy хочет видеть проект].
-
----
-
-## 3. Последовательность работ
-
-### Фаза 0. Окружение (🧑)
-- [x] Установить SDK, Python, sqlite3, Claude Code.
-- [x] Выгрузить базы игры, скопировать ванильные файлы и образец в `reference/`.
-- [x] Проверить, что ModBuddy открывается и собирает пустой проект.
-
-### Фаза 1. Каркас репозитория (🤖)
-- [x] `CLAUDE.md`, `README.md`, `.gitignore`, структура папок.
-- [x] Дизайн-документ в `docs/`.
-- [x] `tools/validate.py`, первые проверки: парность `en_US`/`ru_RU`, префикс `REMSELY_`, существование файлов из `.modinfo`, таблицы и колонки против `DebugGameplay.sqlite`.
-- [x] Подтянуть официальные русские термины из `DebugLocalization.sqlite` (эпохи, «Пастбище», «Ферма», «Строитель», «Губернатор», «Лояльность») и закрыть пометки [проверить] в дизайн-документе.
-
-### Фаза 2. Минимальный играбельный лидер (🤖 + 🧑 тест)
-Цель: Александр II появляется в списке у России, партия запускается. Без способностей и своего арта.
-- [x] Типы, `Leaders`, `CivilizationLeaders` (Россия), `LoadingInfo`, `PlayerColors` (`#1C1C1C` / `#D4A017` / `#F5F1E6`).
-- [x] Тексты: имя, титул, название мода, заглушки описаний (en + ru).
-- [x] Зависимость от R&F в `.modinfo` [проверить: только R&F или R&F либо GS].
-- [x] Временный арт: ссылки на иконку и портрет Петра.
-- [x] 🧑 Собрать в ModBuddy, включить мод, начать партию, проверить `Database.log` и `Modding.log`.
-
-### Фаза 3. Механики (🤖, по одному спайку на часть)
-Для каждой части: найти ванильный аналог в `DebugGameplay.sqlite` → реализовать → проверить в игре.
-
-| Часть | Подсказка, где искать аналог | Риск |
-|---|---|---|
-| Строители +1 заряд | Политики и способности, дающие заряды строителям (например, у Китая) | Низкий |
-| Пастбища +1 производства | Модификаторы `ADJUST_PLOT_YIELD` с требованием на тип улучшения | Низкий |
-| Фермы +1 за каждые 2 соседние фермы (макс. +2) | Ванильная смежность ферм задаётся глобально (`Improvement_Adjacencies`), не для лидера | **Высокий, вероятно Lua** |
-| Земства: культура и лояльность в городах с губернатором, по эпохам | Требования на наличие губернатора и на текущую эпоху игрока [проверить названия] | Средний: 8 ступеней эпох, условие «губернатор обустраивается» |
-| Военная реформа: −50% золота на улучшение | Политика «Профессиональная армия» даёт такую же скидку [проверить] | Низкий |
-| Повестка «Освободитель» | Ванильные повестки, завязанные на войны; счётчик «30 ходов без объявления войны» | Средний, возможно Lua |
-| Список городов | Механика GEOGRAPHICA / `CityNames` с привязкой к лидеру | Средний |
-
-- [ ] 🧑 Проверка в игре по чек-листу раздела 12 дизайн-документа. FireTuner для ускорения: выдать технологии, сменить эпоху, назначить губернатора.
-
-### Фаза 4. Арт (🧑 генерация, 🤖 обработка)
-Порядок: **сначала сам лидер, потом всё остальное**, чтобы везде было одно лицо.
-1. [x] **Концепты** (бесплатные генераторы с большим лимитом, раздел 5): 20–50 вариантов, выбрать лицо, мундир, позу. Бакенбарды, мундир с эполетами 1860–1870-х.
-2. [x] **Character sheet**: эталон лидера (анфас и три четверти, нейтральный фон). Дальше он референс для всех генераций.
-3. [x] **Портрет для дипломатии** (fallback) по размерам ванильных fallback-изображений. 🤖 убрать фон (`rembg`), подогнать холст.
-4. [x] **Иконка лидера**: крупный план лица из эталона. 🤖 `tools/slice_art.py` режет во все размеры из образца.
-5. [x] **Фон экрана загрузки**: композиция A или B из раздела 8 дизайн-документа (кабинет в Зимнем дворце / Дворцовая площадь зимой).
-6. [x] **Превью для Workshop** (`tools/make_preview.py`).
-7. [x] 🧑 Asset Editor: импорт текстур, классы `UserInterface` / `LeaderFallback`, сборка BLP. 🤖 `tools/make_art.py` заранее готовит `.xlp`, `.artdef`, `.dep`, DDS и `.tex` по образцу (см. `docs/art-pipeline.md`).
-
-### Фаза 5. Тексты (🤖 черновик, 🧑 вычитка)
-- [x] Реплики дипломатии, Цивилопедия, абзац экрана загрузки, описание мода и страницы Workshop. Цитата не добавлена: нет сверки с печатными источниками.
-- [ ] Вычитать русский вариант: стиль ванильной локализации, официальные термины.
-
-### Фаза 6. Полировка и релиз
-- [ ] Полный прогон валидатора, полная партия против ИИ-Александра (повестка срабатывает, нет ошибок в логах).
-- [ ] Партия с R&F без GS и с GS (эпоха «Будущее» только в GS).
-- [ ] Сохранение и загрузка, переключение языка.
-- [ ] 🧑 Публикация в Steam Workshop через ModBuddy / Uploader.
-- [x] Тег версии в git, CHANGELOG (v1.0.0-alpha, пре-релиз на GitHub).
-
-### Фаза 7 (*). 3D-сцена
-Отложено до релиза.
-
----
-
-## 4. Что положить в CLAUDE.md
-
-- Ссылка на этот roadmap и дизайн-документ.
-- **Названия таблиц, колонок, типов модификаторов, эффектов и требований брать только из `reference/game-db/DebugGameplay.sqlite` или `reference/vanilla/`**, никогда не придумывать. Перед реализацией механики найти ванильный аналог и сослаться на него.
-- Русские игровые термины только из `DebugLocalization.sqlite`.
-- Префикс `REMSELY_`, ключи текста `LOC_..._REMSELY_...`.
-- Любая правка текста — сразу в оба языка.
-- После любой правки — `python tools/validate.py`.
-- Claude Code не может сам запустить игру, ModBuddy и Asset Editor. На этих шагах он останавливается, пишет, что сделать вручную и какой лог прислать.
-
----
-
-## 5. Генерация изображений
-
-### 5.1. Концепты (бесплатно, большой объём)
-
-| Сервис | Лимит (середина 2026, может меняться) | Чем полезен |
-|---|---|---|
-| **Google Gemini** (Nano Banana 2) | Самый щедрый бесплатный лимит | Быстрый перебор, правки диалогом, работа с референсом. Минус: водяной знак |
-| **Microsoft Copilot / Bing Image Creator** | Бесплатно, минимальный порог входа | Перебор идей |
-| **Leonardo AI** | Ежедневные кредиты (~150) | Много моделей, image-to-image. Минус: на бесплатном тарифе картинки публичные, проверить права |
-| **Perchance** | Без лимита, низкое разрешение | Черновой перебор композиций |
-
-### 5.2. Финальные варианты (бесплатно, малый лимит)
-
-| Сервис | Лимит | Чем полезен |
-|---|---|---|
-| **ChatGPT** (Images 2.0, gpt-image-2) | 2–3 картинки в день | Лучшее понимание длинных промптов, точные правки по референсу |
-| **Gemini Nano Banana Pro** | ~2 картинки в день | Высокое качество, сохранение персонажа по референсу |
-| **Ideogram** | Небольшой ежедневный лимит | Текст на картинке (превью Workshop) |
-
-Стратегия: концепты в Gemini / Leonardo → эталон → финал в ChatGPT или Nano Banana Pro с эталоном как референсом, по 2–3 попытки в день.
-
-### 5.3. Полностью бесплатно и без лимитов (локально)
-- **Stable Diffusion 3.5 / FLUX через ComfyUI или Forge** — нужен GPU от 8–12 ГБ VRAM. Нет лимитов и водяных знаков, можно обучить LoRA на эталоне.
-- **Upscayl** — бесплатный локальный апскейл.
-- **rembg** — удаление фона.
-
-### 5.4. Шаблон промпта
-```
-Painted portrait in the style of Civilization VI leader art: stylized,
-slightly exaggerated proportions, painterly textures, warm side light on the face.
-Emperor Alexander II of Russia, about 45 years old, tall, mutton-chop sideburns
-and moustache, dark military uniform of the 1860s with gold epaulettes and orders,
-calm and dignified expression. Three-quarter view, waist up,
-neutral light background. No text, no watermark.
-```
-Промпты и удачные результаты сохранять в `art/prompts.md`.
-
-### 5.5. Права
-Мод бесплатный, но Workshop — публичная площадка. Перед финалом проверить условия бесплатного тарифа выбранного сервиса (кому принадлежат изображения, можно ли публично распространять). Не использовать чужие узнаваемые работы (картины, иллюстрации) как прямой образец.
-
----
-
-## 6. Открытые вопросы
-
-- ОС: SDK только под Windows. Если основная машина не Windows — нужна Windows (VM или отдельный ПК) хотя бы для ModBuddy, Asset Editor и тестов.
-- Смежность ферм: XML или Lua (решается в фазе 3).
-- Зависимость мода: требовать R&F или GS, и как вести себя «Земствам» в эпоху «Будущее» без GS.
+v1.0.0-alpha was published. See the [changelog](CHANGELOG.md); the previous plan is preserved in [the archive](docs/roadmap-archive.md).

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameData>
+  <LocalizedText>
+    <Replace Tag="LOC_LEADER_REMSELY_ALEXANDER_II_NAME" Language="en_US">
+      <Text>Alexander II</Text>
+    </Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS_NAME" Language="en_US">
+      <Text>The Great Reforms</Text>
+    </Replace>
+    <Replace Tag="LOC_TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS_DESCRIPTION" Language="en_US">
+      <Text>Emancipation of the Serfs: Builders have +1 [ICON_Charges] charge. Pastures get +1 [ICON_Production] Production. Farms get +1 [ICON_Food] Food for every 2 adjacent Farms.[NEWLINE][NEWLINE]Zemstvo Reform: Cities with an assigned [ICON_Governor] Governor get +2 [ICON_Culture] Culture and +4 [ICON_PressureUp] Loyalty. Starting with the Medieval Era, the bonus grows by +1 [ICON_Culture] Culture and +2 [ICON_PressureUp] Loyalty with every new era.[NEWLINE][NEWLINE]Military Reform: Unit upgrades cost 50% less [ICON_Gold] Gold.</Text>
+    </Replace>
+    <Replace Tag="LOC_AGENDA_REMSELY_LIBERATOR_NAME" Language="en_US">
+      <Text>The Liberator</Text>
+    </Replace>
+    <Replace Tag="LOC_AGENDA_REMSELY_LIBERATOR_DESCRIPTION" Language="en_US">
+      <Text>Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_PEACE" Language="en_US">
+      <Text>Alexander II appreciates that you have kept the peace for a long time</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_WAR" Language="en_US">
+      <Text>Alexander II is displeased that you recently declared war</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_ANY" Language="en_US">
+      <Text>(You have kept the peace)</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_ANY" Language="en_US">
+      <Text>(You recently declared war)</Text>
+    </Replace>
+    <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_DESCRIPTION" Language="en_US">
+      <Text>Adds Alexander II as an alternate leader of Russia: the Tsar-Liberator who abolished serfdom.[NEWLINE][NEWLINE]THE GREAT REFORMS[NEWLINE][ICON_BULLET] Emancipation of the Serfs: Builders have +1 charge, Pastures get +1 Production, Farms get +1 Food for every 2 adjacent Farms.[NEWLINE][ICON_BULLET] Zemstvo Reform: Cities with an assigned Governor get +2 Culture and +4 Loyalty; starting with the Medieval Era the bonus grows by +1 Culture and +2 Loyalty with every new era.[NEWLINE][ICON_BULLET] Military Reform: Unit upgrades cost 50% less Gold.[NEWLINE][NEWLINE]AGENDA: THE LIBERATOR[NEWLINE]Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.[NEWLINE][NEWLINE]INCLUDED[NEWLINE][ICON_BULLET] 14 new Russian city names, the capital is Saint Petersburg[NEWLINE][ICON_BULLET] Portrait, icon, loading screen and diplomacy backgrounds[NEWLINE][ICON_BULLET] 31 diplomacy lines and a Civilopedia page[NEWLINE][ICON_BULLET] English and Russian text[NEWLINE][NEWLINE]Requires Rise and Fall; Gathering Storm is recommended (the Future Era). The leader plays as Russia.[NEWLINE][NEWLINE]Author: Remsely. Made with Claude Code (Anthropic).</Text>
+    </Replace>
+    <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_TEASER" Language="en_US">
+      <Text>Alexander II, the Tsar-Liberator, for Russia: Great Reforms, agenda, cities, diplomacy lines and art.</Text>
+    </Replace>
+    <!-- Diplomacy lines: DRAFT, to be proofread (ROADMAP phase 5) -->
+    <Replace Tag="LOC_DIPLO_ACCEPT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Thank you. Russia values such friendship.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_DECLARE_FRIEND_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>I accept your offer of friendship. May it serve both our peoples.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_DELEGATION_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Your delegation is welcome. We shall receive it with due honor.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_MAKE_DEAL_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Reasonable. Let us consider the matter settled.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_OPEN_BORDERS_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Our borders are open to you. Let trade and travel flourish.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Russia would be glad to count you as a friend. Shall we declare it?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DECLARE_WAR_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>I have tried to keep the peace, but you leave me no choice. Russia will defend her interests.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DECLARE_WAR_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>I sought peace for a long time. Now there is none, and the fault is yours.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEFEAT_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>The empire has fallen, but the work of reform will outlive me.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEFEAT_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>The empire has fallen, but the work of reform will outlive me.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DELEGATION_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>I have sent a delegation to you with gifts from Russia.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DENOUNCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Your conduct is unworthy of a great power. Russia will not forget it. (Denounces You).</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DENOUNCE_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>You are entitled to think so. Time will judge.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_FIRST_MEET_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>The Emperor of All Russia greets you. I hope our nations will find common ground.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_FIRST_MEET_NEAR_INITIATOR_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Thank you. A good beginning.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_FIRST_MEET_NO_MANS_INFO_EXCHANGE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Tell me about your land. Russia is vast, and we have much to learn from one another.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_FIRST_MEET_VISIT_RECIPIENT_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Come to our nearest city and see how Russia is changing.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_GREETING_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>I am glad to see you. Russia desires peace and good works.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_EXIT_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Your state is well governed. Such order serves its people.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MAKE_ALLIANCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Would you like to form an alliance?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MAKE_PEACE_AI_ACCEPT_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Peace is the better road. I accept.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MAKE_PEACE_AI_REFUSE_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Not yet. This war is not over.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MAKE_PEACE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Enough blood has been shed. Let us make peace.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_OPEN_BORDERS_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Will you allow our people and goods to cross your lands?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>A pity.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>I cannot accept this now. Perhaps later.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_DELEGATION_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Not at this time.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_MAKE_DEAL_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>No. The time for this has not yet come.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_OPEN_BORDERS_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>We are not ready to open our borders.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_EXIT_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>You declared war, and I cannot overlook it. Russia remembers.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_TOO_MANY_TROOPS_NEAR_ME_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
+      <Text>Withdraw your troops from our borders. Do not provoke me.</Text>
+    </Replace>
+    <!-- City names that vanilla lacks (docs/remselys-alexander-ii.md, 5) -->
+    <Replace Tag="LOC_CITY_NAME_REMSELY_ODESSA" Language="en_US">
+      <Text>Odessa</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_KHARKOV" Language="en_US">
+      <Text>Kharkov</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_SEVASTOPOL" Language="en_US">
+      <Text>Sevastopol</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_VLADIVOSTOK" Language="en_US">
+      <Text>Vladivostok</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_KHABAROVSK" Language="en_US">
+      <Text>Khabarovsk</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_BLAGOVESHCHENSK" Language="en_US">
+      <Text>Blagoveshchensk</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_TASHKENT" Language="en_US">
+      <Text>Tashkent</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_VERNY" Language="en_US">
+      <Text>Verny</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_NOVOROSSIYSK" Language="en_US">
+      <Text>Novorossiysk</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_ROSTOV_ON_DON" Language="en_US">
+      <Text>Rostov-on-Don</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_BAKU" Language="en_US">
+      <Text>Baku</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_RIGA" Language="en_US">
+      <Text>Riga</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_NOVO_ARKHANGELSK" Language="en_US">
+      <Text>Novo-Arkhangelsk</Text>
+    </Replace>
+    <Replace Tag="LOC_CITY_NAME_REMSELY_TOMSK" Language="en_US">
+      <Text>Tomsk</Text>
+    </Replace>
+    <Replace Tag="LOC_LOADING_INFO_LEADER_REMSELY_ALEXANDER_II" Language="en_US">
+      <Text>Welcome to the Winter Palace, Tsar Alexander. Your empire is vast and its burdens are old: the serfs wait for freedom, the provinces for self-government, the army for reform. Free your peasants, let the Zemstvos govern the land, and Russia will grow strong from within.</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_TITLE" Language="en_US">
+      <Text>Alexander II</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_SUBTITLE" Language="en_US">
+      <Text>Emperor and Autocrat of All Russia, Tsar of Poland, Grand Duke of Finland</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_CAPSULE_BODY" Language="en_US">
+      <Text>Alexander's Russia is a patient builder of the home front. His Builders do more, his Pastures grow productive, his grouped Farms grow fertile, and every Governor brings Culture and Loyalty to the city they serve.</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_DETAILED_BODY" Language="en_US">
+      <Text>Alexander's bonuses reward a wide, well-governed empire. Builders get an extra [ICON_Charges] charge, Pastures yield more [ICON_Production] Production, and Farms grouped together yield [ICON_Food] Food. Assign a [ICON_Governor] Governor to a city and the Zemstvo reform gives it [ICON_Culture] Culture and [ICON_PressureUp] Loyalty that grow with every era from the Medieval Era on, so even frontier cities stay stable. Upgrading units costs half as much [ICON_Gold] Gold, which keeps an old army modern without ruining the treasury. His agenda, The Liberator, makes other leaders like rulers who keep the peace and dislike those who recently declared war.</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_HISTORY_PARA_1" Language="en_US">
+      <Text>Alexander II (1818-1881) became Emperor of Russia in 1855, in the middle of the Crimean War. The defeat showed that the empire, vast but backward, could not keep its place in Europe without deep change. The reforms that followed earned him the name of the Tsar Liberator.</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_HISTORY_PARA_2" Language="en_US">
+      <Text>The greatest of them was the Manifesto of 19 February 1861, which freed more than twenty million peasants from serfdom. Freedom came with redemption payments and many limits, and the peasants were far from satisfied, but it opened the way to a new Russia.</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_HISTORY_PARA_3" Language="en_US">
+      <Text>The reforms that followed reshaped the state itself. In 1864 the zemstvos gave provinces and districts elected local self-government, and a new judicial system brought open courts and trial by jury. In 1874 the military reform of Dmitry Milyutin introduced universal conscription and modernized the army.</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_HISTORY_PARA_4" Language="en_US">
+      <Text>Abroad, Alexander ended the long Caucasian War in 1864 and pushed the borders of the empire into Central Asia, taking Tashkent and Samarkand. In 1867 he sold Russian America, Alaska, to the United States for 7.2 million dollars. The war with the Ottoman Empire in 1877-1878 freed Bulgaria, although the Congress of Berlin took back much of what Russia had won.</Text>
+    </Replace>
+    <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_HISTORY_PARA_5" Language="en_US">
+      <Text>His reforms did not satisfy everyone. The Polish uprising of 1863 was crushed, and a growing revolutionary movement turned to terror. Alexander survived several attempts on his life. On 13 March 1881 (1 March in the old style) a bomb thrown by members of the People's Will fatally wounded him in Saint Petersburg, and the throne passed to his son Alexander III.</Text>
+    </Replace>
+  </LocalizedText>
+</GameData>

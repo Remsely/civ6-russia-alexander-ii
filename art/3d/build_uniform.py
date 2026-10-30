@@ -1,0 +1,917 @@
+# Uniform without details (tunic with skirt, trousers) built from the MPFB body surface.
+# blender -b art/3d/alexander_assembly.blend --python art/3d/build_uniform.py
+# Writes art/3d/alexander_rest.blend: only the 'Human' scene (rig, body, uniform); the source file is left untouched.
+# MPFB space: metres, Z up, the human faces -Y, A-pose rest. Clothes are made in the rest pose and skinned to the same
+# 53-bone game_engine skeleton, so every animation of the body drives them too.
+import bpy, bmesh, math, os, sys
+import mathutils.geometry as mg
+from collections import defaultdict
+import numpy as np
+from mathutils import Vector
+from mathutils.bvhtree import BVHTree
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(HERE, 'alexander_rest.blend')  # in the rest pose; build_pose.py poses it into alexander_leader.blend
+sys.path.insert(0, HERE)
+import head_shape  # noqa: E402
+import mat_util  # noqa: E402
+import uniform_paint  # noqa: E402
+
+# Alexander's build (alexander_ii_full.png): a big chest and broad shoulders over a waist the belt can take in, a
+# V rather than a barrel. MPFB macros and extra targets from MPFB's library, applied to the 'Human' basemesh before
+# anything is measured; then his head (head_shape.py) and a neck for the collar; the rig is refitted to the new shape.
+HEAD_SCALE = 1.0
+NECK_LONGER = 0.6
+BODY_MACROS = {'weight': 0.85, 'muscle': 0.7}
+BODY_TARGETS = {'torso/measure-shoulder-dist-incr': 0.6, 'torso/torso-scale-horiz-incr': 0.35,
+                # no extra depth or bust: with them the chest stood ~15 cm in front of the collar (a pigeon breast
+                # in profile, the epaulettes' fringe could not lie on the shoulders' front); flat pectorals
+                'torso/torso-scale-depth-decr': 0.35, 'torso/torso-muscle-pectoral-decr': 0.6,
+                # the weight macro's paunch taken back in (the front of the tunic bulged out over it below the chest)
+                'stomach/stomach-pregnant-decr': 0.8,
+                # the portrait's head is 1/7.7 of his height, MPFB's 1/8.6: a bigger head (the generated one follows it)
+                'head/head-scale-vert-incr': HEAD_SCALE, 'head/head-scale-horiz-incr': HEAD_SCALE,
+                'head/head-scale-depth-incr': HEAD_SCALE,
+                # a longer neck: the portrait's chin is ~8 cm over the shoulders at the collar, room for its tall collar
+                'neck/measure-neck-height-incr': NECK_LONGER,
+                # the macros' muscle and weight swell the upper arms (the sleeves are made round them, SLEEVE_EASE):
+                # slimmer there; the forearms and hands as the macros make them and the hands larger - the portrait's
+                # fist on the hilt is ~14% bigger than MPFB's, and a thin wrist stood in the wide cuff
+                'arms/measure-upperarm-circ-decr': 1.0,
+                'arms/l-upperarm-muscle-decr': 0.6, 'arms/r-upperarm-muscle-decr': 0.6,
+                'arms/l-upperarm-fat-decr': 0.6, 'arms/r-upperarm-fat-decr': 0.6,
+                'hands/l-hand-scale-incr': 0.6, 'hands/r-hand-scale-incr': 0.6,
+                # full deltoids: the shoulder's end rounded out under the epaulette, not a narrow slope into the arm
+                'arms/l-upperarm-shoulder-muscle-incr': 0.6, 'arms/r-upperarm-shoulder-muscle-incr': 0.6,
+                # the portrait's elbows hang ~35 cm under the shoulder joints (MPFB's upper arm: 31 cm), its legs come
+                # down closer together under a narrower skirt
+                'arms/measure-upperarm-length-incr': 0.5, 'hip/hip-scale-horiz-decr': 1.0}
+
+# Heights from alexander_ii_full.png scaled to the 2.07 m MPFB figure (feet 0, crown 2.07).
+# The tunic's own standing collar (the dark collar seen between the halves of the red one, which build_details.py lays
+# over it): its top runs level round the neck under the jaw. Set from the chin once the head is on (shape_body).
+STAND_BELOW_CHIN, STAND_BACK_RISE = 0.041, 0.010  # the collar's top a level edge round a ring tilted forward, as a
+                                  # shirt collar's band: 3.1 cm under the chin at the nape (rising 2.5 cm up it, it stood
+                                  # up at the back), 4.1 at the front (the white shirt's edge over it ~3 cm under it) -
+                                  # its edges at the opening a little lower, as the portrait's (head_shape.collar_top)
+STAND_TOP_FRONT, STAND_TOP_BACK = 1.795, 1.85
+STAND_OFF = 0.002                 # off the neck at the top: its narrowest outline over NECK_OUTLINE_ZS (the chin widens
+                                  # the top) - the portrait's collar is narrow at the top, close round the neck (at 1.6 cm
+                                  # it was ~20% wider there than the portrait's; the neck itself, wider than this
+                                  # outline, now sets most of the top's width) ...
+STAND_WIDEN = 0.008               # ... and this much more at the sides (fading to none at the front and back): the neck
+                                  # fills the collar, so it is as wide (round the thin MPFB neck it came out a stalk
+                                  # under the head, 13 cm across against the jaw's 17)
+STAND_LEAN = 0.33                 # ... and wider down to its foot by this much a unit of height: its walls lean out to the
+                                  # sides (~18 deg), a cone as the portrait's (at 0.45 its flare under the thin neck made
+                                  # the neck stand out thinner still); upright, it read as a straight pipe round the neck
+STAND_SKIN_GAP = 0.003            # ... and off the skin up its top 3 cm (the pose step keeps the neck inside it): the
+                                  # portrait's collar is as wide as the neck at its top (at SKIN_GAP, with the red
+                                  # collar over it, it stood ~1.5 cm out of the neck at the sides, ~15 px too wide)
+NECK_OUTLINE_ZS = (1.75, 1.77, 1.79)
+WAIST_Z = 1.325                   # belt line (its centre 3 cm below: 1.295 in the portrait): the torso part of the tunic ends just below, the skirt starts just above
+BELT_H, BELT_N = 0.058, 96        # belt over the waist seam (WAIST_Z - 0.03): height; directions of its profile
+BELT_TILT = (3.0, 3.0)            # degrees its plane goes down to his left (the sabre hangs from it there) and to the
+                                  # front (over the belly), as the portrait's (level all round, it read as a hoop)
+BELT_TAPER = 0.14                 # under the belt the skirt runs out to its own width in a straight line over this
+                                  # height (let go within 3 cm, it sprang out over the seat in a round bulge)
+HEM_Z = 0.905                     # tunic hem, mid-thigh (the portrait's, row 855 in the 'ref' view)
+ANKLE_Z = 0.12                    # trousers end, inside the boot
+BOOT_TOP = 0.45                   # top of the boot shafts: the trousers are tucked in below it
+SLEEVE_T = 0.95                   # sleeve end along the forearm (0 elbow, 1 wrist)
+TUNIC_OFF, TROUSERS_OFF = 0.016, 0.015  # a tailored tunic (at 2.8 cm it stood off
+                                  # the chest and back like a padded coat)
+SHOULDER_OFF = 0.012              # tunic offset over the shoulders (above the armpits)
+SLEEVE_EASE, CUFF_EASE = 0.036, 0.014  # sleeves: round tubes this much looser than the arm (the portrait's are full: ~15 cm
+                                  # across at the elbow; at 2.6 cm, 12.8 cm across, the arms read thin as a boy's beside
+                                  # the chest and the epaulettes); cuff off the wrist
+SLEEVE_TOP_IN = 0.012             # ... and this much narrower over the top of the upper arm, full by mid-arm (the
+                                  # portrait's arms under the epaulettes are ~1.2 cm in from ours each side; the
+                                  # elbows match)
+SLEEVE_CUFF_R = 0.058             # ... narrowing along the forearm to this radius at the cuff (the portrait's gauntlet
+                                  # cuff ~14 cm across where it meets the sleeve; at 4.7 cm it was 10)
+SKIRT_EASE, SKIRT_FLARE = 0.020, 0.025  # skirt clearance over hips and thighs, extra radius at the hem
+PLEAT_FLARE = 0.0                 # ... and more at the sides and back, where the pleats are: in the portrait the skirt
+                                  # kicks out behind the piped pleat edge (~4 cm past a plain flare at the hem)
+TROUSER_EASE = 1.08                # trouser leg radius over the mid-thigh
+TUCKED = 0.005                    # the trousers inside the boots this far off the leg
+TROUSER_TAPER = 0.75              # straight trouser leg: radius at the ankle relative to the top of the thigh
+CLOTH_THICK = 0.006
+WELD = 0.007                      # body vertices closer than this are merged in the clothes
+WAIST_GAP, WAIST_TAPER = 0.012, 0.03 # front pulled in from the chest to the belt by up to WAIST_TAPER
+CHEST_GAP = 0.01                  # cloth (wool and lining) over the ironed chest
+SKIN_GAP = 0.008                  # minimum cloth-to-skin distance (skinning moves them apart unevenly)
+FLAP_X, FLAP_STEP = -0.02, 0.003  # closure edge: 2 cm to the wearer's right, flap lifted 3 mm
+# Texture: uniform_paint.py (dark wool, red piping, cuffs and stripes); the pleats' piping marks where the skirt steps.
+CUFF_T = 0.30                     # the cuff's share of the forearm (red, uniform_paint.py; the details fit to it)
+PLEAT_ANGLE = uniform_paint.PLEAT_ANGLE
+PLEAT_STEP = 0.0                  # ... by this much at the hem (none at the belt): the piping on the outline there (at
+                                  # 1.2 cm the skirt's back was a stepped, fussy hem)
+
+sc = bpy.data.scenes['Human']
+bpy.context.window.scene = sc
+for s in list(bpy.data.scenes):
+    if s != sc:
+        bpy.data.scenes.remove(s)
+h, rig = bpy.data.objects['Human'], bpy.data.objects['HumanRig']
+for name in ('Body', 'LEAD_REMSELY_TEST', 'LeaderCameraRig', 'Tunic', 'Trousers', 'BodyUnder'):
+    o = bpy.data.objects.get(name)
+    if o and name != 'LEAD_REMSELY_TEST':
+        bpy.data.objects.remove(o)
+root = bpy.data.objects.get('LEAD_REMSELY_TEST')
+if root:
+    rig.parent = None
+    bpy.data.objects.remove(root)
+# Modelling happens in the rest pose (MPFB's A-pose): no test animation on the rig, no posed bones.
+if rig.animation_data:
+    rig.animation_data_clear()
+for pb in rig.pose.bones:
+    pb.matrix_basis.identity()
+
+
+
+def shape_body():
+    from bl_ext.blender_org import mpfb
+    from bl_ext.blender_org.mpfb.services.targetservice import TargetService
+    from bl_ext.blender_org.mpfb.services.humanservice import HumanService
+    for k, v in BODY_MACROS.items():
+        h['MPFB_HUM_' + k] = v
+    TargetService.reapply_macro_details(h)
+    keys = h.data.shape_keys.key_blocks
+    for name, val in BODY_TARGETS.items():
+        nm = os.path.basename(name)
+        if keys.get(nm):
+            keys[nm].value = val
+        else:
+            TargetService.load_target(h, os.path.join(os.path.dirname(mpfb.__file__), 'data', 'targets', name + '.target.gz'),
+                                      weight=val, name=nm)
+    for nm in ('measure-neck-circ-incr',):  # targets of earlier versions, now done by head_shape.fit_neck
+        if keys.get(nm):
+            keys[nm].value = 0.0
+    head_shape.straighten(h)
+    head_shape.flatten_back(h)
+    HumanService.refit(h)
+    head_shape.fit(h)
+    global STAND_TOP_FRONT, STAND_TOP_BACK
+    chin = float(head_shape.LAST['landmarks']['chin'][2])
+    STAND_TOP_FRONT = chin - STAND_BELOW_CHIN
+    STAND_TOP_BACK = STAND_TOP_FRONT + STAND_BACK_RISE
+    print('stand collar: top %.3f front, %.3f back' % (STAND_TOP_FRONT, STAND_TOP_BACK))
+    neck = rig.data.bones['neck_01'].head_local
+    head_shape.fit_neck(h, (neck.x, neck.y), chin, STAND_TOP_FRONT, STAND_TOP_BACK)
+    head_shape.slope_shoulders(h)
+    HumanService.refit(h)
+    head_shape.face_weights(h)
+    sc['head'] = dict(T=[list(r) for r in head_shape.LAST['T']], CHIN_Z=float(head_shape.LAST['landmarks']['chin'][2]))
+
+
+shape_body()
+
+# Body in the rest pose with the current MPFB shape (shape keys + mask of helper geometry).
+rig.data.pose_position = 'REST'
+dg = bpy.context.evaluated_depsgraph_get()
+body_me = bpy.data.meshes.new_from_object(h.evaluated_get(dg), preserve_all_data_layers=True, depsgraph=dg)
+rig.data.pose_position = 'POSE'
+vg_names = [g.name for g in h.vertex_groups]
+gi = {n: i for i, n in enumerate(vg_names)}
+
+
+def iron_chest(me):
+    """Iron the chest of the body itself - pectorals and nipples (the skin there is hidden under the tunic anyway), so
+    no step that builds cloth from the body can bring them back: the front of the chest is replaced by a heavily
+    smoothed copy, fading out towards the armpits, the collarbones and the belly."""
+    bm = bmesh.new(); bm.from_mesh(me)
+    orig = [v.co.copy() for v in bm.verts]
+    for _ in range(40):
+        bmesh.ops.smooth_vert(bm, verts=bm.verts[:], factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    for v, c in zip(bm.verts, orig):
+        k = (smoothstep(-abs(c.x), -0.21, -0.15) * smoothstep(c.z, 1.30, 1.38) * smoothstep(-c.z, -1.70, -1.64)
+             * smoothstep(-c.y, 0.0, 0.06))
+        v.co = c.lerp(v.co, k)
+    bm.to_mesh(me); bm.free()
+
+
+def smoothstep(x, a, b):
+    t = max(0.0, min(1.0, (x - a) / (b - a)))
+    return t * t * (3 - 2 * t)
+
+
+iron_chest(body_me)
+bones = {b.name: (rig.matrix_world @ b.head_local, rig.matrix_world @ b.tail_local) for b in rig.data.bones}
+
+
+def wsum(v, names):
+    return sum(g.weight for g in v.groups if vg_names[g.group] in names)
+
+
+HAND = {n for n in gi if n.startswith(('hand_', 'index_', 'middle_', 'pinky_', 'ring_', 'thumb_'))}
+FOOT = {'foot_l', 'foot_r', 'ball_l', 'ball_r'}
+ARM = {'upperarm_l', 'upperarm_r', 'lowerarm_l', 'lowerarm_r'}
+
+
+def forearm_t(co, side):
+    a, b = bones['lowerarm_' + side]
+    d = b - a
+    return (co - a).dot(d) / d.length_squared
+
+
+def cut_body():
+    """Body with clean cut lines (edge loops) at the belt, ankles and sleeve ends."""
+    bm = bmesh.new(); bm.from_mesh(body_me)
+    planes = [((0, 0, WAIST_Z - 0.03), (0, 0, 1)), ((0, 0, ANKLE_Z), (0, 0, 1))]
+    for s in 'lr':
+        a, b = bones['lowerarm_' + s]
+        planes.append((a + (b - a) * SLEEVE_T, (b - a).normalized()))
+    for co, no in planes:
+        bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=co, plane_no=no)
+    me = bpy.data.meshes.new('BodyCut'); bm.to_mesh(me); bm.free()
+    return me
+
+
+cut_me = cut_body()
+
+
+def region(p):
+    """'tunic', 'trousers' or None (skin stays visible) for a face of the cut body."""
+    c = p.center
+    vs = [cut_me.vertices[i] for i in p.vertices]
+    w = lambda names: sum(wsum(v, names) for v in vs) / len(vs)
+    if w(ARM) + w(HAND) > 0.5:
+        return 'tunic' if forearm_t(c, 'l' if c.x > 0 else 'r') < SLEEVE_T else None
+    if c.z < ANKLE_Z or c.z > stand_top(c):
+        return None
+    return 'tunic' if c.z > WAIST_Z - 0.03 else 'trousers'
+
+
+NECK_AXIS = bones['neck_01'][0].xy
+
+
+def neck_outline(z, n=72):
+    """Radius of the neck from NECK_AXIS per direction (n sectors), from the body edges crossing the plane z."""
+    rs = [0.0] * n
+    for e in body_me.edges:
+        p, q = body_me.vertices[e.vertices[0]].co, body_me.vertices[e.vertices[1]].co
+        if (p.z - z) * (q.z - z) < 0:
+            x = (p + (q - p) * ((z - p.z) / (q.z - p.z))).xy - NECK_AXIS
+            if x.length < 0.14:
+                k = int((math.atan2(x.x, -x.y) % (2 * math.pi)) / (2 * math.pi) * n) % n
+                rs[k] = max(rs[k], x.length)
+    for k in range(n):  # empty sectors take their neighbours
+        if rs[k] == 0:
+            rs[k] = max(rs[k - 1], rs[(k + 1) % n])
+    return rs
+
+
+NECK_RS = [min(rs) for rs in zip(*(neck_outline(z) for z in NECK_OUTLINE_ZS))]
+for _ in range(3):
+    NECK_RS = [NECK_RS[k] * 0.5 + (NECK_RS[k - 1] + NECK_RS[(k + 1) % len(NECK_RS)]) * 0.25 for k in range(len(NECK_RS))]
+print('neck outline', round(min(NECK_RS), 3), round(max(NECK_RS), 3))
+
+
+def neck_sector(d):
+    return int((math.atan2(d.x, -d.y) % (2 * math.pi)) / (2 * math.pi) * len(NECK_RS)) % len(NECK_RS)
+
+
+def stand_top(c):
+    """Top of the tunic's standing collar above c (by direction round the neck)."""
+    d = c.xy - NECK_AXIS
+    return head_shape.collar_top(d.x, d.y, STAND_TOP_FRONT, STAND_TOP_BACK)
+
+
+freg = [region(p) for p in cut_me.polygons]
+
+
+def leg_axis_point(co, s):
+    pts = [bones['thigh_' + s][0], bones['calf_' + s][0], bones['calf_' + s][1]]
+    best = None
+    for a, b in zip(pts, pts[1:]):
+        d = b - a
+        p = a + d * max(0.0, min(1.0, (co - a).dot(d) / d.length_squared))
+        if best is None or (co - p).length < (co - best).length:
+            best = p
+    return best
+
+
+def loosen_legs(bm):
+    """Straight trouser legs: push the leg surface out to a cylinder tapering from the thigh to the ankle."""
+    top = {}
+    for s in 'lr':
+        rs = sorted((v.co - leg_axis_point(v.co, s)).length for v in bm.verts
+                    if 0.74 < v.co.z < 0.80 and (v.co.x > 0) == (s == 'l'))  # mid-thigh, clear of the crotch
+        top[s] = rs[len(rs) // 2] * TROUSER_EASE
+    print('thigh radius', top)
+    for v in bm.verts:
+        blend = max(0.0, min(1.0, (1.08 - v.co.z) / 0.12)) * smoothstep(v.co.z, BOOT_TOP - 0.03, BOOT_TOP + 0.07)
+        if blend == 0:
+            continue
+        s = 'l' if v.co.x > 0 else 'r'
+        p = leg_axis_point(v.co, s)
+        r = v.co - p
+        t = max(0.0, min(1.0, (v.co.z - ANKLE_Z) / (0.95 - ANKLE_Z)))
+        target = top[s] * (TROUSER_TAPER + (1 - TROUSER_TAPER) * t)
+        if r.length < target:
+            v.co = v.co.lerp(p + r.normalized() * target, blend)
+
+
+def ray_hull(hull, c, d):
+    """Distance from c along unit direction d to the convex polygon hull."""
+    best = 0.0
+    for i in range(len(hull)):
+        r = mg.intersect_line_line_2d(c, c + d * 3.0, hull[i], hull[(i + 1) % len(hull)])
+        if r is not None:
+            best = max(best, (r - c).length)
+    return best
+
+
+_hulls = {}
+
+
+def hull_at(z):
+    """Convex hull of the body slice at height z without arms and hands (both legs together below the crotch)."""
+    key = round(z, 2)
+    if key not in _hulls:
+        pts = [Vector((p.x, p.y)) for p in TRUNK_PTS if abs(p.z - key) < 0.012]
+        _hulls[key] = [pts[i] for i in mg.convex_hull_2d(pts)] if len(pts) > 2 else None
+    return _hulls[key]
+
+
+def arm_weight(v, dl):
+    return sum(w for g, w in v[dl].items() if vg_names[g] in ARM or vg_names[g] in HAND)
+
+
+def convexify_torso(bm):
+    """Cloth spans the hollows: each torso slice is pushed out to the convex hull of the same slice of the (already
+    inflated and smoothed) cloth. The hull of the cloth, not of the body: the body's nipples would come back as bumps."""
+    dl = bm.verts.layers.deform.active
+    trunk = [v.co.copy() for v in bm.verts if arm_weight(v, dl) < 0.3]
+    hulls = {}
+    for v in bm.verts:
+        k = smoothstep(0.6 - arm_weight(v, dl), 0.0, 0.4)  # 1 on the torso, fading out into the sleeves
+        if k == 0:
+            continue
+        key = round(v.co.z, 2)
+        if key not in hulls:
+            pts = [q.xy for q in trunk if abs(q.z - key) < 0.012]
+            hulls[key] = [pts[i] for i in mg.convex_hull_2d(pts)] if len(pts) > 2 else None
+        hull = hulls[key]
+        if not hull:
+            continue
+        c = sum(hull, Vector((0.0, 0.0))) / len(hull)
+        d = v.co.xy - c
+        if d.length < 1e-6:
+            continue
+        target = ray_hull(hull, c, d.normalized())
+        if target > d.length:
+            v.co.xy = c + d.normalized() * (d.length + (target - d.length) * k)
+
+
+def fill_vertical(bm):
+    """Cloth also spans vertical hollows: on the chest it falls straight from the pectorals to the belly (no fold under
+    the breast), on the back from the shoulder blades to the waist. Per 1.5 cm column the front (back) profile is
+    pushed out to its upper convex envelope."""
+    dl = bm.verts.layers.deform.active
+    cross = lambda o, a, b: (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    for sign in (-1, 1):  # front faces -Y
+        cols = defaultdict(list)
+        for v in bm.verts:
+            if sign * v.co.y > 0 and v.co.z > WAIST_Z - 0.06 and arm_weight(v, dl) < 0.3:
+                cols[round(v.co.x / 0.015)].append(v)
+        for col in cols.values():
+            hull = []
+            for q in sorted((v.co.z, sign * v.co.y) for v in col):
+                while len(hull) >= 2 and cross(hull[-2], hull[-1], q) >= 0:
+                    hull.pop()
+                hull.append(q)
+            zs, fs = [q[0] for q in hull], [q[1] for q in hull]
+            for v in col:
+                f = float(np.interp(v.co.z, zs, fs))
+                if sign * v.co.y < f:
+                    v.co.y = sign * f
+
+
+def upper_envelope(pts):
+    """Upper convex envelope of (t, f) points as sorted (ts, fs) - the line a cloth stretched over them would take."""
+    cross = lambda o, p, q: (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0])
+    hull = []
+    for q in sorted(pts):
+        while len(hull) >= 2 and cross(hull[-2], hull[-1], q) >= 0:
+            hull.pop()
+        hull.append(q)
+    return [q[0] for q in hull], [q[1] for q in hull]
+
+
+def tailored_front(bm):
+    """The front of the tunic from the belt to the collarbones is laid like stretched wool over the ironed body: in
+    every vertical column the cloth runs from the collar over the chest and then in towards the belt (no sag
+    under the chest, no bosom), across every height one arc spans the sternum; CHEST_GAP off the body."""
+    dl = bm.verts.layers.deform.active
+    z0, z1, xmax = WAIST_Z - 0.06, 1.76, 0.2
+    skin = [p for p in SMOOTH_TRUNK if p.y < 0 and abs(p.x) < xmax + 0.02 and z0 - 0.02 < p.z < z1 + 0.02]
+    xs = np.arange(-xmax, xmax + 1e-6, 0.01)
+    zs = np.arange(z0, z1 + 1e-6, 0.01)
+    grid = np.zeros((len(zs), len(xs)))
+    for j, x in enumerate(xs):  # vertical: per column
+        col = [(p.z, -p.y) for p in skin if abs(p.x - x) < 0.008]
+        tz, tf = upper_envelope([(z, f + CHEST_GAP) for z, f in col])
+        env = np.interp(zs, tz, tf)
+        # Below the fullest point of the chest the cloth is pulled in towards the belt (the tunic is cut to the waist),
+        # as far as the belly lets it: never closer than WAIST_GAP to the body. Not a straight drop: that hangs.
+        floor = np.full(len(zs), -1.0)
+        for z, f in col:
+            i = int(round((z - z0) / 0.01))
+            if 0 <= i < len(zs):
+                floor[i] = max(floor[i], f + WAIST_GAP)
+        ok = floor > -1
+        floor = np.interp(zs, zs[ok], floor[ok])
+        top = int(np.argmax(env))
+        for i in range(top):
+            t = (zs[top] - zs[i]) / (zs[top] - z0)
+            env[i] = max(floor[i], min(env[i], env[top] - WAIST_TAPER * smoothstep(t, 0.0, 1.0)))
+        grid[:, j] = env
+    across = np.abs(xs) <= 0.17
+    x2, x4 = xs[across] ** 2, xs[across] ** 4
+    for i in range(len(zs)):  # horizontal: per height one arc f = a - b*x^2 - c*x^4 lifted over the columns. A
+        # stretched envelope would be a flat plate between the pectorals with rounded corners that read as two bumps;
+        # a parabola alone (a broad flat chest, sides turning back sharply) stood out 3-4 cm at the breastbone
+        A = np.stack([np.ones_like(x2), -x2, -x4], 1)
+        _, b, c = np.linalg.lstsq(A, grid[i][across], rcond=None)[0]
+        if c < 0:
+            b, c = max(0.0, -np.polyfit(x2, grid[i][across], 1)[0]), 0.0
+        elif b < 0:
+            b, c = 0.0, max(0.0, -np.polyfit(x4, grid[i][across], 1)[0])
+        arc = b * xs ** 2 + c * xs ** 4
+        grid[i] = (grid[i][across] + arc[across]).max() - arc
+    for _ in range(3):  # soften the envelope's corners
+        grid[1:-1] = (grid[:-2] + grid[1:-1] + grid[2:]) / 3
+    front = [v for v in bm.verts if v.co.y < 0 and abs(v.co.x) < xmax and z0 < v.co.z < z1 and arm_weight(v, dl) < 0.3]
+
+    def onto_front():
+        for v in front:
+            i = min(max((v.co.z - z0) / 0.01, 0), len(zs) - 1.001)
+            i0 = int(i); fr = i - i0
+            f = np.interp(v.co.x, xs, grid[i0] * (1 - fr) + grid[i0 + 1] * fr)
+            w = smoothstep(-abs(v.co.x), -0.19, -0.12) * smoothstep(-v.co.z, -1.75, -1.66)
+            v.co.y += (-f - v.co.y) * w
+
+    onto_front()
+    # spread the vertices evenly over the new surface (the body's dense nipple/navel topology is crumpled there)
+    inner = [v for v in front if not v.is_boundary]
+    for _ in range(15):
+        bmesh.ops.smooth_vert(bm, verts=inner, factor=0.5, use_axis_x=True, use_axis_y=False, use_axis_z=True)
+        onto_front()
+
+
+def cinch_waist(bm):
+    """The tunic is cut to the waist and the belt takes it in: around the belt the cloth comes down to WAIST_GAP off
+    the body, easing back out to the full chest and over the hips (the skirt grows from this loop)."""
+    dl = bm.verts.layers.deform.active
+    bm.normal_update()
+    for v in bm.verts:
+        # a narrow band at the belt; pulled in at the sides and the back, the front stays straight (a cinch reaching
+        # up under the chest makes a bust)
+        k = smoothstep(v.co.z, WAIST_Z - 0.06, WAIST_Z - 0.02) * smoothstep(-v.co.z, -(WAIST_Z + 0.10), -(WAIST_Z + 0.01))
+        k *= smoothstep(0.3 - arm_weight(v, dl), 0.0, 0.2) * smoothstep(v.normal.y, -0.8, -0.2)
+        if k == 0:
+            continue
+        loc, nrm, _, _ = SMOOTH_BVH.find_nearest(v.co)
+        target = loc + nrm * WAIST_GAP
+        if (v.co - loc).dot(nrm) > WAIST_GAP:
+            v.co = v.co.lerp(target, k)
+
+
+def fit_neckline(bm):
+    """Around the neck the tunic lies on the body (SHOULDER_OFF off it): the slice hulls of the cloth at these heights
+    span the neck and the shoulders, which made the neckline stand off the neck like a flared collar."""
+    dl = bm.verts.layers.deform.active
+    for v in bm.verts:
+        k = smoothstep(v.co.z, 1.66, 1.73) * smoothstep(0.3 - arm_weight(v, dl), 0.0, 0.2)
+        if k == 0:
+            continue
+        loc, nrm, _, _ = SMOOTH_BVH.find_nearest(v.co)
+        v.co = v.co.lerp(loc + nrm * SHOULDER_OFF, k)
+
+
+def stand_collar(bm):
+    """Above the shoulders the tunic stands up as a collar: a smooth cone STAND_OFF round the neck at the top, widening
+    down (STAND_LEAN), never inside the body where the shoulders rise into it."""
+    for v in bm.verts:
+        w = smoothstep(v.co.z, 1.70, 1.75)
+        d = v.co.xy - NECK_AXIS
+        if w == 0 or d.length > 0.2:
+            continue
+        dd = Vector((d.x, d.y, 0.0)).normalized()
+        hit = BODY_BVH.ray_cast(Vector((NECK_AXIS.x, NECK_AXIS.y, v.co.z)), dd, 0.25)  # neck or shoulder, from inside
+        top = stand_top(v.co)
+        lean = STAND_LEAN * max(0.0, top - v.co.z)  # the cone out to its foot
+        gap = STAND_SKIN_GAP + (SKIN_GAP - STAND_SKIN_GAP) * (1 - smoothstep(v.co.z, top - 0.06, top - 0.03))
+        side = STAND_WIDEN * (d.x / max(d.length, 1e-6)) ** 2
+        target = max(NECK_RS[neck_sector(d)] + STAND_OFF + side + lean, (hit[3] + gap) if hit[0] else 0.0)
+        v.co.xy = NECK_AXIS + d.normalized() * (d.length + (target - d.length) * w)
+    # a straight top edge: the ring under it is spread evenly between the edge and the cloth below
+    edge = [v for v in bm.verts if v.is_boundary and v.co.z > 1.70]
+    for v in edge:
+        v.co.z = stand_top(v.co)
+    for v in {e.other_vert(v) for v in edge for e in v.link_edges} - set(edge):
+        top = stand_top(v.co)
+        if v.co.z > top - 0.008:
+            v.co.z = top - 0.008
+
+
+def arm_axis(co, s):
+    """Nearest point on the arm (shoulder -> elbow -> wrist) and its parameter u in 0..1 along the arm."""
+    pts = [bones['upperarm_' + s][0], bones['lowerarm_' + s][0], bones['hand_' + s][0]]
+    lens = [(b - a).length for a, b in zip(pts, pts[1:])]
+    best, acc = None, 0.0
+    for (a, b), ln in zip(zip(pts, pts[1:]), lens):
+        t = max(0.0, min(1.0, (co - a).dot(b - a) / ln ** 2))
+        p = a + (b - a) * t
+        if best is None or (co - p).length < (co - best[0]).length:
+            best = (p, (acc + t * ln) / sum(lens))
+        acc += ln
+    return best
+
+
+def loosen_sleeves(bm):
+    """Sleeves become round tubes: radius per slice = the fullest part of the arm there plus SLEEVE_EASE, tapering
+    along the forearm into a cuff that sits CUFF_EASE off the wrist."""
+    dl = bm.verts.layers.deform.active
+    nb = 25
+    for s in 'lr':
+        vs = [(v, *arm_axis(v.co, s)) for v in bm.verts if (v.co.x > 0) == (s == 'l') and arm_weight(v, dl) > 0.3]
+        bins = defaultdict(list)
+        for v, p, u in vs:
+            bins[min(int(u * nb), nb - 1)].append((BODY_BVH.find_nearest(v.co)[0] - p).length)
+        body = {k: sorted(r)[int(len(r) * 0.8)] for k, r in bins.items()}
+        keys = sorted(body)
+        cuff = sorted(bins[keys[-1]] + bins[keys[-2]])[len(bins[keys[-1]] + bins[keys[-2]]) // 2] + CUFF_EASE
+        # straight tube: the upper-arm radius narrowing evenly to the cuff, never tighter than the arm under it
+        upper = sorted(r for k in keys if 0.15 < (k + 0.5) / nb < 0.4 for r in bins[k])
+        top = upper[len(upper) // 2] + SLEEVE_EASE  # median: the deltoid and armpit would make a balloon
+        end = max(cuff, min(top, SLEEVE_CUFF_R))
+        prof = {}
+        for k in keys:
+            u = (k + 0.5) / nb
+            # the portrait's full wool sleeve: one width down past the elbow, then narrowing into the cuff
+            prof[k] = max(top + (end - top) * smoothstep(u, 0.45, 0.95) - SLEEVE_TOP_IN * (1 - smoothstep(u, 0.1, 0.45)),
+                          body[k] + 0.012)
+        print('sleeve', s, 'radius %.3f, at the cuff %.3f' % (top, end))
+        for v, p, u in vs:
+            k = smoothstep(arm_weight(v, dl), 0.3, 0.7) * smoothstep(u, 0.0, 0.18)  # blend into the shoulder
+            d = v.co - p
+            target = prof[min(int(u * nb), nb - 1)]
+            v.co = p + d.normalized() * (d.length + (target - d.length) * k)
+
+
+def extrude_skirt(bm, rings=20):
+    """The skirt continues the tunic below the waist: rings grown from the waist edge loop down to the hem, hanging over
+    the hips and both thighs (never narrower than the ring above). Returns the new vertices with their 0..1 depth."""
+    loop_edges = [e for e in bm.edges if e.is_boundary and all(v.co.z < WAIST_Z for v in e.verts)]
+    adj = defaultdict(list)
+    for e in loop_edges:
+        a, b = e.verts
+        adj[a].append(b); adj[b].append(a)
+    start = next(iter(adj)); loop = [start]; prev = None
+    while True:
+        nxt = [w for w in adj[loop[-1]] if w is not prev][0]
+        if nxt is start:
+            break
+        prev = loop[-1]; loop.append(nxt)
+    print('waist loop', len(loop), 'of', len(loop_edges))
+    c = sum((v.co.xy for v in loop), Vector((0.0, 0.0))) / len(loop)
+    dirs = [(v.co.xy - c).normalized() for v in loop]
+    radius = [(v.co.xy - c).length for v in loop]
+    # radius profile per column: clear the body, never narrower than above, then eased so the cloth falls smoothly
+    # from the waist over the hips instead of kinking like a lampshade
+    prof = [[radius[j]] for j in range(len(loop))]
+    for i in range(1, rings):
+        t = i / (rings - 1)
+        for j, v0 in enumerate(loop):
+            hull = hull_at(v0.co.z + (HEM_Z - v0.co.z) * t)
+            target = ray_hull(hull, c, dirs[j]) + TUNIC_OFF + SKIRT_EASE if hull else 0.0
+            prof[j].append(max(prof[j][-1], target))
+    for col in prof:
+        for _ in range(12):
+            col[1:-1] = [max(col[k], (col[k - 1] + col[k] + col[k + 1]) / 3) if k > 2 else (col[k - 1] + col[k] + col[k + 1]) / 3
+                         for k in range(1, len(col) - 1)]
+        col[-1] = max(col[-1], col[-2])
+    for j, col in enumerate(prof):
+        side = smoothstep(math.degrees(math.atan2(abs(dirs[j].x), -dirs[j].y)), 55.0, 110.0)  # 0 front .. 1 sides, back
+        for i in range(1, rings):
+            col[i] += (SKIRT_FLARE + PLEAT_FLARE * side) * (i / (rings - 1)) ** 1.6
+            # the pleat: behind the piped edge the back panel stands out (a fold the light catches, as in the portrait)
+            ang = math.degrees(math.atan2(abs(dirs[j].x), -dirs[j].y))
+            pa = PLEAT_ANGLE[0] + (PLEAT_ANGLE[1] - PLEAT_ANGLE[0]) * i / (rings - 1)
+            col[i] += PLEAT_STEP * smoothstep(ang, pa + 1.0, pa + 9.0) * (i / (rings - 1))
+    rows, out = [loop], []
+    for i in range(1, rings):
+        t = i / (rings - 1)
+        row = []
+        for j, v0 in enumerate(loop):
+            z = v0.co.z + (HEM_Z - v0.co.z) * t
+            co = c + dirs[j] * prof[j][i]
+            nv = bm.verts.new((co.x, co.y, z)); row.append(nv); out.append((nv, t))
+        rows.append(row)
+    new_faces = []
+    for r0, r1 in zip(rows, rows[1:]):
+        for j in range(len(loop)):
+            j2 = (j + 1) % len(loop)
+            new_faces.append(bm.faces.new((r0[j], r0[j2], r1[j2], r1[j])))
+    bm.normal_update()
+    f = new_faces[len(new_faces) // 2]
+    if f.normal.xy.dot(f.calc_center_median().xy - c) < 0:
+        bmesh.ops.reverse_faces(bm, faces=new_faces)
+    inner = [v for row in rows[1:-1] for v in row]
+    for _ in range(3):
+        bmesh.ops.smooth_vert(bm, verts=inner, factor=0.5, use_axis_x=True, use_axis_y=True)
+    # round off the turn from the cinched waist into the skirt: the waist loop itself and a few rings either side
+    turn = [v for v in bm.verts if not v.is_boundary and WAIST_Z - 0.10 < v.co.z < WAIST_Z + 0.06]
+    for _ in range(8):
+        bmesh.ops.smooth_vert(bm, verts=turn, factor=0.5, use_axis_x=True, use_axis_y=True)
+    return out
+
+
+def overlap_front(bm):
+    """Single-breasted closure: the wearer's left flap laps over the right and ends FLAP_X right of the centre (to the
+    viewer's left), where the piping runs. The flap is lifted FLAP_STEP so its edge reads as a step in the cloth."""
+    bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(FLAP_X, 0, 0), plane_no=(1, 0, 0))
+    bm.normal_update()
+    for v in bm.verts:
+        if v.co.y < -0.03 and v.co.x > FLAP_X + 1e-4:
+            v.co.y -= FLAP_STEP * smoothstep(-abs(v.co.x - FLAP_X), -0.12, -0.08)  # flap fades out towards the side
+
+
+def belt_band(bm):
+    """The belt draws the tunic in: on the belt's height the cloth is taken in to one profile all round - the body's
+    outline there plus the cloth's offset at its tightest place - fading out above and below. The profile is kept
+    (BELT_PROFILE) for build_details.py, which puts the belt on it, so it hugs the tunic at the back as well."""
+    zc = WAIST_Z - 0.03
+    hull = hull_at(zc)
+    c = sum(hull, Vector((0.0, 0.0))) / len(hull)
+    belt = dict(BELT_ZC=zc, BELT_H=BELT_H, BELT_C=(c.x, c.y), BELT_TILT=BELT_TILT)
+    z_at = lambda p: mat_util.belt_z(belt, p.x, p.y)  # noqa: E731 - its plane is tilted
+    dirs = [Vector((math.sin(2 * math.pi * k / BELT_N), -math.cos(2 * math.pi * k / BELT_N))) for k in range(BELT_N)]
+    half = BELT_H / 2 + 0.004
+    # the body's widest over the belt's whole height in its own plane (taken at its middle on the level, the belly
+    # under its lowered front stood out past it and the tunic there rose over its lower edge: the belt pressed in)
+    body = []
+    for d in dirs:
+        p = c + d * ray_hull(hull, c, d)
+        zd = z_at(p)
+        body.append(max(ray_hull(hull_at(zd + s * half), c, d) if hull_at(zd + s * half) else 0.0
+                        for s in (-1.0, -0.5, 0.0, 0.5, 1.0)))
+    sector = lambda d: (math.atan2(d.x, -d.y) % (2 * math.pi)) / (2 * math.pi) * BELT_N
+    cloth = [0.0] * BELT_N
+    for v in bm.verts:
+        if abs(v.co.z - z_at(v.co)) < 0.01 and abs(v.co.x) < 0.35:
+            d = v.co.xy - c
+            k = int(round(sector(d))) % BELT_N
+            cloth[k] = max(cloth[k], d.length)
+    fit = max(0.012, min(t - b for t, b in zip(cloth, body) if t > 0))
+    prof = [b + fit for b in body]
+    for _ in range(4):
+        prof = [prof[k] * 0.5 + (prof[k - 1] + prof[(k + 1) % BELT_N]) * 0.25 for k in range(BELT_N)]
+    # the skirt's width BELT_TAPER under the belt, per direction (where the straight taper meets it)
+    reach = [0.0] * BELT_N
+    for v in bm.verts:
+        if abs(v.co.z - (z_at(v.co) - half - BELT_TAPER)) < 0.012 and abs(v.co.x) < 0.35:
+            d = v.co.xy - c
+            k = int(round(sector(d))) % BELT_N
+            reach[k] = max(reach[k], d.length)
+    for _ in range(BELT_N):
+        if all(reach):
+            break
+        reach = [r or max(reach[k - 1], reach[(k + 1) % BELT_N]) for k, r in enumerate(reach)]
+    for _ in range(4):
+        reach = [reach[k] * 0.5 + (reach[k - 1] + reach[(k + 1) % BELT_N]) * 0.25 for k in range(BELT_N)]
+    for v in bm.verts:
+        if abs(v.co.x) > 0.35:
+            continue
+        d = v.co.xy - c
+        f = sector(d); k0 = int(f) % BELT_N
+        lerp = lambda a: a[k0] + (a[(k0 + 1) % BELT_N] - a[k0]) * (f - int(f))  # noqa: E731
+        target = lerp(prof)
+        zv = z_at(v.co)
+        if zv - v.co.z > half:  # under the belt: straight out to the skirt, never into the body
+            t = (zv - v.co.z - half) / BELT_TAPER
+            if t >= 1:
+                continue
+            hull = hull_at(v.co.z)  # (off it by the belt's own fit by the belt, the tunic's further down: at the
+            target = max(target + (lerp(reach) - target) * t,  # tunic's right under it, it stood out over the belt)
+                         ray_hull(hull, c, d.normalized()) + fit + (TUNIC_OFF - fit) * t if hull else 0.0)
+            w, w_out = 1.0, 1 - smoothstep(zv - v.co.z, half, half + 0.03)
+        else:
+            w = w_out = 1 - smoothstep(v.co.z - zv, half, half + 0.03)
+        if d.length < target:  # ... and out to it on its height, wherever the body is narrower there than at its
+            w = w_out          # widest (only taken in, the cloth left a gap under the belt's top on his right)
+        if w <= 0:
+            continue
+        v.co.xy = c + d.normalized() * (d.length + (target - d.length) * w)
+    print('belt fit %.3f, profile %.3f..%.3f' % (fit, min(prof), max(prof)))
+    return dict(belt, BELT_PROFILE=prof)
+
+
+def extract(name, keep, offset, smooth):
+    bm = bmesh.new(); bm.from_mesh(cut_me)
+    drop = [f for f in bm.faces if not keep(freg[f.index])]
+    bmesh.ops.delete(bm, geom=drop, context='FACES')
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+    # Weld the body's micro-detail (nipple rings, navel): flattened, those tiny faces fold over and shade as dark dots.
+    n = len(bm.verts)
+    bmesh.ops.remove_doubles(bm, verts=[v for v in bm.verts if not v.is_boundary], dist=WELD)
+    bmesh.ops.dissolve_degenerate(bm, edges=bm.edges[:], dist=1e-4)
+    print(name, 'welded', n - len(bm.verts), 'vertices')
+    # Inflate and iron out anatomy (nipples, navel, muscles); the tunic is then given its own volume.
+    bm.normal_update()
+    for v in bm.verts:
+        k = 1.0 if name != 'Tunic' else 1 - (1 - SHOULDER_OFF / offset) * smoothstep(v.co.z, 1.58, 1.68)
+        v.co += v.normal * offset * k  # thinner over the shoulders, or they balloon
+    if name == 'Trousers':
+        loosen_legs(bm)
+    inner = [v for v in bm.verts if not v.is_boundary]
+    for _ in range(smooth):
+        bmesh.ops.smooth_vert(bm, verts=inner, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    if name == 'Tunic':
+        chest = [v for v in inner if v.co.y < 0 and 1.40 < v.co.z < 1.72 and abs(v.co.x) < 0.2]
+        for _ in range(smooth * 3):
+            bmesh.ops.smooth_vert(bm, verts=chest, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+        convexify_torso(bm)
+        fill_vertical(bm)
+        tailored_front(bm)
+        cinch_waist(bm)
+        fit_neckline(bm)
+        loosen_sleeves(bm)
+        for _ in range(6):
+            bmesh.ops.smooth_vert(bm, verts=inner, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    # Ragged face-level edges (neckline) become smooth curves: relax boundary vertices along their own loop.
+    for _ in range(10):
+        new = {}
+        for v in bm.verts:
+            if v.is_boundary:
+                nb = [e.other_vert(v) for e in v.link_edges if e.is_boundary]
+                if len(nb) == 2:
+                    new[v] = v.co * 0.5 + (nb[0].co + nb[1].co) * 0.25
+        for v, co in new.items():
+            v.co = co
+    for _ in range(2):  # only keep the cloth off the skin; a full offset would bring the anatomy back
+        bm.normal_update()
+        for v in bm.verts:
+            loc, nrm, _, dist = SMOOTH_BVH.find_nearest(v.co)
+            if loc is not None and (v.co - loc).dot(nrm) < offset * 0.4:
+                v.co = loc + nrm * offset * 0.4
+            loc, nrm, _, dist = BODY_BVH.find_nearest(v.co)  # and never closer than SKIN_GAP to the real skin
+            if loc is not None and (v.co - loc).dot(nrm) < SKIN_GAP:
+                v.co = loc + nrm * SKIN_GAP
+        bmesh.ops.smooth_vert(bm, verts=inner, factor=0.3, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    if name == 'Trousers':  # under the skirt the waistband hugs the body, or it shows through the cinched tunic
+        for v in bm.verts:
+            k = smoothstep(v.co.z, WAIST_Z - 0.16, WAIST_Z - 0.08)
+            if k > 0:
+                loc, nrm, _, _ = SMOOTH_BVH.find_nearest(v.co)
+                if (v.co - loc).dot(nrm) > 0.005:
+                    v.co = v.co.lerp(loc + nrm * 0.005, k)
+            # ... and tucked into the boots it lies on the calf (as loose as above, it held the boot's shaft out to
+            # 17 cm across at the top: the portrait's are slim)
+            k = 1 - smoothstep(v.co.z, BOOT_TOP - 0.02, BOOT_TOP + 0.03)
+            if k > 0:
+                loc, nrm, _, _ = BODY_BVH.find_nearest(v.co)
+                if loc is not None and (v.co - loc).dot(nrm) > TUCKED:
+                    v.co = v.co.lerp(loc + nrm * TUCKED, k)
+    if name == 'Tunic':
+        stand_collar(bm)
+        depth = bm.verts.layers.float.new('skirt_depth')  # 0 above the waist, 0..1 down the skirt; read for skinning
+        for v, t in extrude_skirt(bm):
+            v[depth] = t
+        overlap_front(bm)
+        BELT.update(belt_band(bm))
+    me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
+    ob = bpy.data.objects.new(name, me); sc.collection.objects.link(ob)
+    for n in vg_names:
+        ob.vertex_groups.new(name=n)
+    return ob
+
+
+TRUNK_PTS = [v.co.copy() for v in body_me.vertices if ANKLE_Z < v.co.z and wsum(v, ARM | HAND) < 0.3]
+bmb = bmesh.new(); bmb.from_mesh(body_me)
+BODY_BVH = BVHTree.FromBMesh(bmb)
+# Ironed body for keeping the cloth off the skin: against the real one, nipples and muscles push bumps back into it.
+for _ in range(15):
+    bmesh.ops.smooth_vert(bmb, verts=bmb.verts[:], factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+SMOOTH_BVH = BVHTree.FromBMesh(bmb)
+bmb.verts.ensure_lookup_table()
+SMOOTH_TRUNK = [bmb.verts[i].co.copy() for i, v in enumerate(body_me.vertices) if wsum(v, ARM | HAND) < 0.3]
+bmb.free()
+
+BELT = {}
+tunic = extract('Tunic', lambda r: r == 'tunic', TUNIC_OFF, 30)
+trousers = extract('Trousers', lambda r: r == 'trousers', TROUSERS_OFF, 10)
+
+
+# Tunic and trousers skinning: copy the body weights from the nearest surface point.
+src = bpy.data.objects.new('BodyWeights', cut_me); sc.collection.objects.link(src)
+for n in vg_names:
+    src.vertex_groups.new(name=n)
+for ob in (tunic, trousers):
+    m = ob.modifiers.new('W', 'DATA_TRANSFER')
+    m.object = src; m.use_vert_data = True; m.data_types_verts = {'VGROUP_WEIGHTS'}
+    m.vert_mapping = 'POLYINTERP_NEAREST'
+    m.layers_vgroup_select_src = 'ALL'; m.layers_vgroup_select_dst = 'NAME'
+    bpy.context.view_layer.objects.active = ob
+    bpy.ops.object.modifier_apply(modifier='W')
+# Skirt skinning: pelvis at the waist, blending into the thigh of its side towards the hem (the cloth follows the leg
+# halfway, so a step does not tear it). Extra skirt bones can be added later for secondary motion.
+depth = [0.0] * len(tunic.data.vertices)
+tunic.data.attributes['skirt_depth'].data.foreach_get('value', depth)
+for idx, t in enumerate(depth):
+    if t <= 0:
+        continue
+    co = tunic.data.vertices[idx].co
+    for g in tunic.vertex_groups:
+        g.remove([idx])
+    side = abs(co.x) / (abs(co.x) + abs(co.y) + 1e-6)
+    wt = 0.55 * t ** 1.5 * side
+    tunic.vertex_groups['pelvis'].add([idx], 1.0 - wt, 'REPLACE')
+    if wt > 0:
+        tunic.vertex_groups['thigh_l' if co.x > 0 else 'thigh_r'].add([idx], wt, 'REPLACE')
+
+# Join into one Uniform mesh, keep only deform groups, give it thickness and a cloth material.
+for part, ob in ((0, tunic), (2, trousers)):  # face attribute for the texture painter below
+    a = ob.data.attributes.new('part', 'INT', 'FACE')
+    a.data.foreach_set('value', [part] * len(ob.data.polygons))
+for o in sc.objects:
+    o.select_set(o in (tunic, trousers))
+bpy.context.view_layer.objects.active = tunic
+bpy.ops.object.join()
+uni = tunic; uni.name = uni.data.name = 'Uniform'
+for g in list(uni.vertex_groups):
+    if g.name not in bones:
+        uni.vertex_groups.remove(g)
+mat = bpy.data.materials.get('Uniform_Cloth') or bpy.data.materials.new('Uniform_Cloth')
+mat.diffuse_color = (0.04, 0.045, 0.06, 1)
+uni.data.materials.clear(); uni.data.materials.append(mat)
+for p in uni.data.polygons:
+    p.use_smooth = True
+uniform_paint.paint(uni, mat, dict(WAIST_Z=WAIST_Z, HEM_Z=HEM_Z, SLEEVE_T=SLEEVE_T, CUFF_T=CUFF_T, FLAP_X=FLAP_X),
+                    bones)  # on the single sheet: the inner layer added next reuses the same UVs
+# thickness stays a modifier: build_pose.py simulates the single sheet as cloth and applies it after
+sol = uni.modifiers.new('Thick', 'SOLIDIFY'); sol.thickness = CLOTH_THICK; sol.offset = -1; sol.use_rim = True
+
+# Body under the clothes: drop faces hidden by the uniform (keeps hands, feet, neck, head), so nothing pokes through.
+bm = bmesh.new(); bm.from_mesh(cut_me)
+hidden = {f for f in bm.faces if freg[f.index] is not None}
+for _ in range(2):  # keep a margin of two face rings under the cloth edges (sleeve ends, neckline, ankles)
+    edge = {f for f in hidden if any(g not in hidden for v in f.verts for g in v.link_faces)}
+    hidden -= edge
+bmesh.ops.delete(bm, geom=list(hidden), context='FACES')
+bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+under_me = bpy.data.meshes.new('BodyUnder'); bm.to_mesh(under_me); bm.free()
+bpy.data.objects.remove(src)
+under = bpy.data.objects.new('BodyUnder', under_me); sc.collection.objects.link(under)
+for n in vg_names:
+    under.vertex_groups.new(name=n)
+for g in list(under.vertex_groups):
+    if g.name not in bones and g.name not in head_shape.FACE_BONES:
+        under.vertex_groups.remove(g)
+skin = bpy.data.materials.get('LEAD_REMSELY_TEST_Skin') or bpy.data.materials.new('Skin')
+under.data.materials.clear(); under.data.materials.append(skin)
+for ob in (uni, under):
+    ob.modifiers.new('Armature', 'ARMATURE').object = rig
+h.hide_set(True); h.hide_render = True
+for ob in (uni, under):  # every vertex's weights sum to 1 (the importer does not normalise)
+    bpy.context.view_layer.objects.active = ob
+    for o in sc.objects:
+        o.select_set(o == ob)
+    bpy.ops.object.vertex_group_normalize_all(lock_active=False)
+
+def two_faced(ob):
+    """No edge of ob with more than two faces (welding near the neck can make one): the smallest extra faces go.
+    build_pose.py binds the collar, belt and cuffs to the uniform's surface, and Surface Deform refuses such a target
+    (they stayed in the rest pose, the cuffs hanging in the air)."""
+    bm = bmesh.new(); bm.from_mesh(ob.data)
+    gone = set()
+    for e in bm.edges:
+        fs = [f for f in e.link_faces if f not in gone]
+        if len(fs) > 2:
+            gone.update(sorted(fs, key=lambda f: f.calc_area())[:len(fs) - 2])
+    if gone:
+        bmesh.ops.delete(bm, geom=list(gone), context='FACES')
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+        bm.to_mesh(ob.data)
+        print('%s: %d faces off edges shared by three' % (ob.name, len(gone)))
+    bm.free()
+
+
+two_faced(uni)
+print('uniform verts', len(uni.data.vertices), 'faces', len(uni.data.polygons))
+# Measurements the details (build_details.py) are fitted to.
+sc['uniform'] = dict(WAIST_Z=WAIST_Z, HEM_Z=HEM_Z, SLEEVE_T=SLEEVE_T, CUFF_T=CUFF_T, FLAP_X=FLAP_X, BOOT_TOP=BOOT_TOP,
+                     ANKLE_Z=ANKLE_Z, STAND_TOP_FRONT=STAND_TOP_FRONT, STAND_TOP_BACK=STAND_TOP_BACK,
+                     STAND_LEAN=STAND_LEAN,
+                     NECK_AXIS=tuple(NECK_AXIS), **BELT)
+print('body under verts', len(under.data.vertices))
+bpy.ops.outliner.orphans_purge(do_recursive=True)
+for screen in bpy.data.screens:  # open with the texture visible (Solid mode shows only the flat material colour)
+    for area in screen.areas:
+        if area.type == 'VIEW_3D':
+            area.spaces.active.shading.type = 'MATERIAL'
+bpy.ops.wm.save_as_mainfile(filepath=OUT, compress=True)
+print('saved', OUT, os.path.getsize(OUT))

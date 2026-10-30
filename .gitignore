@@ -7,6 +7,9 @@ reference/
 .mcp.json
 .claude/settings.local.json
 
+# Z Code: локальный конфиг MCP (машинные пути), скиллы (.zcode/skills/) — в git
+.zcode/config.json
+
 # Python
 __pycache__/
 .venv/
@@ -15,6 +18,7 @@ __pycache__/
 
 # ModBuddy
 *.suo
+*.civ6suo
 *.user
 obj/
 bin/
@@ -26,3 +30,22 @@ dist/
 # Скриншоты из игры и промежуточные результаты нарезки (воспроизводятся tools/slice_art.py)
 art/*.png
 art/build/
+
+# Сбои и логи инструментов
+hs_err_pid*.log
+cooker.log
+
+# Blender: тяжёлые исходники (сотни МБ, лимит GitHub 100 МБ) и резервные копии
+*.blend
+*.blend1
+*.glb
+# ...кроме того, из чего собирается лидер: alexander_assembly.blend — только сцена Human (полный оригинал с
+# экспериментами — alexander_assembly_full.blend, локально), alexander_leader.blend — результат art/3d/build_*.py
+!art/3d/alexander_assembly.blend
+!art/3d/alexander_leader.blend
+!art/3d/head/*.glb
+
+# BLP 3D-лидера: собирает tools/build.py (сотни МБ)
+mod/Platforms/*/BLPs/leaders/
+# Текстуры 3D-лидера для cooker'а: несжатые DDS (~0,5 ГБ), art/3d/make_leader_asset.py пишет их из art/3d/textures/*.png
+mod/Textures/LEAD_REMSELY_ALEXANDER_II_*.dds

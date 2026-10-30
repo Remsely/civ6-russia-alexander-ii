@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<AssetObjects..XLP>
+	<m_Version>
+		<major>3</major>
+		<minor>0</minor>
+		<build>163</build>
+		<revision>723</revision>
+	</m_Version>
+	<m_ClassName text="Leader"/>
+	<m_PackageName text="leaders/leader_remsely_alexander_ii"/>
+	<m_Entries>
+		<Element>
+			<m_EntryID text="ART_LEADER_REMSELY_ALEXANDER_II"/>
+			<m_ObjectName text="AlexanderII"/>
+		</Element>
+	</m_Entries>
+	<m_AllowedPlatforms>
+		<Element>WINDOWS</Element>
+		<Element>LINUX</Element>
+		<Element>MACOS</Element>
+	</m_AllowedPlatforms>
+</AssetObjects..XLP>
