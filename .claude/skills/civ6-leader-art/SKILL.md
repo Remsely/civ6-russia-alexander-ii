@@ -5,7 +5,7 @@ description: Арт лидера-мода Civilization VI - портрет, ик
 
 # Арт лидера-мода
 
-Порядок сборки: `slice_art.py` → `make_art.py` → `make_leader3d.py`, если 3D включён, → `tools/build.py`. Последний запускает cooker SDK для BLP и устанавливает мод. См. `civ6-mod-build` и `docs/art-pipeline.md`; ниже — то, что уже стоило нам итераций. Для 3D-импорта и игровых сбоев используй также `civ6-3d-import`.
+Порядок сборки: `slice_art.py` → `make_art.py` → `make_leader3d.py`, если 3D включён, → `tools/build.py`. Последний запускает cooker SDK для BLP и устанавливает мод. См. `civ6-mod-build` и `docs/ru/art-pipeline.md`; ниже — то, что уже стоило нам итераций. Для 3D-импорта и игровых сбоев используй также `civ6-3d-import`.
 
 ## Грабли
 - **Имена текстур** (верхний регистр): `<LEADER>_NEUTRAL` (портрет и экран загрузки), `<LEADER>_SELECT` (карточка выбора, `Players.Portrait`), `<LEADER>_BACKGROUND` (`LoadingInfo.BackgroundImage`), `FALLBACK_NEUTRAL_<LEADER>`, иконки `<Mod>Icon<размер>`.

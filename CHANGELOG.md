@@ -1,13 +1,14 @@
-# История версий
+# Changelog
+
+[Русский](CHANGELOG.ru.md)
 
 ## v1.0.0-alpha
 
-Первый публичный выпуск (альфа: часть механик в игре ещё не проверена, см. `docs/TESTING.md`).
+First public alpha release; some mechanics still required in-game verification at release.
 
-- Лидер Александр II для России, способность «Великие реформы» (строители, пастбища, фермы, земства, улучшение юнитов).
-- Повестка ИИ «Освободитель», 31 реплика дипломатии.
-- 11 новых названий городов (Одесса, Севастополь, Владивосток, Ташкент, Самарканд и другие) в начале списка России, столица Санкт-Петербург.
-- Чёрно-золотые цвета, портрет, иконка, фон загрузки, фон дипломатии.
-- Тексты загрузки и страница Цивилопедии (без цитаты: слова не сверены с печатными источниками).
-- Русский и английский текст.
-- BLP для Windows и macOS (на macOS в игре не проверялось).
+- Alexander II as an alternate leader of Russia, with the Great Reforms ability (Builders, Pastures, Farms, Zemstvos and unit upgrades).
+- The Liberator agenda and 31 diplomacy lines.
+- Eleven new city names, including Odessa, Sevastopol, Vladivostok, Tashkent and Samarkand, at the start of Russia's list; Saint Petersburg as capital.
+- Black-and-gold colors, portrait, icon, loading and diplomacy backgrounds.
+- Loading text and Civilopedia page, without a quote pending verification against printed sources.
+- English and Russian text; Windows and macOS BLPs (macOS was not tested in game).
