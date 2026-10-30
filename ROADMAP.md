@@ -24,6 +24,7 @@ The release order reflects the agreed direction. Dates are unset; mechanics that
 
 - [ ] Refine the 3D model based on feedback.
 - [ ] Add movement animations for different diplomacy situations.
+- [ ] Improve the 2D backgrounds on the loading and diplomacy screens.
 
 ## v3.0.0 — unique district and speech
 

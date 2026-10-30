@@ -10,6 +10,7 @@ description: Выпуск мода Civilization VI - архив для GitHub Re
 **Push, tag и публикация релиза - внешние необратимые действия: только по прямому согласию пользователя.** `gh` может быть не установлен; `git push` по SSH из Codex не проходит (см. `AGENTS.md`).
 
 ## Описание и оформление
+- Коммит выпуска при слиянии в основную ветку (`main`/`master`) имеет заголовок `v<версия>: <описание на английском> (#<PR>)`, например `v1.5.0-alpha: Add an animated 3D model of Alexander II to the diplomacy screen (#1)`; номер PR — при наличии. Тело с описанием изменений и проверок — на английском. Рабочие коммиты следуют `docs/commit-conventions.md`.
 - Описание каждого релиза: сначала полный английский текст, ниже полный русский. Готовь единый файл заметок для GitHub Releases; оба раздела должны описывать одни и те же изменения. `CHANGELOG.md` и `CHANGELOG.ru.md` обновляй отдельно.
 - Имя в игре красится цветом из Civ6_ColorAtlas.xml (цвета палитры игроков в тексте невидимы); текущий выбор - в `civ6-leader-texts`. Описание и тизер - ключи `LOC_REMSELY_*_MOD_DESCRIPTION/TEASER` в обоих языках, абзацы через `[NEWLINE]`, списки через `[ICON_BULLET]`.
 - Страница Workshop: `workshop/description.bbcode` (`[h1] [h2] [list] [olist]`), `workshop/workshop.json` (`visibility` 2 = скрытый), превью из `tools\make_preview.py`.
