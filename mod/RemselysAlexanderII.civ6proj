@@ -6,7 +6,7 @@
     <Name>[COLOR_FLOAT_CULTURE]Remsely's[ENDCOLOR] Alexander II</Name>
     <Guid>2963ce6a-9b5e-4b12-b040-219e08807d3b</Guid>
     <ProjectGuid>7d0c3b8e-5f21-4c6a-9a4e-2b8f1e6d3c95</ProjectGuid>
-    <ModVersion>1</ModVersion>
+    <ModVersion>2</ModVersion>
     <Teaser>LOC_REMSELY_ALEXANDER_II_MOD_TEASER</Teaser>
     <Description>LOC_REMSELY_ALEXANDER_II_MOD_DESCRIPTION</Description>
     <Authors>Remsely</Authors>
@@ -34,12 +34,9 @@
     <Folder Include="ArtDefs" />
     <Folder Include="Data" />
     <Folder Include="Lua" />
-    <Folder Include="Platforms\" />
-    <Folder Include="Platforms\MacOS\" />
     <Folder Include="Platforms\MacOS\BLPs" />
     <Folder Include="Platforms\MacOS\BLPs\UI" />
     <Folder Include="Platforms\MacOS\BLPs\leaders" />
-    <Folder Include="Platforms\Windows\" />
     <Folder Include="Platforms\Windows\BLPs" />
     <Folder Include="Platforms\Windows\BLPs\UI" />
     <Folder Include="Platforms\Windows\BLPs\leaders" />

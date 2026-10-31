@@ -2,6 +2,15 @@
 
 [Русский](CHANGELOG.ru.md)
 
+## v1.5.0-alpha
+
+- Add the animated 3D Alexander II leader and a diplomacy background.
+- Fix eye geometry and bone bindings; add automated checks for cooked leader bindings. The corrected animation was confirmed in game.
+- Revise Alexander's city list and change the farm adjacency bonus from Production to Food.
+- Update the 3D build pipeline, bilingual documentation and roadmap.
+
+The release remains an alpha: gameplay and compatibility checks continue. Windows was tested in game; macOS has not been tested in game.
+
 ## v1.0.0-alpha
 
 First public alpha release; some mechanics still required in-game verification at release.
