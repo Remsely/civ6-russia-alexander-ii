@@ -1,4 +1,4 @@
-# Банк идей — Remsely's Alexander II
+# Банк идей — Remsely's Russian Empire: Alexander II
 
 Идеи на будущее, **не в текущем релизе**. Отсюда выбранное переносится в [`../../ROADMAP.ru.md`](../../ROADMAP.ru.md). Источник истины — этот файл (русский); английское зеркало: [`../en/ideas.md`](../en/ideas.md).
 

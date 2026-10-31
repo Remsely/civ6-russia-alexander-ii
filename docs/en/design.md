@@ -1,4 +1,4 @@
-# Mod Design — Remsely's Alexander II
+# Mod Design — Remsely's Russian Empire: Alexander II
 
 > Detailed earlier design notes are preserved in [the historical document](../remselys-alexander-ii.md). For current behaviour, code and in-game tests take precedence.
 
@@ -9,7 +9,7 @@ Russian version: [`../ru/design.md`](../ru/design.md). Game terms follow the glo
 
 | Field | Value |
 |---|---|
-| Mod name | Remsely's Alexander II (kept in both languages; only the description is translated) |
+| Mod name | Remsely's Russian Empire: Alexander II (kept in both languages; only the description is translated) |
 | Type | Alternate leader for the Russia civilization (`CIVILIZATION_RUSSIA`) |
 | Leader | Alexander II Nikolaevich, Emperor of All Russia (1855–1881), called the Tsar Liberator |
 | Kept from vanilla Russia | Civilization ability Mother Russia, unique unit Cossack, unique district Lavra |

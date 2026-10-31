@@ -1,6 +1,6 @@
 [![English](https://img.shields.io/badge/lang-English-blue)](README.md) [![Русский](https://img.shields.io/badge/lang-Русский-red)](README.ru.md)
 
-# Remsely's Alexander II
+# Remsely's Russian Empire: Alexander II
 
 A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate leader of Russia.
 
@@ -27,7 +27,7 @@ Requires Rise and Fall; Gathering Storm is recommended (the Future Era). Platfor
 
 1. Download `RemselysAlexanderII-vX.zip` from the [Releases](https://github.com/Remsely/civ6-russia-alexander-ii/releases) section (a `.sha256` sits next to it).
 2. Unpack the `RemselysAlexanderII` folder into `Documents\My Games\Sid Meier's Civilization VI\Mods\`.
-3. In game: "Additional Content" → "Mods", enable **Remsely's Alexander II**. The leader appears among Russia's leaders in a new game.
+3. In game: "Additional Content" → "Mods", enable **Remsely's Russian Empire: Alexander II**. The leader appears among Russia's leaders in a new game.
 
 Colors and city lists are written into the save at game creation; start a new game to test changes to them.
 

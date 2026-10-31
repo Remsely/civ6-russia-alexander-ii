@@ -1,4 +1,4 @@
-# Ideas Bank — Remsely's Alexander II
+# Ideas Bank — Remsely's Russian Empire: Alexander II
 
 Future ideas, **not in the current release**. Chosen items move to [`../../ROADMAP.md`](../../ROADMAP.md). The Russian file is the source of truth: [`../ru/ideas.md`](../ru/ideas.md).
 

@@ -1,6 +1,6 @@
 [![English](https://img.shields.io/badge/lang-English-blue)](README.md) [![Русский](https://img.shields.io/badge/lang-Русский-red)](README.ru.md)
 
-# Remsely's Alexander II
+# Remsely's Russian Empire: Alexander II
 
 Мод для Civilization VI: **Александр II, Император-Освободитель**, как альтернативный лидер России.
 
@@ -27,7 +27,7 @@
 
 1. Скачайте `RemselysAlexanderII-vX.zip` из раздела [Releases](https://github.com/Remsely/civ6-russia-alexander-ii/releases) (рядом лежит `.sha256`).
 2. Распакуйте папку `RemselysAlexanderII` в `Документы\My Games\Sid Meier's Civilization VI\Mods\`.
-3. В игре: «Дополнительно» → «Моды», включите **Remsely's Alexander II**. Лидер появится среди лидеров России в новой партии.
+3. В игре: «Дополнительно» → «Моды», включите **Remsely's Russian Empire: Alexander II**. Лидер появится среди лидеров России в новой партии.
 
 Цвета и списки городов записываются в сохранение при создании партии; для проверки их изменений начните новую партию.
 

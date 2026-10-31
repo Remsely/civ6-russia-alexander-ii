@@ -1,5 +1,5 @@
 --==========================================================================================================================
--- LEADER: Remsely's Alexander II
+-- LEADER: Remsely's Russian Empire: Alexander II
 --==========================================================================================================================
 INSERT INTO Types (Type, Kind) VALUES
 		('LEADER_REMSELY_ALEXANDER_II',                'KIND_LEADER'),
