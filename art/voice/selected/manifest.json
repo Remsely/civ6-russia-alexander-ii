@@ -1,0 +1,102 @@
+[
+  {
+    "file": "first-meet-raw.wav",
+    "sha256": "1da3f73cb10754d407291daa5fcb42cd27bc4bcb3beeab12e58530ec25a830ec",
+    "source": "peter-greeting-tight-raw.wav",
+    "key": "FIRST_MEET",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Текст для синтеза без тире после «Я»; одобрено."
+  },
+  {
+    "file": "first-meet-clean.wav",
+    "sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "source": "peter-greeting-tight-clean.wav",
+    "key": "FIRST_MEET",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Текст для синтеза без тире после «Я»; одобрено."
+  },
+  {
+    "file": "declare-war-ai-raw.wav",
+    "sha256": "6b56ab662a1801a801d4d918ba7ecf7149e07bd9aa97a648039614664c5ad734",
+    "source": "peter-war-calm-a.wav",
+    "key": "DECLARE_WAR_FROM_AI",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Первый спокойный вариант; одобрен."
+  },
+  {
+    "file": "declare-war-ai-clean.wav",
+    "sha256": "2c6218e1ddd9a11f87a1688a8accd1df50f1885b44e0b11dc568d20f4f7261ef",
+    "source": "final-clean-war.wav",
+    "key": "DECLARE_WAR_FROM_AI",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Первый спокойный вариант; одобрен."
+  },
+  {
+    "file": "kudos-raw.wav",
+    "sha256": "9f5e0313ae626553b75f30bab22d45c614564607b199f6cca8d52c8f18ac3e58",
+    "source": "peter-praise-calm-32.wav",
+    "key": "KUDO_EXIT",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Одобрено, мягкая обработка предпочтительна."
+  },
+  {
+    "file": "kudos-clean.wav",
+    "sha256": "ec3ba30407dbbf9c29f78b49e91d5066b8ea57abf53cf23a0efe402c9ab90626",
+    "source": "final-clean-praise.wav",
+    "key": "KUDO_EXIT",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Одобрено, мягкая обработка предпочтительна."
+  },
+  {
+    "file": "warning-raw.wav",
+    "sha256": "d59e99b2b699854a4f32addc3098285d55818faebfdf76ff22d276b6510d8cf7",
+    "source": "peter-warning-restrained-a.wav",
+    "key": "WARNING_EXIT",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Первый сдержанный вариант; предпочтён."
+  },
+  {
+    "file": "warning-clean.wav",
+    "sha256": "ef1ce7767d328c19f08bac6ec4492e3cdf1750e9bfb66a10c0cb2cb0ca09a8a0",
+    "source": "final-clean-warning.wav",
+    "key": "WARNING_EXIT",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Первый сдержанный вариант; предпочтён."
+  },
+  {
+    "file": "defeat-ai-raw.wav",
+    "sha256": "e3c0f4bd255b0d4a5b07db5f6d82eb45cdd03e2a1678dcafc872bad4e301caa8",
+    "source": "peter-defeat-reflective-c-raw.wav",
+    "key": "DEFEAT_FROM_AI",
+    "seed": 117,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Третий вариант сдержанной печали; выбран. Произношение слова преобразований требует внимания."
+  },
+  {
+    "file": "defeat-ai-clean.wav",
+    "sha256": "b14a5b1f9d8d0a9f3eebb315f951a5f1380cd235807140b4c5c0519be97c52e9",
+    "source": "peter-defeat-reflective-c-clean.wav",
+    "key": "DEFEAT_FROM_AI",
+    "seed": 117,
+    "steps": 32,
+    "cfg": 2.0,
+    "note": "Третий вариант сдержанной печали; выбран. Произношение слова преобразований требует внимания."
+  }
+]

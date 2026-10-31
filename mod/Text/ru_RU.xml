@@ -44,7 +44,7 @@
       <Text>Я принимаю ваше предложение дружбы. Пусть она послужит обоим нашим народам.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_ACCEPT_DELEGATION_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Ваша делегация желанный гость. Мы примем ее с подобающими почестями.</Text>
+      <Text>Ваши посланники будут приняты при русском дворе с подобающими почестями.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_ACCEPT_MAKE_DEAL_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Разумно. Будем считать дело решенным.</Text>
@@ -65,10 +65,10 @@
       <Text>Империя пала, но дело преобразований меня переживет.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DEFEAT_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Империя пала, но дело преобразований меня переживет.</Text>
+      <Text>Вы одержали верх. Пусть же Россия обретет силы подняться вновь.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DELEGATION_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Я направил к вам делегацию с дарами России.</Text>
+      <Text>Я направляю к вашему двору посланников с дарами и уверениями в моем расположении.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DENOUNCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Ваши действия недостойны великой державы. Россия этого не забудет. (Осуждает вас)</Text>
@@ -77,13 +77,13 @@
       <Text>Вы вправе так считать. Время рассудит.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Император Всероссийский приветствует вас. Надеюсь, наши державы найдут общий язык.</Text>
+      <Text>Я - Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_NEAR_INITIATOR_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Благодарю. Хорошее начало.</Text>
+      <Text>Благодарю за теплый прием. Надеюсь, это начало добрых отношений между нашими державами.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_NO_MANS_INFO_EXCHANGE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Расскажите о вашей стране. Россия огромна, и нам есть чему поучиться друг у друга.</Text>
+      <Text>Расскажите мне о вашей стране. Уверен, нашим народам есть чему поучиться друг у друга.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_VISIT_RECIPIENT_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Посетите наш ближайший город и увидите, как меняется Россия.</Text>
@@ -95,13 +95,13 @@
       <Text>Ваше государство хорошо управляется. Такой порядок служит народу.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MAKE_ALLIANCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Хотите ли вы заключить союз?</Text>
+      <Text>Россия была бы рада укрепить нашу дружбу. Заключим ли мы союз на благо наших народов?</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MAKE_PEACE_AI_ACCEPT_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Мир - лучший путь. Я согласен.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MAKE_PEACE_AI_REFUSE_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Пока нет. Эта война не окончена.</Text>
+      <Text>Я желаю мира, но ваши условия неприемлемы для России.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MAKE_PEACE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Довольно крови. Заключим мир.</Text>
@@ -110,16 +110,16 @@
       <Text>Позволите ли вы нашим людям и товарам пересекать ваши земли?</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Жаль.</Text>
+      <Text>Мне жаль, что вы отвергли мою дружбу. Надеюсь, это не помешает добрым отношениям между нами.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Не могу принять это сейчас. Возможно, позже.</Text>
+      <Text>Благодарю за предложение, но сейчас я не могу назвать наши державы друзьями.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DELEGATION_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Сейчас - нет.</Text>
+      <Text>Благодарю за оказанную честь, но сейчас я не могу принять ваших посланников.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_MAKE_DEAL_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Нет. Время для этого еще не пришло.</Text>
+      <Text>Нет, эти условия не отвечают интересам России.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_OPEN_BORDERS_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Мы не готовы открыть наши границы.</Text>
@@ -128,7 +128,7 @@
       <Text>Вы развязали войну, и я не могу этого не заметить. Россия помнит.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_WARNING_TOO_MANY_TROOPS_NEAR_ME_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Отведите ваши войска от наших границ. Не искушайте меня.</Text>
+      <Text>Россия стремится к миру, а вы стягиваете войска к нашим границам. Отведите их немедленно.</Text>
     </Replace>
     <!-- City names that vanilla lacks (docs/remselys-alexander-ii.md, 5) -->
     <Replace Tag="LOC_CITY_NAME_REMSELY_ODESSA" Language="ru_RU">

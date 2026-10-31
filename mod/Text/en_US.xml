@@ -42,7 +42,7 @@
       <Text>I accept your offer of friendship. May it serve both our peoples.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_ACCEPT_DELEGATION_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Your delegation is welcome. We shall receive it with due honor.</Text>
+      <Text>Your envoys shall be received at the Russian court with due honors.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_ACCEPT_MAKE_DEAL_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>Reasonable. Let us consider the matter settled.</Text>
@@ -51,7 +51,7 @@
       <Text>Our borders are open to you. Let trade and travel flourish.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Russia would be glad to count you as a friend. Shall we declare it?</Text>
+      <Text>Russia would be glad to count you as a friend. Shall we declare our friendship?</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DECLARE_WAR_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>I have tried to keep the peace, but you leave me no choice. Russia will defend her interests.</Text>
@@ -63,25 +63,25 @@
       <Text>The empire has fallen, but the work of reform will outlive me.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DEFEAT_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>The empire has fallen, but the work of reform will outlive me.</Text>
+      <Text>You have prevailed. May Russia find the strength to rise again.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DELEGATION_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>I have sent a delegation to you with gifts from Russia.</Text>
+      <Text>I send envoys to your court bearing gifts and assurances of my goodwill.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DENOUNCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Your conduct is unworthy of a great power. Russia will not forget it. (Denounces You).</Text>
+      <Text>Your conduct is unworthy of a great power. Russia will not forget it. (Denounces You)</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DENOUNCE_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>You are entitled to think so. Time will judge.</Text>
+      <Text>You are entitled to think so. Time will tell.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>The Emperor of All Russia greets you. I hope our nations will find common ground.</Text>
+      <Text>I am Alexander, Emperor of All Russia. I greet you and hope our nations will find common ground.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_NEAR_INITIATOR_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Thank you. A good beginning.</Text>
+      <Text>Thank you for your warm reception. I hope this marks the beginning of good relations between our nations.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_NO_MANS_INFO_EXCHANGE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Tell me about your land. Russia is vast, and we have much to learn from one another.</Text>
+      <Text>Tell me about your country. I am certain our peoples have much to learn from one another.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_VISIT_RECIPIENT_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>Come to our nearest city and see how Russia is changing.</Text>
@@ -93,13 +93,13 @@
       <Text>Your state is well governed. Such order serves its people.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MAKE_ALLIANCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Would you like to form an alliance?</Text>
+      <Text>Russia would be glad to strengthen our friendship. Shall we form an alliance for the good of our peoples?</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MAKE_PEACE_AI_ACCEPT_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>Peace is the better road. I accept.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MAKE_PEACE_AI_REFUSE_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Not yet. This war is not over.</Text>
+      <Text>I desire peace, but your terms are unacceptable to Russia.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MAKE_PEACE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>Enough blood has been shed. Let us make peace.</Text>
@@ -108,16 +108,16 @@
       <Text>Will you allow our people and goods to cross your lands?</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>A pity.</Text>
+      <Text>I regret that you have declined my friendship. I hope this will not stand in the way of good relations between us.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>I cannot accept this now. Perhaps later.</Text>
+      <Text>I thank you for your offer, but I cannot call our nations friends at present.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DELEGATION_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Not at this time.</Text>
+      <Text>I thank you for the honor, but I cannot receive your envoys at present.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_MAKE_DEAL_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>No. The time for this has not yet come.</Text>
+      <Text>No, these terms do not serve Russia’s interests.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_OPEN_BORDERS_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>We are not ready to open our borders.</Text>
@@ -126,7 +126,7 @@
       <Text>You declared war, and I cannot overlook it. Russia remembers.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_WARNING_TOO_MANY_TROOPS_NEAR_ME_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Withdraw your troops from our borders. Do not provoke me.</Text>
+      <Text>Russia seeks peace, yet you are massing troops on our borders. Withdraw them at once.</Text>
     </Replace>
     <!-- City names that vanilla lacks (docs/remselys-alexander-ii.md, 5) -->
     <Replace Tag="LOC_CITY_NAME_REMSELY_ODESSA" Language="en_US">
@@ -172,7 +172,7 @@
       <Text>Tomsk</Text>
     </Replace>
     <Replace Tag="LOC_LOADING_INFO_LEADER_REMSELY_ALEXANDER_II" Language="en_US">
-      <Text>Welcome to the Winter Palace, Tsar Alexander. Your empire is vast and its burdens are old: the serfs wait for freedom, the provinces for self-government, the army for reform. Free your peasants, let the Zemstvos govern the land, and Russia will grow strong from within.</Text>
+      <Text>Welcome to the Winter Palace, Emperor Alexander. Your empire is vast and its burdens are old: the serfs wait for freedom, the provinces for self-government, the army for reform. Free your peasants, let the Zemstvos govern the land, and Russia will grow strong from within.</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_TITLE" Language="en_US">
       <Text>Alexander II</Text>

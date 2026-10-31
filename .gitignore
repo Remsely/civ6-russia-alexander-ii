@@ -13,6 +13,7 @@ reference/
 # Python
 __pycache__/
 .venv/
+.venv-voice/
 *.pyc
 .pytest_cache/
 
