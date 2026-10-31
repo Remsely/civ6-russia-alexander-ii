@@ -49,11 +49,11 @@ Rationale: schools and medicine are the best documented effects of the historica
 ### 3.3. Railway Network
 
 - Every city **connected to the Capital by railroad** gets **+1 Production**.
-- Every connected own city gets **+1 Gold per connected foreign city** (city-states and civilizations at war count; no cap, the user's decision). The scale: 15 own × 10 foreign cities = 150 Gold per turn in the late game; the technical bound of the tier machinery (50 foreign cities) is beyond any real game.
+- Every connected own city gets **+1 Gold per connected foreign city** (city-states and civilizations at war count; no cap, the user's decision). The scale: 15 own × 10 foreign cities = 150 Gold per turn in the late game; the technical bound of the tier machinery (200 foreign cities) is beyond any real game.
 
 Connection rules: a city is connected when its center belongs to the railroad tree grown from the Capital's center — a breadth-first walk over plots with `ROUTE_RAILROAD`; connected city centers act as junctions (a line may pass through a city). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is the origin of the network and never bonuses itself. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
 
-Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties `REMSELY_RAIL_CONNECTED` and `REMSELY_RAIL_FOREIGN_N` up to date (recomputed on route and city events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (ten Gold tiers) — an extension of the Farm pattern. Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
+Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties `REMSELY_RAIL_CONNECTED` and `REMSELY_RAIL_FOREIGN_N` up to date (recomputed on route and city events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Gold tiers - a technical margin, not a design cap) — an extension of the Farm pattern. Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
 
 ### 3.4. Ability texts
 

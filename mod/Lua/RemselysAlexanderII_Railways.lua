@@ -15,7 +15,7 @@
 local DEBUG = false -- set true to write every recalculation to Lua.log
 local PROPERTY_CONNECTED = "REMSELY_RAIL_CONNECTED"
 local PROPERTY_FOREIGN = "REMSELY_RAIL_FOREIGN_N"
-local MAX_FOREIGN = 50 -- technical bound of the tier machinery, NOT a design cap; 50 rail-connected foreign cities is beyond any real game
+local MAX_FOREIGN = 200 -- technical bound of the tier machinery, NOT a design cap; 200 rail-connected foreign cities is beyond any conceivable game
 
 local RAILROAD = GameInfo.Routes["ROUTE_RAILROAD"]
 if RAILROAD == nil then return end -- Gathering Storm only; the mod already requires it
