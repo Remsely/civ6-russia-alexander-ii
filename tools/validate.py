@@ -196,15 +196,17 @@ COLOR_TAG = re.compile(r"\[COLOR_([A-Za-z0-9_]+)\]")
 
 
 def check_text_colors(files):
-    """[COLOR_X] in text resolves only against Civ6_ColorAtlas.xml (COLOR_FLOAT_GOLD, COLOR_LIGHTBLUE, ...). Names from the player
-    palette (COLOR_STANDARD_ORANGE_MD) are not text colors: the game renders such text invisible."""
+    """[COLOR_X] in text resolves only against Civ6_ColorAtlas.xml, in either form the vanilla texts use: a bare
+    atlas name ([COLOR_Civ6Green]) or a COLOR_-prefixed one ([COLOR_FLOAT_GOLD]). Names from the Colors table
+    (COLOR_STANDARD_ORANGE_MD, COLOR_PLAYER_*, COLOR_ALTCIV_*) are not text colors: the game renders such text
+    invisible."""
     if not COLOR_ATLAS.is_file():
         return
     known = {e.get("Name") for e in etree.parse(str(COLOR_ATLAS)).iter("Color", "ColorSet")}
     sources = [MODINFO, *(MOD / f for f in files if f.endswith(".xml"))]
     for path in sources:
         for name in sorted(set(COLOR_TAG.findall(path.read_text(encoding="utf-8")))):
-            if f"COLOR_{name}" not in known:
+            if name not in known and f"COLOR_{name}" not in known:
                 err(f"text color: [COLOR_{name}] in {path.name} is not in Civ6_ColorAtlas.xml (invisible in game)")
 
 

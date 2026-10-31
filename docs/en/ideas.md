@@ -1,4 +1,4 @@
-# Ideas Bank — Remsely's Alexander II
+# Ideas Bank — Remsely's Russian Empire: Alexander II
 
 Future ideas, **not in the current release**. Chosen items move to [`../../ROADMAP.md`](../../ROADMAP.md). The Russian file is the source of truth: [`../ru/ideas.md`](../ru/ideas.md).
 
@@ -6,9 +6,9 @@ Future ideas, **not in the current release**. Chosen items move to [`../../ROADM
 
 These decisions supersede conflicting earlier proposals below; implementation and balance still need testing.
 
-- Railways: first test the user's mechanic: +1 Production per connected city of the player's civilization and +2 Gold per connected city of another civilization. Define connection and ownership rules before implementation; no cap has been agreed.
-- Emancipation: from the Industrial Era, +1 Builder charge and +1 Food per two adjacent Farms, without an artificial +2 cap. Remove Pasture Production and the unit upgrade discount. Investigate effects on existing Builders.
-- Starting locations: experiment with tundra, rivers and coast on generated maps; consider true-start maps, the effect on Peter and compatibility separately.
+- Railways: **implemented in v2.0.0** ("Railway Network", design doc 3.3) — connectivity is pairwise: Lua builds connected components of railroad plots with cities as junctions (a line may pass through a city and tie networks together); every own city gets +1 Production for each own city connected to it by railroad, **capped by the city's Population** (the user's rule of 31 October 2026, late evening: a 10-Pop city counts at most 10 cities), and +1 Gold for each foreign city (city-states and civs at war count) connected to it **uncapped**, transit over foreign rails included; the Capital is an ordinary city of the network; no design cap — the user's explicit demand (the tier machinery's technical bound of 200 cities of each kind is beyond any conceivable game); Gathering Storm is now a hard mod dependency. The pairwise wording is the user's repeated demand of 31 October 2026 (evening): the first "tree from the Capital" implementation did not match it and was reworked.
+- Emancipation: **implemented in v2.0.0** — from the Industrial Era, +1 Builder charge and +1 Food per two adjacent Farms; Pastures and the upgrade discount removed. The +2 cap was removed the same day at the user's insistence: a tier at 6 neighbours was added (natural max +3), fulfilling the "no artificial cap" agreement.
+- Starting locations: **rejected by the user on 31 October 2026** — no start bias of any kind (not river/coast, not the Petersburg true start, not own maps): Russia spent centuries fighting its way to the seas, and a seaside start would hand the player for free what Russia won through wars. The mod does not touch starting positions — Russia keeps its vanilla tundra bias.
 - Unique district and building: financial theme and State Bank; devise original mechanics closer to implementation, and confirm the district in light of its design.
 - Voice: high quality, including research into AI and local options; loading narration in English and Russian, diplomacy in Russian.
 - Additional diplomatic animations; investigate mouth movement timed to speech.
@@ -29,12 +29,16 @@ The sections below are retained for context and may conflict with the decisions 
 
 ## Emancipation rebalance — Industrial Era threshold
 
+**Implemented in v2.0.0** in an extended form: the whole ability — Builder charge, Farm food adjacency, the Governor title and Governor-city growth — unlocks in the Industrial Era; Pastures and the unit upgrade discount were removed entirely (design doc, section 3). The original idea follows.
+
 User's idea: all three "Emancipation of the Serfs" bonuses — Builder +1 charge, Pasture +1 Production, Farm +1 Food per 2 neighbours — apply only from the Industrial Era (today they work all game, too strong in the early game). Historically apt: the reforms belong to the second half of the 19th century.
 
-- Implementation: add an "era not earlier than Industrial" requirement to the three modifiers (`REMSELY_REFORMS_BUILDER_CHARGES`, `REMSELY_REFORMS_PASTURE_PRODUCTION`, `REMSELY_REFORMS_FARM_ADJ_2/_4_FOOD`) — the same era-threshold mechanism the Zemstvos use.
-- Design caveat: before the Industrial Era only the Zemstvos and the upgrade discount remain — half a game with almost no ability. Possibly intentional (a peaceful late game), but check how it feels.
+- Implementation: an `OwnerRequirementSetId` with an "era not earlier than Industrial" threshold on the ability's modifiers.
+- Design caveat: before the Industrial Era the ability gives nothing — half a game without it; the once-discussed compensation via starting preferences was rejected (see the "Start bias" section below).
 
 ## Start bias — "Petersburg, not tundra"
+
+**Rejected by the user on 31 October 2026** in full (river/coast rows, the Petersburg true start, own maps): Russia spent centuries fighting its way to the seas — a seaside start would give away for free what took centuries of wars to win; the player earns the access to the sea, as Russia did. The mod does not touch starting positions; Russia keeps its vanilla tundra bias. The research below is kept in case the topic ever returns.
 
 User's idea: add "river + coast" bias rows for Russia (Petersburg). By the extend-only principle the vanilla tundra bias cannot be weakened (`UPDATE` forbidden) — tundra tier 1 stays; river and coast are added on top; if that proves too weak — variant C (own maps).
 
@@ -58,11 +62,9 @@ Game mechanics (draft): keeps the Bank's bonuses and adds — in this city distr
 
 ## Railway reform — part of the ability (not a district)
 
-A city gets +1 Production for every city of its own civilization connected to it by rail, and +1 Gold for every connected foreign city. Connection = an unbroken path of railroad tiles (`ROUTE_RAILROAD`) between city centers.
+**Implemented in v2.0.0** as the third part of the ability, "Railway Network" (design doc, section 3.3). The original sketch follows, with two corrections found along the way: railroads unlock with the Steam Power tech (not Steel — verified in `Expansion2_Routes.xml`; 1 Iron + 1 Coal per tile, built by the Military Engineer), and route-change events do exist (`RouteAddedToMap`/`RouteChanged`/`RouteRemovedFromMap`) — the recompute is instant, with a turn-start safety sweep.
 
-- Requires Gathering Storm (railroads arrive with the Steel tech, built by a Military Engineer); with R&F only the bonus simply never fires — document it.
-- Implementation: Lua computes connectivity (search from city centers over railroad tiles) and sets counter properties on the city-center plot; read via thresholds with `REQUIREMENT_PLOT_PROPERTY_MATCHES` + `MODIFIER_PLAYER_ADJUST_PLOT_YIELD` — an extension of the farm pattern. There is no event for road changes — recompute once per turn.
-- Balance in question: late game 15 cities give every city +14 Production (half a wonder). Gentler option: +1 Production per 2 connected own cities, +1 Gold per foreign city.
+Draft idea: a city gets +1 Production for every own city connected to it by rail, and +1 Gold for every connected foreign city. Connection = an unbroken path of railroad tiles (`ROUTE_RAILROAD`) between city centers.
 
 Historical note (verified 2026-10-25): the network grew from ~920 km (1855) to ~22,900 km (1880) — 25-fold, faster than every great power (Germany ×2.9, USA ×3, Britain ×1.6 over 1860–1880); by 1880 Russia caught up with Britain and France in network length. The program was Alexander II's 1857 rescript (the Main Society of Russian Railways, foreign capital, state guarantees), private concessions from 1867. There was no aggregate industrial leap (that came in the 1890s, Witte), but the foundation was laid: Donbass and Yuzovka (1869), Baku oil (1872), railway-driven machine building, the State Bank of 1860. Source: [History of rail transport in Russia — Wikipedia](https://en.wikipedia.org/wiki/History_of_rail_transport_in_Russia).
 
