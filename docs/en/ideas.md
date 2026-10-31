@@ -8,7 +8,7 @@ These decisions supersede conflicting earlier proposals below; implementation an
 
 - Railways: **implemented in v2.0.0** ("Railway Network", design doc 3.3) — Lua grows the rail tree from the Capital (transit over foreign rails counts, the Capital never bonuses itself), each connected own city gets +1 Production, and every foreign connected city (city-states and civs at war count) gives +1 Gold to every connected own city, with no design cap — the user's explicit demand (the tier machinery's technical bound of 200 foreign cities is beyond any conceivable game); Gathering Storm is now a hard mod dependency.
 - Emancipation: **implemented in v2.0.0** — from the Industrial Era, +1 Builder charge and +1 Food per two adjacent Farms; Pastures and the upgrade discount removed. The +2 cap was removed the same day at the user's insistence: a tier at 6 neighbours was added (natural max +3), fulfilling the "no artificial cap" agreement.
-- Starting locations: experiment with tundra, rivers and coast on generated maps; consider true-start maps, the effect on Peter and compatibility separately.
+- Starting locations: **rejected by the user on 31 October 2026** — no start bias of any kind (not river/coast, not the Petersburg true start, not own maps): Russia spent centuries fighting its way to the seas, and a seaside start would hand the player for free what Russia won through wars. The mod does not touch starting positions — Russia keeps its vanilla tundra bias.
 - Unique district and building: financial theme and State Bank; devise original mechanics closer to implementation, and confirm the district in light of its design.
 - Voice: high quality, including research into AI and local options; loading narration in English and Russian, diplomacy in Russian.
 - Additional diplomatic animations; investigate mouth movement timed to speech.
@@ -34,9 +34,11 @@ The sections below are retained for context and may conflict with the decisions 
 User's idea: all three "Emancipation of the Serfs" bonuses — Builder +1 charge, Pasture +1 Production, Farm +1 Food per 2 neighbours — apply only from the Industrial Era (today they work all game, too strong in the early game). Historically apt: the reforms belong to the second half of the 19th century.
 
 - Implementation: an `OwnerRequirementSetId` with an "era not earlier than Industrial" threshold on the ability's modifiers.
-- Design caveat: before the Industrial Era the ability gives nothing — half a game without it; the compensation is starting preferences (the next v2.0.0 roadmap item).
+- Design caveat: before the Industrial Era the ability gives nothing — half a game without it; the once-discussed compensation via starting preferences was rejected (see the "Start bias" section below).
 
 ## Start bias — "Petersburg, not tundra"
+
+**Rejected by the user on 31 October 2026** in full (river/coast rows, the Petersburg true start, own maps): Russia spent centuries fighting its way to the seas — a seaside start would give away for free what took centuries of wars to win; the player earns the access to the sea, as Russia did. The mod does not touch starting positions; Russia keeps its vanilla tundra bias. The research below is kept in case the topic ever returns.
 
 User's idea: add "river + coast" bias rows for Russia (Petersburg). By the extend-only principle the vanilla tundra bias cannot be weakened (`UPDATE` forbidden) — tundra tier 1 stays; river and coast are added on top; if that proves too weak — variant C (own maps).
 

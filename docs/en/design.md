@@ -26,7 +26,7 @@ Game terms must be official, taken from the game's own localization files (see [
 
 ## 3. Leader Ability: The Great Reforms
 
-The whole ability unlocks in the **Industrial Era** — the reforms of the 1860s-70s. Before it the trait deliberately gives nothing; the early game is later compensated by starting preferences (ROADMAP, v2.0.0).
+The whole ability unlocks in the **Industrial Era** — the reforms of the 1860s-70s. Before it the trait deliberately gives nothing — a conscious trade-off: compensating the early game with starting preferences was rejected; Russia historically fought its own way to the seas ([ideas bank](ideas.md)).
 
 ### 3.1. Emancipation of the Serfs
 
