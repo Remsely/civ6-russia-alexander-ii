@@ -20,10 +20,10 @@ Speed-up: FireTuner — grant techs, change era, assign a Governor.
 ## Mechanics
 
 - [ ] Before the Industrial Era the ability gives nothing: Builders have normal charges, Farms give no adjacency Food, Pastures no +1 Production, unit upgrades at full price.
-- [ ] From the Industrial Era: Builders get +1 charge; a Farm with 2 adjacent Farms gives +1 **Food**, with 4 — +2 (Food icon in the plot tooltip).
+- [ ] From the Industrial Era: Builders get +1 charge; a Farm with 2 adjacent Farms gives +1 **Food**, with 4 — +2, with 6 — +3 (Food icon in the plot tooltip).
 - [ ] **Governor title**: on entering the Industrial Era the title counter increases by 1 (vanilla grants titles only from built things — this is our new combination, check it right on the era boundary).
 - [ ] Zemstvo Reform: a city with an assigned Governor grows 10% faster; cities without a Governor do not.
-- [ ] Railway Network: a city linked to the Capital by a continuous railroad (foreign rails count as transit) gets +1 Production; every connected own city gets +1 Gold per foreign connected city (city-states and civs at war count, cap +10); the Capital never bonuses itself.
+- [ ] Railway Network: a city linked to the Capital by a continuous railroad (foreign rails count as transit) gets +1 Production; every connected own city gets +1 Gold per foreign connected city (city-states and civs at war count, no cap); the Capital never bonuses itself.
 - [ ] Railroads: bonuses appear right after a segment is built (route events); a captured city or a moved capital is picked up by the next turn. The Military Engineer unlocks railroads after Steam Power (1 Iron + 1 Coal per tile).
 - [ ] The old Zemstvos are gone: no Culture or Loyalty in Governor cities.
 - [ ] AI Alexander plays without errors, the agenda fires (likes peaceful, dislikes recent aggressors).

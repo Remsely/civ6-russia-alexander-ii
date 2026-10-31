@@ -1,20 +1,21 @@
 --==========================================================================================================================
 -- Remsely's Alexander II: Great Reforms, Railway Network (docs/ru/design.md, 3.3)
 -- Cities connected to the Capital by a continuous railroad get +1 Production each and +1 Gold per foreign connected
--- city (cap 10). A city is connected when its center belongs to the railroad tree grown from the Capital's center:
--- the tree walks railroad plots, and connected city centers act as junctions (a line may pass through a city).
+-- city - uncapped, per the user's explicit decision (MAX_FOREIGN below is only a technical bound for the tier machinery,
+-- far beyond any real game). A city is connected when its center belongs to the railroad tree grown from the Capital's
+-- center: the tree walks railroad plots, and connected city centers act as junctions (a line may pass through a city).
 -- Whoever built the rails does not matter - transit counts. The Capital is the origin and never bonuses itself.
 --
 -- XML cannot see routes or count connected cities, so this script keeps two plot properties up to date and the XML
 -- modifiers (Data/GameDefines.sql) read them, exactly like the Farm adjacency script:
 --   REMSELY_RAIL_CONNECTED  - 1 on the center of each connected own city (non-capital)
---   REMSELY_RAIL_FOREIGN_N  - number of foreign connected cities (capped) on the same centers
+--   REMSELY_RAIL_FOREIGN_N  - number of foreign connected cities on the same centers (bounded by MAX_FOREIGN)
 -- Recomputed on every route and city event, at turn start and once at load.
 --==========================================================================================================================
 local DEBUG = false -- set true to write every recalculation to Lua.log
 local PROPERTY_CONNECTED = "REMSELY_RAIL_CONNECTED"
 local PROPERTY_FOREIGN = "REMSELY_RAIL_FOREIGN_N"
-local MAX_FOREIGN = 10
+local MAX_FOREIGN = 50 -- technical bound of the tier machinery, NOT a design cap; 50 rail-connected foreign cities is beyond any real game
 
 local RAILROAD = GameInfo.Routes["ROUTE_RAILROAD"]
 if RAILROAD == nil then return end -- Gathering Storm only; the mod already requires it

@@ -11,7 +11,7 @@ A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate lea
 **Leader ability: The Great Reforms** (from the Industrial Era)
 - *Emancipation of the Serfs:* Builders have +1 charge and Farms get +1 Food for every 2 adjacent Farms.
 - *Zemstvo Reform:* gain 1 additional Governor title; cities with an assigned Governor get +10% growth.
-- *Railway Network:* cities connected to the Capital by railroad get +1 Production and +1 Gold per foreign railroad-connected city (up to +10 Gold).
+- *Railway Network:* cities connected to the Capital by railroad get +1 Production and +1 Gold per foreign railroad-connected city.
 
 **AI agenda: The Liberator.** Likes civilizations that have kept the peace for a long time; dislikes those that recently declared war.
 

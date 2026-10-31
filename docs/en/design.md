@@ -33,7 +33,7 @@ The whole ability unlocks in the **Industrial Era** — the reforms of the 1860s
 From the Industrial Era:
 
 - Builders get **+1 charge**.
-- Each **Farm** gets **+1 Food per 2 adjacent Farms** (max +2 at 4). Food, not Production: Russia's civ ability already grants Production on tundra, and stacking Production made the trait too strong. Only Farms count as neighbours. Adjacency is counted in Lua (`mod/Lua/RemselysAlexanderII_Farms.lua`); modifiers read plot properties, and the era gate holds the yield back until the Industrial Era.
+- Each **Farm** gets **+1 Food per 2 adjacent Farms** (tiers at 2/4/6 neighbours, natural max +3; no artificial cap). Food, not Production: Russia's civ ability already grants Production on tundra, and stacking Production made the trait too strong. Only Farms count as neighbours. Adjacency is counted in Lua (`mod/Lua/RemselysAlexanderII_Farms.lua`); modifiers read plot properties, and the era gate holds the yield back until the Industrial Era.
 
 Pastures (+1 Production) and the Military Reform (50% unit upgrade discount) were removed in v2.0.0; the military theme returns as a unique unit (ROADMAP, v3.5.0).
 
@@ -49,7 +49,7 @@ Rationale: schools and medicine are the best documented effects of the historica
 ### 3.3. Railway Network
 
 - Every city **connected to the Capital by railroad** gets **+1 Production**.
-- Every connected own city gets **+1 Gold per connected foreign city** (city-states and civilizations at war count; the cap is 10 foreign cities, i.e. up to +10 Gold per city). The scale is agreed with the user: 15 own × 10 foreign cities = 150 Gold per turn in the late game.
+- Every connected own city gets **+1 Gold per connected foreign city** (city-states and civilizations at war count; no cap, the user's decision). The scale: 15 own × 10 foreign cities = 150 Gold per turn in the late game; the technical bound of the tier machinery (50 foreign cities) is beyond any real game.
 
 Connection rules: a city is connected when its center belongs to the railroad tree grown from the Capital's center — a breadth-first walk over plots with `ROUTE_RAILROAD`; connected city centers act as junctions (a line may pass through a city). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is the origin of the network and never bonuses itself. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
 

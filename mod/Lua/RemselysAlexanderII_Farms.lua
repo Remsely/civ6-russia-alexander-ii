@@ -1,14 +1,16 @@
 --==========================================================================================================================
--- Remsely's Alexander II: Great Reforms, Farm adjacency (docs/remselys-alexander-ii.md, 3.1)
--- Farms get +1 Food per 2 adjacent Farms (max +2 at 4). Only Farms count as neighbours.
+-- Remsely's Alexander II: Great Reforms, Farm adjacency (docs/ru/design.md, 3.1)
+-- Farms get +1 Food per 2 adjacent Farms: tiers at 2, 4 and 6 neighbours (natural max +3 - the hex has only 6 sides,
+-- there is no artificial cap). Only Farms count as neighbours.
 --
--- XML cannot count adjacent improvements, so this script keeps two plot properties up to date and the XML modifiers
--- (Data/GameDefines.sql) read them: one for "2+ adjacent Farms", one for "4+ adjacent Farms". The properties are set for
--- every Farm regardless of owner; the modifiers only exist for Alexander II players, so only they get the Production.
+-- XML cannot count adjacent improvements, so this script keeps three plot properties up to date and the XML modifiers
+-- (Data/GameDefines.sql) read them: one for "2+ adjacent Farms", one for "4+", one for "6+". The properties are set for
+-- every Farm regardless of owner; the modifiers only exist for Alexander II players, so only they get the Food.
 --==========================================================================================================================
 local DEBUG = false -- set true to write every recalculation to Lua.log
 local PROPERTY_2 = "REMSELY_FARM_ADJ_2"
 local PROPERTY_4 = "REMSELY_FARM_ADJ_4"
+local PROPERTY_6 = "REMSELY_FARM_ADJ_6"
 
 local FARM = GameInfo.Improvements["IMPROVEMENT_FARM"]
 if FARM == nil then return end
@@ -32,17 +34,19 @@ end
 
 local function RefreshPlot(plot, skipX, skipY)
 	if plot == nil then return end
-	local near2, near4 = 0, 0
+	local near2, near4, near6 = 0, 0, 0
 	if IsFarm(plot) and not (plot:GetX() == skipX and plot:GetY() == skipY) then
 		local count = CountAdjacentFarms(plot:GetX(), plot:GetY(), skipX, skipY)
 		if count >= 2 then near2 = 1 end
 		if count >= 4 then near4 = 1 end
+		if count >= 6 then near6 = 1 end
 	end
 	if (plot:GetProperty(PROPERTY_2) or 0) ~= near2 then plot:SetProperty(PROPERTY_2, near2) end
 	if (plot:GetProperty(PROPERTY_4) or 0) ~= near4 then plot:SetProperty(PROPERTY_4, near4) end
+	if (plot:GetProperty(PROPERTY_6) or 0) ~= near6 then plot:SetProperty(PROPERTY_6, near6) end
 	if DEBUG then
-		print(string.format("REMSELY_FARMS: plot (%d,%d) farm=%s adjacentFarms=%d -> adj2=%d adj4=%d",
-			plot:GetX(), plot:GetY(), tostring(IsFarm(plot)), CountAdjacentFarms(plot:GetX(), plot:GetY(), skipX, skipY), near2, near4))
+		print(string.format("REMSELY_FARMS: plot (%d,%d) farm=%s adjacentFarms=%d -> adj2=%d adj4=%d adj6=%d",
+			plot:GetX(), plot:GetY(), tostring(IsFarm(plot)), CountAdjacentFarms(plot:GetX(), plot:GetY(), skipX, skipY), near2, near4, near6))
 	end
 end
 
