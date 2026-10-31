@@ -8,7 +8,7 @@
       <Text>The Great Reforms</Text>
     </Replace>
     <Replace Tag="LOC_TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS_DESCRIPTION" Language="en_US">
-      <Text>Emancipation of the Serfs: Starting in the Industrial Era, Builders have +1 [ICON_Charges] charge and Farms get +1 [ICON_Food] Food for every 2 adjacent Farms.[NEWLINE][NEWLINE]Zemstvo Reform: Starting in the Industrial Era, gain 1 additional [ICON_Governor] Governor title; cities with an assigned Governor get +10% growth.[NEWLINE][NEWLINE]Railway Network: cities connected to the [ICON_Capital] Capital by railroad get +1 [ICON_Production] Production and +1 [ICON_Gold] Gold for every foreign city connected by railroad.</Text>
+      <Text>Emancipation of the Serfs: Starting in the Industrial Era, Builders have +1 [ICON_Charges] charge and Farms get +1 [ICON_Food] Food for every 2 adjacent Farms.[NEWLINE][NEWLINE]Zemstvo Reform: On entering the Industrial Era the empire gains 1 [ICON_Governor] Governor title, and starting in the Industrial Era cities with an assigned Governor get +10% growth.[NEWLINE][NEWLINE]Railway Network: Every city gets +1 [ICON_Production] Production for each city of your civilization and +1 [ICON_Gold] Gold for each city of another civilization connected to it by railroad.</Text>
     </Replace>
     <Replace Tag="LOC_AGENDA_REMSELY_LIBERATOR_NAME" Language="en_US">
       <Text>The Liberator</Text>

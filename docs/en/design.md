@@ -39,21 +39,20 @@ Pastures (+1 Production) and the Military Reform (50% unit upgrade discount) wer
 
 ### 3.2. Zemstvo Reform
 
-From the Industrial Era:
-
-- The empire gains **+1 Governor title**.
-- Cities with an assigned Governor get **+10% growth**.
+- On entering the Industrial Era the empire gains **1 Governor title**.
+- From the Industrial Era on, cities with an assigned Governor get **+10% growth**.
 
 Rationale: schools and medicine are the best documented effects of the historical zemstvos. Loyalty is gone: Governors already provide it, and the zemstvos were a hotbed of liberal opposition to the crown. Culture was dropped to keep the trait legible. Analogs: the title grant as Casa de Contratación; growth as the Hanging Gardens and the Colonial Offices policy; growth gated on a city condition as the Palenque city-state (growth with a Campus). Granting a title on an era threshold has no vanilla precedent (titles come from built things), so it is a mandatory in-game check.
 
 ### 3.3. Railway Network
 
-- Every city **connected to the Capital by railroad** gets **+1 Production**.
-- Every connected own city gets **+1 Gold per connected foreign city** (city-states and civilizations at war count; no cap, the user's decision). The scale: 15 own × 10 foreign cities = 150 Gold per turn in the late game; the technical bound of the tier machinery (200 foreign cities) is beyond any real game.
+- Every city gets **+1 Production for each city of your civilization connected to it by railroad**.
+- Every city gets **+1 Gold for each city of another civilization** (city-states and civilizations at war count) **connected to it by railroad**.
+- No cap, the user's decision. The scale: 15 own cities all interconnected and linked to 10 foreign ones give every city +14 Production and +10 Gold (150 Gold per turn total); the technical bound of the tier machinery (200 cities of each kind) is beyond any real game.
 
-Connection rules: a city is connected when its center belongs to the railroad tree grown from the Capital's center — a breadth-first walk over plots with `ROUTE_RAILROAD`; connected city centers act as junctions (a line may pass through a city). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is the origin of the network and never bonuses itself. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
+Connection rules: two cities are connected when an unbroken railroad path leads from center to center — over plots with `ROUTE_RAILROAD`, with city centers acting as junctions (a line may pass through a city and tie networks together through it). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is an ordinary city of the network and receives bonuses like any other. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
 
-Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties `REMSELY_RAIL_CONNECTED` and `REMSELY_RAIL_FOREIGN_N` up to date (recomputed on route and city events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Gold tiers - a technical margin, not a design cap) — an extension of the Farm pattern. Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
+Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties of own city centers — `REMSELY_RAIL_OWN_N` (connected own cities) and `REMSELY_RAIL_FOREIGN_N` (connected foreign cities) — up to date (recomputed on route and city events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Production and 200 Gold tiers - a technical margin, not a design cap) — an extension of the Farm pattern. Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
 
 ### 3.4. Ability texts
 
