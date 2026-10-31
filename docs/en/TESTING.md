@@ -5,7 +5,7 @@ The player performs the in-game checks. Building and installation can be scripte
 ## Preparation
 
 1. `.venv\Scripts\python.exe tools\install.py` (validate + copy to `Documents\My Games\Sid Meier's Civilization VI\Mods`).
-2. **Restart the game** and enable the mod in "Additional Content" → "Mods". Rise and Fall is required (Governors); Gathering Storm is compatible.
+2. **Restart the game** and enable the mod in "Additional Content" → "Mods". Gathering Storm is required (railroads, Governors).
 3. Start a **new** game as Russia: colors and city lists are stored in the save; art-only changes can be checked in an existing game after restarting.
 
 Speed-up: FireTuner — grant techs, change era, assign a Governor.
@@ -23,6 +23,8 @@ Speed-up: FireTuner — grant techs, change era, assign a Governor.
 - [ ] From the Industrial Era: Builders get +1 charge; a Farm with 2 adjacent Farms gives +1 **Food**, with 4 — +2 (Food icon in the plot tooltip).
 - [ ] **Governor title**: on entering the Industrial Era the title counter increases by 1 (vanilla grants titles only from built things — this is our new combination, check it right on the era boundary).
 - [ ] Zemstvo Reform: a city with an assigned Governor grows 10% faster; cities without a Governor do not.
+- [ ] Railway Network: a city linked to the Capital by a continuous railroad (foreign rails count as transit) gets +1 Production; every connected own city gets +1 Gold per foreign connected city (city-states and civs at war count, cap +10); the Capital never bonuses itself.
+- [ ] Railroads: bonuses appear right after a segment is built (route events); a captured city or a moved capital is picked up by the next turn. The Military Engineer unlocks railroads after Steam Power (1 Iron + 1 Coal per tile).
 - [ ] The old Zemstvos are gone: no Culture or Loyalty in Governor cities.
 - [ ] AI Alexander plays without errors, the agenda fires (likes peaceful, dislikes recent aggressors).
 

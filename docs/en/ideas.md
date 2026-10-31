@@ -6,8 +6,8 @@ Future ideas, **not in the current release**. Chosen items move to [`../../ROADM
 
 These decisions supersede conflicting earlier proposals below; implementation and balance still need testing.
 
-- Railways: first test the user's mechanic: +1 Production per connected city of the player's civilization and +2 Gold per connected city of another civilization. Define connection and ownership rules before implementation; no cap has been agreed.
-- Emancipation: from the Industrial Era, +1 Builder charge and +1 Food per two adjacent Farms, without an artificial +2 cap. Remove Pasture Production and the unit upgrade discount. Investigate effects on existing Builders.
+- Railways: **implemented in v2.0.0** ("Railway Network", design doc 3.3) — Lua grows the rail tree from the Capital (transit over foreign rails counts, the Capital never bonuses itself), each connected own city gets +1 Production, and every foreign connected city (city-states and civs at war count) gives +1 Gold to every connected own city, cap +10; Gathering Storm is now a hard mod dependency.
+- Emancipation: **implemented in v2.0.0** — from the Industrial Era, +1 Builder charge and +1 Food per two adjacent Farms; Pastures and the upgrade discount removed. The +2 Food cap per Farm inherited from 1.5.0 (tiers 2/4) remains; the "no artificial cap" agreement below is not fulfilled — an open question.
 - Starting locations: experiment with tundra, rivers and coast on generated maps; consider true-start maps, the effect on Peter and compatibility separately.
 - Unique district and building: financial theme and State Bank; devise original mechanics closer to implementation, and confirm the district in light of its design.
 - Voice: high quality, including research into AI and local options; loading narration in English and Russian, diplomacy in Russian.
@@ -60,11 +60,9 @@ Game mechanics (draft): keeps the Bank's bonuses and adds — in this city distr
 
 ## Railway reform — part of the ability (not a district)
 
-A city gets +1 Production for every city of its own civilization connected to it by rail, and +1 Gold for every connected foreign city. Connection = an unbroken path of railroad tiles (`ROUTE_RAILROAD`) between city centers.
+**Implemented in v2.0.0** as the third part of the ability, "Railway Network" (design doc, section 3.3). The original sketch follows, with two corrections found along the way: railroads unlock with the Steam Power tech (not Steel — verified in `Expansion2_Routes.xml`; 1 Iron + 1 Coal per tile, built by the Military Engineer), and route-change events do exist (`RouteAddedToMap`/`RouteChanged`/`RouteRemovedFromMap`) — the recompute is instant, with a turn-start safety sweep.
 
-- Requires Gathering Storm (railroads arrive with the Steel tech, built by a Military Engineer); with R&F only the bonus simply never fires — document it.
-- Implementation: Lua computes connectivity (search from city centers over railroad tiles) and sets counter properties on the city-center plot; read via thresholds with `REQUIREMENT_PLOT_PROPERTY_MATCHES` + `MODIFIER_PLAYER_ADJUST_PLOT_YIELD` — an extension of the farm pattern. There is no event for road changes — recompute once per turn.
-- Balance in question: late game 15 cities give every city +14 Production (half a wonder). Gentler option: +1 Production per 2 connected own cities, +1 Gold per foreign city.
+Draft idea: a city gets +1 Production for every own city connected to it by rail, and +1 Gold for every connected foreign city. Connection = an unbroken path of railroad tiles (`ROUTE_RAILROAD`) between city centers.
 
 Historical note (verified 2026-10-25): the network grew from ~920 km (1855) to ~22,900 km (1880) — 25-fold, faster than every great power (Germany ×2.9, USA ×3, Britain ×1.6 over 1860–1880); by 1880 Russia caught up with Britain and France in network length. The program was Alexander II's 1857 rescript (the Main Society of Russian Railways, foreign capital, state guarantees), private concessions from 1867. There was no aggregate industrial leap (that came in the 1890s, Witte), but the foundation was laid: Donbass and Yuzovka (1869), Baku oil (1872), railway-driven machine building, the State Bank of 1860. Source: [History of rail transport in Russia — Wikipedia](https://en.wikipedia.org/wiki/History_of_rail_transport_in_Russia).
 

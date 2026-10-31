@@ -14,7 +14,7 @@ Russian version: [`../ru/design.md`](../ru/design.md). Game terms follow the glo
 | Leader | Alexander II Nikolaevich, Emperor of All Russia (1855–1881), called the Tsar Liberator |
 | Kept from vanilla Russia | Civilization ability Mother Russia, unique unit Cossack, unique district Lavra |
 | New in the mod | Leader ability, AI agenda, city list, colors, 3D leader, art, texts |
-| Requirements | Rise and Fall or Gathering Storm (Governors are needed for the Zemstvo Reform) |
+| Requirements | Gathering Storm (railroads for the Railway Network; Governors for the Zemstvo Reform) |
 | Type prefix | `REMSELY_` (e.g. `LEADER_REMSELY_ALEXANDER_II`) |
 | Structural reference | JFD's Russia: Elisabeth (`reference/samples/JFD-Russia-Elisabeth`) |
 
@@ -46,7 +46,16 @@ From the Industrial Era:
 
 Rationale: schools and medicine are the best documented effects of the historical zemstvos. Loyalty is gone: Governors already provide it, and the zemstvos were a hotbed of liberal opposition to the crown. Culture was dropped to keep the trait legible. Analogs: the title grant as Casa de Contratación; growth as the Hanging Gardens and the Colonial Offices policy; growth gated on a city condition as the Palenque city-state (growth with a Campus). Granting a title on an era threshold has no vanilla precedent (titles come from built things), so it is a mandatory in-game check.
 
-### 3.3. Ability texts
+### 3.3. Railway Network
+
+- Every city **connected to the Capital by railroad** gets **+1 Production**.
+- Every connected own city gets **+1 Gold per connected foreign city** (city-states and civilizations at war count; the cap is 10 foreign cities, i.e. up to +10 Gold per city). The scale is agreed with the user: 15 own × 10 foreign cities = 150 Gold per turn in the late game.
+
+Connection rules: a city is connected when its center belongs to the railroad tree grown from the Capital's center — a breadth-first walk over plots with `ROUTE_RAILROAD`; connected city centers act as junctions (a line may pass through a city). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is the origin of the network and never bonuses itself. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
+
+Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties `REMSELY_RAIL_CONNECTED` and `REMSELY_RAIL_FOREIGN_N` up to date (recomputed on route and city events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (ten Gold tiers) — an extension of the Farm pattern. Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
+
+### 3.4. Ability texts
 
 Ability descriptions state values explicitly, without references to the Civilopedia. Current texts live in `mod/Text/{en_US,ru_RU}.xml`; the Russian table mirroring them is in [`../ru/design.md`](../ru/design.md).
 

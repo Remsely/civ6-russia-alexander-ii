@@ -8,10 +8,10 @@ A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate lea
 
 ## What's in the mod
 
-**Leader ability: The Great Reforms**
-- *Emancipation of the Serfs:* Builders have +1 charge, Pastures get +1 Production, and Farms get +1 Food for every 2 adjacent Farms (max +2 at 4).
-- *Zemstvo Reform:* cities with an assigned Governor get +2 Culture and +4 Loyalty; from the Medieval Era the bonus grows by +1 Culture and +2 Loyalty with every new era (Future Era: +9 and +18).
-- *Military Reform:* unit upgrades cost 50% less Gold.
+**Leader ability: The Great Reforms** (from the Industrial Era)
+- *Emancipation of the Serfs:* Builders have +1 charge and Farms get +1 Food for every 2 adjacent Farms.
+- *Zemstvo Reform:* gain 1 additional Governor title; cities with an assigned Governor get +10% growth.
+- *Railway Network:* cities connected to the Capital by railroad get +1 Production and +1 Gold per foreign railroad-connected city (up to +10 Gold).
 
 **AI agenda: The Liberator.** Likes civilizations that have kept the peace for a long time; dislikes those that recently declared war.
 
@@ -19,7 +19,7 @@ A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate lea
 
 **Also:** a researched 45-name city list led by Saint Petersburg (Moscow, Odessa, Kharkov, Sevastopol, Vladivostok, Tashkent, Baku, Riga…), black-and-gold border colors, a loading screen background, a diplomacy background, 31 diplomacy lines and a Civilopedia page, in English and Russian.
 
-Requires Rise and Fall; Gathering Storm is recommended (the Future Era). Platforms: Windows and macOS (BLPs are built for both; the mod has not been tested in game on macOS).
+Requires Gathering Storm. Platforms: Windows and macOS (BLPs are built for both; the mod has not been tested in game on macOS).
 
 ## Install
 
