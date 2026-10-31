@@ -14,7 +14,7 @@ Russian version: [`../ru/design.md`](../ru/design.md). Game terms follow the glo
 | Leader | Alexander II Nikolaevich, Emperor of All Russia (1855–1881), called the Tsar Liberator |
 | Kept from vanilla Russia | Civilization ability Mother Russia, unique unit Cossack, unique district Lavra |
 | New in the mod | Leader ability, AI agenda, city list, colors, 3D leader, art, texts |
-| Requirements | Rise and Fall or Gathering Storm (Governors and Loyalty are needed for Zemstvos); the Future Era exists only in Gathering Storm |
+| Requirements | Rise and Fall or Gathering Storm (Governors are needed for the Zemstvo Reform) |
 | Type prefix | `REMSELY_` (e.g. `LEADER_REMSELY_ALEXANDER_II`) |
 | Structural reference | JFD's Russia: Elisabeth (`reference/samples/JFD-Russia-Elisabeth`) |
 
@@ -26,35 +26,29 @@ Game terms must be official, taken from the game's own localization files (see [
 
 ## 3. Leader Ability: The Great Reforms
 
+The whole ability unlocks in the **Industrial Era** — the reforms of the 1860s-70s. Before it the trait deliberately gives nothing; the early game is later compensated by starting preferences (ROADMAP, v2.0.0).
+
 ### 3.1. Emancipation of the Serfs
 
+From the Industrial Era:
+
 - Builders get **+1 charge**.
-- Each **Pasture** gets **+1 Production**.
-- Each **Farm** gets **+1 Food per 2 adjacent Farms** (max +2 at 4). Food, not Production: Russia's civ ability already grants Production on tundra, and stacking Production made the trait too strong. Only Farms count as neighbours. Adjacency is counted in Lua (`mod/Lua/RemselysAlexanderII_Farms.lua`); modifiers read plot properties.
+- Each **Farm** gets **+1 Food per 2 adjacent Farms** (max +2 at 4). Food, not Production: Russia's civ ability already grants Production on tundra, and stacking Production made the trait too strong. Only Farms count as neighbours. Adjacency is counted in Lua (`mod/Lua/RemselysAlexanderII_Farms.lua`); modifiers read plot properties, and the era gate holds the yield back until the Industrial Era.
+
+Pastures (+1 Production) and the Military Reform (50% unit upgrade discount) were removed in v2.0.0; the military theme returns as a unique unit (ROADMAP, v3.5.0).
 
 ### 3.2. Zemstvo Reform
 
-Cities with an assigned Governor get Culture and Loyalty that grow with the player's eras:
+From the Industrial Era:
 
-| Era (official names) | Culture | Loyalty |
-|---|---|---|
-| Ancient Era | +2 | +4 |
-| Classical Era | +2 | +4 |
-| Medieval Era | +3 | +6 |
-| Renaissance Era | +4 | +8 |
-| Industrial Era | +5 | +10 |
-| Modern Era | +6 | +12 |
-| Atomic Era | +7 | +14 |
-| Information Era | +8 | +16 |
-| Future Era (Gathering Storm only) | +9 | +18 |
+- The empire gains **+1 Governor title**.
+- Cities with an assigned Governor get **+10% growth**.
 
-### 3.3. Military Reform
+Rationale: schools and medicine are the best documented effects of the historical zemstvos. Loyalty is gone: Governors already provide it, and the zemstvos were a hotbed of liberal opposition to the crown. Culture was dropped to keep the trait legible. Analogs: the title grant as Casa de Contratación; growth as the Hanging Gardens and the Colonial Offices policy; growth gated on a city condition as the Palenque city-state (growth with a Campus). Granting a title on an era threshold has no vanilla precedent (titles come from built things), so it is a mandatory in-game check.
 
-Unit upgrades cost **50% less Gold** (vanilla analogue: the Professional Army policy).
+### 3.3. Ability texts
 
-### 3.4. Ability texts
-
-Ability descriptions state values explicitly, without references to the Civilopedia. Current texts live in `mod/Text/{en_US,ru_RU}.xml`; the Russian column mirrors them (see [`../ru/design.md`](../ru/design.md)).
+Ability descriptions state values explicitly, without references to the Civilopedia. Current texts live in `mod/Text/{en_US,ru_RU}.xml`; the Russian table mirroring them is in [`../ru/design.md`](../ru/design.md).
 
 ## 4. AI Agenda: The Liberator
 

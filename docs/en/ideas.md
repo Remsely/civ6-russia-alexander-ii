@@ -29,10 +29,12 @@ The sections below are retained for context and may conflict with the decisions 
 
 ## Emancipation rebalance — Industrial Era threshold
 
+**Implemented in v2.0.0** in an extended form: the whole ability — Builder charge, Farm food adjacency, the Governor title and Governor-city growth — unlocks in the Industrial Era; Pastures and the unit upgrade discount were removed entirely (design doc, section 3). The original idea follows.
+
 User's idea: all three "Emancipation of the Serfs" bonuses — Builder +1 charge, Pasture +1 Production, Farm +1 Food per 2 neighbours — apply only from the Industrial Era (today they work all game, too strong in the early game). Historically apt: the reforms belong to the second half of the 19th century.
 
-- Implementation: add an "era not earlier than Industrial" requirement to the three modifiers (`REMSELY_REFORMS_BUILDER_CHARGES`, `REMSELY_REFORMS_PASTURE_PRODUCTION`, `REMSELY_REFORMS_FARM_ADJ_2/_4_FOOD`) — the same era-threshold mechanism the Zemstvos use.
-- Design caveat: before the Industrial Era only the Zemstvos and the upgrade discount remain — half a game with almost no ability. Possibly intentional (a peaceful late game), but check how it feels.
+- Implementation: an `OwnerRequirementSetId` with an "era not earlier than Industrial" threshold on the ability's modifiers.
+- Design caveat: before the Industrial Era the ability gives nothing — half a game without it; the compensation is starting preferences (the next v2.0.0 roadmap item).
 
 ## Start bias — "Petersburg, not tundra"
 
