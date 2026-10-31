@@ -46,13 +46,13 @@ Rationale: schools and medicine are the best documented effects of the historica
 
 ### 3.3. Railway Network
 
-- Every city gets **+1 Production for each city of your civilization connected to it by railroad**.
-- Every city gets **+1 Gold for each city of another civilization** (city-states and civilizations at war count) **connected to it by railroad**.
-- No cap, the user's decision. The scale: 15 own cities all interconnected and linked to 10 foreign ones give every city +14 Production and +10 Gold (150 Gold per turn total); the technical bound of the tier machinery (200 cities of each kind) is beyond any real game.
+- Every city gets **+1 Production for each city of your civilization connected to it by railroad**, capped by **the city's Population** (a 10-Pop city gets at most +10 — the user's rule).
+- Every city gets **+1 Gold for each city of another civilization** (city-states and civilizations at war count) **connected to it by railroad** — uncapped.
+- No Gold cap, the user's decision; the Production limit is natural (the city's Population). The scale: 15 own cities all interconnected and linked to 10 foreign ones give a 14+ Pop city up to +14 Production and +10 Gold (150 Gold per turn total); the technical bound of the tier machinery (200 cities of each kind) is beyond any real game.
 
 Connection rules: two cities are connected when an unbroken railroad path leads from center to center — over plots with `ROUTE_RAILROAD`, with city centers acting as junctions (a line may pass through a city and tie networks together through it). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is an ordinary city of the network and receives bonuses like any other. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
 
-Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties of own city centers — `REMSELY_RAIL_OWN_N` (connected own cities) and `REMSELY_RAIL_FOREIGN_N` (connected foreign cities) — up to date (recomputed on route and city events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Production and 200 Gold tiers - a technical margin, not a design cap) — an extension of the Farm pattern. Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
+Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties of own city centers — `REMSELY_RAIL_OWN_N` (connected own cities, already capped by the city's Population) and `REMSELY_RAIL_FOREIGN_N` (connected foreign cities) — up to date (recomputed on route, city and population events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Production and 200 Gold tiers - a technical margin, not a design cap) — an extension of the Farm pattern. Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
 
 ### 3.4. Ability texts
 
