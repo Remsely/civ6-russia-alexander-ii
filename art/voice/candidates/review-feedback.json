@@ -1,0 +1,191 @@
+{
+  "ACCEPT_DECLARE_FRIEND_FROM_AI": {
+    "candidate": "diplomacy-v1/accept-declare-friend-from-ai-clean.wav",
+    "status": "provisionally selected; revisit delivery",
+    "user_feedback": "Акцент на слове такую, а нужен на слове ценит",
+    "next_candidates": "friend-appreciation-v1, 32 and 64 steps",
+    "delivery": "Спокойно, сдержанно; мягкий смысловой акцент на ценит",
+    "v2_feedback": "Оба варианта: по-прежнему сильный акцент на такую, подача голоса неравномерная",
+    "v3_feedback": "В обоих вариантах нет акцента на слове ценит",
+    "revised_text": "Благодарю. Россия ценит вашу дружбу.",
+    "steps_comparison_feedback": "Принятие дружбы плохо; пользователь предложил вашу дружбу",
+    "trial_text": "Россия очень ценит дружбу с вами. Благодарю.",
+    "trial_english_text": "Russia greatly values your friendship. Thank you.",
+    "selected": "art/voice/selected/accept-declare-friend-ai-clean.wav",
+    "selected_steps": 32,
+    "selected_text": "Россия очень ценит дружбу с вами. Благодарю.",
+    "selection_feedback": "Первый вариант оставляем пока; все равно не нравится",
+    "needs_rework": true
+  },
+  "LOADING_RU": {
+    "candidate": "loading-v1/loading-ru-clean.wav",
+    "status": "selected; not integrated",
+    "user_feedback": "Слишком суетливо; в игре размереннее и четче; ошибки ударений",
+    "next_candidates": "review-round11",
+    "pronunciation": {
+      "суду": "суду́"
+    },
+    "clarification": "Замечания касаются также смысловых ударений и распределения акцентов внутри предложений, а не только словарных ударений.",
+    "preferred_steps": 96,
+    "preferred_excerpt": "prosody-steps-v1/loading-64-clean.wav",
+    "steps_comparison_feedback": "64 шага гораздо лучше; подтверждение относится к короткому фрагменту",
+    "latest_feedback": "128 шагов лучше 96",
+    "number": 32,
+    "needs_rework": false,
+    "preferred_candidate": "art\\voice\\selected\\loading-ru-clean.wav",
+    "selection_feedback": "Пользователь предпочел 128 шагов; темп 88%"
+  },
+  "FIRST_MEET": {
+    "preferred_steps": 32,
+    "selected": "art/voice/selected/first-meet-clean.wav",
+    "user_feedback": "Для первой встречи лучше 32 шага",
+    "compared_candidate": "friend-first-meet-64-v1/first-meet-clean.wav"
+  },
+  "ACCEPT_DECLARE_FRIEND_FROM_HUMAN": {
+    "latest_feedback": "Слишком суетливо",
+    "number": 2,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/accept-declare-friend-from-human-clean.wav"
+  },
+  "ACCEPT_DELEGATION_FROM_HUMAN": {
+    "latest_feedback": "Сделать спокойнее",
+    "number": 3,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/accept-delegation-from-human-clean.wav"
+  },
+  "DECLARE_FRIEND_FROM_AI": {
+    "latest_feedback": "Неверное другОм; нужно дрУгом",
+    "number": 6,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/declare-friend-from-ai-clean.wav"
+  },
+  "DECLARE_WAR_FROM_AI": {
+    "latest_feedback": "Голос не похож на наш",
+    "number": 7,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/declare-war-from-ai-clean.wav"
+  },
+  "DEFEAT_FROM_AI": {
+    "latest_feedback": "Голос не похож на утвержденный",
+    "number": 9,
+    "status": "new takes requested; awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round2/defeat-from-ai-clean.wav"
+  },
+  "DEFEAT_FROM_HUMAN": {
+    "latest_feedback": "Нет грусти; спокойнее и медленнее",
+    "number": 10,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/defeat-from-human-clean.wav"
+  },
+  "DELEGATION_FROM_AI": {
+    "latest_feedback": "Заменить дарами на подарками",
+    "number": 11,
+    "status": "new takes requested; awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round3/delegation-from-ai-clean.wav"
+  },
+  "DENOUNCE_FROM_AI": {
+    "latest_feedback": "Выбран вариант 2 из review-round5-disapproval",
+    "number": 12,
+    "status": "selected; not integrated",
+    "needs_rework": false,
+    "next_candidates": "review-round2/denounce-from-ai-clean.wav",
+    "selected": "art/voice/selected/denounce-ai-clean.wav"
+  },
+  "FIRST_MEET_NEAR_INITIATOR_POSITIVE": {
+    "latest_feedback": "Подача похожа на аудиокнигу; другие фразы живее",
+    "number": 15,
+    "status": "new takes requested; awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round3/first-meet-near-initiator-positive-clean.wav"
+  },
+  "GREETING": {
+    "latest_feedback": "Рад вас видеть звучит как робот",
+    "number": 18,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/greeting-clean.wav"
+  },
+  "KUDO_EXIT": {
+    "latest_feedback": "Речь прерывистая, сделать плавнее",
+    "number": 19,
+    "status": "revision requested; new take awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round3/kudo-exit-clean.wav"
+  },
+  "MAKE_PEACE_AI_ACCEPT_DEAL": {
+    "latest_feedback": "Слишком большие паузы, слова слишком быстрые; голос не похож",
+    "number": 21,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/make-peace-ai-accept-deal-clean.wav"
+  },
+  "MAKE_PEACE_FROM_AI": {
+    "latest_feedback": "Сломан конец, неравномерное произношение, другой голос",
+    "number": 23,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/make-peace-from-ai-clean.wav"
+  },
+  "OPEN_BORDERS_FROM_AI": {
+    "latest_feedback": "Заменить земли из-за неправильного произношения",
+    "number": 24,
+    "status": "new takes requested; awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round3/open-borders-from-ai-clean.wav"
+  },
+  "REJECT_DECLARE_FRIEND_FROM_AI": {
+    "latest_feedback": "Конец звучит как бот",
+    "number": 25,
+    "status": "revision requested; new take awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round3/reject-declare-friend-from-ai-clean.wav"
+  },
+  "REJECT_MAKE_DEAL_FROM_AI": {
+    "latest_feedback": "Вопросительная интонация вместо утверждения",
+    "number": 28,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/reject-make-deal-from-ai-clean.wav"
+  },
+  "WARNING_EXIT": {
+    "latest_feedback": "Как будто акцент; голос отличается от нашего",
+    "number": 30,
+    "status": "revision requested",
+    "needs_rework": true,
+    "next_candidates": "review-round2/warning-exit-clean.wav"
+  },
+  "ACCEPT_OPEN_BORDERS_FROM_HUMAN": {
+    "latest_feedback": "Начало звучит как бот, нужна размеренная речь",
+    "number": 5,
+    "status": "revision requested; new take awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round3/accept-open-borders-from-human-clean.wav"
+  },
+  "DENOUNCE_FROM_HUMAN": {
+    "latest_feedback": "Слишком быстро, размереннее",
+    "number": 13,
+    "status": "revision requested; new take awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round3/denounce-from-human-clean.wav"
+  },
+  "MAKE_ALLIANCE_FROM_AI": {
+    "latest_feedback": "Голос не похож",
+    "number": 20,
+    "status": "revision requested; new take awaiting review",
+    "needs_rework": true,
+    "next_candidates": "review-round3/make-alliance-from-ai-clean.wav"
+  },
+  "REJECT_OPEN_BORDERS_FROM_HUMAN": {
+    "latest_feedback": "Голос не похож на утвержденный",
+    "number": 29,
+    "status": "new takes requested; awaiting review",
+    "needs_rework": true
+  }
+}

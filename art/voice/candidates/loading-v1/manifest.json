@@ -1,0 +1,43 @@
+[
+  {
+    "language": "ru",
+    "text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и справедливому суду. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?",
+    "prompt": "(A mature male narrator speaks Russian with calm authority, rich resonant voice, dignified measured storytelling, thoughtful and inspiring, clear natural speech.)",
+    "seed": 731,
+    "steps": 32,
+    "cfg": 2,
+    "reference": "art\\build\\voice\\integration\\narrator\\ru-narrator-reference.wav",
+    "reference_sha256": "0ff972bae3ccdb2fae7359124ba6b99ef10b964718e88d999555f04a30403d45",
+    "source": "Base/Platforms/Windows/audio/Russian/Speech_Localized.xml DOM_LEAD_PET.wav",
+    "seconds": 44.7,
+    "raw": "loading-ru-raw.wav",
+    "clean": "loading-ru-clean.wav",
+    "raw_sha256": "a7a452da3996e0c69a27f80c6666e46a6b2e2c855ca1ac0b4fc78a9750bf39d6",
+    "clean_sha256": "32cb868f8921284d1f9a360c2bb6f93fa8ee3e680cc324b393169f52a12e9b53",
+    "status": "revision requested",
+    "join_silence_seconds": 0.25,
+    "sample_rate": 48000,
+    "processing": "Butterworth order 2 70-9500Hz sosfiltfilt peak 0.85 PCM24",
+    "user_feedback": "Суетливый темп, недостаточно размеренная и четкая подача, ошибки в ударениях"
+  },
+  {
+    "language": "en",
+    "text": "Welcome to the Winter Palace, Emperor Alexander. From the shores of the Baltic to the Pacific Ocean, your realm stretches far and wide. Yet Russia's greatness is measured in more than its borders: its future rests with those who till its soil, build its cities, and guard its frontiers. The serfs await freedom, the provinces a voice in their own affairs, and the army reform. Free your people, entrust the zemstvos with the care of their communities, and open the way to education and justice. Let reform strengthen the state, and peace give your subjects time to build. Can you guide Russia through its trials and bequeath to future generations an empire whose strength springs from the well-being of its people?",
+    "prompt": "(A mature male narrator speaks English with calm authority, rich resonant voice, dignified measured storytelling, thoughtful and inspiring, clear natural speech.)",
+    "seed": 731,
+    "steps": 32,
+    "cfg": 2,
+    "reference": "art\\build\\voice\\integration\\narrator\\en-narrator-reference.wav",
+    "reference_sha256": "69c3ecd242ca2a3b3a266348e13f5870cf1fd985b756c00492408726adbb31aa",
+    "source": "Base/Platforms/Windows/audio/English(US)/Speech_Localized.xml DOM_LEAD_PET.wav",
+    "seconds": 53.66,
+    "raw": "loading-en-raw.wav",
+    "clean": "loading-en-clean.wav",
+    "raw_sha256": "b5aeae23f975c4ac412caca9c00b01fe2bd631387c8309aa6340e68bd5be3164",
+    "clean_sha256": "c4775f6ddd2e02effcd3bc7fb4c08fd3039812f43a8cd1eeb198a2a36f4faaa5",
+    "status": "draft text and voice awaiting user review",
+    "join_silence_seconds": 0.25,
+    "sample_rate": 48000,
+    "processing": "Butterworth order 2 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  }
+]

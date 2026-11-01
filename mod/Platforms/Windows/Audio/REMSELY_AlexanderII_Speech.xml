@@ -11,6 +11,32 @@
         <Event Id="1895120767" Name="Play_REMSELY_AlexanderII_WARNING" GUID="{971A9745-89E3-5D71-96DE-14FBCBE68D80}"/>
         <Event Id="229343008" Name="Play_REMSELY_AlexanderII_DEFEAT" GUID="{8C64B052-41E9-5614-8986-07DE59708AFB}"/>
         <Event Id="2234229935" Name="Play_REMSELY_AlexanderII_DECLARE_WAR_FROM_HUMAN" GUID="{0207CFC2-030C-5D2D-9C71-D3091446DE8B}"/>
+        <Event Id="3709316133" Name="Play_REMSELY_AlexanderII_ACCEPT_DECLARE_FRIEND_FROM_AI" GUID="{2BDDD2F7-7229-5DFC-BC92-CF4467F820EA}"/>
+        <Event Id="1999317822" Name="Play_REMSELY_AlexanderII_ACCEPT_DECLARE_FRIEND_FROM_HUMAN" GUID="{3086484A-D0B3-5A95-89CF-53EE8EA0928A}"/>
+        <Event Id="3108196515" Name="Play_REMSELY_AlexanderII_ACCEPT_DELEGATION_FROM_HUMAN" GUID="{F63C4E1E-8DDE-5677-9018-5B954D245B5D}"/>
+        <Event Id="1454641599" Name="Play_REMSELY_AlexanderII_ACCEPT_MAKE_DEAL_FROM_AI" GUID="{C4FBD26B-87A3-5DFD-B01F-31C85C160E88}"/>
+        <Event Id="4174600361" Name="Play_REMSELY_AlexanderII_ACCEPT_OPEN_BORDERS_FROM_HUMAN" GUID="{2D2CC099-B97D-5908-B6DE-335FD1F9931A}"/>
+        <Event Id="3969764932" Name="Play_REMSELY_AlexanderII_DECLARE_FRIEND_FROM_AI" GUID="{C84A677A-6652-5C9C-8A81-124D1E72F12A}"/>
+        <Event Id="1046838927" Name="Play_REMSELY_AlexanderII_DELEGATION_FROM_AI" GUID="{0A2C8C39-DE5B-5ADA-922E-B6AC84903A3F}"/>
+        <Event Id="2025155928" Name="Play_REMSELY_AlexanderII_DENOUNCE_FROM_AI" GUID="{CBCA3850-D3E5-5E2E-B6F3-364EF0622A19}"/>
+        <Event Id="1259556121" Name="Play_REMSELY_AlexanderII_DENOUNCE_FROM_HUMAN" GUID="{E8EBF742-9B4B-5C02-B1B2-0665FCD09825}"/>
+        <Event Id="1172328450" Name="Play_REMSELY_AlexanderII_FIRST_MEET_NEAR_INITIATOR_POSITIVE" GUID="{2E50F67C-490A-51F5-B728-98B9DA3C0472}"/>
+        <Event Id="395317942" Name="Play_REMSELY_AlexanderII_FIRST_MEET_NO_MANS_INFO_EXCHANGE" GUID="{4CC29BEE-DA66-5F0E-9B1A-E4D8E9CC6B3E}"/>
+        <Event Id="2830110297" Name="Play_REMSELY_AlexanderII_FIRST_MEET_VISIT_RECIPIENT" GUID="{62CCF015-0B9F-52B5-97D6-E966CFD2DD7F}"/>
+        <Event Id="748905044" Name="Play_REMSELY_AlexanderII_GREETING" GUID="{8919617F-4136-54EB-BB30-1923CEA379E6}"/>
+        <Event Id="2723600041" Name="Play_REMSELY_AlexanderII_MAKE_ALLIANCE_FROM_AI" GUID="{EA981C2E-866F-5404-82AD-E476A991D776}"/>
+        <Event Id="1132343497" Name="Play_REMSELY_AlexanderII_MAKE_PEACE_AI_ACCEPT_DEAL" GUID="{2F493215-854E-5971-BA71-FAA770AE2FAB}"/>
+        <Event Id="2336675661" Name="Play_REMSELY_AlexanderII_MAKE_PEACE_AI_REFUSE_DEAL" GUID="{34C745E4-AA3C-50AA-A5F6-8D011ABB2177}"/>
+        <Event Id="2240501656" Name="Play_REMSELY_AlexanderII_MAKE_PEACE_FROM_AI" GUID="{4FDC0034-2477-533B-8921-FDB7B691B121}"/>
+        <Event Id="4263227437" Name="Play_REMSELY_AlexanderII_OPEN_BORDERS_FROM_AI" GUID="{00AA476E-8765-537A-8D08-AD0F4EF571AA}"/>
+        <Event Id="293157166" Name="Play_REMSELY_AlexanderII_REJECT_DECLARE_FRIEND_FROM_AI" GUID="{59EE120B-3E58-5D2D-8A3F-255CC01825C6}"/>
+        <Event Id="97796263" Name="Play_REMSELY_AlexanderII_REJECT_DECLARE_FRIEND_FROM_HUMAN" GUID="{5C1E4A19-D2E7-5FCA-8C92-6515F67E2DAF}"/>
+        <Event Id="792165102" Name="Play_REMSELY_AlexanderII_REJECT_DELEGATION_FROM_HUMAN" GUID="{137013EE-2F19-5FDB-910A-52CF8BAF0C08}"/>
+        <Event Id="920522074" Name="Play_REMSELY_AlexanderII_REJECT_MAKE_DEAL_FROM_AI" GUID="{F0076F5F-D092-50D8-BA68-092B12AAEFD8}"/>
+        <Event Id="195726976" Name="Play_REMSELY_AlexanderII_REJECT_OPEN_BORDERS_FROM_HUMAN" GUID="{0F385228-F960-5A0C-B467-8A5F0037A1AB}"/>
+        <Event Id="184067940" Name="Play_REMSELY_AlexanderII_WARNING_TOO_MANY_TROOPS_NEAR_ME" GUID="{502778A9-57A4-5DD5-BB11-7946B433D603}"/>
+        <Event Id="2690794365" Name="Play_REMSELY_AlexanderII_DEFEAT_FROM_HUMAN" GUID="{7F1B6168-725F-5BB2-9F9F-584A85B4D028}"/>
+        <Event Id="3137245497" Name="Play_REMSELY_AlexanderII_LOADING_RU" GUID="{151AAF90-7FD6-5657-90E2-C1675346B79C}"/>
         <Event Id="870329749" Name="Stop_REMSELY_AlexanderII_Speech" GUID="{2C113551-EDDD-5EE5-9DB0-214C70A49778}"/>
       </IncludedEvents>
       <IncludedMemoryFiles>
@@ -37,6 +63,110 @@
         <File Id="3580184062" Language="SFX">
           <ShortName>declare-war-human-clean.wav</ShortName>
           <Path>3580184062.wem</Path>
+        </File>
+        <File Id="3580184061" Language="SFX">
+          <ShortName>accept-declare-friend-ai-clean.wav</ShortName>
+          <Path>3580184061.wem</Path>
+        </File>
+        <File Id="3580184060" Language="SFX">
+          <ShortName>accept-declare-friend-from-human-clean.wav</ShortName>
+          <Path>3580184060.wem</Path>
+        </File>
+        <File Id="3580184051" Language="SFX">
+          <ShortName>accept-delegation-from-human-clean.wav</ShortName>
+          <Path>3580184051.wem</Path>
+        </File>
+        <File Id="3580184050" Language="SFX">
+          <ShortName>accept-make-deal-from-ai-clean.wav</ShortName>
+          <Path>3580184050.wem</Path>
+        </File>
+        <File Id="3899467966" Language="SFX">
+          <ShortName>accept-open-borders-from-human-clean.wav</ShortName>
+          <Path>3899467966.wem</Path>
+        </File>
+        <File Id="3899467967" Language="SFX">
+          <ShortName>declare-friend-from-ai-clean.wav</ShortName>
+          <Path>3899467967.wem</Path>
+        </File>
+        <File Id="3899467964" Language="SFX">
+          <ShortName>delegation-from-ai-clean.wav</ShortName>
+          <Path>3899467964.wem</Path>
+        </File>
+        <File Id="3899467965" Language="SFX">
+          <ShortName>denounce-ai-clean.wav</ShortName>
+          <Path>3899467965.wem</Path>
+        </File>
+        <File Id="3899467962" Language="SFX">
+          <ShortName>denounce-from-human-clean.wav</ShortName>
+          <Path>3899467962.wem</Path>
+        </File>
+        <File Id="3899467963" Language="SFX">
+          <ShortName>first-meet-near-initiator-positive-clean.wav</ShortName>
+          <Path>3899467963.wem</Path>
+        </File>
+        <File Id="3899467960" Language="SFX">
+          <ShortName>first-meet-no-mans-info-exchange-clean.wav</ShortName>
+          <Path>3899467960.wem</Path>
+        </File>
+        <File Id="3899467961" Language="SFX">
+          <ShortName>first-meet-visit-recipient-clean.wav</ShortName>
+          <Path>3899467961.wem</Path>
+        </File>
+        <File Id="3899467958" Language="SFX">
+          <ShortName>greeting-clean.wav</ShortName>
+          <Path>3899467958.wem</Path>
+        </File>
+        <File Id="3899467959" Language="SFX">
+          <ShortName>make-alliance-from-ai-clean.wav</ShortName>
+          <Path>3899467959.wem</Path>
+        </File>
+        <File Id="3882690251" Language="SFX">
+          <ShortName>make-peace-ai-accept-deal-clean.wav</ShortName>
+          <Path>3882690251.wem</Path>
+        </File>
+        <File Id="3882690250" Language="SFX">
+          <ShortName>make-peace-ai-refuse-deal-clean.wav</ShortName>
+          <Path>3882690250.wem</Path>
+        </File>
+        <File Id="3882690249" Language="SFX">
+          <ShortName>make-peace-from-ai-clean.wav</ShortName>
+          <Path>3882690249.wem</Path>
+        </File>
+        <File Id="3882690248" Language="SFX">
+          <ShortName>open-borders-from-ai-clean.wav</ShortName>
+          <Path>3882690248.wem</Path>
+        </File>
+        <File Id="3882690255" Language="SFX">
+          <ShortName>reject-declare-friend-from-ai-clean.wav</ShortName>
+          <Path>3882690255.wem</Path>
+        </File>
+        <File Id="3882690254" Language="SFX">
+          <ShortName>reject-declare-friend-from-human-clean.wav</ShortName>
+          <Path>3882690254.wem</Path>
+        </File>
+        <File Id="3882690253" Language="SFX">
+          <ShortName>reject-delegation-from-human-clean.wav</ShortName>
+          <Path>3882690253.wem</Path>
+        </File>
+        <File Id="3882690252" Language="SFX">
+          <ShortName>reject-make-deal-from-ai-clean.wav</ShortName>
+          <Path>3882690252.wem</Path>
+        </File>
+        <File Id="3882690243" Language="SFX">
+          <ShortName>reject-open-borders-from-human-clean.wav</ShortName>
+          <Path>3882690243.wem</Path>
+        </File>
+        <File Id="3882690242" Language="SFX">
+          <ShortName>warning-too-many-troops-near-me-clean.wav</ShortName>
+          <Path>3882690242.wem</Path>
+        </File>
+        <File Id="3865912664" Language="SFX">
+          <ShortName>defeat-from-human-clean.wav</ShortName>
+          <Path>3865912664.wem</Path>
+        </File>
+        <File Id="3865912665" Language="SFX">
+          <ShortName>loading-ru-clean.wav</ShortName>
+          <Path>3865912665.wem</Path>
         </File>
       </IncludedMemoryFiles>
     </SoundBank>

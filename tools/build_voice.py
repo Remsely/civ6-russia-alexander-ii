@@ -16,7 +16,7 @@ import numpy as np
 import wave
 from lxml import etree
 
-from leader_voice import BANK, GAIN_DB, LEADER_SPEECH, LINES, ROOT, SELECTED, STOP, bind_scene, event
+from leader_voice import DEFEAT_GROUP, DEFEAT_VALUES, DEFEAT_SWITCH, BANK, GAIN_DB, LEADER_SPEECH, LINES, ROOT, SELECTED, STOP, bind_scene, event
 
 TOOL_SHA = '6bde737465b5b06b376af4489cc84e06d591d40f284c62a3f8f92fac9609edad'
 GAME_AUDIO = Path("C:/Program Files (x86)/Steam/steamapps/common/Sid Meier's Civilization VI/Base/Platforms/Windows/audio")
@@ -62,10 +62,14 @@ def main():
     chain = [bytes(mixer)]
     manifest = {x['file']: x for x in json.loads((SELECTED / 'manifest.json').read_text(encoding='utf-8-sig'))}
     voices, report = [], []
+    trial = json.loads((ROOT / 'art/voice/game-trial-manifest.json').read_text(encoding='utf-8'))
+    trial.append(dict(key='LOADING_RU', file='art/voice/selected/loading-ru-clean.wav', sha256=manifest['loading-ru-clean.wav']['sha256']))
     with tempfile.TemporaryDirectory(prefix='alexander-voice-') as temp:
-        for slot, (filename, _) in LINES.items():
-            source = SELECTED / filename
-            if hashlib.sha256(source.read_bytes()).hexdigest() != manifest[filename]['sha256']:
+        items = [(slot, SELECTED / filename, manifest[filename]['sha256']) for slot, (filename, _) in LINES.items()]
+        items += [(row['key'], ROOT / row['file'], row['sha256']) for row in trial]
+        for slot, source, expected_sha in items:
+            filename = source.name
+            if hashlib.sha256(source.read_bytes()).hexdigest() != expected_sha:
                 raise ValueError('Selected recording changed: ' + filename)
             with wave.open(str(source), 'rb') as recording:
                 rate = recording.getframerate()
@@ -82,7 +86,15 @@ def main():
                 converted.setsampwidth(2)
                 converted.setframerate(rate)
                 converted.writeframes(np.clip(np.rint(samples * 32768), -32768, 32767).astype('<i2').tobytes())
-            voices.append(dict(event=event(slot), wem=tool['pcm_wem'](str(wav)), body=bytes(sound), plugin=0x00010001))
+            body = bytes(sound)
+            if slot == 'LOADING_RU':
+                # -16.7 LUFS source; -8 dB inherited chain plus +7.1 dB here
+                # gives approximately -17.6 LUFS before the shared speech bus.
+                assert sound[30:32] == bytes([1, 0]) and struct.unpack_from('<f', sound, 32)[0] == -2.0
+                adjusted = bytearray(sound)
+                struct.pack_into('<f', adjusted, 32, 5.1)
+                body = bytes(adjusted)
+            voices.append(dict(event=event(slot), wem=tool['pcm_wem'](str(wav)), body=body, plugin=0x00010001))
             report.append(dict(slot=slot, event=event(slot), source=filename, seconds=len(samples) / rate))
     blob, ids = tool['build_bank'](BANK, voices, chain=chain)
     # Our UI stop targets only our own branch. Native Stop_Leader_Speech reaches
@@ -95,6 +107,34 @@ def main():
     struct.pack_into('<I', stop_action, 0, stop_id)
     struct.pack_into('<I', stop_action, 6, fnv(BANK + '/chain0'))
     built = tool['read_hirc'](blob)
+    # The cinematic still fires one DEFEAT event. Only its sound selection changes.
+    # Use our own switch group; never change the game's civilization/era switches.
+    by_id = {struct.unpack_from('<I', body)[0]: (kind, body) for kind, body in built}
+    sounds = []
+    for slot in ('DEFEAT', 'DEFEAT_FROM_HUMAN'):
+        ev = by_id[fnv(event(slot))][1]
+        act = by_id[struct.unpack_from('<I', ev, 8)[0]][1]
+        sounds.append(struct.unpack_from('<I', act, 6)[0])
+    container_id = fnv(DEFEAT_SWITCH)
+    container = tool['switch_container'](container_id, fnv(BANK + '/chain0'),
+        DEFEAT_GROUP, [(value, [sound_id]) for value, sound_id in zip(DEFEAT_VALUES, sounds)], sounds)
+    play_id = struct.unpack_from('<I', by_id[fnv(event('DEFEAT'))][1], 8)[0]
+    updated = []
+    for kind, body in built:
+        oid = struct.unpack_from('<I', body)[0]
+        if oid in sounds:
+            body = bytearray(body)
+            struct.pack_into('<I', body, 25, container_id)
+        elif oid == fnv(BANK + '/chain0'):
+            head, children = tool['split_children'](body)
+            children = [c for c in children if c not in sounds] + [container_id]
+            updated.append((6, container))
+            body = head + struct.pack('<I', len(children)) + b''.join(struct.pack('<I', c) for c in children)
+        elif oid == play_id:
+            body = bytearray(body)
+            struct.pack_into('<I', body, 6, container_id)
+        updated.append((kind, bytes(body)))
+    built = updated
     built.extend([(3, bytes(stop_action)), (4, struct.pack('<III', fnv(STOP), 1, stop_id))])
     media = [(fnv(f'{BANK}/media{i}'), v['wem']) for i, v in enumerate(voices)]
     blob = tool['assemble'](BANK, built, media)

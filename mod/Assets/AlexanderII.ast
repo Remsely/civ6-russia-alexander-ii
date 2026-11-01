@@ -2585,7 +2585,7 @@
             <m_Name text="06_DEFEAT"/>
             <m_Description text=""/>
             <m_AnimationName text="AlexanderII_Voice_DEFEAT"/>
-            <m_fDuration>4.716667</m_fDuration>
+            <m_fDuration>5.196667</m_fDuration>
             <m_Triggers>
               <Element>
                 <m_eType>SOUND</m_eType>

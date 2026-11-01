@@ -1,6 +1,7 @@
 """Speech bindings shared by the asset generator and the audio builder."""
 from pathlib import Path
 import wave
+import json
 from lxml import etree
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,6 +12,14 @@ STOP = 'Stop_REMSELY_AlexanderII_Speech'
 LEADER_SPEECH = 854467727
 GAIN_DB = 1.0
 SCENE_TAIL = 0.35
+DEFEAT_GROUP = 'REMSELY_AlexanderII_DefeatVariant'
+DEFEAT_VALUES = ('FROM_AI', 'FROM_HUMAN')
+DEFEAT_SWITCH = BANK + '/defeat-switch'
+
+
+def defeat_human_source():
+    rows = json.loads((ROOT / 'art/voice/game-trial-manifest.json').read_text(encoding='utf-8'))
+    return ROOT / next(row['file'] for row in rows if row['key'] == 'DEFEAT_FROM_HUMAN')
 LINES = {
     'FIRST_MEET': ('first-meet-clean.wav', 'Play_RUSS_PA_FIRST_MEET_J_Edited'),
     'DECLARE_WAR_FROM_AI': ('declare-war-ai-clean.wav', 'Play_RUSS_PA_DECLARE_WAR_FROM_AI_Edited'),
@@ -77,4 +86,7 @@ def scene_duration(slot, trigger):
     """End the cinematic shortly after speech, rather than after the 16s idle."""
     with wave.open(str(SELECTED / LINES[slot][0])) as recording:
         seconds = recording.getnframes() / recording.getframerate()
+    if slot == 'DEFEAT':
+        with wave.open(str(defeat_human_source())) as recording:
+            seconds = max(seconds, recording.getnframes() / recording.getframerate())
     return float(trigger.findtext('m_fStartTime')) + seconds + SCENE_TAIL

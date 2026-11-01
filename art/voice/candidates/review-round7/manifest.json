@@ -1,0 +1,40 @@
+[
+  {
+    "key": "LOADING_RU",
+    "number": 32,
+    "text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?",
+    "synthesis_text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?",
+    "steps": 96,
+    "seed": 311,
+    "mode": "styled-continuation",
+    "reference": "art\\build\\voice\\integration\\narrator\\ru-peter-loading.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\narrator\\ru-peter-loading-pacing-096.wav",
+    "prompt_text": "Холодный ветер родины не остудит ваш пыл, царь Петр. Ваша страсть к науке и культуре – великий дар; вы многому научитесь благодаря посольствам в дальних странах. Под вашим правлением Россия будет расти и процветать, занимая все новые земли, дабы стать величайшей империей на свете.",
+    "feedback": "Предыдущая регенерация: естественная пауза, но быстро, мягко и приглушенно; ручная пауза отклонена",
+    "style": "(A mature Russian narrator speaks in Russian, calm and stately, solemn, firm and dignified, restrained and serious, not cheerful or affectionate, measured natural phrasing with distinct pauses between clauses.)",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 27.68,
+    "inference_seconds": 293.41247329999896,
+    "reference_sha256": "a8e326e0b88eda832c748e902f51842a1647d8cc0ea516d0e901b512c7841ee3",
+    "prompt_wav_sha256": "e0a4da4c22632d8d74a3cfbc897996ae7b24589257aacb5e53de742c4b6f5319",
+    "raw": "loading-ru-raw.wav",
+    "clean": "loading-ru-clean.wav",
+    "raw_sha256": "76cd91b9070663b9db598e0f7951c9b140b83134ce05a1fbccaa1f8bc285966d",
+    "clean_sha256": "f6ba3fb7c50dc5f69cc5f78732d12f836ca62072412a5364cc0c3343fb972b30",
+    "segments_generated": [
+      {
+        "text": "(A mature Russian narrator speaks in Russian, calm and stately, solemn, firm and dignified, restrained and serious, not cheerful or affectionate, measured natural phrasing with distinct pauses between clauses.) Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?",
+        "seconds": 27.68
+      }
+    ],
+    "status": "rejected automatically: ASR heard style instruction and mostly omitted narration",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24",
+    "mild": "loading-ru-mild.wav",
+    "mild_sha256": "5216c260eedefc8b8f268b25a4b97f07688f037abd82a62b2f9fc2d4359d0096",
+    "mild_processing": "Butterworth order 2 highpass 55 Hz, sosfiltfilt, peak 0.85; no lowpass or tempo change",
+    "unfiltered": "loading-ru-unfiltered.wav",
+    "unfiltered_sha256": "eec053f65b2b0cf606f5bcd7672eca2f3622770eca13533419feabc548fba937",
+    "unfiltered_processing": "peak 0.85 only; no filter or tempo change"
+  }
+]

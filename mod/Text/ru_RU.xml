@@ -38,7 +38,7 @@
     </Replace>
     <!-- Diplomacy lines: DRAFT, to be proofread (ROADMAP phase 5) -->
     <Replace Tag="LOC_DIPLO_ACCEPT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Благодарю. Россия ценит такую дружбу.</Text>
+      <Text>Россия очень ценит дружбу с вами. Благодарю.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_ACCEPT_DECLARE_FRIEND_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Я принимаю ваше предложение дружбы. Пусть она послужит обоим нашим народам.</Text>
@@ -68,7 +68,7 @@
       <Text>Вы одержали верх. Пусть же Россия обретет силы подняться вновь.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DELEGATION_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Я направляю к вашему двору посланников с дарами и уверениями в моем расположении.</Text>
+      <Text>Я направляю к вашему двору посланников с подарками и уверениями в моем расположении.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DENOUNCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Ваши действия недостойны великой державы. Россия этого не забудет. (Осуждает вас)</Text>
@@ -77,7 +77,7 @@
       <Text>Вы вправе так считать. Время рассудит.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Я - Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.</Text>
+      <Text>Я Александр, император Всероссийский, приветствую вас и надеюсь, что наши державы найдут общий язык.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_NEAR_INITIATOR_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Благодарю за теплый прием. Надеюсь, это начало добрых отношений между нашими державами.</Text>
@@ -107,10 +107,10 @@
       <Text>Довольно крови. Заключим мир.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_OPEN_BORDERS_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Позволите ли вы нашим людям и товарам пересекать ваши земли?</Text>
+      <Text>Позволите ли вы нашим людям и товарам пересекать ваши границы?</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
-      <Text>Мне жаль, что вы отвергли мою дружбу. Надеюсь, это не помешает добрым отношениям между нами.</Text>
+      <Text>Мне жаль, что вы отвергли мою дружбу. Надеюсь, это не помешает добрым отношениям между нашими державами.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
       <Text>Благодарю за предложение, но сейчас я не могу назвать наши державы друзьями.</Text>
@@ -202,7 +202,7 @@
       <Plurality>1</Plurality>
     </Replace>
     <Replace Tag="LOC_LOADING_INFO_LEADER_REMSELY_ALEXANDER_II" Language="ru_RU">
-      <Text>Добро пожаловать в Зимний дворец, государь Александр. Ваша империя огромна, а ее бремя старо: крестьяне ждут воли, губернии ждут самоуправления, армия ждет перемен. Освободите крестьян, дайте земствам управлять краем, и Россия окрепнет изнутри.</Text>
+      <Text>Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_TITLE" Language="ru_RU">
       <Text>Александр II</Text>

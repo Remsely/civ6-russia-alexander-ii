@@ -7,7 +7,7 @@ description: Проверка и отладка мода Civilization VI - valid
 
 1. `.venv\Scripts\python.exe tools\validate.py` после каждой правки (SQL по копиям баз, цвета по ванильным XML, парность en/ru, обязательные тексты лидера, ссылки на LOC). Нужен `OK`.
 2. `tools\install.py`, затем попроси пользователя **перезапустить игру** и начать **новую партию**: цвета, города, повестки и свойства пишутся в сохранение, в старой партии изменений не видно.
-3. Если что-то не работает, не гадай: попроси логи из `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Logs\` (`Database.log`, `Modding.log`, `Lua.log`) и ищи `ERROR`.
+3. Если что-то не работает, сначала сам прочитай доступные логи из `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Logs\` (`Database.log`, `Modding.log`, `Lua.log`) и ищи `ERROR`. Сверь дату и маркеры с установленной версией: старый лог не подтверждает новый код. Если доступа нет, запроси необходимые логи у пользователя.
 
 ## Уроки
 - Валидатор ловит не всё. Реальный случай: `INSERT INTO PlayerColors (..., TextColor)` падал в игре (`[ColorManager] ERROR: table PlayerColors has no column named TextColor`), и игра молча брала стандартные цвета. В дампах баз (`reference/game-db`) таблицы цветов нет, валидатор строит её из ванильных XML.

@@ -27,7 +27,10 @@
     "seed": 311,
     "steps": 32,
     "cfg": 2.0,
-    "note": "Первый спокойный вариант; одобрен."
+    "note": "Первый спокойный вариант; одобрен.",
+    "status": "rework requested; preserved installed take",
+    "needs_rework": true,
+    "latest_feedback": "Голос не похож на наш"
   },
   {
     "file": "declare-war-ai-clean.wav",
@@ -37,7 +40,10 @@
     "seed": 311,
     "steps": 32,
     "cfg": 2.0,
-    "note": "Первый спокойный вариант; одобрен."
+    "note": "Первый спокойный вариант; одобрен.",
+    "status": "rework requested; preserved installed take",
+    "needs_rework": true,
+    "latest_feedback": "Голос не похож на наш"
   },
   {
     "file": "kudos-raw.wav",
@@ -47,7 +53,10 @@
     "seed": 311,
     "steps": 32,
     "cfg": 2.0,
-    "note": "Одобрено, мягкая обработка предпочтительна."
+    "note": "Одобрено, мягкая обработка предпочтительна.",
+    "status": "rework requested; preserved installed take",
+    "needs_rework": true,
+    "latest_feedback": "Голос не похож на наш"
   },
   {
     "file": "kudos-clean.wav",
@@ -57,7 +66,10 @@
     "seed": 311,
     "steps": 32,
     "cfg": 2.0,
-    "note": "Одобрено, мягкая обработка предпочтительна."
+    "note": "Одобрено, мягкая обработка предпочтительна.",
+    "status": "rework requested; preserved installed take",
+    "needs_rework": true,
+    "latest_feedback": "Голос не похож на наш"
   },
   {
     "file": "warning-raw.wav",
@@ -67,7 +79,10 @@
     "seed": 311,
     "steps": 32,
     "cfg": 2.0,
-    "note": "Первый сдержанный вариант; предпочтён."
+    "note": "Первый сдержанный вариант; предпочтён.",
+    "status": "rework requested; preserved installed take",
+    "needs_rework": true,
+    "latest_feedback": "Как будто акцент; голос отличается от нашего"
   },
   {
     "file": "warning-clean.wav",
@@ -77,7 +92,10 @@
     "seed": 311,
     "steps": 32,
     "cfg": 2.0,
-    "note": "Первый сдержанный вариант; предпочтён."
+    "note": "Первый сдержанный вариант; предпочтён.",
+    "status": "rework requested; preserved installed take",
+    "needs_rework": true,
+    "latest_feedback": "Как будто акцент; голос отличается от нашего"
   },
   {
     "file": "defeat-ai-raw.wav",
@@ -87,7 +105,10 @@
     "seed": 117,
     "steps": 32,
     "cfg": 2.0,
-    "note": "Третий вариант сдержанной печали; выбран. Произношение слова преобразований требует внимания."
+    "note": "Третий вариант сдержанной печали; выбран. Произношение слова преобразований требует внимания.",
+    "status": "rework requested; preserved installed take",
+    "needs_rework": true,
+    "latest_feedback": "Голос не похож на наш"
   },
   {
     "file": "defeat-ai-clean.wav",
@@ -97,7 +118,10 @@
     "seed": 117,
     "steps": 32,
     "cfg": 2.0,
-    "note": "Третий вариант сдержанной печали; выбран. Произношение слова преобразований требует внимания."
+    "note": "Третий вариант сдержанной печали; выбран. Произношение слова преобразований требует внимания.",
+    "status": "rework requested; preserved installed take",
+    "needs_rework": true,
+    "latest_feedback": "Голос не похож на наш"
   },
   {
     "file": "declare-war-human-raw.wav",
@@ -126,5 +150,96 @@
     "prompt": "(A mature male Russian emperor speaks in Russian, measured pace, calm composed and dignified, quiet even tone, restrained natural conversational acting, clear pronunciation.)",
     "text": "Я долго искал мира. Теперь его нет, и вина лежит на вас.",
     "note": "Вариант 2 выбран пользователем 1 ноября 2026; спокойная сдержанная подача."
+  },
+  {
+    "file": "accept-declare-friend-ai-raw.wav",
+    "sha256": "e9ff52579026ebf590257e44e42de20c94447c20ae47e69e5f39a9a1b51da18a",
+    "source": "art\\voice\\candidates\\friend-appreciation-v1\\friend-appreciation-32-raw.wav",
+    "key": "ACCEPT_DECLARE_FRIEND_FROM_AI",
+    "text": "Россия очень ценит дружбу с вами. Благодарю.",
+    "english_text": "Russia greatly values your friendship. Thank you.",
+    "seed": 731,
+    "steps": 32,
+    "cfg": 2,
+    "reference": "first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt": "(A mature male Russian emperor speaks in Russian, measured pace, calm composed and dignified, quiet even tone, restrained natural conversational acting, clear pronunciation.)",
+    "sample_rate": 48000,
+    "seconds": 3.2,
+    "processing": "Butterworth order 2 70-9500Hz sosfiltfilt peak 0.85 PCM24",
+    "status": "provisional",
+    "note": "Временно выбран первый вариант (32 шага); пользователь по-прежнему недоволен подачей. Вернуться к доработке. Пока не подключен в игре.",
+    "integration_status": "integrated in trial bank; playback unverified"
+  },
+  {
+    "file": "accept-declare-friend-ai-clean.wav",
+    "sha256": "2b745664609182790d03579f826769e04398974245f90f3f4f0444056ca59371",
+    "source": "art\\voice\\candidates\\friend-appreciation-v1\\friend-appreciation-32-clean.wav",
+    "key": "ACCEPT_DECLARE_FRIEND_FROM_AI",
+    "text": "Россия очень ценит дружбу с вами. Благодарю.",
+    "english_text": "Russia greatly values your friendship. Thank you.",
+    "seed": 731,
+    "steps": 32,
+    "cfg": 2,
+    "reference": "first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt": "(A mature male Russian emperor speaks in Russian, measured pace, calm composed and dignified, quiet even tone, restrained natural conversational acting, clear pronunciation.)",
+    "sample_rate": 48000,
+    "seconds": 3.2,
+    "processing": "Butterworth order 2 70-9500Hz sosfiltfilt peak 0.85 PCM24",
+    "status": "provisional",
+    "note": "Временно выбран первый вариант (32 шага); пользователь по-прежнему недоволен подачей. Вернуться к доработке. Пока не подключен в игре.",
+    "integration_status": "integrated in trial bank; playback unverified"
+  },
+  {
+    "file": "denounce-ai-raw.wav",
+    "sha256": "e3731d1b9324da119d885afea3f8be81f13758fe4de894ebfa12f2e385950944",
+    "source": "art\\voice\\candidates\\review-round5-disapproval\\denounce-from-ai-alternative-raw.wav",
+    "key": "DENOUNCE_FROM_AI",
+    "text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+    "seed": 117,
+    "steps": 32,
+    "cfg": 2,
+    "reference": "art/voice/selected/first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt": "(A mature Russian emperor speaks in Russian, calm and restrained but clearly disapproving, firm and dignified, natural conversation, without shouting.)",
+    "sample_rate": 48000,
+    "seconds": 4.64,
+    "status": "selected; integrated in trial bank; playback unverified",
+    "note": "Пользователь выбрал вариант 2."
+  },
+  {
+    "file": "denounce-ai-clean.wav",
+    "sha256": "eaab0f6bf7c25eb0aed879e747bad06b08e525d8548fc6aaa2be8255fdd5c97a",
+    "source": "art\\voice\\candidates\\review-round5-disapproval\\denounce-from-ai-alternative-clean.wav",
+    "key": "DENOUNCE_FROM_AI",
+    "text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+    "seed": 117,
+    "steps": 32,
+    "cfg": 2,
+    "reference": "art/voice/selected/first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt": "(A mature Russian emperor speaks in Russian, calm and restrained but clearly disapproving, firm and dignified, natural conversation, without shouting.)",
+    "sample_rate": 48000,
+    "seconds": 4.64,
+    "status": "selected; integrated in trial bank; playback unverified",
+    "note": "Пользователь выбрал вариант 2."
+  },
+  {
+    "file": "loading-ru-clean.wav",
+    "sha256": "6105da961ea8c4a539cdce4a2678ceb7d7d3085af4f37a34d752156131df9b27",
+    "source": "art\\voice\\candidates\\review-round11\\loading-ru-tempo-088.wav",
+    "key": "LOADING_RU",
+    "text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?",
+    "seed": 117,
+    "steps": 128,
+    "cfg": 2,
+    "reference": "art\\build\\voice\\integration\\narrator\\ru-peter-loading.wav",
+    "reference_sha256": "a8e326e0b88eda832c748e902f51842a1647d8cc0ea516d0e901b512c7841ee3",
+    "prompt": "(A Russian narrator speaks Russian in a stately, solemn, serious, firm and dignified voice, with measured pace and deliberate phrasing.)",
+    "sample_rate": 48000,
+    "processing": "peak normalized to 0.85, no filter, ffmpeg atempo 0.88; same as preferred 96-step candidate",
+    "status": "selected; integrated in trial bank; playback unverified",
+    "note": "Пользователь предпочел 128 шагов варианту на 96; темп 88%."
   }
 ]

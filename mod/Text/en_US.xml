@@ -36,7 +36,7 @@
     </Replace>
     <!-- Diplomacy lines: DRAFT, to be proofread (ROADMAP phase 5) -->
     <Replace Tag="LOC_DIPLO_ACCEPT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Thank you. Russia values such friendship.</Text>
+      <Text>Russia greatly values your friendship. Thank you.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_ACCEPT_DECLARE_FRIEND_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>I accept your offer of friendship. May it serve both our peoples.</Text>
@@ -66,7 +66,7 @@
       <Text>You have prevailed. May Russia find the strength to rise again.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DELEGATION_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>I send envoys to your court bearing gifts and assurances of my goodwill.</Text>
+      <Text>I send envoys to your court bearing presents and assurances of my goodwill.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_DENOUNCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>Your conduct is unworthy of a great power. Russia will not forget it. (Denounces You)</Text>
@@ -75,7 +75,7 @@
       <Text>You are entitled to think so. Time will tell.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>I am Alexander, Emperor of All Russia. I greet you and hope our nations will find common ground.</Text>
+      <Text>I am Alexander, Emperor of All Russia, and I greet you, hoping our nations will find common ground.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_FIRST_MEET_NEAR_INITIATOR_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>Thank you for your warm reception. I hope this marks the beginning of good relations between our nations.</Text>
@@ -105,10 +105,10 @@
       <Text>Enough blood has been shed. Let us make peace.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_OPEN_BORDERS_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>Will you allow our people and goods to cross your lands?</Text>
+      <Text>Will you allow our people and goods to cross your borders?</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
-      <Text>I regret that you have declined my friendship. I hope this will not stand in the way of good relations between us.</Text>
+      <Text>I regret that you have declined my friendship. I hope this will not stand in the way of good relations between our nations.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_REJECT_DECLARE_FRIEND_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="en_US">
       <Text>I thank you for your offer, but I cannot call our nations friends at present.</Text>
@@ -172,7 +172,7 @@
       <Text>Tomsk</Text>
     </Replace>
     <Replace Tag="LOC_LOADING_INFO_LEADER_REMSELY_ALEXANDER_II" Language="en_US">
-      <Text>Welcome to the Winter Palace, Emperor Alexander. Your empire is vast and its burdens are old: the serfs wait for freedom, the provinces for self-government, the army for reform. Free your peasants, let the Zemstvos govern the land, and Russia will grow strong from within.</Text>
+      <Text>Welcome to the Winter Palace, Emperor Alexander. From the shores of the Baltic to the Pacific Ocean, your realm stretches far and wide. Yet Russia's greatness is measured in more than its borders: its future rests with those who till its soil, build its cities, and guard its frontiers. The serfs await freedom, the provinces a voice in their own affairs, and the army reform. Free your people, entrust the zemstvos with the care of their communities, and open the way to education and justice. Let reform strengthen the state, and peace give your subjects time to build. Can you guide Russia through its trials and bequeath to future generations an empire whose strength springs from the well-being of its people?</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_TITLE" Language="en_US">
       <Text>Alexander II</Text>
