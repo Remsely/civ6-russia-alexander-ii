@@ -30,7 +30,8 @@ The release order reflects the agreed direction. Dates are unset; mechanics that
 
 - [ ] Refine the 3D model based on feedback.
 - [ ] Add movement animations for different diplomacy situations.
-- [ ] Improve the 2D backgrounds on the loading and diplomacy screens.
+- [ ] Before reworking the 2D backgrounds, inspect the number and purpose of vanilla leaders' separate loading and diplomacy backgrounds; distinguish independent variants from parallax layers. Determine whether the game supports switching backgrounds between diplomacy scenes/situations and assess whether Alexander would benefit from different backgrounds. If supported and useful, define the variants and test switching with one prototype.
+- [ ] Improve the 2D backgrounds on the loading and diplomacy screens based on the findings.
 
 ## v3.0.0 — unique district and speech
 
