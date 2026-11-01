@@ -18,7 +18,9 @@ The release order reflects the agreed direction. Dates are unset; mechanics that
 - [x] Rework the ability: from the Industrial Era, +1 Builder charge, +1 Food per two adjacent Farms (tiers at 2/4/6), +1 Governor title and +10% growth for cities with an assigned Governor; Pasture Production and the unit upgrade discount removed.
 - [x] Implement the railway network: a city connected to the Capital by rail gets +1 Production and +1 Gold per foreign rail-connected city, with no design cap (the tier machinery's technical bound is 200 foreign cities); Gathering Storm is a hard dependency.
 - [ ] Complete the in-game checks of the ability and the railway network ([docs/en/TESTING.md](docs/en/TESTING.md)).
-- [ ] Produce high-quality voice: loading narration in English and Russian, diplomacy in Russian. Research AI options, including local ones.
+- [x] Select a voice and integrate six Russian diplomacy recordings on Windows; the user confirmed the current build on November 1, 2026, following duration/loop and speech-stop fixes.
+- [ ] Record and integrate RU/EN loading narration and the second defeat text with separate audio selection; verify redistribution terms. [Voice audit (Russian)](docs/voice-coverage.ru.md).
+- [ ] Consider voicing the other 24 lines after completing the minimal set.
 
 ## v2.5.0 — a living leader
 

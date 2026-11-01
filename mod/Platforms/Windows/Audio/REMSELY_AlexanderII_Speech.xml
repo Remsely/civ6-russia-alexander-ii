@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="10" SoundbankVersion="113">
+  <SoundBanks>
+    <SoundBank Id="2881740416" Language="SFX">
+      <ShortName>REMSELY_AlexanderII_Speech</ShortName>
+      <Path>REMSELY_AlexanderII_Speech.bnk</Path>
+      <IncludedEvents>
+        <Event Id="3989851997" Name="Play_REMSELY_AlexanderII_FIRST_MEET" GUID="{0D4811B7-F666-5968-9D43-413B05D03C48}"/>
+        <Event Id="1022246950" Name="Play_REMSELY_AlexanderII_DECLARE_WAR_FROM_AI" GUID="{C579C057-8C85-5A33-BD67-8D361BD58699}"/>
+        <Event Id="231957545" Name="Play_REMSELY_AlexanderII_KUDOS" GUID="{B6FC6159-F735-5483-9FB6-D572EA035274}"/>
+        <Event Id="1895120767" Name="Play_REMSELY_AlexanderII_WARNING" GUID="{971A9745-89E3-5D71-96DE-14FBCBE68D80}"/>
+        <Event Id="229343008" Name="Play_REMSELY_AlexanderII_DEFEAT" GUID="{8C64B052-41E9-5614-8986-07DE59708AFB}"/>
+        <Event Id="2234229935" Name="Play_REMSELY_AlexanderII_DECLARE_WAR_FROM_HUMAN" GUID="{0207CFC2-030C-5D2D-9C71-D3091446DE8B}"/>
+        <Event Id="870329749" Name="Stop_REMSELY_AlexanderII_Speech" GUID="{2C113551-EDDD-5EE5-9DB0-214C70A49778}"/>
+      </IncludedEvents>
+      <IncludedMemoryFiles>
+        <File Id="3580184059" Language="SFX">
+          <ShortName>first-meet-clean.wav</ShortName>
+          <Path>3580184059.wem</Path>
+        </File>
+        <File Id="3580184058" Language="SFX">
+          <ShortName>declare-war-ai-clean.wav</ShortName>
+          <Path>3580184058.wem</Path>
+        </File>
+        <File Id="3580184057" Language="SFX">
+          <ShortName>kudos-clean.wav</ShortName>
+          <Path>3580184057.wem</Path>
+        </File>
+        <File Id="3580184056" Language="SFX">
+          <ShortName>warning-clean.wav</ShortName>
+          <Path>3580184056.wem</Path>
+        </File>
+        <File Id="3580184063" Language="SFX">
+          <ShortName>defeat-ai-clean.wav</ShortName>
+          <Path>3580184063.wem</Path>
+        </File>
+        <File Id="3580184062" Language="SFX">
+          <ShortName>declare-war-human-clean.wav</ShortName>
+          <Path>3580184062.wem</Path>
+        </File>
+      </IncludedMemoryFiles>
+    </SoundBank>
+  </SoundBanks>
+</SoundBanksInfo>

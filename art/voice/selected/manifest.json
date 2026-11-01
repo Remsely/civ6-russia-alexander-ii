@@ -98,5 +98,33 @@
     "steps": 32,
     "cfg": 2.0,
     "note": "Третий вариант сдержанной печали; выбран. Произношение слова преобразований требует внимания."
+  },
+  {
+    "file": "declare-war-human-raw.wav",
+    "sha256": "ba775bbbb4fbdd83b6ed2ffcbc8cb0901ff0eb5e70786bf11f41fc4d45054a22",
+    "source": "war-human-v2/war-human-2-raw.wav",
+    "key": "DECLARE_WAR_FROM_HUMAN",
+    "seed": 731,
+    "steps": 32,
+    "cfg": 2.0,
+    "reference": "first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt": "(A mature male Russian emperor speaks in Russian, measured pace, calm composed and dignified, quiet even tone, restrained natural conversational acting, clear pronunciation.)",
+    "text": "Я долго искал мира. Теперь его нет, и вина лежит на вас.",
+    "note": "Вариант 2 выбран пользователем 1 ноября 2026; спокойная сдержанная подача."
+  },
+  {
+    "file": "declare-war-human-clean.wav",
+    "sha256": "06608c74bbac181ea391382a76d2f2258f9032f8fa310bbd79c6e1a079ea2d55",
+    "source": "war-human-v2/war-human-2-clean.wav",
+    "key": "DECLARE_WAR_FROM_HUMAN",
+    "seed": 731,
+    "steps": 32,
+    "cfg": 2.0,
+    "reference": "first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt": "(A mature male Russian emperor speaks in Russian, measured pace, calm composed and dignified, quiet even tone, restrained natural conversational acting, clear pronunciation.)",
+    "text": "Я долго искал мира. Теперь его нет, и вина лежит на вас.",
+    "note": "Вариант 2 выбран пользователем 1 ноября 2026; спокойная сдержанная подача."
   }
 ]

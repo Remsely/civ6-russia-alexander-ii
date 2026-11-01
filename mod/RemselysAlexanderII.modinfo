@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <Mod id="2963ce6a-9b5e-4b12-b040-219e08807d3b" version="2">
   <Properties>
     <Name>[COLOR_Emergency_In_Progress]Remsely's[ENDCOLOR] Russian Empire: Alexander II</Name>
@@ -59,6 +59,17 @@
       <File>Lua/RemselysAlexanderII_Farms.lua</File>
       <File>Lua/RemselysAlexanderII_Railways.lua</File>
     </AddGameplayScripts>
+    <AddUserInterfaces id="REMSELY_Voice_UI">
+      <Properties>
+        <Context>InGame</Context>
+      </Properties>
+      <File>UI/RemselysAlexanderII_Voice.xml</File>
+    </AddUserInterfaces>
+    <UpdateAudio id="REMSELY_InGame_Audio">
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderIIBanks.ini</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.bnk</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.xml</File>
+    </UpdateAudio>
   </InGameActions>
   <Files>
     <File>Data/Config.sql</File>
@@ -106,5 +117,10 @@
     <File>XLPs/Leader_AlexanderII.xlp</File>
     <File>Platforms/Windows/BLPs/leaders/leader_remsely_alexander_ii.blp</File>
     <File>Platforms/MacOS/BLPs/leaders/leader_remsely_alexander_ii.blp</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderIIBanks.ini</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.bnk</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.xml</File>
+    <File>UI/RemselysAlexanderII_Voice.xml</File>
+    <File>UI/RemselysAlexanderII_Voice.lua</File>
   </Files>
 </Mod>

@@ -217,6 +217,12 @@ def main() -> int:
     check_sql(actions)
     mod_tags = check_text(files)
     check_loc_refs(actions, mod_tags)
+    if any(tag == 'UpdateAudio' for _, tag, _ in actions):
+        from verify_voice import verify_voice
+        try:
+            verify_voice()
+        except (AssertionError, ValueError, KeyError, OSError, IndexError) as error:
+            err(f'voice bank: {error}')
     if '--leader-bindings' in sys.argv:
         from verify_leader_bindings import verify_current
 

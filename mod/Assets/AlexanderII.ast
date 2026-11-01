@@ -94,27 +94,27 @@
           </Element>
           <Element>
             <m_SlotName text="01_FIRST_MEET"/>
-            <m_AnimationName text="AlexanderII_Idle"/>
+            <m_AnimationName text="AlexanderII_Voice_FIRST_MEET"/>
           </Element>
           <Element>
             <m_SlotName text="02_DECLARE_WAR_FROM_HUMAN"/>
-            <m_AnimationName text="AlexanderII_Idle"/>
+            <m_AnimationName text="AlexanderII_Voice_DECLARE_WAR_FROM_HUMAN"/>
           </Element>
           <Element>
             <m_SlotName text="03_DECLARE_WAR_FROM_AI"/>
-            <m_AnimationName text="AlexanderII_Idle"/>
+            <m_AnimationName text="AlexanderII_Voice_DECLARE_WAR_FROM_AI"/>
           </Element>
           <Element>
             <m_SlotName text="04_KUDOS"/>
-            <m_AnimationName text="AlexanderII_Idle"/>
+            <m_AnimationName text="AlexanderII_Voice_KUDOS"/>
           </Element>
           <Element>
             <m_SlotName text="05_WARNING"/>
-            <m_AnimationName text="AlexanderII_Idle"/>
+            <m_AnimationName text="AlexanderII_Voice_WARNING"/>
           </Element>
           <Element>
             <m_SlotName text="06_DEFEAT"/>
-            <m_AnimationName text="AlexanderII_Idle"/>
+            <m_AnimationName text="AlexanderII_Voice_DEFEAT"/>
           </Element>
         </m_Bindings>
       </m_animationBindings>
@@ -2155,14 +2155,14 @@
           <Element>
             <m_Name text="01_FIRST_MEET"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderII_Idle"/>
-            <m_fDuration>0.000000</m_fDuration>
+            <m_AnimationName text="AlexanderII_Voice_FIRST_MEET"/>
+            <m_fDuration>7.090000</m_fDuration>
             <m_Triggers>
               <Element>
                 <m_eType>SOUND</m_eType>
                 <m_Name text="1"/>
                 <m_Description text=""/>
-                <m_FXName text="Play_RUSS_PA_FIRST_MEET_J_Edited"/>
+                <m_FXName text="Play_REMSELY_AlexanderII_FIRST_MEET"/>
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>0.500000</m_fStartTime>
@@ -2215,17 +2215,6 @@
               </Element>
               <Element>
                 <m_eType>SOUND</m_eType>
-                <m_Name text="17"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Cloth_Medium"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>9.088617</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
                 <m_Name text="18"/>
                 <m_Description text=""/>
                 <m_FXName text="Leader_Foley_Cloth_Medium"/>
@@ -2235,18 +2224,7 @@
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="28"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>9.717448</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>2</m_nTrackIndex>
-              </Element>
-            </m_Triggers>
+              </m_Triggers>
             <m_Tracks>
               <Element>
                 <m_Name text="Sound"/>
@@ -2285,32 +2263,20 @@
           <Element>
             <m_Name text="02_DECLARE_WAR_FROM_HUMAN"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderII_Idle"/>
-            <m_fDuration>0.000000</m_fDuration>
+            <m_AnimationName text="AlexanderII_Voice_DECLARE_WAR_FROM_HUMAN"/>
+            <m_fDuration>4.110000</m_fDuration>
             <m_Triggers>
               <Element>
                 <m_eType>SOUND</m_eType>
-                <m_Name text="2"/>
+                <m_Name text="REMSELY_Speech"/>
                 <m_Description text=""/>
-                <m_FXName text="Play_RUSS_PA_DECLARE_WAR_FROM_HUMAN_B_Edited"/>
+                <m_FXName text="Play_REMSELY_AlexanderII_DECLARE_WAR_FROM_HUMAN"/>
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>0.400000</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>0</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="19"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Cloth_Silkier_Medium"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>4.546875</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
+              </Element><Element>
                 <m_eType>SOUND</m_eType>
                 <m_Name text="20"/>
                 <m_Description text=""/>
@@ -2318,28 +2284,6 @@
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>3.750000</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="21"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Cloth_Hard"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>4.937500</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="22"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Cloth_Medium"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>10.167969</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
               </Element>
@@ -2376,29 +2320,7 @@
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>2</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="32"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>9.621095</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>2</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="33"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Phillip_Footstep_Medium"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>10.425782</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>2</m_nTrackIndex>
-              </Element>
-            </m_Triggers>
+              </m_Triggers>
             <m_Tracks>
               <Element>
                 <m_Name text="Sound"/>
@@ -2437,14 +2359,14 @@
           <Element>
             <m_Name text="03_DECLARE_WAR_FROM_AI"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderII_Idle"/>
-            <m_fDuration>0.000000</m_fDuration>
+            <m_AnimationName text="AlexanderII_Voice_DECLARE_WAR_FROM_AI"/>
+            <m_fDuration>8.176667</m_fDuration>
             <m_Triggers>
               <Element>
                 <m_eType>SOUND</m_eType>
                 <m_Name text="3"/>
                 <m_Description text=""/>
-                <m_FXName text="Play_RUSS_PA_DECLARE_WAR_FROM_AI_Edited"/>
+                <m_FXName text="Play_REMSELY_AlexanderII_DECLARE_WAR_FROM_AI"/>
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>0.466667</m_fStartTime>
@@ -2472,17 +2394,6 @@
                 <m_fStartTime>1.335938</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>2</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="34"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Cloth_Medium"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>8.474219</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
               </Element>
               <Element>
                 <m_eType>SOUND</m_eType>
@@ -2545,41 +2456,19 @@
           <Element>
             <m_Name text="04_KUDOS"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderII_Idle"/>
-            <m_fDuration>0.000000</m_fDuration>
+            <m_AnimationName text="AlexanderII_Voice_KUDOS"/>
+            <m_fDuration>5.296667</m_fDuration>
             <m_Triggers>
               <Element>
                 <m_eType>SOUND</m_eType>
                 <m_Name text="4"/>
                 <m_Description text=""/>
-                <m_FXName text="Play_RUSS_PA_KUDOS_A"/>
+                <m_FXName text="Play_REMSELY_AlexanderII_KUDOS"/>
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>0.466667</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>0</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="37"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Footstep_Scuff_Long"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>5.630691</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>2</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="38"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Phillip_Footstep_Medium"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>5.320986</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>2</m_nTrackIndex>
               </Element>
               <Element>
                 <m_eType>SOUND</m_eType>
@@ -2642,54 +2531,21 @@
           <Element>
             <m_Name text="05_WARNING"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderII_Idle"/>
-            <m_fDuration>0.000000</m_fDuration>
+            <m_AnimationName text="AlexanderII_Voice_WARNING"/>
+            <m_fDuration>5.523333</m_fDuration>
             <m_Triggers>
               <Element>
                 <m_eType>SOUND</m_eType>
                 <m_Name text="5"/>
                 <m_Description text=""/>
-                <m_FXName text="Play_RUSS_PA_WARNING_F_1"/>
+                <m_FXName text="Play_REMSELY_AlexanderII_WARNING"/>
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>0.533333</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>0</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="41"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Cloth_Hard"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>7.160492</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="42"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Cloth_Grab_Soft"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>7.358026</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>2</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="43"/>
-                <m_Description text=""/>
-                <m_FXName text="Leader_Foley_Cloth_Medium"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>6.567905</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-            </m_Triggers>
+              </m_Triggers>
             <m_Tracks>
               <Element>
                 <m_Name text="Sound"/>
@@ -2728,14 +2584,14 @@
           <Element>
             <m_Name text="06_DEFEAT"/>
             <m_Description text=""/>
-            <m_AnimationName text="AlexanderII_Idle"/>
-            <m_fDuration>0.000000</m_fDuration>
+            <m_AnimationName text="AlexanderII_Voice_DEFEAT"/>
+            <m_fDuration>4.716667</m_fDuration>
             <m_Triggers>
               <Element>
                 <m_eType>SOUND</m_eType>
                 <m_Name text="6"/>
                 <m_Description text=""/>
-                <m_FXName text="Play_RUSS_PA_DEFEAT_C"/>
+                <m_FXName text="Play_REMSELY_AlexanderII_DEFEAT"/>
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>0.366667</m_fStartTime>

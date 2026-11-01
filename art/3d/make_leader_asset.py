@@ -29,6 +29,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
 from make_art import write_dds  # noqa: E402
+from leader_voice import bind_scene  # noqa: E402
 
 MOD = ROOT / "mod"
 EXPORT = ROOT / "art" / "build" / "export"
@@ -238,6 +239,7 @@ def ast(info):
         s.find("m_GroupName").set("text", m["group"])
         s.find(".//m_ObjectName").set("text", m["group"])
         states.append(s)
+    bind_scene(tree)
     a.find("m_Name").set("text", NAME)
     save(tree, MOD / "Assets" / f"{NAME}.ast")
 

@@ -30,3 +30,7 @@ description: Сборка мода Civilization VI без ModBuddy - cooker SDK 
 - Решение `RemselysAlexanderII.civ6sln` в корне, проект `mod/RemselysAlexanderII.civ6proj` — генерирует `tools/make_modbuddy.py` из `.modinfo` (руками не править). Мод в `mod/`, а не в корне: Asset Editor и cooker сканируют всю папку проекта и ломаются о `reference/` (junction на игру и SDK).
 - ModBuddy при сборке пишет **свой** `.dep` из `.Art.xml`. Пустые списки пакетов в Art.xml = в игре пропадают портрет, иконка, фон загрузки, а вместо 3D-лидера Клеопатра. Поэтому `make_modbuddy.py` строит Art.xml из нашего `.dep`, а проект после сборки копирует наш `.dep` (цель `RestoreDep`). После смены проекта ModBuddy нужно закрыть и заново открыть решение — иначе он собирает старую версию из памяти.
 - Сборка ModBuddy кладёт мод в ту же папку, что `install.py` (`Mods\RemselysAlexanderII`): последняя сборка перезаписывает предыдущую.
+
+## Озвучка
+
+При изменении выбранных WAV/событий сначала `tools/build_voice.py` (зависимость bnktool закреплена SHA; подготовка — `docs/voice-integration.ru.md`), затем validate и обычный build. `build.py` перед cook генерирует реальные короткие речевые FGX через `voice_animations.ps1`, после cook проверяет длительности BLP. Один короткий ANM поверх старого длинного FGX недостаточен. При правке только банка, без изменения AST/ANM/FGX, повторный cook арта не нужен; требуется validate/install. Банк поддержан на Windows; MacOS BLP не подтверждает аудио MacOS.

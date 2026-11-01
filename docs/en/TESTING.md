@@ -48,3 +48,8 @@ Speed-up: FireTuner — grant techs, change era, assign a Governor.
 ## Logs
 
 `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Logs\`: `Database.log`, `Modding.log`, `Lua.log`, `ArtDef.log` (3D and art). Look for lines with `ERROR` and `Remsely`/`REMSELY`. `tools/validate.py` does not catch everything: for example, a bad `PlayerColors` column only shows in `Database.log` (look for `[ColorManager] ERROR`).
+
+
+## Voice confirmation and regression checks
+
+On November 1, 2026, the user confirmed the current Windows build with six diplomacy recordings after the loop/duration and Escape fixes. This is general confirmation, not a separate test log for every situation. After changes, check first meeting, both war directions, agenda approval/warning and defeat; one playback, transition to dialogue, Escape/RMB mid-sentence, leader switching and the speech volume control. The user must restart and launch the game. Build details and limits for the second defeat text/loading narration: `docs/voice-integration.ru.md`; recording coverage: `docs/voice-coverage.ru.md` (Russian).
