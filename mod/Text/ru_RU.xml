@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <GameData>
   <LocalizedText>
     <Replace Tag="LOC_LEADER_REMSELY_ALEXANDER_II_NAME" Language="ru_RU">
@@ -31,10 +31,10 @@
       <Text>(Вы недавно объявили войну)</Text>
     </Replace>
     <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_DESCRIPTION" Language="ru_RU">
-      <Text>Adds Alexander II as an alternate leader of Russia: the Tsar-Liberator who abolished serfdom.[NEWLINE][NEWLINE]THE GREAT REFORMS (from the Industrial Era)[NEWLINE][ICON_BULLET] Emancipation of the Serfs: Builders have +1 charge, Farms get +1 Food for every 2 adjacent Farms.[NEWLINE][ICON_BULLET] Zemstvo Reform: on entering the Industrial Era the empire gains 1 Governor title; cities with an assigned Governor get +10% growth.[NEWLINE][ICON_BULLET] Railway Network: every city gets +1 Production for each city of your civilization connected to it by railroad (no more than the city's Population) and +1 Gold for each foreign city connected to it by railroad.[NEWLINE][NEWLINE]AGENDA: THE LIBERATOR[NEWLINE]Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.[NEWLINE][NEWLINE]INCLUDED[NEWLINE][ICON_BULLET] 14 new Russian city names, the capital is Saint Petersburg[NEWLINE][ICON_BULLET] Portrait, icon, loading screen and diplomacy backgrounds[NEWLINE][ICON_BULLET] 31 diplomacy lines and a Civilopedia page[NEWLINE][ICON_BULLET] English and Russian text[NEWLINE][NEWLINE]Requires Gathering Storm (railroads, Governors). The leader plays as Russia.[NEWLINE][NEWLINE]Author: Remsely. Made with Claude Code (Anthropic).</Text>
+      <Text>Adds Alexander II as an alternate leader of Russia: the Tsar-Liberator who abolished serfdom.[NEWLINE][NEWLINE]THE GREAT REFORMS (from the Industrial Era)[NEWLINE][ICON_BULLET] Emancipation of the Serfs: Builders have +1 charge, Farms get +1 Food for every 2 adjacent Farms.[NEWLINE][ICON_BULLET] Zemstvo Reform: on entering the Industrial Era the empire gains 1 Governor title; cities with an assigned Governor get +10% growth.[NEWLINE][ICON_BULLET] Railway Network: every city gets +1 Production for each city of your civilization connected to it by railroad (no more than the city's Population) and +1 Gold for each foreign city connected to it by railroad.[NEWLINE][NEWLINE]AGENDA: THE LIBERATOR[NEWLINE]Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.[NEWLINE][NEWLINE]INCLUDED[NEWLINE][ICON_BULLET] 14 new Russian city names, the capital is Saint Petersburg[NEWLINE][ICON_BULLET] Animated 3D leader, portrait, icon, loading screen and diplomacy backgrounds[NEWLINE][ICON_BULLET] 31 diplomacy lines with Russian voice recordings on Windows, plus a Civilopedia page[NEWLINE][ICON_BULLET] English and Russian text; Alexander speaks Russian in either interface language[NEWLINE][ICON_BULLET] Expanded loading narration; Russian recording included, English narrator recording in preparation[NEWLINE][NEWLINE]Requires Gathering Storm (railroads, Governors). The leader plays as Russia.[NEWLINE][NEWLINE]Author: Remsely. Made with Claude Code (Anthropic).</Text>
     </Replace>
     <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_TEASER" Language="ru_RU">
-      <Text>Alexander II, the Tsar-Liberator, for Russia: Great Reforms, agenda, cities, diplomacy lines and art.</Text>
+      <Text>Alexander II for Russia: Great Reforms, railways, an animated 3D leader and Russian diplomacy voice.</Text>
     </Replace>
     <!-- Diplomacy lines: DRAFT, to be proofread (ROADMAP phase 5) -->
     <Replace Tag="LOC_DIPLO_ACCEPT_DECLARE_FRIEND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">

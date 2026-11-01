@@ -152,6 +152,14 @@ Not allowed: the opening of the 1856 speech about "rumours" (out of context it m
 
 Print sources: «Голос минувшего», 1916, № 5–6, p. 393; Tatishchev S. S., Emperor Alexander II, vol. 1, Moscow, 1996, p. 331; Lyashenko L. M., Alexander II, Moscow, 2002, pp. 170–171 (in Russian).
 
+## 10. Voice
+
+Alexander's diplomacy dialogue is always spoken in Russian, regardless of interface language. Subtitles are localized into en_US and ru_RU. English voice is planned only for the loading-screen narrator; English versions of Alexander's own dialogue are not required.
+
+The current Windows build integrates recordings for all 31 diplomacy texts and full Russian loading narration. The user confirmed the original six scenes; new routes, separate selection of the two defeat texts and loading narration still require in-game checks. Some takes are being refined. An English narrator is not yet selected or integrated: the English interface temporarily plays Russian loading narration. MacOS art packages do not establish voice support on that platform.
+
+Settings and feedback: `../voice-v2-plan.ru.md`; listening catalog: `../voice-review.ru.md`; integration and verification limits: `../voice-integration.ru.md` (Russian).
+
 ## Sources
 
 - Alexander II: https://inventaire.io/entity/wd:Q83171

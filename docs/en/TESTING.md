@@ -52,4 +52,13 @@ Speed-up: FireTuner — grant techs, change era, assign a Governor.
 
 ## Voice confirmation and regression checks
 
-On November 1, 2026, the user confirmed the current Windows build with six diplomacy recordings after the loop/duration and Escape fixes. This is general confirmation, not a separate test log for every situation. After changes, check first meeting, both war directions, agenda approval/warning and defeat; one playback, transition to dialogue, Escape/RMB mid-sentence, leader switching and the speech volume control. The user must restart and launch the game. Build details and limits for the second defeat text/loading narration: `docs/voice-integration.ru.md`; recording coverage: `docs/voice-coverage.ru.md` (Russian).
+On November 1, 2026, the user confirmed the earlier Windows build with six diplomacy recordings after loop, duration and Escape fixes. That confirmation does not cover the later expansion. All 31 diplomacy texts and Russian loading narration are now integrated; new routing needs testing after a game restart. The user launches the game.
+
+- [ ] First meeting, both war directions and agenda approval/warning: one playback, timely transition to responses, Escape/RMB during speech, leader switching and the speech-volume control.
+- [ ] Both defeat texts: the recording matches the subtitles, the two voices never overlap and neither ending is cut off. Lua.log markers: `REMSELY voice: defeat variant FROM_AI` / `FROM_HUMAN`.
+- [ ] Other 24 dialogue lines: correct recordings for delegations, friendship, deals, borders and peace; opening the scene does not immediately stop them.
+- [ ] Russian loading narration: full text, measured delivery, volume comparable to other loading narrators, no loops, and stops when loading closes. Marker: `REMSELY voice: loading narration started`.
+- [ ] In both Russian and English interfaces, Alexander speaks Russian and subtitles follow the interface language.
+- [ ] Once an English narrator is integrated: only loading narration follows the interface language; diplomacy remains Russian. English audio is currently absent, so both interfaces temporarily use RU loading narration.
+
+Quality review by number: [catalog](../voice-review.ru.md); build, limitations and current routes: [integration](../voice-integration.ru.md) (Russian). A recording's presence in the bank does not complete a listening check.

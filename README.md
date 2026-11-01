@@ -19,7 +19,9 @@ A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate lea
 
 **Also:** a researched 45-name city list led by Saint Petersburg (Moscow, Odessa, Kharkov, Sevastopol, Vladivostok, Tashkent, Baku, Riga…), black-and-gold border colors, a loading screen background, a diplomacy background, 31 diplomacy lines and a Civilopedia page, in English and Russian.
 
-Requires Gathering Storm. Platforms: Windows and macOS (BLPs are built for both; the mod has not been tested in game on macOS).
+**Voice (Windows):** recordings for all 31 diplomacy texts and full Russian loading narration are integrated in the development build. Alexander speaks Russian in either interface language; subtitles are English or Russian. English narration is planned only for the loading screen and is not yet integrated. Extended dialogue routing and both defeat variants still need in-game confirmation; some takes need polishing.
+
+Requires Gathering Storm. Art packages are built for Windows and macOS; voice integration currently targets Windows. The mod has not been tested in game on macOS.
 
 ## Install
 
@@ -53,7 +55,7 @@ Documentation:
 - [docs/en/terms.md](docs/en/terms.md) — the game terms glossary;
 - [CHANGELOG.md](CHANGELOG.md) — version history.
 
-The current development branch contains v1.5.0 changes; published releases may differ.
+The current development branch contains v2.0.0-alpha release preparation; published releases may differ. See the [roadmap](ROADMAP.md) and [draft release notes](docs/v2.0.0-alpha-release-notes.md).
 
 The `reference/` folder (in `.gitignore`) consists of links to game files and database dumps — see "Окружение" in [CLAUDE.md](CLAUDE.md).
 

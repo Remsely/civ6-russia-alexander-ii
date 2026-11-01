@@ -15,12 +15,16 @@ The release order reflects the agreed direction. Dates are unset; mechanics that
 
 ## v2.0.0 — reforms and voice
 
-- [x] Rework the ability: from the Industrial Era, +1 Builder charge, +1 Food per two adjacent Farms (tiers at 2/4/6), +1 Governor title and +10% growth for cities with an assigned Governor; Pasture Production and the unit upgrade discount removed.
-- [x] Implement the railway network: a city connected to the Capital by rail gets +1 Production and +1 Gold per foreign rail-connected city, with no design cap (the tier machinery's technical bound is 200 foreign cities); Gathering Storm is a hard dependency.
-- [ ] Complete the in-game checks of the ability and the railway network ([docs/en/TESTING.md](docs/en/TESTING.md)).
-- [x] Select a voice and integrate six Russian diplomacy recordings on Windows; the user confirmed the current build on November 1, 2026, following duration/loop and speech-stop fixes.
-- [ ] Record and integrate RU/EN loading narration and the second defeat text with separate audio selection; verify redistribution terms. [Voice audit (Russian)](docs/voice-coverage.ru.md).
-- [ ] Consider voicing the other 24 lines after completing the minimal set.
+**Status:** implementation prepared; in-game testing and voice polishing continue. The release has not been published.
+
+- [x] Rework the ability: from the Industrial Era, +1 Builder charge, +1 Food per two adjacent Farms (tiers at 2/4/6), a one-time Governor title and +10% growth for cities with an assigned Governor; remove Pasture Production and the unit upgrade discount.
+- [x] Implement the railway network: each city gets +1 Production per rail-connected own city (capped by the receiving city's Population) and +1 Gold per rail-connected foreign city. A Capital connection is not required; city-states and civilizations at war count. Gathering Storm is required.
+- [ ] Complete in-game checks of the ability, railways, save/load and compatibility ([TESTING](docs/en/TESTING.md)).
+- [x] Select a Russian voice and integrate six core diplomacy recordings on Windows; the user confirmed the earlier build on November 1, 2026 after loop, duration and speech-stop fixes.
+- [x] Prepare recordings for all 31 diplomacy texts, including the other 24 lines and the second defeat variant; integrate trial routing, separate audio selection for the two DEFEAT texts, and full Russian loading narration.
+- [ ] Test the new loading narration and volume, extended dialogue and both defeat variants in game; refine takes with outstanding feedback. [Voice audit (Russian)](docs/voice-coverage.ru.md).
+- [ ] Select and integrate an English narrator for the loading screen only; test narration language selection. Alexander's dialogue stays Russian in every interface language, with RU/EN subtitles.
+- [ ] Complete text review, final checks, release versioning and packaging. [Draft release notes](docs/v2.0.0-alpha-release-notes.md). [Release preparation checklist](docs/v2.0.0-alpha-release-checklist.md).
 
 ## v2.5.0 — a living leader
 
