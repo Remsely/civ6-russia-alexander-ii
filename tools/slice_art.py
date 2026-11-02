@@ -3,7 +3,7 @@
 Вход:  art/source/alexander_ii_full.png  (в полный рост, прозрачный фон) -> портрет
        art/source/alexander_ii_short.png (по пояс, прозрачный фон)       -> иконка
        art/source/cabinet.png (кабинет, 16:9)                            -> фон экрана загрузки
-       art/source/diplomacy.png (тёмный зал, 16:9)                       -> фон fallback-картинки и задний план 3D-лидера в дипломатии
+       art/source/diplomacy_petrovsky_night.png (Петровский зал)                       -> фон fallback-картинки и задний план 3D-лидера в дипломатии
 Выход: art/build/portrait_827x1024.png, fallback_827x1024.png, background_loading_1920x955.png, scene_1920x1010.png,
        art/build/icon_<размер>.png (круглая иконка лидера, 8 размеров)
 
@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE_FULL = ROOT / "art" / "source" / "alexander_ii_full.png"
 SOURCE_SHORT = ROOT / "art" / "source" / "alexander_ii_short.png"
 SOURCE_CABINET = ROOT / "art" / "source" / "cabinet.png"
-SOURCE_DIPLOMACY = ROOT / "art" / "source" / "diplomacy.png"
+SOURCE_DIPLOMACY = ROOT / "art" / "source" / "diplomacy_petrovsky_night.png"
 BUILD = ROOT / "art" / "build"
 
 PORTRAIT_SIZE = (827, 1024)

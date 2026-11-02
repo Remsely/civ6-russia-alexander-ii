@@ -16,9 +16,9 @@ INSERT INTO Traits (TraitType, Name, Description) VALUES
 INSERT INTO LeaderTraits (LeaderType, TraitType) VALUES
 		('LEADER_REMSELY_ALEXANDER_II', 'TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS');
 
--- Loading screen: our portrait and background (the study in the Winter Palace)
+-- Loading screen: our portrait over Peter's standard Russian map background.
 INSERT INTO LoadingInfo (LeaderType, ForegroundImage, BackgroundImage, PlayDawnOfManAudio) VALUES
-		('LEADER_REMSELY_ALEXANDER_II', 'LEADER_REMSELY_ALEXANDER_II_NEUTRAL', 'LEADER_REMSELY_ALEXANDER_II_BACKGROUND', 0);
+		('LEADER_REMSELY_ALEXANDER_II', 'LEADER_REMSELY_ALEXANDER_II_NEUTRAL', 'LEADER_PETER_GREAT_BACKGROUND', 0);
 
 INSERT INTO CivilizationLeaders (CivilizationType, LeaderType, CapitalName) VALUES
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', 'LOC_CITY_NAME_ST_PETERSBURG');
