@@ -33,14 +33,15 @@ def verify_voice():
     selected = {row['file']: row for row in json.loads((ROOT / 'art/voice/selected/manifest.json').read_text(encoding='utf-8-sig'))}
     sources = {slot: dict(file='art/voice/selected/' + filename, sha256=selected[filename]['sha256'])
                for slot, (filename, _) in LINES.items()}
-    extras = [row['key'] for row in trial] + ['LOADING_RU']
+    extras = [row['key'] for row in trial]
     assert len(set(extras)) == len(extras) and not set(extras) & set(LINES), 'duplicate voice slot'
     sources.update({row['key']: row for row in trial})
-    sources['LOADING_RU'] = dict(file='art/voice/selected/loading-ru-clean.wav', sha256=selected['loading-ru-clean.wav']['sha256'])
     texts = {r.get('Tag'): r.findtext('Text') for r in etree.parse(str(ROOT / 'mod/Text/ru_RU.xml')).findall('.//Replace')}
     for row in trial:
         text = texts['LOC_DIPLO_' + row['key'] + '_LEADER_REMSELY_ALEXANDER_II_ANY'].replace(' (Осуждает вас)', '')
         assert text == row['text'], 'voice/subtitle mismatch: ' + row['key']
+    from loading_voice import verify_loading_voice
+    verify_loading_voice()
     assert len(media) == len(LINES) + len(extras) and media == sorted(media), 'media index'
     for _, start, size in media:
         wem = chunks[b'DATA'][1][start:start + size]
@@ -124,9 +125,6 @@ def verify_voice():
             cursor += 8 + length + (length % 2)
         assert struct.unpack_from('<HHI', wav_chunks[b'fmt ']) == (0xfffe, 1, 48000), 'embedded format: ' + slot
         assert wav_chunks[b'data'] == expected, 'embedded PCM differs from selected source: ' + slot
-        if slot == 'LOADING_RU':
-            assert sound[30:32] == b'\x01\x00' and abs(struct.unpack_from('<f', sound, 32)[0] - 5.1) < 1e-5, 'loading gain'
-
         assert order.index(sound_id) < order.index(action_id) < order.index(voice_hash(name))
     for slot in LINES:
         trigger = next(t for t in scene.findall('.//m_Triggers/Element')

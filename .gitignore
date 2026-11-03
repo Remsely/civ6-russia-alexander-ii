@@ -50,3 +50,7 @@ cooker.log
 mod/Platforms/*/BLPs/leaders/
 # Текстуры 3D-лидера для cooker'а: несжатые DDS (~0,5 ГБ), art/3d/make_leader_asset.py пишет их из art/3d/textures/*.png
 mod/Textures/LEAD_REMSELY_ALEXANDER_II_*.dds
+
+# Rejected loading auditions stay local; recipes/reports and selected WAVs are versioned.
+art/voice/candidates/loading-short-*/*.wav
+art/voice/candidates/loading-approved-edit-v1/*.wav

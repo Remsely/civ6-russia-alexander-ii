@@ -45,29 +45,6 @@ local defeatTextSwitches = {
 local function SetDefeatVariant(value)
     UI.SetSoundSwitchValue("REMSELY_AlexanderII_DefeatVariant", value);
 end
-local loadingStarted = false;
-
-local function OnLoadingContentReady()
-    if loadingStarted or UI.IsResyncLoadInProgress() or GameConfiguration:IsWorldBuilderEditor() then return; end
-    local playerID = Network.GetLocalPlayerID();
-    if GameConfiguration.IsHotseat() then
-        for id = 0, MapConfiguration.GetMaxMajorPlayers() - 1 do
-            local p = PlayerConfigurations[id];
-            if p ~= nil and p:GetSlotStatus() == SlotStatus.SS_TAKEN then playerID = id; break; end
-        end
-    end
-    local p = PlayerConfigurations[playerID];
-    if p ~= nil and p:GetLeaderTypeName() == "LEADER_REMSELY_ALEXANDER_II" then
-        loadingStarted = true;
-        UI.PlaySound("Play_REMSELY_AlexanderII_LOADING_RU");
-        print("REMSELY voice: loading narration started");
-    end
-end
-
-local function OnLoadingClosed()
-    if loadingStarted then StopVoice(); loadingStarted = false; end
-end
-
 local function OnSceneOpened(playerID)
     local config = PlayerConfigurations[playerID];
     observingAlexander = config ~= nil and config:GetLeaderTypeName() == "LEADER_REMSELY_ALEXANDER_II";
@@ -122,8 +99,6 @@ end
 
 local function Shutdown()
     StopVoice();
-    Events.LoadScreenContentReady.Remove(OnLoadingContentReady);
-    Events.LoadScreenClose.Remove(OnLoadingClosed);
     Events.HideLeaderScreen.Remove(StopVoice);
     Events.ShowLeaderScreen.Remove(StopVoice);
     Events.DiplomacyStatement.Remove(OnStatement);
@@ -133,8 +108,6 @@ local function Shutdown()
     LuaEvents.DiploScene_SceneClosed.Remove(OnSceneClosed);
 end
 
-Events.LoadScreenContentReady.Add(OnLoadingContentReady);
-Events.LoadScreenClose.Add(OnLoadingClosed);
 Events.HideLeaderScreen.Add(StopVoice);
 Events.ShowLeaderScreen.Add(StopVoice);
 Events.DiplomacyStatement.Add(OnStatement);

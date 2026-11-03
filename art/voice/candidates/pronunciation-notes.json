@@ -39,7 +39,9 @@
       "delivery": "размеренно, торжественно, четко и естественно",
       "review": "проверять ударения и смысловые акценты в целых предложениях; избегать роботизированной манеры",
       "preferred_steps": "128 preferred to 96; selected review-round11, seed 117, CFG 2, atempo 0.88, no filter",
-      "phrasing": "Natural generated pause before «губернии»; manual pause splice rejected. Solemn and firm, not soft or kindly; measured words without syllabic fragmentation."
+      "phrasing": "Natural generated pause before «губернии»; manual pause splice rejected. Solemn and firm, not soft or kindly; measured words without syllabic fragmentation.",
+      "latest_feedback": "Прежний v9 seed311/128 шагов гораздо лучше160. Попробовать точку с запятой в прежнем рецепте.",
+      "pending_experiment": "V12 same128steps/seed311/reference/CFG2/mode/style/processing88%; only synthesis comma→semicolon before губернии.37.63s;ASR gap0.52vs0.28; awaiting listening, no manual pause, not installed."
     }
   },
   "note": "Записи фиксируют услышанное пользователем; подсказки ударения не гарантируют результат. Не переносить их в игровые XML. Для исправлений допустима согласованная по смыслу замена, в обоих языках; новые дубли проверяет пользователь."

@@ -36,7 +36,6 @@
         <Event Id="195726976" Name="Play_REMSELY_AlexanderII_REJECT_OPEN_BORDERS_FROM_HUMAN" GUID="{0F385228-F960-5A0C-B467-8A5F0037A1AB}"/>
         <Event Id="184067940" Name="Play_REMSELY_AlexanderII_WARNING_TOO_MANY_TROOPS_NEAR_ME" GUID="{502778A9-57A4-5DD5-BB11-7946B433D603}"/>
         <Event Id="2690794365" Name="Play_REMSELY_AlexanderII_DEFEAT_FROM_HUMAN" GUID="{7F1B6168-725F-5BB2-9F9F-584A85B4D028}"/>
-        <Event Id="3137245497" Name="Play_REMSELY_AlexanderII_LOADING_RU" GUID="{151AAF90-7FD6-5657-90E2-C1675346B79C}"/>
         <Event Id="870329749" Name="Stop_REMSELY_AlexanderII_Speech" GUID="{2C113551-EDDD-5EE5-9DB0-214C70A49778}"/>
       </IncludedEvents>
       <IncludedMemoryFiles>
@@ -163,10 +162,6 @@
         <File Id="3865912664" Language="SFX">
           <ShortName>defeat-from-human-clean.wav</ShortName>
           <Path>3865912664.wem</Path>
-        </File>
-        <File Id="3865912665" Language="SFX">
-          <ShortName>loading-ru-clean.wav</ShortName>
-          <Path>3865912665.wem</Path>
         </File>
       </IncludedMemoryFiles>
     </SoundBank>

@@ -19,9 +19,9 @@
   },
   "LOADING_RU": {
     "candidate": "loading-v1/loading-ru-clean.wav",
-    "status": "selected; not integrated",
+    "status": "selected seed311; installed 2026-11-03; runtime check pending",
     "user_feedback": "Слишком суетливо; в игре размереннее и четче; ошибки ударений",
-    "next_candidates": "review-round11",
+    "next_candidates": null,
     "pronunciation": {
       "суду": "суду́"
     },
@@ -29,11 +29,14 @@
     "preferred_steps": 96,
     "preferred_excerpt": "prosody-steps-v1/loading-64-clean.wav",
     "steps_comparison_feedback": "64 шага гораздо лучше; подтверждение относится к короткому фрагменту",
-    "latest_feedback": "128 шагов лучше 96",
+    "latest_feedback": "Оставить loading-ru-seed-311-tempo-088.wav и установить в игру. Более поздние пробы не выбраны.",
     "number": 32,
     "needs_rework": false,
-    "preferred_candidate": "art\\voice\\selected\\loading-ru-clean.wav",
-    "selection_feedback": "Пользователь предпочел 128 шагов; темп 88%"
+    "preferred_candidate": "art/voice/candidates/loading-short-v9-normal-088/loading-ru-seed-311-tempo-088.wav",
+    "selection_feedback": "Пользователь предпочел 128 шагов; темп 88%",
+    "generation_only": true,
+    "pending_candidate_dir": null,
+    "reference_control_dir": "art/voice/candidates/loading-short-v14-preferred-reference"
   },
   "FIRST_MEET": {
     "preferred_steps": 32,

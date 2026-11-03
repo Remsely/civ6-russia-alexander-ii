@@ -1,0 +1,5 @@
+{
+  "status": "rejected before listening: incomplete ending",
+  "asr_check": "asr-check.json",
+  "conclusion": "Increasing steps 128 to 160 did not fix early completion with seed 117; do not install"
+}

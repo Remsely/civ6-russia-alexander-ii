@@ -46,6 +46,8 @@ def main():
   for index,text in enumerate(texts,1):
    torch.manual_seed(item['seed'])
    kwargs=dict(reference_wav_path=str(reference),cfg_value=plan['cfg'],inference_timesteps=item['steps'],denoise=False,normalize=False)
+   for option in ('min_len','max_len'):
+    if option in item:kwargs[option]=int(item[option])
    if item['mode'] in ('calm-continuation','styled-continuation'):
     kwargs.update(prompt_wav_path=str(prompt),prompt_text=item['prompt_text'])
    if item['mode'] != 'calm-continuation':

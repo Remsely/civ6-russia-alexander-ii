@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="10" SoundbankVersion="113">
+  <SoundBanks>
+    <SoundBank Id="145284426" Language="SFX">
+      <ShortName>REMSELY_AlexanderII_Loading</ShortName>
+      <Path>REMSELY_AlexanderII_Loading.bnk</Path>
+      <IncludedEvents>
+        <Event Id="3137245497" Name="Play_REMSELY_AlexanderII_LOADING_RU" GUID="{151AAF90-7FD6-5657-90E2-C1675346B79C}"/>
+        <Event Id="1127040149" Name="Stop_REMSELY_AlexanderII_Loading" GUID="{D94084A5-16F8-58D6-8B59-A514D52ED8CC}"/>
+      </IncludedEvents>
+      <IncludedMemoryFiles>
+        <File Id="1688565349" Language="SFX">
+          <ShortName>loading-ru-seed-311-tempo-088.wav</ShortName>
+          <Path>1688565349.wem</Path>
+        </File>
+      </IncludedMemoryFiles>
+    </SoundBank>
+  </SoundBanks>
+</SoundBanksInfo>

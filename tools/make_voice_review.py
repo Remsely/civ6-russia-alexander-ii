@@ -84,10 +84,28 @@ for row in ET.parse(ROOT/'mod/Text/ru_RU.xml').getroot().iter('Replace'):
  page += [f'## {count}. {LABELS[key]}', '',f'`{key}` — {state}.', '',text,'',f'![Прослушать]({path.as_posix()})','']
  if note:page += ['Последнее замечание: '+note+'.','']
 assert count==31
-loading=selected['LOADING_RU']
-page += ['## 32. Полное русское вступление', '', loading['text'], '',
- f"![Выбранный дубль: 128 шагов, темп 88%]({(ROOT/'art/voice/selected'/loading['file']).as_posix()})", '',
- 'Выбран пользователем; без фильтра, atempo 0.88. Подключен к пробной сборке; запуск и громкость в игре не подтверждены.', '',
+from loading_voice import loading_recording
+loading=loading_recording()
+page += ['## 32. Русское вступление', '', loading['text'], '',
+ f"![128 шагов, темп 88%]({(ROOT/loading['file']).as_posix()})", '',
+ f"Сокращенная проба: {loading['seconds']:.2f} с, без фильтра, atempo 0.88. Распознаванием проверен текст; качество подачи, естественность концовки и последовательность в игре ожидают проверки. Штатная речь об эпохе сохранена перед обращением к лидеру. Прежний выбранный полный дубль сохранен в selected/.", '',
  'Архив предыдущих дублей: [история]('+str((ROOT/'art/voice/candidates/diplomacy-v1/review.md').as_posix())+').', '']
+if loading.get('user_feedback'): page += ['Последний отзыв о текущем установленном дубле: '+loading['user_feedback'], '']
+next_loading=feedback.get('LOADING_RU',{}).get('next_candidates')
+if next_loading:
+ candidate_dir=ROOT/'art/voice/candidates'/next_loading
+ review_path=candidate_dir/'review.json'
+ if review_path.exists():
+  primary=json.loads(review_path.read_text(encoding='utf-8'))
+  takes=[primary]+primary.get('alternatives',[])
+  text_shown=False
+  for index,take in enumerate(takes,1):
+   # Preview eligibility is not an installation approval or a passed transcript check.
+   if not (take.get('asr_content_matches') or take.get('listening_ready')): continue
+   page += [f"Новая проба №32, вариант {index}, seed {take['seed']}; ожидает прослушивания, не установлена.", '',
+    f"![{take['steps']} шагов, темп 88%, вариант {index}]({(candidate_dir/take['review_file']).as_posix()})", '',
+    f"Длительность: {take['seconds']:.2f} с. {take.get('review_note_ru', '')} {take.get('transcript_note_ru', 'Распознаванием проверены слова; тембр, подача и естественная концовка оцениваются на слух.')}", '']
+   if not text_shown and take['text'] != loading['text']:
+    page += ['Текст новых проб: '+take['text'], ''];text_shown=True
 (ROOT/'docs/voice-review.ru.md').write_text('\n'.join(page),encoding='utf-8')
 print('Current catalog updated: 31 diplomatic entries + loading; English excluded')

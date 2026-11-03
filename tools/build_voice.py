@@ -63,7 +63,6 @@ def main():
     manifest = {x['file']: x for x in json.loads((SELECTED / 'manifest.json').read_text(encoding='utf-8-sig'))}
     voices, report = [], []
     trial = json.loads((ROOT / 'art/voice/game-trial-manifest.json').read_text(encoding='utf-8'))
-    trial.append(dict(key='LOADING_RU', file='art/voice/selected/loading-ru-clean.wav', sha256=manifest['loading-ru-clean.wav']['sha256']))
     with tempfile.TemporaryDirectory(prefix='alexander-voice-') as temp:
         items = [(slot, SELECTED / filename, manifest[filename]['sha256']) for slot, (filename, _) in LINES.items()]
         items += [(row['key'], ROOT / row['file'], row['sha256']) for row in trial]
@@ -87,13 +86,6 @@ def main():
                 converted.setframerate(rate)
                 converted.writeframes(np.clip(np.rint(samples * 32768), -32768, 32767).astype('<i2').tobytes())
             body = bytes(sound)
-            if slot == 'LOADING_RU':
-                # -16.7 LUFS source; -8 dB inherited chain plus +7.1 dB here
-                # gives approximately -17.6 LUFS before the shared speech bus.
-                assert sound[30:32] == bytes([1, 0]) and struct.unpack_from('<f', sound, 32)[0] == -2.0
-                adjusted = bytearray(sound)
-                struct.pack_into('<f', adjusted, 32, 5.1)
-                body = bytes(adjusted)
             voices.append(dict(event=event(slot), wem=tool['pcm_wem'](str(wav)), body=body, plugin=0x00010001))
             report.append(dict(slot=slot, event=event(slot), source=filename, seconds=len(samples) / rate))
     blob, ids = tool['build_bank'](BANK, voices, chain=chain)
@@ -164,7 +156,9 @@ def main():
     tree = etree.parse(str(scene))
     bind_scene(tree)
     save(tree, scene)
-    # Register audio and the small, independent UI context (no vanilla UI override).
+    from loading_voice import build_loading_bank
+    build_loading_bank(tool, objects, original_sound=bytes(sound), chain=tool['official_chain'](str(args.game_audio / 'Speech.bnk'), LINES['FIRST_MEET'][1]))
+    # Register diplomacy audio/UI. The loading narrator has a separate Global bank.
     modinfo = ROOT / 'mod/RemselysAlexanderII.modinfo'
     tree = etree.parse(str(modinfo))
     files = ['Platforms/Windows/Audio/' + name for name in

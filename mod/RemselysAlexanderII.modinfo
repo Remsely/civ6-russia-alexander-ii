@@ -31,8 +31,32 @@
     <UpdateColors id="REMSELY_FrontEnd_Colors">
       <File>Data/Colors.sql</File>
     </UpdateColors>
+    <UpdateAudio id="REMSELY_FrontEnd_Audio">
+      <Properties>
+        <LoadOrder>10</LoadOrder>
+      </Properties>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderIILoadingBanks.ini</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.bnk</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.xml</File>
+    </UpdateAudio>
+    <ImportFiles id="REMSELY_LoadScreen_Voice">
+      <Properties>
+        <LoadOrder>20</LoadOrder>
+      </Properties>
+      <File>UI/LoadScreen.lua</File>
+      <File>UI/RemselysAlexanderII_LoadScreen.lua</File>
+      <File>UI/RemselysAlexanderII_LoadingEraDurations.lua</File>
+    </ImportFiles>
   </FrontEndActions>
   <InGameActions>
+    <UpdateAudio id="REMSELY_Loading_Audio">
+      <Properties>
+        <LoadOrder>10</LoadOrder>
+      </Properties>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderIILoadingBanks.ini</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.bnk</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.xml</File>
+    </UpdateAudio>
     <UpdateDatabase id="REMSELY_InGame_Data">
       <Properties>
         <LoadOrder>10</LoadOrder>
@@ -122,5 +146,11 @@
     <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.xml</File>
     <File>UI/RemselysAlexanderII_Voice.xml</File>
     <File>UI/RemselysAlexanderII_Voice.lua</File>
+    <File>UI/RemselysAlexanderII_LoadScreen.lua</File>
+    <File>UI/LoadScreen.lua</File>
+    <File>UI/RemselysAlexanderII_LoadingEraDurations.lua</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderIILoadingBanks.ini</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.bnk</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.xml</File>
   </Files>
 </Mod>

@@ -1,0 +1,5 @@
+{
+  "status": "rejected by user",
+  "feedback": "Звучит как слоу мо. Нужна нормальная генерация с последующим замедлением до88%, как при работе над Александром.",
+  "constraint": "No slowed reference, no artificial long min_len, no splicing; regular synthesis followed by atempo0.88"
+}

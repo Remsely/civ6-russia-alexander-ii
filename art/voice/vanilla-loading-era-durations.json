@@ -1,0 +1,552 @@
+{
+  "Chinese(PRC)": {
+    "ERA_CLASSICAL": {
+      "seconds": 16.765604166666666,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 203439920,
+      "sha256": "7ff580c4294ede4c09e62705d944b57c39a9cca7526ab05132ec49a76952970c"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 23.067041666666668,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 206937887,
+      "sha256": "29be8fbb11de8888372a9fe8a81cd90dcc79630722becd8809daea2f7075d209"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 22.334458333333334,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 208585309,
+      "sha256": "3fcf6412b25f5bccbcb3670ea1acd41dbc5f52c463aa2cf3a0a64316aa14a172"
+    },
+    "ERA_MODERN": {
+      "seconds": 29.021708333333333,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 230453225,
+      "sha256": "e01c7cced790234c38c3514decce2ba3b2a7dca0c1d5adf9d5df2848b95f15cc"
+    },
+    "ERA_INDUSTRIAL": {
+      "seconds": 22.131270833333332,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 734667734,
+      "sha256": "afcd3fece71eaf7542abcc7acdc7b57d45b15783a344893fe1e02d8f08b5a4c7"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 17.889666666666667,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 923789840,
+      "sha256": "50c02d11159764703da52e05f01f333273aeed9ea920ef5e256901d45317feb8"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 26.788333333333334,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 926053006,
+      "sha256": "06a8d56fbc5d7b822278ba1ef3268232df424b238382e06f46cc44824b65daac"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 17.748083333333334,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 947890557,
+      "sha256": "ecf29e4aabd2de25a51f5be5e440891df49ae5ce1871e8577ef0314a17bae519"
+    }
+  },
+  "Chinese(Taiwan)": {
+    "ERA_INDUSTRIAL": {
+      "seconds": 28.483208333333334,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 83861006,
+      "sha256": "2f9118bf0cdaaf576354944ae0005e7217ee1402079d5aabc3ad415b38c92fda"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 26.7069375,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 378374089,
+      "sha256": "6effea93c9453f005a5619edaacd99f32a43b479b57ec19fa4f0f26b1c95d230"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 25.10129166666667,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 431477079,
+      "sha256": "99f4f29f241ece5d8ad4eb0aa5646ae7606ab8c98be813125d1a2d68c8068173"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 26.483395833333333,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 891385043,
+      "sha256": "2ac3891471f9bb9afb2450da635dc7cc5848cafa3701514b151a68cae21eae72"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 19.0148125,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 899157746,
+      "sha256": "fb53bae6eb19a040b26eb7357c7472a77ac04112fa949a2d7db0f733e4b739bc"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 21.479125,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 954811346,
+      "sha256": "02ca2c38dc2fa1a7c55a1d9c62c3d9ffa40538579d36cc1618638abd748737a4"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 31.9475625,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 966963001,
+      "sha256": "27ba5758700c1939b9f26e6cd8ab16b7f1c6afdb5fccfd3c59dadaf7533b1410"
+    },
+    "ERA_MODERN": {
+      "seconds": 31.143583333333332,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 969975793,
+      "sha256": "9f9c10b3d9c705f1ebfe9dd739c259ad572cd86f4140a07a525052416528d223"
+    }
+  },
+  "English(US)": {
+    "ERA_INDUSTRIAL": {
+      "seconds": 24.278645833333332,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 138316366,
+      "sha256": "6ee060b20deb558dce378e79e4817c474b3c7c913507a08093cccdf42689dc27"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 23.191979166666666,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 313431795,
+      "sha256": "119ef391cec6f5777b38028761b3bf3099dc6f4866ba4c672e7c8db3470d2f8d"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 19.284979166666666,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 419374500,
+      "sha256": "14c23142a95cc86c454b901ae21995a8c65f045a92c16f879edff2cbd6d75247"
+    },
+    "ERA_MODERN": {
+      "seconds": 31.863645833333333,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 462003994,
+      "sha256": "5ef7793860b6bce39f16021ac57adda7a26e981a49310a9c3f4215cb695e0ceb"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 26.058958333333333,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 709511606,
+      "sha256": "96bc45830a064dcd120053ad3e6d736a48562a279b8b35017e2a4542f9899efa"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 22.89741666666667,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 899087152,
+      "sha256": "aa977c92b5c0d8901d3f3d2ea81b236a76fe3a571f6415fff7aabf7f1a7b2c68"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 26.430979166666667,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 899959243,
+      "sha256": "9d94db2e841039a16f327820a31ee930db7c7ba4fc9420e5c16a7e8996b464d7"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 19.5748125,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 1048558341,
+      "sha256": "e7494643bdd8817b444cd3af715fdde392426ce5d295e2ad4bca94cd9a7edde9"
+    }
+  },
+  "French(France)": {
+    "ERA_ATOMIC": {
+      "seconds": 20.985375,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 91744119,
+      "sha256": "5ce552bd7928dcc3c1c935cbbd67e885eead7b83f5a35b6716e7732522d6bb5f"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 24.341083333333334,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 227607710,
+      "sha256": "40a1d85b2eb7f290a92feab2694b78d5ed1b5fedfa2e03ca7b58803678523a55"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 16.166833333333333,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 719555240,
+      "sha256": "d5b3d3cae54ccb9f5df4a259e0dbd6dfcc410d6ea30aa22015a1e81d85556cc7"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 17.283541666666668,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 732706142,
+      "sha256": "e9b9c3963d6c949f3d0adc6eb255c6a4667ab7cfc55fda104c8ec8e8a7458718"
+    },
+    "ERA_INDUSTRIAL": {
+      "seconds": 22.106791666666666,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 768777445,
+      "sha256": "6ad7ee9c76a95144eb55449517d330cdfe963146b4ba041474782e994a7f333d"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 20.839125,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 770293491,
+      "sha256": "a54da7b31c11386cf35a833e9b8ab37b8278eed60422fa65a509b0c6a73e394a"
+    },
+    "ERA_MODERN": {
+      "seconds": 27.210583333333332,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 842376570,
+      "sha256": "d3d27636ad203d8dd4b5acd34f52217ba8d94fd23631f139e8b0045dc88c0e11"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 27.219791666666666,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 1062399135,
+      "sha256": "a9ab84d32330df228e07086c4aa47668ea4789c6f6376a82062b741ef220bcbb"
+    }
+  },
+  "German": {
+    "ERA_MODERN": {
+      "seconds": 31.5371875,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 5554133,
+      "sha256": "1e106e9ba12c970324c41ccb142cdb6460a3ab1f6e4c7803594501b2a31eabd1"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 24.200583333333334,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 5839487,
+      "sha256": "3fb56fd2999aa3566ba9aea86793192cc7799cd75c0c1229e9f153eb3fdffe5a"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 18.053895833333332,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 47838344,
+      "sha256": "ddf26eb193d2f469ea2740c3c6d62e0538782f124ea80f545b73838ecc0b0842"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 27.844354166666665,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 539051395,
+      "sha256": "a73fcf987ca80e02f2930e1683d535f48b179343dce776b622f7a37ee7752515"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 23.368791666666667,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 576339932,
+      "sha256": "50e8b3ec96a02fb77408dece3168d6c7768e2227e93c04aaba4b2c65a3917436"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 19.344333333333335,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 750500958,
+      "sha256": "d0bf8ef903c0c47a50c98ff3fa3356763fd1ed72341cab64b7c1dfd26abe8740"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 28.7378125,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 849948393,
+      "sha256": "38bbb147bbbb967a4c8f99a6625907062e31b1c9f7dfcc5153db6a1723e61d44"
+    },
+    "ERA_INDUSTRIAL": {
+      "seconds": 24.4979375,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 925029950,
+      "sha256": "ada6977b68d05569f36bee5761cf5ed6b142b56f6c2faa9fc65ab5cb686f912c"
+    }
+  },
+  "Italian": {
+    "ERA_ANCIENT": {
+      "seconds": 18.568416666666668,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 49457772,
+      "sha256": "571ababd9f334227ef6de3b23a67b0529be7e3fa9c6c9fe9c379730149c6169d"
+    },
+    "ERA_MODERN": {
+      "seconds": 31.032416666666666,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 162113825,
+      "sha256": "9962752d93a9c93ff30307d967fc8317f410ed3f762fc9ec1f0871050431f208"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 24.725208333333335,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 181039157,
+      "sha256": "ed148c33e4649d0dc6ef4b0828464c6241ce325f073146e8ebd1545682ceac19"
+    },
+    "ERA_INDUSTRIAL": {
+      "seconds": 24.097125,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 220041123,
+      "sha256": "b39cc08cf4228cceb971182c927b9cdc87c4ed2aa259e8098aa83053366e9a2c"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 18.396208333333334,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 312724449,
+      "sha256": "f309db5e49ce0dadc564628dcda8d6d2cf478fa0e13cafc3ef3f666832cb5268"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 23.262708333333332,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 390059293,
+      "sha256": "0cea9dd6dfd0b4e5fc4ac2a4b5fa30ba440724e27f1fbd2b59630febe7913643"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 29.649375,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 396971394,
+      "sha256": "4f553557dcab251657950e8797a0c9ef9ee645cdc71af00bb7f956ee9d602a18"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 27.291958333333334,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 441390956,
+      "sha256": "d93139fc251025bba931801b6f3992b1d9f4e9efc397a1da4cd01c6699686233"
+    }
+  },
+  "Japanese": {
+    "ERA_CLASSICAL": {
+      "seconds": 22.210833333333333,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 58340745,
+      "sha256": "6c7e8092e5e9da4931076a3369f2f480bf765f67ddce2b5cf73646e002579f6c"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 31.763770833333332,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 366133329,
+      "sha256": "861857734c55c5934d3d8ae758497135cf321046dfda1b5e7a22d20e46b07541"
+    },
+    "ERA_MODERN": {
+      "seconds": 41.43066666666667,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 502155461,
+      "sha256": "15ab2e90f36789a0c4a2cad03b9e8d140a1df7364fb267bed15da4a7ac18ee06"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 38.21160416666667,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 519407913,
+      "sha256": "736e6460e0821dc1eb7f463ef95193e5051775e51725ce2c32057cb76bac5d5b"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 23.714,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 537821489,
+      "sha256": "ac40547c3baa834d30adf0b3eb5fff439b618e02047296277f4317a3b69a0452"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 35.705625,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 553757708,
+      "sha256": "27dbc05dba5816868f8c83a70a1b3bd65c6084b5e3c3eb08ce226b07ecba2990"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 30.582854166666667,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 559326192,
+      "sha256": "fee162c004f25b6555409ad55bacdd20483012d90031997daf5c5a39b87f8330"
+    },
+    "ERA_INDUSTRIAL": {
+      "seconds": 29.358583333333332,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 925364729,
+      "sha256": "a878cc7abf28cfa4b3ca63d19ffc3b6ec7d23e2a1c7c274d7d225b733296723c"
+    }
+  },
+  "Korean": {
+    "ERA_INFORMATION": {
+      "seconds": 26.613395833333332,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 283284795,
+      "sha256": "3744aed48eb4812d5bf5a847bcbd4e4e94eedb309a198d94a55b6da769da616a"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 18.356729166666668,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 312287906,
+      "sha256": "82918b768aff4c749bfda889c161f60b37bcf64274725c4df7f524fe29e3f2ca"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 24.100270833333333,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 362057005,
+      "sha256": "76049498156fac9bba5ac973ea815546599bc835f2b0892739bbb07cc66ea0a1"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 16.866729166666666,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 396325600,
+      "sha256": "81b1fa2c6e54e3428449aec85f5df0bb013ff57945e5a06e0f7b157317fb7d14"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 26.394541666666665,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 422714028,
+      "sha256": "e6c5a1055adc4cec06692288d5c9f2344faec72f654f42b9b0d5e0e6c5190902"
+    },
+    "ERA_INDUSTRIAL": {
+      "seconds": 23.578625,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 442374884,
+      "sha256": "8f96769d65a393bed0960e867dfa18e75fbf736684815c234b189a05dd83f881"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 24.787541666666666,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 490584209,
+      "sha256": "ce372d130c7a64662f564c177a857837041892e4f63e277faa9b77e48edd99c0"
+    },
+    "ERA_MODERN": {
+      "seconds": 31.767583333333334,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 698488478,
+      "sha256": "ea1f9bcb834377e9bf8fd6c47e74a7669887109847733ec106858d1d857087df"
+    }
+  },
+  "Polish": {
+    "ERA_RENAISSANCE": {
+      "seconds": 27.0145,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 6574477,
+      "sha256": "9f4ac342a3e8a8934c2d4fd0fe57416ec69b346327cb937ca15e4f4c7b7c7441"
+    },
+    "ERA_MODERN": {
+      "seconds": 30.664791666666666,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 77953695,
+      "sha256": "ee48e38fe75f3179aa3e9eb92ebadc6a73042902842f1e4626505864d3eee081"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 18.923583333333333,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 250449559,
+      "sha256": "b718159482a895c9d53b135df991001ca5068eb587e0928041bf5c372dd1a04f"
+    },
+    "ERA_INDUSTRIAL": {
+      "seconds": 22.496020833333333,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 349970167,
+      "sha256": "c317596da0fe71b9caf7555a2c8c9b5258bdf32d20445dfbbad2765717d59807"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 24.0333125,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 385222436,
+      "sha256": "90b2246d096805d5ccbce0c0de459ca29818358f550004d33089d9bdda534669"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 19.777854166666668,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 493349063,
+      "sha256": "bf2a6f1101d5df8ba05d8a93f4fc3376f95ca400032174d69736cd5d63113db1"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 31.502541666666666,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 591007500,
+      "sha256": "e8f59bb1fd05caa7ec29f39805bcc3db515d1558f8dd05e7a16ea09c4d9e8d67"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 23.959958333333333,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 702604095,
+      "sha256": "80e12ce810400442c2cd6b9feb0ff6a2a7f09b8cae8dd05e82cb3efd85e67987"
+    }
+  },
+  "Russian": {
+    "ERA_ATOMIC": {
+      "seconds": 18.778,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 30996707,
+      "sha256": "e4bb5e77b431c13f40a3c580a18bc9656826f452709000b87b83c3688bf0c6e5"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 19.838333333333335,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 48687869,
+      "sha256": "1fa360387443d57ed97967312e578a91a345d64f8cc71a32e7aa83436a0d30a2"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 23.559041666666666,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 99480577,
+      "sha256": "6dd6e876678228bbeb772e28e9e3a0971d0f53921c56f262c69cd8eafbb1f66f"
+    },
+    "ERA_MODERN": {
+      "seconds": 24.2120625,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 394854191,
+      "sha256": "2ef3092d850cc70e30d7cd2cd3e83e4864c63089747ca7344b37224b4b8da7a8"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 14.473479166666667,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 398665229,
+      "sha256": "7c0d2588bc8f3f6b58ef7b6f5ad3d68fc8dbcf363cfd40ab44318b4b6befb736"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 15.6176875,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 539523573,
+      "sha256": "654f1aa92f3fb16704e3ed33946a03789bfe2469f89477a6c10181cebdb112d6"
+    },
+    "ERA_INDUSTRIAL": {
+      "seconds": 21.282833333333333,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 778028528,
+      "sha256": "9148e9dec0b9f8c6ef914327f963a18502bca21969923b7de0e374617f8b9f17"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 21.0748125,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 950301269,
+      "sha256": "dc004bd61b4797827a7aff75fc80f0e68b9ebe9881bc1f6d8b6c0c631057976d"
+    }
+  },
+  "Spanish(Spain)": {
+    "ERA_INDUSTRIAL": {
+      "seconds": 23.47479166666667,
+      "source": "DOM_ERA_IND.wav",
+      "media_id": 7333785,
+      "sha256": "b7e77e81971d4e50aea187e5cc1ac2b26ea8c81a66f58565ad497144b1dcfb0a"
+    },
+    "ERA_ATOMIC": {
+      "seconds": 21.7485,
+      "source": "DOM_ERA_ATO.wav",
+      "media_id": 53230790,
+      "sha256": "53f985fd64be8c3347189587a7ccf715d267d95bfbaf5b62b4fdea8b8ba65d1b"
+    },
+    "ERA_ANCIENT": {
+      "seconds": 15.4925,
+      "source": "DOM_ERA_ANC.wav",
+      "media_id": 168177835,
+      "sha256": "297da2652ff8c36c03eb926efdf260915daaa2bb5cbc2e5c2f7ef80451af027f"
+    },
+    "ERA_RENAISSANCE": {
+      "seconds": 23.538541666666667,
+      "source": "DOM_ERA_REN.wav",
+      "media_id": 230475527,
+      "sha256": "cf67f32ea8f1df5cdccce9a140f753fa66a2d438ea643fbf27a88c8b815aa85b"
+    },
+    "ERA_MODERN": {
+      "seconds": 26.884958333333334,
+      "source": "DOM_ERA_MOD.wav",
+      "media_id": 519756849,
+      "sha256": "117113175e9f424ede60b8b1ae13fd1797fb888cc4e8d14380ca27df6986a591"
+    },
+    "ERA_INFORMATION": {
+      "seconds": 25.3235,
+      "source": "DOM_ERA_INF.wav",
+      "media_id": 778396043,
+      "sha256": "f4f0b68c363d5c041f721aeebefbe93ddae044587513a4d5d0e3d6b5e69e64a0"
+    },
+    "ERA_MEDIEVAL": {
+      "seconds": 22.976666666666667,
+      "source": "DOM_ERA_MED.wav",
+      "media_id": 1031637739,
+      "sha256": "3e2e0e90de21ece2f575a7e6b026d55310e346d96505db0bd5d840dba6bfb29b"
+    },
+    "ERA_CLASSICAL": {
+      "seconds": 18.151583333333335,
+      "source": "DOM_ERA_CLA.wav",
+      "media_id": 1050747651,
+      "sha256": "70a147408d6bb5e6e7d86d20795d079e11a5da7cdeed837525c602a585c51d05"
+    }
+  }
+}
