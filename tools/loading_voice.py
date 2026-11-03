@@ -170,4 +170,5 @@ def verify_loading_voice():
     listed = [f.text for f in modinfo.findall('./Files/File')]
     assert all(f in files and f in listed for f in ('UI/LoadScreen.lua', 'UI/RemselysAlexanderII_LoadScreen.lua', 'UI/RemselysAlexanderII_LoadingEraDurations.lua')), 'missing FrontEnd loading hook file'
     wrapper = (ROOT / 'mod/UI/LoadScreen.lua').read_text(encoding='utf-8')
-    assert wrapper.rstrip().endswith('include("RemselysAlexanderII_LoadScreen");'), 'loading extension must run after vanilla initialization'
+    from loading_screen import build_source
+    assert wrapper == build_source(), 'loading screen differs from embedded source modules'

@@ -156,6 +156,8 @@ def main():
     tree = etree.parse(str(scene))
     bind_scene(tree)
     save(tree, scene)
+    from loading_screen import write_screen
+    write_screen()
     from loading_voice import build_loading_bank
     build_loading_bank(tool, objects, original_sound=bytes(sound), chain=tool['official_chain'](str(args.game_audio / 'Speech.bnk'), LINES['FIRST_MEET'][1]))
     # Register diplomacy audio/UI. The loading narrator has a separate Global bank.
