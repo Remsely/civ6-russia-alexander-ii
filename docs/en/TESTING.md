@@ -19,12 +19,12 @@ Speed-up: FireTuner — grant techs, change era, assign a Governor.
 
 ## Mechanics
 
-- [ ] Before the Industrial Era the ability gives nothing: Builders have normal charges, Farms give no adjacency Food, Pastures no +1 Production, unit upgrades at full price.
-- [ ] From the Industrial Era: Builders get +1 charge; a Farm with 2 adjacent Farms gives +1 **Food**, with 4 — +2, with 6 — +3 (Food icon in the plot tooltip).
+- [ ] Before the Industrial Era the ability gives nothing: Builders have normal charges; Farms and Pastures are vanilla, unit upgrades at full price.
+- [ ] From the Industrial Era: Builders get +1 charge. The Farm adjacency bonus is gone in every era (removed on 3 November 2026).
 - [ ] **Governor title**: on entering the Industrial Era the title counter increases by 1 (vanilla grants titles only from built things — this is our new combination, check it right on the era boundary).
-- [ ] Zemstvo Reform: a city with an assigned Governor grows 10% faster; cities without a Governor do not.
-- [ ] Railway Network: every city gets +1 Production per city of your civilization and +1 Gold per city of another civilization (city-states and civs at war count, no cap) connected to it by a continuous railroad; foreign rails count as transit, a line may pass through a city junction; the Capital is an ordinary city and bonuses like any other; two own cities linked by rails not through the Capital still bonus each other.
-- [ ] Production cap by Population: a city with Population N gets at most +N Production from railroads (e.g. Pop 10 with 15 connected own cities gives +10, not +15); population growth raises the cap immediately; Gold is not limited by it.
+- [ ] Zemstvos: a city with an assigned Governor grows 10% faster; cities without a Governor do not.
+- [ ] Railway Network: every city gets +1 Production per other city of your civilization and +1 Gold per foreign city (city-states and civs at war count) connected to it by a continuous railroad; a rail on the city center tile itself is not required — the center touching a railroad plot is enough; foreign rails count as transit, a line may pass through a city junction; the Capital is an ordinary city and bonuses like any other; two own cities linked by rails not through the Capital still bonus each other.
+- [ ] Population cap on both bonuses: a city with Population N gets at most +N Production and at most +N Gold from railroads each (e.g. Pop 10 with 15 connected own and 20 foreign cities gives +10 and +10, not +15/+20); population growth raises both caps immediately.
 - [ ] Railroads: bonuses appear right after a segment is built (route events); a captured city or a moved capital is picked up by the next turn. The Military Engineer unlocks railroads after Steam Power (1 Iron + 1 Coal per tile).
 - [ ] The old Zemstvos are gone: no Culture or Loyalty in Governor cities.
 - [ ] AI Alexander plays without errors, the agenda fires (likes peaceful, dislikes recent aggressors).

@@ -80,7 +80,6 @@
       <Properties>
         <LoadOrder>100</LoadOrder>
       </Properties>
-      <File>Lua/RemselysAlexanderII_Farms.lua</File>
       <File>Lua/RemselysAlexanderII_Railways.lua</File>
     </AddGameplayScripts>
     <AddUserInterfaces id="REMSELY_Voice_UI">
@@ -100,7 +99,6 @@
     <File>Data/Colors.sql</File>
     <File>Data/GameDefines.sql</File>
     <File>Data/Icons.sql</File>
-    <File>Lua/RemselysAlexanderII_Farms.lua</File>
     <File>Lua/RemselysAlexanderII_Railways.lua</File>
     <File>Text/en_US.xml</File>
     <File>Text/ru_RU.xml</File>

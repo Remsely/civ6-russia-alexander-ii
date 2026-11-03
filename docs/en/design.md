@@ -14,7 +14,7 @@ Russian version: [`../ru/design.md`](../ru/design.md). Game terms follow the glo
 | Leader | Alexander II Nikolaevich, Emperor of All Russia (1855–1881), called the Tsar Liberator |
 | Kept from vanilla Russia | Civilization ability Mother Russia, unique unit Cossack, unique district Lavra |
 | New in the mod | Leader ability, AI agenda, city list, colors, 3D leader, art, texts |
-| Requirements | Gathering Storm (railroads for the Railway Network; Governors for the Zemstvo Reform) |
+| Requirements | Gathering Storm (railroads for the Railway Network; Governors for the Zemstvos) |
 | Type prefix | `REMSELY_` (e.g. `LEADER_REMSELY_ALEXANDER_II`) |
 | Structural reference | JFD's Russia: Elisabeth (`reference/samples/JFD-Russia-Elisabeth`) |
 
@@ -33,11 +33,10 @@ The whole ability unlocks in the **Industrial Era** — the reforms of the 1860s
 From the Industrial Era:
 
 - Builders get **+1 charge**.
-- Each **Farm** gets **+1 Food per 2 adjacent Farms** (tiers at 2/4/6 neighbours, natural max +3; no artificial cap). Food, not Production: Russia's civ ability already grants Production on tundra, and stacking Production made the trait too strong. Only Farms count as neighbours. Adjacency is counted in Lua (`mod/Lua/RemselysAlexanderII_Farms.lua`); modifiers read plot properties, and the era gate holds the yield back until the Industrial Era.
 
-Pastures (+1 Production) and the Military Reform (50% unit upgrade discount) were removed in v2.0.0; the military theme returns as a unique unit (ROADMAP, v3.5.0).
+The Farm bonus (+1 Food per 2 adjacent Farms) was removed entirely on 3 November 2026 by the user's decision — farms are vanilla now. Pastures (+1 Production) and the Military Reform (50% unit upgrade discount) were removed earlier in v2.0.0; the military theme returns as a unique unit (ROADMAP, v3.5.0).
 
-### 3.2. Zemstvo Reform
+### 3.2. Zemstvos
 
 - On entering the Industrial Era the empire gains **1 Governor title**.
 - From the Industrial Era on, cities with an assigned Governor get **+10% growth**.
@@ -46,13 +45,13 @@ Rationale: schools and medicine are the best documented effects of the historica
 
 ### 3.3. Railway Network
 
-- Every city gets **+1 Production for each city of your civilization connected to it by railroad**, capped by **the city's Population** (a 10-Pop city gets at most +10 — the user's rule).
-- Every city gets **+1 Gold for each city of another civilization** (city-states and civilizations at war count) **connected to it by railroad** — uncapped.
-- No Gold cap, the user's decision; the Production limit is natural (the city's Population). The scale: 15 own cities all interconnected and linked to 10 foreign ones give a 14+ Pop city up to +14 Production and +10 Gold (150 Gold per turn total); the technical bound of the tier machinery (200 cities of each kind) is beyond any real game.
+- Every city gets **+1 Production for each of your other cities connected to it by railroad**.
+- Every city gets **+1 Gold for each foreign city** (city-states and civilizations at war count) **connected to it by railroad**.
+- **Each bonus is capped by the city's Population** (a 10-Pop city gets at most +10 of each — the user's rule of 3 November 2026; before that Gold was uncapped). The scale: 15 own cities all interconnected and linked to 10 foreign ones give a 14+ Pop city up to +14 Production and +10 Gold; the technical bound of the tier machinery (200) is beyond any real game.
 
 Connection rules: two cities are connected when an unbroken railroad path leads from center to center — over plots with `ROUTE_RAILROAD`, with city centers acting as junctions (a line may pass through a city and tie networks together through it). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is an ordinary city of the network and receives bonuses like any other. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
 
-Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties of own city centers — `REMSELY_RAIL_OWN_N` (connected own cities, already capped by the city's Population) and `REMSELY_RAIL_FOREIGN_N` (connected foreign cities) — up to date (recomputed on route, city and population events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Production and 200 Gold tiers - a technical margin, not a design cap) — an extension of the Farm pattern. Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
+Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties of own city centers — `REMSELY_RAIL_OWN_N` (connected own cities, already capped by the city's Population) and `REMSELY_RAIL_FOREIGN_N` (connected foreign cities) — up to date (recomputed on route, city and population events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Production and 200 Gold tiers - a technical margin, not a design cap; the plot-property + MODIFIER_PLAYER_ADJUST_PLOT_YIELD pattern). Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
 
 ### 3.4. Ability texts
 

@@ -16,9 +16,12 @@ INSERT INTO Traits (TraitType, Name, Description) VALUES
 INSERT INTO LeaderTraits (LeaderType, TraitType) VALUES
 		('LEADER_REMSELY_ALEXANDER_II', 'TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS');
 
--- Loading screen: our portrait and background (the study in the Winter Palace)
+-- Loading screen: our portrait and background (the study in the Winter Palace).
+-- PlayDawnOfManAudio must be 1: the flag gates the native era narration, which
+-- RemselysAlexanderII_LoadScreen plays for our leader (with Peter's dawn segment muted).
+-- It sat at 0 since the pre-voice days, silently muting the era narration for Alexander.
 INSERT INTO LoadingInfo (LeaderType, ForegroundImage, BackgroundImage, PlayDawnOfManAudio) VALUES
-		('LEADER_REMSELY_ALEXANDER_II', 'LEADER_REMSELY_ALEXANDER_II_NEUTRAL', 'LEADER_REMSELY_ALEXANDER_II_BACKGROUND', 0);
+		('LEADER_REMSELY_ALEXANDER_II', 'LEADER_REMSELY_ALEXANDER_II_NEUTRAL', 'LEADER_REMSELY_ALEXANDER_II_BACKGROUND', 1);
 
 INSERT INTO CivilizationLeaders (CivilizationType, LeaderType, CapitalName) VALUES
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', 'LOC_CITY_NAME_ST_PETERSBURG');
@@ -46,7 +49,8 @@ INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
 --==========================================================================================================================
 -- ABILITY: The Great Reforms
 -- Everything unlocks in the Industrial Era (the reforms of the 1860s-70s); before it the trait deliberately gives nothing.
--- Done: 3.1 Emancipation of the Serfs (Builder charges, Farm food via Lua); 3.2 Zemstvo Reform (Governor title + city growth).
+-- Done: 3.1 Emancipation of the Serfs (Builder charges); 3.2 Zemstvos (Governor title + city growth).
+-- The former Farm adjacency bonus was removed entirely (the user's decision, 3 Nov 2026): farms are vanilla now.
 -- 3.2 rationale: schools and medicine are the best documented effects of the historical zemstvos. Culture and Loyalty are
 -- gone: Governors already give Loyalty, the liberal zemstvos were a hotbed of opposition to the crown (so "loyalty" was
 -- the weakest historical fit), and Culture was dropped to keep the trait legible. Analogs: title grant as Casa de
@@ -76,62 +80,19 @@ INSERT INTO TraitModifiers (TraitType, ModifierId) VALUES
 		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_ZEMSTVO_GROWTH');
 
 --------------------------------------------------------------------------------------------------------------------------
--- 3.1 Farm adjacency: +1 Food per 2 adjacent Farms (tiers at 2/4/6 neighbours, natural max +3; no artificial cap), from
--- the Industrial Era. Food, not Production: Russia's
--- civ ability already gives tundra Production, so stacked Production made the trait too strong. Counted by
--- Lua/RemselysAlexanderII_Farms.lua, which sets the plot properties below regardless of era (the modifiers' era gate holds
--- the yield back); the modifiers only read them. Pattern: Sukritact's Al-Hasan (Jahazi) plot property + MODIFIER_PLAYER_ADJUST_PLOT_YIELD.
---------------------------------------------------------------------------------------------------------------------------
-INSERT INTO Requirements (RequirementId, RequirementType) VALUES
-		('REMSELY_REQUIRES_FARM_ADJ_2', 'REQUIREMENT_PLOT_PROPERTY_MATCHES'),
-		('REMSELY_REQUIRES_FARM_ADJ_4', 'REQUIREMENT_PLOT_PROPERTY_MATCHES'),
-		('REMSELY_REQUIRES_FARM_ADJ_6', 'REQUIREMENT_PLOT_PROPERTY_MATCHES');
-INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
-		('REMSELY_REQUIRES_FARM_ADJ_2', 'PropertyName',    'REMSELY_FARM_ADJ_2'),
-		('REMSELY_REQUIRES_FARM_ADJ_2', 'PropertyMinimum', '1'),
-		('REMSELY_REQUIRES_FARM_ADJ_4', 'PropertyName',    'REMSELY_FARM_ADJ_4'),
-		('REMSELY_REQUIRES_FARM_ADJ_4', 'PropertyMinimum', '1'),
-		('REMSELY_REQUIRES_FARM_ADJ_6', 'PropertyName',    'REMSELY_FARM_ADJ_6'),
-		('REMSELY_REQUIRES_FARM_ADJ_6', 'PropertyMinimum', '1');
-INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES
-		('REMSELY_PLOT_FARM_ADJ_2_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL'),
-		('REMSELY_PLOT_FARM_ADJ_4_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL'),
-		('REMSELY_PLOT_FARM_ADJ_6_REQUIREMENTS', 'REQUIREMENTSET_TEST_ALL');
-INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
-		('REMSELY_PLOT_FARM_ADJ_2_REQUIREMENTS', 'REQUIRES_PLOT_HAS_FARM'),
-		('REMSELY_PLOT_FARM_ADJ_2_REQUIREMENTS', 'REMSELY_REQUIRES_FARM_ADJ_2'),
-		('REMSELY_PLOT_FARM_ADJ_4_REQUIREMENTS', 'REQUIRES_PLOT_HAS_FARM'),
-		('REMSELY_PLOT_FARM_ADJ_4_REQUIREMENTS', 'REMSELY_REQUIRES_FARM_ADJ_4'),
-		('REMSELY_PLOT_FARM_ADJ_6_REQUIREMENTS', 'REQUIRES_PLOT_HAS_FARM'),
-		('REMSELY_PLOT_FARM_ADJ_6_REQUIREMENTS', 'REMSELY_REQUIRES_FARM_ADJ_6');
-INSERT INTO Modifiers (ModifierId, ModifierType, OwnerRequirementSetId, SubjectRequirementSetId) VALUES
-		('REMSELY_REFORMS_FARM_ADJ_2_FOOD', 'MODIFIER_PLAYER_ADJUST_PLOT_YIELD', 'REMSELY_PLAYER_ERA_AT_LEAST_INDUSTRIAL_REQUIREMENTS', 'REMSELY_PLOT_FARM_ADJ_2_REQUIREMENTS'),
-		('REMSELY_REFORMS_FARM_ADJ_4_FOOD', 'MODIFIER_PLAYER_ADJUST_PLOT_YIELD', 'REMSELY_PLAYER_ERA_AT_LEAST_INDUSTRIAL_REQUIREMENTS', 'REMSELY_PLOT_FARM_ADJ_4_REQUIREMENTS'),
-		('REMSELY_REFORMS_FARM_ADJ_6_FOOD', 'MODIFIER_PLAYER_ADJUST_PLOT_YIELD', 'REMSELY_PLAYER_ERA_AT_LEAST_INDUSTRIAL_REQUIREMENTS', 'REMSELY_PLOT_FARM_ADJ_6_REQUIREMENTS');
-INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
-		('REMSELY_REFORMS_FARM_ADJ_2_FOOD', 'YieldType', 'YIELD_FOOD'),
-		('REMSELY_REFORMS_FARM_ADJ_2_FOOD', 'Amount',    '1'),
-		('REMSELY_REFORMS_FARM_ADJ_4_FOOD', 'YieldType', 'YIELD_FOOD'),
-		('REMSELY_REFORMS_FARM_ADJ_4_FOOD', 'Amount',    '1'),
-		('REMSELY_REFORMS_FARM_ADJ_6_FOOD', 'YieldType', 'YIELD_FOOD'),
-		('REMSELY_REFORMS_FARM_ADJ_6_FOOD', 'Amount',    '1');
-INSERT INTO TraitModifiers (TraitType, ModifierId) VALUES
-		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_REFORMS_FARM_ADJ_2_FOOD'),
-		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_REFORMS_FARM_ADJ_4_FOOD'),
-		('TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS', 'REMSELY_REFORMS_FARM_ADJ_6_FOOD');
-
---------------------------------------------------------------------------------------------------------------------------
 -- 3.3 Railway Network: EVERY own city gets +1 Production for each own city and +1 Gold for each foreign city
--- connected to it by a continuous railroad (city-states count, war does not matter) - no design cap, per the
--- user's explicit decision. Two cities are connected when an unbroken path of railroad plots leads from center
--- to center; city centers are junctions, so a line may pass through a city and tie networks together. Whoever
--- built the rails does not matter (transit). The Capital is an ordinary city: it receives bonuses like any other.
+-- connected to it by a continuous railroad (city-states count, war does not matter). EACH bonus is capped by the
+-- city's Population (the user's rule, 3 Nov 2026: a 10-Pop city counts at most 10 connected cities per bonus).
+-- Two cities are connected when an unbroken path of railroad plots leads from center to center; city centers are
+-- junctions, so a line may pass through a city and tie networks together. Whoever built the rails does not matter
+-- (transit). The Capital is an ordinary city: it receives bonuses like any other.
 -- No era gate: railroads need the Steam Power tech, Iron and Coal and Military Engineers (Gathering Storm, an
 -- explicit mod dependency since v2.0.0), so they cannot exist before the Industrial Era anyway.
 -- Lua/RemselysAlexanderII_Railways.lua keeps REMSELY_RAIL_OWN_N (own connected cities, the city itself
--- excluded) and REMSELY_RAIL_FOREIGN_N (foreign connected cities) on own city centers (both technically bounded
--- at 200 - beyond any conceivable game); the modifiers below only read them (the Farm pattern). The tiers stack:
--- tier N switches on at property N, so N own / N foreign connected cities = +N Production / +N Gold in the city.
+-- excluded) and REMSELY_RAIL_FOREIGN_N (foreign connected cities) on own city centers, both already clamped to
+-- the city's Population there (MAX_TIER 200 below is only the technical bound of the tier machinery, far beyond
+-- any conceivable game); the modifiers only read them. The tiers stack: tier N switches on at property N, so
+-- N own / N foreign connected cities = +N Production / +N Gold in the city.
 --------------------------------------------------------------------------------------------------------------------------
 INSERT INTO Requirements (RequirementId, RequirementType) VALUES
 		('REMSELY_REQUIRES_RAIL_OWN_1', 'REQUIREMENT_PLOT_PROPERTY_MATCHES'),

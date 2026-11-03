@@ -353,9 +353,14 @@ function OnLoadScreenContentReady()
 			bPlayDOM = loadingInfo.PlayDawnOfManAudio;
 		end
 
-		if (m_isResyncLoad) then
-			bPlayDOM = false;
-		end
+			if (m_isResyncLoad) then
+				bPlayDOM = false;
+			end
+
+			-- Remsely: our leader's dawn audio is driven entirely by
+			-- RemselysAlexanderII_LoadScreen (explicit switches + the native event),
+			-- so the vanilla pass must not post it with an unknown leader id.
+			if leaderType == "LEADER_REMSELY_ALEXANDER_II" then bPlayDOM = false; end
 
 		if bPlayDOM then
 			local dawnOfManLeaderID = leaderID;
@@ -376,8 +381,6 @@ function OnLoadScreenContentReady()
 				dawnOfManLeaderID = -1;
 			end
 
-			-- Keep the native era introduction, with no fallback vanilla leader speech.
-			if leaderType == "LEADER_REMSELY_ALEXANDER_II" then dawnOfManLeaderID = -1; end
 			UI.SetSoundSwitchValue("Leader_Screen_Civilization", UI.GetCivilizationSoundSwitchValueByLeader(dawnOfManLeaderID));
 			UI.SetSoundSwitchValue("Civilization", UI.GetCivilizationSoundSwitchValueByLeader(dawnOfManLeaderID));
 			UI.SetSoundSwitchValue("Era_DawnOfMan", UI.GetEraSoundSwitchValue(dawnOfManEraHash));

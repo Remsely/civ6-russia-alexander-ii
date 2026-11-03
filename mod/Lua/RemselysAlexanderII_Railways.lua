@@ -1,16 +1,16 @@
 --==========================================================================================================================
 -- Remsely's Russian Empire: Alexander II - Great Reforms, Railway Network (docs/ru/design.md, 3.3)
--- Every own city gets +1 Production for each own city connected to it by a continuous railroad, capped by the city's
--- Population (a 10-Pop city counts at most 10 connected own cities - the user's rule), and +1 Gold for each foreign
--- city connected to it - uncapped (MAX_TIER below is only a technical bound for the tier machinery, far beyond any
--- real game). Two cities are connected when an unbroken path of railroad plots leads from center to center; city
--- centers are junctions, so a line may pass through a city and even tie two networks together. Whoever built the
--- rails does not matter - transit counts. The Capital is an ordinary city here: it receives bonuses like any other.
+-- Every own city gets +1 Production for each own city and +1 Gold for each foreign city connected to it by a
+-- continuous railroad; EACH bonus is capped by the city's Population (a 10-Pop city counts at most 10 connected
+-- cities per bonus - the user's rule). Two cities are connected when an unbroken path of railroad plots leads
+-- from center to center; city centers are junctions, so a line may pass through a city and even tie two networks
+-- together. Whoever built the rails does not matter - transit counts. The Capital is an ordinary city here: it
+-- receives bonuses like any other.
 --
 -- XML cannot see routes or count connected cities, so this script keeps two plot properties up to date on the centers
--- of own cities and the XML modifiers (Data/GameDefines.sql) read them, exactly like the Farm adjacency script:
+-- of own cities and the XML modifiers (Data/GameDefines.sql) read them:
 --   REMSELY_RAIL_OWN_N     - own cities railroad-connected to this city (the city itself excluded), capped by Population
---   REMSELY_RAIL_FOREIGN_N - foreign cities (any other player, city-states included) railroad-connected to this city
+--   REMSELY_RAIL_FOREIGN_N - foreign cities (any other player, city-states included) railroad-connected, capped by Population
 -- Recomputed on every route, city and population event, at turn start and once at load.
 --==========================================================================================================================
 local DEBUG = false -- set true to write every recalculation to Lua.log
@@ -42,8 +42,7 @@ end
 local function RecomputePlayer(playerID, player)
 	ClearPlayer(playerID)
 
-	-- Population of own cities: the Production bonus counts at most as many connected own cities as the city's
-	-- Population (the user's rule; Gold stays uncapped)
+	-- Population of own cities: each bonus counts at most as many connected cities as the city's Population
 	local popByPlot = {}
 	for _, city in player:GetCities():Members() do
 		local cityPlot = Map.GetPlot(city:GetLocation())
@@ -150,9 +149,10 @@ local function RecomputePlayer(playerID, player)
 				end
 			end
 			if own > MAX_TIER then own = MAX_TIER end
+			if foreign > MAX_TIER then foreign = MAX_TIER end
 			local population = popByPlot[cityIndex] or 1
 			if own > population then own = population end
-			if foreign > MAX_TIER then foreign = MAX_TIER end
+			if foreign > population then foreign = population end
 			local plot = Map.GetPlotByIndex(cityIndex)
 			plot:SetProperty(PROPERTY_OWN, own)
 			plot:SetProperty(PROPERTY_FOREIGN, foreign)

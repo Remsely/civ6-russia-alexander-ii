@@ -22,7 +22,7 @@ Codex: источник проектных скиллов — `.agents/skills/`;
 
 Мод лидера — это база данных, тексты, 2D-арт и 3D-ассет лидера:
 - `RemselysAlexanderII.modinfo` (пишется руками) описывает файлы и действия: во FrontEnd `Data/Config.sql` (экран выбора лидера), во InGame `Data/GameDefines.sql` (всё остальное); `Data/Icons.sql` (иконка лидера), `Data/Colors.sql` (цвета), `Text/{en_US,ru_RU}.xml`, `UpdateArt` с `RemselysAlexanderII.dep`.
-- `Lua/RemselysAlexanderII_Farms.lua` — смежность ферм (считает соседей, ставит свойства клетки, которые читают XML-модификаторы).
+- Бонус ферм убран 3 ноября 2026; `RemselysAlexanderII_Railways.lua` — ж/д-связность городов (ставит свойства клетки-центра, которые читают XML-модификаторы; оба бонуса ограничены населением города).
 - `art/source/` — исходные картинки; `tools/slice_art.py` режет их в `art/build/` (не в git), `tools/make_art.py` генерирует `Textures/*.dds|.tex`, `XLPs/`, `ArtDefs/`, `.dep`, `Data/Icons.sql`. BLP (`Platforms/{Windows,MacOS}/BLPs/`) собирает `tools/build.py` (cooker SDK); после изменения картинок их нужно пересобрать.
 - `tools/validate.py`, `tools/install.py` — проверка и установка. `art/prompts.md` — промпты для нейросетей.
 - `reference/` — в `.gitignore`: ванильные файлы игры, образцы модов, копии баз.

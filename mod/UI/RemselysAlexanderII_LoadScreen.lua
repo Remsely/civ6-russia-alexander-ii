@@ -1,13 +1,21 @@
 -- Runs inside the vanilla FrontEnd LoadScreen context after its initialization.
+-- For Alexander the vanilla pass posts no dawn audio (bPlayDOM = false in LoadScreen.lua);
+-- this script drives the native dawn event itself: the civilization switches point at
+-- Russia (DB.MakeHash("Russia") - the value stored in the game's audio bank) so the era
+-- narration plays in the selected audio language, then the leader segment (Peter's
+-- recording for Russia) is muted with an unmatched switch value, and our own Alexander
+-- narration is queued after the era narration of the era the game starts in.
 include("RemselysAlexanderII_LoadingEraDurations");
 local baseContentReady = OnLoadScreenContentReady;
 local baseShow = OnShow;
 local baseHide = OnHide;
 local narrationStarted = false;
 local narrationDeadline = nil;
+local leaderMuteDeadline = nil;
 
 local function StopNarration()
     narrationDeadline = nil;
+    leaderMuteDeadline = nil;
     ContextPtr:ClearUpdate();
     if narrationStarted then
         UI.PlaySound("Stop_REMSELY_AlexanderII_Loading");
@@ -26,7 +34,9 @@ function OnHide()
     baseHide();
 end
 
-local function GetEraDelay()
+-- (era, seconds) of the dawn narration: the start era, or the save's HostEra, or the
+-- LoadingInfo override; seconds is nil when the era has no measured duration.
+local function GetEraAndDelay()
     local era = GameInfo.Eras[GameConfiguration.GetStartEra()];
     if GameConfiguration.IsSavedGame() then
         local metadata = UI.GetSaveGameMetaData();
@@ -34,10 +44,10 @@ local function GetEraDelay()
     end
     local info = GameInfo.LoadingInfo["LEADER_REMSELY_ALEXANDER_II"];
     if info then
-        if info.PlayDawnOfManAudio == false then return 0; end
+        if info.PlayDawnOfManAudio == false then return nil, 0; end
         if info.DawnOfManEraId then era = GameInfo.Eras[info.DawnOfManEraId] or era; end
     end
-    if era == nil then return nil; end
+    if era == nil then return nil, nil; end
     local language = Options.GetAppOption("Language", "AudioLanguage");
     local times = REMSELY_LoadingEraSeconds[language] or REMSELY_LoadingEraSeconds["English(US)"];
     local seconds = times[era.EraType];
@@ -49,21 +59,45 @@ local function GetEraDelay()
             if candidate and UI.GetEraSoundSwitchValue(candidate.Hash) == value then seconds = duration; break; end
         end
     end
-    return seconds;
+    return era, seconds;
+end
+
+-- The native dawn event is a sequence: the era narration first, a leader-specific
+-- speech second (DOM_LEAD_PET for Russia). The leader segment reads its switch when
+-- that segment starts, so while the era narration is still playing we move
+-- Leader_Screen_Civilization to a value that is not in the bank's table (and is not
+-- the engine's special NO_LEADER, which silences the whole event): Peter's segment
+-- then resolves to nothing and only the era narration is heard.
+local function MuteNativeLeaderDawn()
+    leaderMuteDeadline = nil;
+    -- Only the group the dawn event's leader segment reads; the "Civilization" group is
+    -- left alone so later screens (diplomacy ambience) keep a valid value.
+    local muteValue = DB.MakeHash("REMSELY_ALEXANDER_II_MUTE");
+    UI.SetSoundSwitchValue("Leader_Screen_Civilization", muteValue);
+    print("REMSELY voice: native leader dawn segment muted (value " .. tostring(muteValue) .. ")");
 end
 
 local function OnNarrationUpdate()
-    if narrationDeadline ~= nil and UI.GetElapsedTime() >= narrationDeadline then
+    local now = UI.GetElapsedTime();
+    if leaderMuteDeadline ~= nil and now >= leaderMuteDeadline then
+        MuteNativeLeaderDawn();
+    end
+    if narrationDeadline ~= nil and now >= narrationDeadline then
         narrationDeadline = nil;
-        ContextPtr:ClearUpdate();
+        -- The era narration has ended by now, so stopping the native event can only cut
+        -- the already muted Peter segment if it survived, never the era narration.
+        UI.PlaySound("STOP_SPEECH_DAWNOFMAN");
         narrationStarted = true;
         UI.PlaySound("Play_REMSELY_AlexanderII_LOADING_RU");
         print("REMSELY voice: FrontEnd loading narration started after era intro");
     end
+    if narrationDeadline == nil and leaderMuteDeadline == nil then
+        ContextPtr:ClearUpdate();
+    end
 end
 
 function OnLoadScreenContentReady()
-    if narrationStarted or narrationDeadline ~= nil then return; end
+    if narrationStarted or narrationDeadline ~= nil or leaderMuteDeadline ~= nil then return; end
     baseContentReady();
     if UI.IsResyncLoadInProgress() or GameConfiguration:IsWorldBuilderEditor() then return; end
     local playerID = Network.GetLocalPlayerID();
@@ -76,13 +110,32 @@ function OnLoadScreenContentReady()
     local player = PlayerConfigurations[playerID];
     if player == nil or player:GetLeaderTypeName() ~= "LEADER_REMSELY_ALEXANDER_II" then return; end
     if Challenges.IsChallengeActive() then return; end
-    local seconds = GetEraDelay();
+    local era, seconds = GetEraAndDelay();
+    if era ~= nil then
+        local russiaValue = DB.MakeHash("Russia");
+        local eraValue = UI.GetEraSoundSwitchValue(era.Hash);
+        -- Diagnostics: what the native resolver would have used for our leader and for
+        -- Peter, to compare against the value stored in the game's bank (1816587302).
+        local ownValue = UI.GetCivilizationSoundSwitchValueByLeader(player:GetLeaderTypeID());
+        local peterValue = "n/a";
+        if GameInfo.Leaders ~= nil then
+            local peter = GameInfo.Leaders["LEADER_PETER_GREAT"];
+            if peter then peterValue = tostring(UI.GetCivilizationSoundSwitchValueByLeader(peter.Index)); end
+        end
+        print("REMSELY voice: dawn values russia=" .. tostring(russiaValue) .. " era=" .. tostring(eraValue)
+            .. " (" .. tostring(era.EraType) .. " hash " .. tostring(era.Hash) .. ")"
+            .. " ownLeader=" .. tostring(ownValue) .. " peter=" .. peterValue);
+        UI.SetSoundSwitchValue("Leader_Screen_Civilization", russiaValue);
+        UI.SetSoundSwitchValue("Civilization", russiaValue);
+        UI.SetSoundSwitchValue("Era_DawnOfMan", eraValue);
+        UI.PlaySound("Play_DawnOfMan_Speech");
+        leaderMuteDeadline = UI.GetElapsedTime() + 0.75;
+    end
     if seconds == nil then
+        if leaderMuteDeadline ~= nil then ContextPtr:SetUpdate(OnNarrationUpdate); end
         print("REMSELY voice: unknown era narration duration; custom narration not queued");
         return;
     end
-    -- Preserve Play_DawnOfMan_Speech. Only the native leader branch is muted
-    -- in LoadScreen.lua; its era introduction plays in the selected audio language.
     narrationDeadline = UI.GetElapsedTime() + seconds + 0.5;
     ContextPtr:SetUpdate(OnNarrationUpdate);
     print("REMSELY voice: loading narration queued after era intro, delay " .. tostring(seconds + 0.5));

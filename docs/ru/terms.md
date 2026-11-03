@@ -75,7 +75,7 @@
 |---|---|
 | The Great Reforms | Великие реформы |
 | Emancipation of the Serfs | Освобождение крестьян |
-| Zemstvo Reform | Земская реформа |
+| Zemstvos | Земства |
 | Railway Network | Железнодорожная сеть |
 | The Liberator | Освободитель |
 | Emperor and Autocrat of All Russia, Tsar of Poland, Grand Duke of Finland | Император и самодержец Всероссийский, царь Польский, великий князь Финляндский |
