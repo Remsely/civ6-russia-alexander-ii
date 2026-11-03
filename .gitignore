@@ -54,3 +54,6 @@ mod/Textures/LEAD_REMSELY_ALEXANDER_II_*.dds
 # Rejected loading auditions stay local; recipes/reports and selected WAVs are versioned.
 art/voice/candidates/loading-short-*/*.wav
 art/voice/candidates/loading-approved-edit-v1/*.wav
+
+# English loading audition recipes/reports are kept; selected audio is stored once in selected/.
+art/voice/candidates/loading-en-short-*/*.wav

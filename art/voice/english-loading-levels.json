@@ -1,0 +1,182 @@
+{
+  "language": "English(US)",
+  "method": "ffmpeg loudnorm analysis only; static Wwise Volume through sound/containers/mixers to common Speech Bus; local game sources",
+  "cases": [
+    {
+      "leader": "Peter",
+      "media_id": 540791817,
+      "source_lufs": -30.84,
+      "source_true_peak_db": -13.33,
+      "gain_db": 9.0,
+      "prebus_lufs": -21.84,
+      "chain": [
+        {
+          "id": 163831028,
+          "kind": 2,
+          "gain_db": 0
+        },
+        {
+          "id": 1013531079,
+          "kind": 6,
+          "gain_db": 0
+        },
+        {
+          "id": 720723834,
+          "kind": 5,
+          "gain_db": 0
+        },
+        {
+          "id": 923000845,
+          "kind": 7,
+          "gain_db": -3.0
+        },
+        {
+          "id": 416114231,
+          "kind": 7,
+          "gain_db": 12.0
+        }
+      ]
+    },
+    {
+      "leader": "Gilgamesh",
+      "media_id": 642837966,
+      "source_lufs": -29.99,
+      "source_true_peak_db": -12.34,
+      "gain_db": 4.0,
+      "prebus_lufs": -25.99,
+      "chain": [
+        {
+          "id": 1039141738,
+          "kind": 2,
+          "gain_db": -5.0
+        },
+        {
+          "id": 1013531079,
+          "kind": 6,
+          "gain_db": 0
+        },
+        {
+          "id": 720723834,
+          "kind": 5,
+          "gain_db": 0
+        },
+        {
+          "id": 923000845,
+          "kind": 7,
+          "gain_db": -3.0
+        },
+        {
+          "id": 416114231,
+          "kind": 7,
+          "gain_db": 12.0
+        }
+      ]
+    },
+    {
+      "leader": "Cleopatra",
+      "media_id": 171247245,
+      "source_lufs": -31.17,
+      "source_true_peak_db": -12.74,
+      "gain_db": 7.0,
+      "prebus_lufs": -24.17,
+      "chain": [
+        {
+          "id": 167764946,
+          "kind": 2,
+          "gain_db": -2.0
+        },
+        {
+          "id": 1013531079,
+          "kind": 6,
+          "gain_db": 0
+        },
+        {
+          "id": 720723834,
+          "kind": 5,
+          "gain_db": 0
+        },
+        {
+          "id": 923000845,
+          "kind": 7,
+          "gain_db": -3.0
+        },
+        {
+          "id": 416114231,
+          "kind": 7,
+          "gain_db": 12.0
+        }
+      ]
+    },
+    {
+      "leader": "Gandhi",
+      "media_id": 24443253,
+      "source_lufs": -30.48,
+      "source_true_peak_db": -12.96,
+      "gain_db": 9.0,
+      "prebus_lufs": -21.48,
+      "chain": [
+        {
+          "id": 967673687,
+          "kind": 2,
+          "gain_db": 0
+        },
+        {
+          "id": 1013531079,
+          "kind": 6,
+          "gain_db": 0
+        },
+        {
+          "id": 720723834,
+          "kind": 5,
+          "gain_db": 0
+        },
+        {
+          "id": 923000845,
+          "kind": 7,
+          "gain_db": -3.0
+        },
+        {
+          "id": 416114231,
+          "kind": 7,
+          "gain_db": 12.0
+        }
+      ]
+    },
+    {
+      "leader": "Victoria",
+      "media_id": 137243891,
+      "source_lufs": -31.0,
+      "source_true_peak_db": -13.32,
+      "gain_db": 9.0,
+      "prebus_lufs": -22.0,
+      "chain": [
+        {
+          "id": 557518923,
+          "kind": 2,
+          "gain_db": 0
+        },
+        {
+          "id": 1013531079,
+          "kind": 6,
+          "gain_db": 0
+        },
+        {
+          "id": 720723834,
+          "kind": 5,
+          "gain_db": 0
+        },
+        {
+          "id": 923000845,
+          "kind": 7,
+          "gain_db": -3.0
+        },
+        {
+          "id": 416114231,
+          "kind": 7,
+          "gain_db": 12.0
+        }
+      ]
+    }
+  ],
+  "median_prebus_lufs": -22.0
+}

@@ -4,13 +4,14 @@
 
 ## v2.0.0-alpha — Unreleased
 
-- Rework the Great Reforms: Industrial Era Builder charges and Farm Food adjacency, a one-time Governor title and growth for cities with a Governor. Remove the old Pasture and unit-upgrade bonuses.
-- Add railway Production from connected own cities, capped by local Population, and Gold from connected foreign cities; no Capital connection required. Gathering Storm is required.
-- Integrate Russian recordings for all 31 diplomacy texts on Windows, with separate selection for both defeat texts, and full Russian loading narration.
+- Rework the Great Reforms: Industrial Era Builder charges, a one-time Governor title and growth for cities with a Governor. Remove the old Pasture, unit-upgrade and Farm adjacency bonuses.
+- Add railway Production from connected own cities and Gold from connected foreign cities; each bonus is capped separately by local Population. No Capital connection is required. Gathering Storm is required.
+- Integrate Russian recordings for all 31 diplomacy texts on Windows, with separate selection for both defeat texts, and loading narration in Russian and provisional English.
+- Restore the native era introduction before Alexander's loading narration, using the selected audio language and suppressing Peter's leader segment.
 - Expand and revise RU/EN loading and diplomacy text; preserve selected takes, generation settings and listening feedback.
 - Update audio validation, listening catalog, documentation and agent skills.
 
-Development status: extended voice routes, loading narration, both defeat variants and gameplay changes still require final in-game checks. Some takes need polishing. Alexander always speaks Russian; only loading narration is intended to have an English recording, which is not yet selected or integrated. This entry does not announce a release.
+Development status: extended voice routes, loading narration, both defeat variants and gameplay changes still require final in-game checks. Some takes need polishing. Alexander always speaks Russian; loading narration now has Russian and provisional English recordings, selected by audio language. The English take at 90% tempo was selected by listening; playback in game still needs confirmation. This entry does not announce a release.
 
 ## v1.5.0-alpha
 

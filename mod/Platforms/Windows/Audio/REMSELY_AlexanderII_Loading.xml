@@ -6,12 +6,17 @@
       <Path>REMSELY_AlexanderII_Loading.bnk</Path>
       <IncludedEvents>
         <Event Id="3137245497" Name="Play_REMSELY_AlexanderII_LOADING_RU" GUID="{151AAF90-7FD6-5657-90E2-C1675346B79C}"/>
+        <Event Id="3388909703" Name="Play_REMSELY_AlexanderII_LOADING_EN" GUID="{7C330109-0C49-5769-B8D8-CB654435D202}"/>
         <Event Id="1127040149" Name="Stop_REMSELY_AlexanderII_Loading" GUID="{D94084A5-16F8-58D6-8B59-A514D52ED8CC}"/>
       </IncludedEvents>
       <IncludedMemoryFiles>
         <File Id="1688565349" Language="SFX">
           <ShortName>loading-ru-seed-311-tempo-088.wav</ShortName>
           <Path>1688565349.wem</Path>
+        </File>
+        <File Id="1688565348" Language="SFX">
+          <ShortName>loading-en-seed-311-tempo-090.wav</ShortName>
+          <Path>1688565348.wem</Path>
         </File>
       </IncludedMemoryFiles>
     </SoundBank>

@@ -77,6 +77,16 @@ local function MuteNativeLeaderDawn()
     print("REMSELY voice: native leader dawn segment muted (value " .. tostring(muteValue) .. ")");
 end
 
+-- Match the narrator to the audio language, independently of the UI/subtitles.
+-- Other supported game audio languages retain the existing Russian fallback.
+local function GetNarrationEvent()
+    local language = Options.GetAppOption("Language", "AudioLanguage") or "";
+    if string.sub(language, 1, 7) == "English" then
+        return "Play_REMSELY_AlexanderII_LOADING_EN";
+    end
+    return "Play_REMSELY_AlexanderII_LOADING_RU";
+end
+
 local function OnNarrationUpdate()
     local now = UI.GetElapsedTime();
     if leaderMuteDeadline ~= nil and now >= leaderMuteDeadline then
@@ -88,7 +98,7 @@ local function OnNarrationUpdate()
         -- the already muted Peter segment if it survived, never the era narration.
         UI.PlaySound("STOP_SPEECH_DAWNOFMAN");
         narrationStarted = true;
-        UI.PlaySound("Play_REMSELY_AlexanderII_LOADING_RU");
+        UI.PlaySound(GetNarrationEvent());
         print("REMSELY voice: FrontEnd loading narration started after era intro");
     end
     if narrationDeadline == nil and leaderMuteDeadline == nil then

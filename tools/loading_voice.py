@@ -13,6 +13,7 @@ from leader_voice import ROOT, GAIN_DB
 
 BANK = 'REMSELY_AlexanderII_Loading'
 PLAY = 'Play_REMSELY_AlexanderII_LOADING_RU'
+PLAY_EN = 'Play_REMSELY_AlexanderII_LOADING_EN'
 STOP = 'Stop_REMSELY_AlexanderII_Loading'
 INI = 'REMSELY_AlexanderIILoadingBanks.ini'
 OUT = ROOT / 'mod/Platforms/Windows/Audio'
@@ -26,9 +27,18 @@ def loading_recording():
     return dict(row, file='art/voice/selected/loading-ru-clean.wav')
 
 
-def source_pcm():
-    source = ROOT / loading_recording()['file']
-    assert hashlib.sha256(source.read_bytes()).hexdigest() == loading_recording()['sha256'], 'loading source checksum'
+def loading_recordings():
+    rows = {'ru': loading_recording()}
+    english = ROOT / 'art/voice/loading-en-trial-manifest.json'
+    if english.exists():
+        rows['en'] = json.loads(english.read_text(encoding='utf-8-sig'))
+    return rows
+
+
+def source_pcm(row=None):
+    row = row or loading_recording()
+    source = ROOT / row['file']
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == row['sha256'], 'loading source checksum'
     with wave.open(str(source), 'rb') as wav:
         assert (wav.getnchannels(), wav.getsampwidth(), wav.getframerate()) == (1, 3, 48000)
         raw = np.frombuffer(wav.readframes(wav.getnframes()), dtype=np.uint8).reshape(-1, 3).astype(np.int32)
@@ -43,16 +53,21 @@ def build_loading_bank(tool, objects, original_sound, chain):
     # the InGame Speech bank. It still outputs to the existing shared speech bus.
     chain = [bytearray(body) for body in chain]
     struct.pack_into('<f', chain[0], 18, struct.unpack_from('<f', chain[0], 18)[0] + GAIN_DB)
-    sound = bytearray(original_sound)
-    assert sound[30:32] == b'\x01\x00'
-    struct.pack_into('<f', sound, 32, loading_recording().get('sound_gain_db', 5.1))
-    with tempfile.TemporaryDirectory(prefix='alexander-loading-') as temp:
-        wav_path = Path(temp) / 'loading.wav'
-        with wave.open(str(wav_path), 'wb') as wav:
-            wav.setparams((1, 2, 48000, 0, 'NONE', 'not compressed'))
-            wav.writeframes(source_pcm())
-        wem = tool['pcm_wem'](str(wav_path))
-    blob, ids = tool['build_bank'](BANK, [dict(event=PLAY, wem=wem, body=bytes(sound), plugin=0x00010001)], chain=[bytes(b) for b in chain])
+    voices, media = [], []
+    rows = loading_recordings()
+    for index, (language, row) in enumerate(rows.items()):
+        sound = bytearray(original_sound)
+        assert sound[30:32] == b'\x01\x00'
+        struct.pack_into('<f', sound, 32, row.get('sound_gain_db', 5.1))
+        with tempfile.TemporaryDirectory(prefix='alexander-loading-') as temp:
+            wav_path = Path(temp) / 'loading.wav'
+            with wave.open(str(wav_path), 'wb') as wav:
+                wav.setparams((1, 2, 48000, 0, 'NONE', 'not compressed'))
+                wav.writeframes(source_pcm(row))
+            wem = tool['pcm_wem'](str(wav_path))
+        voices.append(dict(event=PLAY if language == 'ru' else PLAY_EN, wem=wem, body=bytes(sound), plugin=0x00010001))
+        media.append((fnv(BANK + '/media' + str(index)), wem))
+    blob, ids = tool['build_bank'](BANK, voices, chain=[bytes(b) for b in chain])
     stop_event = objects[fnv('Stop_Leader_Speech')][1]
     stop_action = bytearray(objects[struct.unpack_from('<I', stop_event, 8)[0]][1])
     stop_id = fnv(BANK + '/stop')
@@ -60,19 +75,21 @@ def build_loading_bank(tool, objects, original_sound, chain):
     struct.pack_into('<I', stop_action, 6, fnv(BANK + '/chain0'))
     built = tool['read_hirc'](blob) + [(3, bytes(stop_action)), (4, struct.pack('<III', fnv(STOP), 1, stop_id))]
     assert not set(objects) & {struct.unpack_from('<I', b)[0] for _, b in built}, 'vanilla object collision'
-    (OUT / (BANK + '.bnk')).write_bytes(tool['assemble'](BANK, built, [(fnv(BANK + '/media0'), wem)]))
+    (OUT / (BANK + '.bnk')).write_bytes(tool['assemble'](BANK, built, media))
     (OUT / INI).write_text('[Global]\n!' + BANK + '.bnk\n\n[Menu]\n\n[InGame]\n\n[2D]\n\n[3D]\n\n[FMV]\n', encoding='utf-8')
     meta = etree.Element('SoundBanksInfo', Platform='Windows', BasePlatform='Windows', SchemaVersion='10', SoundbankVersion='113')
     bank = etree.SubElement(etree.SubElement(meta, 'SoundBanks'), 'SoundBank', Id=str(ids['bank']), Language='SFX')
     etree.SubElement(bank, 'ShortName').text = BANK
     etree.SubElement(bank, 'Path').text = BANK + '.bnk'
     events = etree.SubElement(bank, 'IncludedEvents')
-    for name in (PLAY, STOP):
+    for name in ([PLAY, PLAY_EN, STOP] if 'en' in rows else [PLAY, STOP]):
         etree.SubElement(events, 'Event', Id=str(fnv(name)), Name=name, GUID='{' + str(uuid.uuid5(uuid.NAMESPACE_URL, name)).upper() + '}')
     memory = etree.SubElement(bank, 'IncludedMemoryFiles')
-    file = etree.SubElement(memory, 'File', Id=str(fnv(BANK + '/media0')), Language='SFX')
-    etree.SubElement(file, 'ShortName').text = Path(loading_recording()['file']).name
-    etree.SubElement(file, 'Path').text = str(fnv(BANK + '/media0')) + '.wem'
+    for index, row in enumerate(rows.values()):
+        media_id = fnv(BANK + '/media' + str(index))
+        file = etree.SubElement(memory, 'File', Id=str(media_id), Language='SFX')
+        etree.SubElement(file, 'ShortName').text = Path(row['file']).name
+        etree.SubElement(file, 'Path').text = str(media_id) + '.wem'
     etree.ElementTree(meta).write(str(OUT / (BANK + '.xml')), encoding='utf-8', xml_declaration=True, pretty_print=True)
 
 
@@ -91,21 +108,6 @@ def verify_loading_voice():
         oid = struct.unpack_from('<I', body)[0]; assert oid not in objects
         objects[oid] = (kind, body); position += 5 + size
     assert position == len(hirc)
-    event = objects[fnv(PLAY)][1]; action = objects[struct.unpack_from('<I', event, 8)[0]][1]
-    assert action[4:6] == b'\x03\x04' and struct.unpack_from('<I', action, 14)[0] == fnv(BANK)
-    kind, sound = objects[struct.unpack_from('<I', action, 6)[0]]
-    assert kind == 2 and struct.unpack_from('<I', sound, 4)[0] == 0x00010001 and sound[8] == 0
-    assert struct.unpack_from('<I', sound, 25)[0] == fnv(BANK + '/chain0')
-    assert abs(struct.unpack_from('<f', sound, 32)[0] - loading_recording().get('sound_gain_db', 5.1)) < 1e-5
-    media_id, size = struct.unpack_from('<II', sound, 9)
-    mid, offset, length = struct.unpack('<III', chunks[b'DIDX'])
-    assert mid == media_id and length == size
-    wem = chunks[b'DATA'][offset:offset + length]; position = 12; wav_chunks = {}
-    while position < len(wem):
-        tag, length = struct.unpack_from('<4sI', wem, position)
-        wav_chunks[tag] = wem[position + 8:position + 8 + length]; position += 8 + length + length % 2
-    assert wav_chunks[b'data'] == source_pcm(), 'loading embedded PCM differs from selected source'
-    assert struct.unpack_from('<HHI', wav_chunks[b'fmt ']) == (0xfffe, 1, 48000)
     chain_gain = 0.0
     for index in range(3):
         kind, mixer = objects[fnv(BANK + '/chain' + str(index))]; assert kind == 7
@@ -116,26 +118,49 @@ def verify_loading_voice():
         assert parent == (fnv(BANK + '/chain' + str(index + 1)) if index < 2 else 0), 'loading depends on InGame parent'
     assert struct.unpack_from('<I', mixer, 7)[0] == fnv('Speech Bus'), 'loading speech bus'
     assert abs(chain_gain + 6.0) < 1e-5, 'loading mixer gain changed'
-    row = loading_recording()
-    assert not row.get('status', '').startswith('rejected'), 'rejected loading take must not be installed'
-    if (ROOT / 'art/voice/loading-trial-manifest.json').exists():
-        assert 'transcript_check' in row, 'new loading take needs a spoken-ending check'
-    if 'transcript_check' in row:
-        transcript = json.loads((ROOT / row['transcript_check']).read_text(encoding='utf-8'))
-        assert transcript['ending_matches'], 'loading speech ending is incomplete'
-        assert transcript['content_matches'], 'loading speech contains missing or foreign text'
-        assert transcript['audio_sha256'] == row['sha256'], 'stale loading transcript check'
-        assert transcript['expected_text'] == row['text'], 'loading transcript checked against different text'
-    if 'source_lufs' in row:
-        assert abs(row['source_lufs'] + chain_gain + row['sound_gain_db'] - row['estimated_prebus_lufs']) < 0.01, 'loading loudness estimate'
-        assert row['true_peak_db'] + chain_gain + row['sound_gain_db'] <= -0.49, 'loading gain leaves no peak headroom'
+    rows = loading_recordings()
+    media_records = list(struct.iter_unpack('<III', chunks[b'DIDX']))
+    media_ids = [mid for mid, _, _ in media_records]
+    assert media_ids == sorted(set(media_ids)), 'loading media index must be sorted and unique'
+    media_index = {mid: (offset, size) for mid, offset, size in media_records}
+    assert len(media_index) == len(rows), 'loading media count'
+    for language, row in rows.items():
+        event = objects[fnv(PLAY if language == 'ru' else PLAY_EN)][1]; action = objects[struct.unpack_from('<I', event, 8)[0]][1]
+        assert action[4:6] == b'\x03\x04' and struct.unpack_from('<I', action, 14)[0] == fnv(BANK)
+        kind, sound = objects[struct.unpack_from('<I', action, 6)[0]]
+        assert kind == 2 and struct.unpack_from('<I', sound, 4)[0] == 0x00010001 and sound[8] == 0
+        assert struct.unpack_from('<I', sound, 25)[0] == fnv(BANK + '/chain0')
+        assert abs(struct.unpack_from('<f', sound, 32)[0] - row.get('sound_gain_db', 5.1)) < 1e-5
+        media_id, size = struct.unpack_from('<II', sound, 9)
+        assert media_id in media_index, 'missing loading media'
+        offset, length = media_index[media_id]
+        assert length == size
+        wem = chunks[b'DATA'][offset:offset + length]; position = 12; wav_chunks = {}
+        while position < len(wem):
+            tag, length = struct.unpack_from('<4sI', wem, position)
+            wav_chunks[tag] = wem[position + 8:position + 8 + length]; position += 8 + length + length % 2
+        assert wav_chunks[b'data'] == source_pcm(row), 'loading embedded PCM differs from selected source'
+        assert struct.unpack_from('<HHI', wav_chunks[b'fmt ']) == (0xfffe, 1, 48000)
+        assert not row.get('status', '').startswith('rejected'), 'rejected loading take must not be installed'
+        if (ROOT / 'art/voice/loading-trial-manifest.json').exists():
+            assert 'transcript_check' in row, 'new loading take needs a spoken-ending check'
+        if 'transcript_check' in row:
+            transcript = json.loads((ROOT / row['transcript_check']).read_text(encoding='utf-8'))
+            assert transcript['ending_matches'], 'loading speech ending is incomplete'
+            assert transcript['content_matches'], 'loading speech contains missing or foreign text'
+            assert transcript['audio_sha256'] == row['sha256'], 'stale loading transcript check'
+            assert transcript['expected_text'] == row['text'], 'loading transcript checked against different text'
+            assert transcript.get('language', 'ru') == language, 'loading transcript language mismatch'
+        if 'source_lufs' in row:
+            assert abs(row['source_lufs'] + chain_gain + row['sound_gain_db'] - row['estimated_prebus_lufs']) < 0.01, 'loading loudness estimate'
+            assert row['true_peak_db'] + chain_gain + row['sound_gain_db'] <= -0.49, 'loading gain leaves no peak headroom'
+        texts = etree.parse(str(ROOT / ('mod/Text/' + ('ru_RU' if language == 'ru' else 'en_US') + '.xml')))
+        assert texts.findtext(".//Replace[@Tag='LOC_LOADING_INFO_LEADER_REMSELY_ALEXANDER_II']/Text") == row['text'], 'loading voice/subtitle mismatch'
     stop = objects[fnv(STOP)][1]; action = objects[struct.unpack_from('<I', stop, 8)[0]][1]
     assert action[4:6] == b'\x02\x01' and struct.unpack_from('<I', action, 6)[0] == fnv(BANK + '/chain0')
     assert (OUT / INI).read_text().split('[Menu]')[0].strip() == '[Global]\n!' + BANK + '.bnk', 'loading must be Global'
     meta = etree.parse(str(OUT / (BANK + '.xml')))
-    assert {e.get('Name') for e in meta.findall('.//Event')} == {PLAY, STOP}
-    texts = etree.parse(str(ROOT / 'mod/Text/ru_RU.xml'))
-    assert texts.findtext(".//Replace[@Tag='LOC_LOADING_INFO_LEADER_REMSELY_ALEXANDER_II']/Text") == loading_recording()['text'], 'loading voice/subtitle mismatch'
+    assert {e.get('Name') for e in meta.findall('.//Event')} == ({PLAY, PLAY_EN, STOP} if 'en' in rows else {PLAY, STOP})
     modinfo = etree.parse(str(ROOT / 'mod/RemselysAlexanderII.modinfo'))
     early = modinfo.find("./FrontEndActions/UpdateAudio[@id='REMSELY_FrontEnd_Audio']")
     assert early is not None and any(f.text.endswith(BANK + '.bnk') for f in early.findall('File')), 'missing FrontEnd bank'
