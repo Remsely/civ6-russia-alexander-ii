@@ -17,11 +17,14 @@ INSERT INTO LeaderTraits (LeaderType, TraitType) VALUES
 		('LEADER_REMSELY_ALEXANDER_II', 'TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS');
 
 -- Loading screen: our portrait and background (the study in the Winter Palace).
--- PlayDawnOfManAudio must be 1: the flag gates the native era narration, which
--- RemselysAlexanderII_LoadScreen plays for our leader (with Peter's dawn segment muted).
--- It sat at 0 since the pre-voice days, silently muting the era narration for Alexander.
+-- PlayDawnOfManAudio must be 0: a pause-menu restart recreates the FrontEnd LoadScreen
+-- context from the vanilla file, where our bPlayDOM patch does not exist, and the flag
+-- is the only thing keeping such contexts from posting the dawn event with Peter's
+-- voice. Every dawn audio for our leader - on normal loads (RemselysAlexanderII_LoadScreen)
+-- and on restarts (the InGame driver in RemselysAlexanderII_Voice) - is posted by our
+-- own code, which does not read this flag.
 INSERT INTO LoadingInfo (LeaderType, ForegroundImage, BackgroundImage, PlayDawnOfManAudio) VALUES
-		('LEADER_REMSELY_ALEXANDER_II', 'LEADER_REMSELY_ALEXANDER_II_NEUTRAL', 'LEADER_REMSELY_ALEXANDER_II_BACKGROUND', 1);
+		('LEADER_REMSELY_ALEXANDER_II', 'LEADER_REMSELY_ALEXANDER_II_NEUTRAL', 'LEADER_REMSELY_ALEXANDER_II_BACKGROUND', 0);
 
 INSERT INTO CivilizationLeaders (CivilizationType, LeaderType, CapitalName) VALUES
 		('CIVILIZATION_RUSSIA', 'LEADER_REMSELY_ALEXANDER_II', 'LOC_CITY_NAME_ST_PETERSBURG');

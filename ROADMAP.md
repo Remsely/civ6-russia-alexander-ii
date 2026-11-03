@@ -24,7 +24,8 @@ The release order reflects the agreed direction. Dates are unset; mechanics that
 - [x] Prepare recordings for all 31 diplomacy texts, including the other 24 lines and the second defeat variant; integrate trial routing, separate audio selection for the two DEFEAT texts, and full Russian loading narration.
 - [ ] Test the new loading narration and volume, extended dialogue and both defeat variants in game; refine takes with outstanding feedback. [Voice audit (Russian)](docs/voice-coverage.ru.md).
 - [ ] Select and integrate an English narrator for the loading screen only; test narration language selection. Alexander's dialogue stays Russian in every interface language, with RU/EN subtitles.
-- [ ] Complete text review, final checks, release versioning and packaging. [Draft release notes](docs/v2.0.0-alpha-release-notes.md). [Release preparation checklist](docs/v2.0.0-alpha-release-checklist.md).
+- [ ] Complete text review, final checks, release versioning and packaging.
+- [ ] Known limitation (accepted; no known fix): after a pause-menu restart the era narration starts a few seconds late - that loading screen is built from vanilla files while mods are not mounted yet, and the mod's code only comes alive near the end of the load. Starting the era on the first second without Peter's voice is not possible with the engine. [Release notes](docs/v2.0.0-alpha-release-notes.md), [technical history (Russian)](docs/voice-integration.ru.md). [Draft release notes](docs/v2.0.0-alpha-release-notes.md). [Release preparation checklist](docs/v2.0.0-alpha-release-checklist.md).
 
 ## v2.5.0 — a living leader
 

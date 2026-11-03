@@ -88,6 +88,12 @@
       </Properties>
       <File>UI/RemselysAlexanderII_Voice.xml</File>
     </AddUserInterfaces>
+    <ImportFiles id="REMSELY_LoadingEraDurations_InGame">
+      <Properties>
+        <LoadOrder>20</LoadOrder>
+      </Properties>
+      <File>UI/RemselysAlexanderII_LoadingEraDurations.lua</File>
+    </ImportFiles>
     <UpdateAudio id="REMSELY_InGame_Audio">
       <File>Platforms/Windows/Audio/REMSELY_AlexanderIIBanks.ini</File>
       <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.bnk</File>
