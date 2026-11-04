@@ -13,7 +13,7 @@ A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate lea
 - *Zemstvos:* on entering the Industrial Era the empire gains 1 Governor title; cities with an assigned Governor get +10% growth.
 - *Railway Network:* every city gets +1 Gold for each foreign city and +1 Production for each of your other cities connected to it by railroad; neither bonus can exceed the city's Population.
 
-**AI agenda: The Liberator.** Likes civilizations that have kept the peace for a long time; dislikes those that recently declared war.
+**AI agenda: The Liberator.** Likes civilizations that have kept the peace and those that share his religion; dislikes recent declarations of war and conversion of his cities to another faith.
 
 **A 3D leader on the diplomacy screen** — Alexander stands in his own hall in the portrait's pose and breathes, blinks and shifts his weight in his idle loop.
 

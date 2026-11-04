@@ -16,13 +16,19 @@
       <Text>Освободитель</Text>
     </Replace>
     <Replace Tag="LOC_AGENDA_REMSELY_LIBERATOR_DESCRIPTION" Language="ru_RU">
-      <Text>Ему нравятся цивилизации, давно не объявлявшие войн. Не нравятся те, что объявили войну недавно.</Text>
+      <Text>Ему нравятся цивилизации, давно не объявлявшие войн и исповедующие его религию. Не нравятся те, кто недавно объявил войну или обратил его города в другую веру.</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_PEACE" Language="ru_RU">
       <Text>Александр II ценит, что вы давно сохраняете мир</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_WAR" Language="ru_RU">
       <Text>Александр II недоволен тем, что вы недавно объявили войну</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_SHARED_FAITH" Language="ru_RU">
+      <Text>Александр II ценит, что вы исповедуете одну религию</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_CONVERSION" Language="ru_RU">
+      <Text>Александр II недоволен обращением его городов в вашу веру</Text>
     </Replace>
     <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_ANY" Language="ru_RU">
       <Text>(Вы поддерживаете мир)</Text>
@@ -31,7 +37,7 @@
       <Text>(Вы недавно объявили войну)</Text>
     </Replace>
     <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_DESCRIPTION" Language="ru_RU">
-      <Text>Adds Alexander II as an alternate leader of Russia: the Tsar-Liberator who abolished serfdom.[NEWLINE][NEWLINE]THE GREAT REFORMS (from the Industrial Era)[NEWLINE][ICON_BULLET] Emancipation of the Serfs: Builders have +1 charge.[NEWLINE][ICON_BULLET] Zemstvos: on entering the Industrial Era the empire gains 1 Governor title; cities with an assigned Governor get +10% growth.[NEWLINE][ICON_BULLET] Railway Network: every city gets +1 Gold for each foreign city and +1 Production for each of your other cities connected to it by railroad; neither bonus can exceed the city's Population.[NEWLINE][NEWLINE]AGENDA: THE LIBERATOR[NEWLINE]Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.[NEWLINE][NEWLINE]INCLUDED[NEWLINE][ICON_BULLET] 14 new Russian city names, the capital is Saint Petersburg[NEWLINE][ICON_BULLET] Animated 3D leader, portrait, icon, loading screen and diplomacy backgrounds[NEWLINE][ICON_BULLET] 31 diplomacy lines with Russian voice recordings on Windows, plus a Civilopedia page[NEWLINE][ICON_BULLET] English and Russian text; Alexander speaks Russian in either interface language[NEWLINE][ICON_BULLET] Loading narration in English and Russian, following the native era introduction[NEWLINE][NEWLINE]Requires Gathering Storm (railroads, Governors). The leader plays as Russia.[NEWLINE][NEWLINE]Author: Remsely. Made with Claude Code (Anthropic).</Text>
+      <Text>Adds Alexander II as an alternate leader of Russia: the Tsar-Liberator who abolished serfdom.[NEWLINE][NEWLINE]THE GREAT REFORMS (from the Industrial Era)[NEWLINE][ICON_BULLET] Emancipation of the Serfs: Builders have +1 charge.[NEWLINE][ICON_BULLET] Zemstvos: on entering the Industrial Era the empire gains 1 Governor title; cities with an assigned Governor get +10% growth.[NEWLINE][ICON_BULLET] Railway Network: every city gets +1 Gold for each foreign city and +1 Production for each of your other cities connected to it by railroad; neither bonus can exceed the city's Population.[NEWLINE][NEWLINE]AGENDA: THE LIBERATOR[NEWLINE]Likes civilizations that have kept the peace for a long time and those that share his religion. Dislikes those that recently declared war or converted his cities to another religion.[NEWLINE][NEWLINE]INCLUDED[NEWLINE][ICON_BULLET] 14 new Russian city names, the capital is Saint Petersburg[NEWLINE][ICON_BULLET] Animated 3D leader, portrait, icon, loading screen and diplomacy backgrounds[NEWLINE][ICON_BULLET] 31 diplomacy lines with Russian voice recordings on Windows, plus a Civilopedia page[NEWLINE][ICON_BULLET] English and Russian text; Alexander speaks Russian in either interface language[NEWLINE][ICON_BULLET] Loading narration in English and Russian, following the native era introduction[NEWLINE][NEWLINE]Requires Gathering Storm (railroads, Governors). The leader plays as Russia.[NEWLINE][NEWLINE]Author: Remsely. Made with Claude Code (Anthropic).</Text>
     </Replace>
     <Replace Tag="LOC_REMSELY_ALEXANDER_II_MOD_TEASER" Language="ru_RU">
       <Text>Alexander II for Russia: Great Reforms, railways, an animated 3D leader and Russian diplomacy voice.</Text>
@@ -214,7 +220,7 @@
       <Text>Россия Александра терпеливо строит свой тыл. С Промышленной эры его строители делают больше, земства ускоряют рост губернаторских городов, а железные дороги связывают империю в единое целое.</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_DETAILED_BODY" Language="ru_RU">
-      <Text>Бонусы Александра раскрываются с Промышленной эры — во времена Великих реформ. Строители получают лишний [ICON_Charges] заряд (Освобождение крестьян). При вступлении в Промышленную эру империя получает 1 [ICON_Governor] титул губернатора, а города с назначенным губернатором растут на 10% быстрее (Земства). Каждый город получает +1 [ICON_Gold] золота за каждый иностранный город и +1 [ICON_Production] производства за каждый другой ваш город, соединенные с ним железной дорогой, — но каждый из бонусов не больше населения города (Железнодорожная сеть). Его повестка, «Освободитель», заставляет других лидеров любить правителей, хранящих мир, и не любить тех, кто недавно объявлял войну.</Text>
+      <Text>Бонусы Александра раскрываются с Промышленной эры — во времена Великих реформ. Строители получают лишний [ICON_Charges] заряд (Освобождение крестьян). При вступлении в Промышленную эру империя получает 1 [ICON_Governor] титул губернатора, а города с назначенным губернатором растут на 10% быстрее (Земства). Каждый город получает +1 [ICON_Gold] золота за каждый иностранный город и +1 [ICON_Production] производства за каждый другой ваш город, соединенные с ним железной дорогой, — но каждый из бонусов не больше населения города (Железнодорожная сеть). Его повестка, «Освободитель», располагает его к миролюбивым правителям и единоверцам; он осуждает недавние войны и обращение своих городов в другую веру.</Text>
     </Replace>
     <Replace Tag="LOC_PEDIA_LEADERS_PAGE_LEADER_REMSELY_ALEXANDER_II_CHAPTER_HISTORY_PARA_1" Language="ru_RU">
       <Text>Александр II (1818-1881) взошел на престол в 1855 году, в разгар Крымской войны. Поражение показало, что огромная, но отсталая империя не сможет удержать свое место в Европе без глубоких перемен. Последовавшие реформы принесли ему имя Царя-Освободителя.</Text>

@@ -59,10 +59,10 @@ Ability descriptions state values explicitly, without references to the Civilope
 
 ## 4. AI Agenda: The Liberator
 
-He likes civilizations that have not declared wars for a long time (threshold ~30 turns) and dislikes those that declared war recently. Implemented in XML without Lua (`MODIFIER_PLAYER_DIPLOMACY_*`).
+He likes civilizations that have not declared wars for a long time (threshold ~30 turns) and dislikes those that declared war recently. It also adds +3 for a shared religion and -12 for converted cities using Philip II’s condition, and favors Holy War when available. Conversion of foreign cities is not implemented. Values and AI behavior require in-game testing.
 
 - Name: The Liberator / «Освободитель»
-- Description: Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.
+- Description: Likes civilizations that have kept the peace for a long time and those that share his religion. Dislikes those that recently declared war or converted his cities to another religion.
 
 ## 5. Cities
 

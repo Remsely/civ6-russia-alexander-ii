@@ -85,7 +85,7 @@ Ability состоит из трёх частей.
 | Ключ | EN | RU |
 |---|---|---|
 | Название | The Liberator | Освободитель |
-| Описание | Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war. | Ему нравятся цивилизации, давно не объявлявшие войн. Не нравятся те, что объявили войну недавно. |
+| Описание | Likes civilizations that have kept the peace for a long time and those that share his religion. Dislikes those that recently declared war or converted his cities to another religion. | Ему нравятся цивилизации, давно не объявлявшие войн и исповедующие его религию. Не нравятся те, кто недавно объявил войну или обратил его города в другую веру. |
 
 ---
 

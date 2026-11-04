@@ -3711,7 +3711,7 @@ INSERT INTO TraitModifiers (TraitType, ModifierId) VALUES
 
 --==========================================================================================================================
 -- AGENDA: The Liberator (docs/remselys-alexander-ii.md, 4)
--- Likes civilizations that keep the peace, dislikes those that recently declared war. XML only (first version).
+-- Likes peace and a shared faith; opposes conversion of his cities (Philip II's Counter Reformer).
 -- Patterns: AGENDA_PEACEKEEPER (Gandhi: not-warmonger like) and AGENDA_BACKSTAB_AVERSE (Tomyris: fading penalty for a declared war).
 -- Like:    requirement set PLAYER_NOT_WARMONGER_SUBJECT; starts at +2, +1 every 10 turns, up to +5 (about 30 turns of peace).
 -- Dislike: requirement set PLAYER_DECLARES_WAR; starts at -6 and fades by 1 every 5 turns (about 30 turns).
@@ -3733,7 +3733,9 @@ INSERT INTO HistoricalAgendas (LeaderType, AgendaType) VALUES
 
 INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId) VALUES
 		('REMSELY_LIBERATOR_PEACE', 'MODIFIER_PLAYER_DIPLOMACY_SIMPLE_MODIFIER', 'PLAYER_NOT_WARMONGER_SUBJECT'),
-		('REMSELY_LIBERATOR_WAR',   'MODIFIER_PLAYER_DIPLOMACY_SIMPLE_MODIFIER', 'PLAYER_DECLARES_WAR');
+		('REMSELY_LIBERATOR_WAR',   'MODIFIER_PLAYER_DIPLOMACY_SIMPLE_MODIFIER', 'PLAYER_DECLARES_WAR'),
+		('REMSELY_LIBERATOR_SHARED_FAITH', 'MODIFIER_PLAYER_DIPLOMACY_SIMPLE_MODIFIER', 'PLAYER_SAME_RELIGION'),
+		('REMSELY_LIBERATOR_CONVERSION', 'MODIFIER_PLAYER_DIPLOMACY_SIMPLE_MODIFIER', 'PLAYER_ENCROACHING_RELIGION');
 
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 		('REMSELY_LIBERATOR_PEACE', 'InitialValue',   '2'),
@@ -3746,15 +3748,30 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
 		('REMSELY_LIBERATOR_WAR',   'ReductionTurns', '5'),
 		('REMSELY_LIBERATOR_WAR',   'ReductionValue', '-1'),
 		('REMSELY_LIBERATOR_WAR',   'SimpleModifierDescription', 'LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_WAR'),
-		('REMSELY_LIBERATOR_WAR',   'StatementKey',   'LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_ANY');
+		('REMSELY_LIBERATOR_WAR',   'StatementKey',   'LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_ANY'),
+		('REMSELY_LIBERATOR_SHARED_FAITH', 'InitialValue', '3'),
+		('REMSELY_LIBERATOR_SHARED_FAITH', 'SimpleModifierDescription', 'LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_SHARED_FAITH'),
+		('REMSELY_LIBERATOR_CONVERSION', 'InitialValue', '-12'),
+		('REMSELY_LIBERATOR_CONVERSION', 'SimpleModifierDescription', 'LOC_DIPLO_MODIFIER_REMSELY_LIBERATOR_CONVERSION');
 
 INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
 		('REMSELY_LIBERATOR_PEACE', 'Sample', 'LOC_TOOLTIP_SAMPLE_DIPLOMACY_ALL'),
-		('REMSELY_LIBERATOR_WAR',   'Sample', 'LOC_TOOLTIP_SAMPLE_DIPLOMACY_ALL');
+		('REMSELY_LIBERATOR_WAR',   'Sample', 'LOC_TOOLTIP_SAMPLE_DIPLOMACY_ALL'),
+		('REMSELY_LIBERATOR_SHARED_FAITH', 'Sample', 'LOC_TOOLTIP_SAMPLE_DIPLOMACY_ALL'),
+		('REMSELY_LIBERATOR_CONVERSION', 'Sample', 'LOC_TOOLTIP_SAMPLE_DIPLOMACY_ALL');
 
 INSERT INTO TraitModifiers (TraitType, ModifierId) VALUES
 		('TRAIT_AGENDA_REMSELY_LIBERATOR', 'REMSELY_LIBERATOR_PEACE'),
-		('TRAIT_AGENDA_REMSELY_LIBERATOR', 'REMSELY_LIBERATOR_WAR');
+		('TRAIT_AGENDA_REMSELY_LIBERATOR', 'REMSELY_LIBERATOR_WAR'),
+		('TRAIT_AGENDA_REMSELY_LIBERATOR', 'REMSELY_LIBERATOR_SHARED_FAITH'),
+		('TRAIT_AGENDA_REMSELY_LIBERATOR', 'REMSELY_LIBERATOR_CONVERSION');
+
+-- Philip II's PhilipDiplomacy prefers Holy War when the usual requirements are met.
+INSERT INTO AiListTypes (ListType) VALUES ('REMSELY_LIBERATOR_DIPLOMACY');
+INSERT INTO AiLists (ListType, AgendaType, System) VALUES
+    ('REMSELY_LIBERATOR_DIPLOMACY', 'TRAIT_AGENDA_REMSELY_LIBERATOR', 'DiplomaticActions');
+INSERT INTO AiFavoredItems (ListType, Item, Favored) VALUES
+    ('REMSELY_LIBERATOR_DIPLOMACY', 'DIPLOACTION_DECLARE_HOLY_WAR', 1);
 --==========================================================================================================================
 -- CITY NAMES (docs/remselys-alexander-ii.md, 5): the leader's list in the design-doc order (#2-#21 there; the capital #1 is
 -- set in CivilizationLeaders above). 14 new names the vanilla Russia list lacks + 6 vanilla names (Moscow, Nizhny Novgorod,
