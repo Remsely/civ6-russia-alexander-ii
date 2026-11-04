@@ -166,6 +166,8 @@ def verify_loading_voice():
     assert early is not None and any(f.text.endswith(BANK + '.bnk') for f in early.findall('File')), 'missing FrontEnd bank'
     hook = modinfo.find("./FrontEndActions/ImportFiles[@id='REMSELY_LoadScreen_Voice']")
     assert hook is not None, 'loading must run before InGame addins'
+    restart_hook = modinfo.find("./InGameActions/ImportFiles[@id='REMSELY_LoadScreen_Voice_InGame']")
+    assert restart_hook is not None and any(f.text == 'UI/LoadScreen.lua' for f in restart_hook.findall('File')), 'missing InGame loading screen import'
     files = [f.text for f in hook.findall('File')]
     listed = [f.text for f in modinfo.findall('./Files/File')]
     assert all(f in files and f in listed for f in ('UI/LoadScreen.lua', 'UI/RemselysAlexanderII_LoadScreen.lua', 'UI/RemselysAlexanderII_LoadingEraDurations.lua')), 'missing FrontEnd loading hook file'

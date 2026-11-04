@@ -123,16 +123,11 @@ ContextPtr:SetShutdown(Shutdown);
 print("REMSELY Alexander II: voice prototype UI loaded");
 
 -- ===========================================================================
--- Dawn-of-man driver. A pause-menu restart recreates the FrontEnd LoadScreen
--- context from the vanilla file (the mod's shadow copy does not apply on that
--- path), and LoadingInfo.PlayDawnOfManAudio = 0 keeps every vanilla context
--- silent for our leader. This context initializes while the loading screen is
--- still visible - on normal loads and on restarts alike - so whenever the load
--- screen extension could not run, the era narration and our Alexander speech
--- are posted from here. The load screen marks handled games through
--- GameConfiguration; restarts rebuild the configuration, clearing the mark.
--- ContextPtr:SetUpdate never ticks in this hidden control-less context, so the
--- narration deadline is polled from engine events instead.
+-- Dawn-of-man fallback. The loading screen is imported in FrontEnd and InGame;
+-- when it posts the narration it sets a GameConfiguration marker. If the marker
+-- is absent, this InGame context posts the era and queues Alexander's speech.
+-- It may initialize late and its duration-based timing is approximate.
+-- ContextPtr:SetUpdate may not tick in this hidden context, so engine events poll it.
 -- ===========================================================================
 local dawnNarrationDeadline = nil;
 local dawnNarrationStarted = false;

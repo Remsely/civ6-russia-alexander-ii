@@ -49,6 +49,12 @@
     </ImportFiles>
   </FrontEndActions>
   <InGameActions>
+    <ImportFiles id="REMSELY_LoadScreen_Voice_InGame">
+      <Properties>
+        <LoadOrder>20</LoadOrder>
+      </Properties>
+      <File>UI/LoadScreen.lua</File>
+    </ImportFiles>
     <UpdateAudio id="REMSELY_Loading_Audio">
       <Properties>
         <LoadOrder>10</LoadOrder>

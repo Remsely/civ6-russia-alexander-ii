@@ -17,12 +17,8 @@ INSERT INTO LeaderTraits (LeaderType, TraitType) VALUES
 		('LEADER_REMSELY_ALEXANDER_II', 'TRAIT_LEADER_REMSELY_ALEXANDER_II_REFORMS');
 
 -- Loading screen: our portrait and background (the study in the Winter Palace).
--- PlayDawnOfManAudio must be 0: a pause-menu restart recreates the FrontEnd LoadScreen
--- context from the vanilla file, where our bPlayDOM patch does not exist, and the flag
--- is the only thing keeping such contexts from posting the dawn event with Peter's
--- voice. Every dawn audio for our leader - on normal loads (RemselysAlexanderII_LoadScreen)
--- and on restarts (the InGame driver in RemselysAlexanderII_Voice) - is posted by our
--- own code, which does not read this flag.
+-- Keep the vanilla path silent for Alexander; our loading-screen extension posts
+-- the era and selected narration. The InGame driver is a fallback if it did not run.
 INSERT INTO LoadingInfo (LeaderType, ForegroundImage, BackgroundImage, PlayDawnOfManAudio) VALUES
 		('LEADER_REMSELY_ALEXANDER_II', 'LEADER_REMSELY_ALEXANDER_II_NEUTRAL', 'LEADER_REMSELY_ALEXANDER_II_BACKGROUND', 0);
 

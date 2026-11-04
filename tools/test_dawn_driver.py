@@ -1,8 +1,8 @@
 """Execute the InGame dawn-of-man driver from the voice UI context.
 
-A pause-menu restart recreates the FrontEnd LoadScreen context from the vanilla
-file, so the InGame driver in RemselysAlexanderII_Voice is what plays the era
-narration and our Alexander speech there. The driver runs when the module loads,
+When the early loading-screen handler has not marked the game, the InGame
+driver in RemselysAlexanderII_Voice is the fallback for the era narration
+and Alexander speech. The driver runs when the module loads,
 so all scenario state is prepared before the module executes.
 """
 from pathlib import Path
