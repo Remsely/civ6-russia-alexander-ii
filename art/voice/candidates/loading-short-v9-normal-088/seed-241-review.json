@@ -1,0 +1,39 @@
+{
+  "key": "LOADING_RU_SEED_241",
+  "number": 32,
+  "text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать.",
+  "synthesis_text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать.",
+  "steps": 128,
+  "seed": 241,
+  "mode": "solemn-narrator",
+  "reference": "art\\build\\voice\\integration\\narrator\\ru-peter-loading.wav",
+  "prompt_wav": "art\\build\\voice\\integration\\narrator\\ru-peter-loading.wav",
+  "prompt_text": "Холодный ветер родины не остудит ваш пыл, царь Петр. Ваша страсть к науке и культуре – великий дар; вы многому научитесь благодаря посольствам в дальних странах. Под вашим правлением Россия будет расти и процветать, занимая все новые земли, дабы стать величайшей империей на свете.",
+  "feedback": "По требованию пользователя: обычная новая генерация исходным голосом диктора; результат затем замедляется до88%. Исходный игровой reference, Basic Cloning/solemn-narrator,128шагов,CFG2,без замедленного prompt,без min_len override,без монтажа. Меняется только seed для получения новых дублей.",
+  "style": "(A Russian narrator speaks Russian in a stately, solemn, serious, firm and dignified voice, with measured pace and deliberate phrasing.)",
+  "cfg": 2,
+  "sample_rate": 48000,
+  "seconds": 34.170854166666665,
+  "inference_seconds": 404.4896489999992,
+  "reference_sha256": "a8e326e0b88eda832c748e902f51842a1647d8cc0ea516d0e901b512c7841ee3",
+  "prompt_wav_sha256": "a8e326e0b88eda832c748e902f51842a1647d8cc0ea516d0e901b512c7841ee3",
+  "raw": "loading-ru-seed-241-raw.wav",
+  "clean": "loading-ru-seed-241-clean.wav",
+  "raw_sha256": "3b08db3ef424a1db842fc616c9a9108fe26e77f6c0549bbd319257bb642f0475",
+  "clean_sha256": "2a6c3e6d8cce811e8d8fc148e70431f54e57e6297612d74fc02827b3ec8469ea",
+  "segments_generated": [
+    {
+      "text": "(A Russian narrator speaks Russian in a stately, solemn, serious, firm and dignified voice, with measured pace and deliberate phrasing.) Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать.",
+      "seconds": 30.08
+    }
+  ],
+  "status": "awaiting user review; correction intent not listening verification",
+  "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24",
+  "review_file": "loading-ru-seed-241-tempo-088.wav",
+  "review_sha256": "790833b275d48aa14466de626f3dc83c9cb17891dc8aba1002611486f97c58f1",
+  "generation_seconds": 30.08,
+  "review_processing": "normal generation, original game reference; peak0.85, no filter, atempo0.88; no splicing",
+  "review_note_ru": "Обычная новая генерация: исходный референс диктора, 128 шагов, CFG2, затем согласованный темп88%. Никакого замедленного образца, нового режима или монтажа.",
+  "review_status": "awaiting text check and user listening; not installed",
+  "english_text": "Welcome to the Winter Palace, Emperor Alexander. From the shores of the Baltic to the Pacific Ocean, your realm stretches far and wide. Yet Russia's greatness is measured in more than its borders: its future rests with those who till its soil, build its cities, and guard its frontiers. The serfs await freedom, the provinces a voice in their own affairs, and the army reform. Free your people, entrust the zemstvos with the care of their communities, and open the way to education and justice. Let reform strengthen the state, and peace give your subjects time to build."
+}

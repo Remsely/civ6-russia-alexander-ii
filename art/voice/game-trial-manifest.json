@@ -1,0 +1,177 @@
+[
+  {
+    "key": "ACCEPT_DECLARE_FRIEND_FROM_AI",
+    "file": "art/voice/selected/accept-declare-friend-ai-clean.wav",
+    "sha256": "2b745664609182790d03579f826769e04398974245f90f3f4f0444056ca59371",
+    "text": "Россия очень ценит дружбу с вами. Благодарю.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "ACCEPT_DECLARE_FRIEND_FROM_HUMAN",
+    "file": "art/voice/candidates/review-round2/accept-declare-friend-from-human-clean.wav",
+    "sha256": "ac89cb87d5c6062f84347497ac871690d7d063661f51a6259f24cb71cd91f1ce",
+    "text": "Я принимаю ваше предложение дружбы. Пусть она послужит обоим нашим народам.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "ACCEPT_DELEGATION_FROM_HUMAN",
+    "file": "art/voice/candidates/review-round2/accept-delegation-from-human-clean.wav",
+    "sha256": "2884f7092304a4c3bca184c940efa5361da0a84744f5d94d7a93bc2340e2a33e",
+    "text": "Ваши посланники будут приняты при русском дворе с подобающими почестями.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "ACCEPT_MAKE_DEAL_FROM_AI",
+    "file": "art/voice/candidates/diplomacy-v1/accept-make-deal-from-ai-clean.wav",
+    "sha256": "7f8babb30af85c21b1dede4fd70dae2e5d52ce9e897612e1c41a2309851893e7",
+    "text": "Разумно. Будем считать дело решенным.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "ACCEPT_OPEN_BORDERS_FROM_HUMAN",
+    "file": "art/voice/candidates/review-round3/accept-open-borders-from-human-clean.wav",
+    "sha256": "61acf14fb4f3b07cbad8717f319c644cc0a1282b11b9036f9275fce8ecf0a162",
+    "text": "Наши границы открыты для вас. Пусть процветают торговля и путешествия.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "DECLARE_FRIEND_FROM_AI",
+    "file": "art/voice/candidates/review-round2/declare-friend-from-ai-clean.wav",
+    "sha256": "b7feab08c69dfd6d3da0f3ad3311fc54c9977612fe0c607d19ca3b07ec559f8f",
+    "text": "Россия была бы рада считать вас другом. Объявим ли мы об этом?",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "DELEGATION_FROM_AI",
+    "file": "art/voice/candidates/review-round4/delegation-from-ai-clean.wav",
+    "sha256": "3e7ddcdbef1b88215ef64a46bcb5c885ae4f3018da18eedeeebeb35f047d4ef3",
+    "text": "Я направляю к вашему двору посланников с подарками и уверениями в моем расположении.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "DENOUNCE_FROM_AI",
+    "file": "art/voice/selected/denounce-ai-clean.wav",
+    "sha256": "eaab0f6bf7c25eb0aed879e747bad06b08e525d8548fc6aaa2be8255fdd5c97a",
+    "text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "DENOUNCE_FROM_HUMAN",
+    "file": "art/voice/candidates/review-round3/denounce-from-human-clean.wav",
+    "sha256": "db46b13225ed8bffa87b8fe21a011a2cbc4d0c04af63c710578c9740c31b9b59",
+    "text": "Вы вправе так считать. Время рассудит.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "FIRST_MEET_NEAR_INITIATOR_POSITIVE",
+    "file": "art/voice/candidates/review-round4/first-meet-near-initiator-positive-clean.wav",
+    "sha256": "3845e9a75348227fb1cde2f01631caf02fdeeb2233c34d4df8578e57665e235e",
+    "text": "Благодарю за теплый прием. Надеюсь, это начало добрых отношений между нашими державами.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "FIRST_MEET_NO_MANS_INFO_EXCHANGE",
+    "file": "art/voice/candidates/diplomacy-v1/first-meet-no-mans-info-exchange-clean.wav",
+    "sha256": "036870aed3234e5c0b3c5bde9efb3f8d8e285807a3fc4719169ad8e81fd6aa22",
+    "text": "Расскажите мне о вашей стране. Уверен, нашим народам есть чему поучиться друг у друга.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "FIRST_MEET_VISIT_RECIPIENT",
+    "file": "art/voice/candidates/diplomacy-v1/first-meet-visit-recipient-clean.wav",
+    "sha256": "8d3dfb8aa52878f6c954b3cdb368cc6e7815556464d535f1e08a4c4887f72008",
+    "text": "Посетите наш ближайший город и увидите, как меняется Россия.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "GREETING",
+    "file": "art/voice/candidates/review-round2/greeting-clean.wav",
+    "sha256": "3c0dde1dc55eef6812b3b0ead068d28805a04df6ddee8f07f031fa309a826e09",
+    "text": "Рад вас видеть. Россия желает мира и добрых дел.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "MAKE_ALLIANCE_FROM_AI",
+    "file": "art/voice/candidates/review-round3/make-alliance-from-ai-clean.wav",
+    "sha256": "4a6e39baf4e9112d7e0e03bbd665d189bd5ce42023e7a08753b0bb6a054e159d",
+    "text": "Россия была бы рада укрепить нашу дружбу. Заключим ли мы союз на благо наших народов?",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "MAKE_PEACE_AI_ACCEPT_DEAL",
+    "file": "art/voice/candidates/review-round2/make-peace-ai-accept-deal-clean.wav",
+    "sha256": "331b6451182616e2caf0f676f4dfa2636e1a3be82af892237f7d04bda8953dfc",
+    "text": "Мир - лучший путь. Я согласен.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "MAKE_PEACE_AI_REFUSE_DEAL",
+    "file": "art/voice/candidates/diplomacy-v1/make-peace-ai-refuse-deal-clean.wav",
+    "sha256": "75ba49ce6e101b841d79713c4f81f26f66ceb4899d4460e8af01d1a98b1ec506",
+    "text": "Я желаю мира, но ваши условия неприемлемы для России.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "MAKE_PEACE_FROM_AI",
+    "file": "art/voice/candidates/review-round2/make-peace-from-ai-clean.wav",
+    "sha256": "fa0513776b66e26747701091740f33ee3df0278a1026e91e2b73960a2fecd863",
+    "text": "Довольно крови. Заключим мир.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "OPEN_BORDERS_FROM_AI",
+    "file": "art/voice/candidates/review-round4/open-borders-from-ai-clean.wav",
+    "sha256": "90552b7e2f86067f2cb339002cf2d85b5465e6c7be32f006bde38266a8f32dc4",
+    "text": "Позволите ли вы нашим людям и товарам пересекать ваши границы?",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "REJECT_DECLARE_FRIEND_FROM_AI",
+    "file": "art/voice/candidates/review-round3/reject-declare-friend-from-ai-clean.wav",
+    "sha256": "902ad860be3e22b848a3615cf286217adc8d227c6b6ea21878ea678cd640bc2b",
+    "text": "Мне жаль, что вы отвергли мою дружбу. Надеюсь, это не помешает добрым отношениям между нашими державами.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "REJECT_DECLARE_FRIEND_FROM_HUMAN",
+    "file": "art/voice/candidates/diplomacy-v1/reject-declare-friend-from-human-clean.wav",
+    "sha256": "e032abaa94fddd69fbad6004287f271b3a2e2e02dedf082e5392afafdb7a0eeb",
+    "text": "Благодарю за предложение, но сейчас я не могу назвать наши державы друзьями.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "REJECT_DELEGATION_FROM_HUMAN",
+    "file": "art/voice/candidates/diplomacy-v1/reject-delegation-from-human-clean.wav",
+    "sha256": "3b08a1bf0f4b92b19a0765f135e7b6aaeb9330be81892a9620a0567321c41d57",
+    "text": "Благодарю за оказанную честь, но сейчас я не могу принять ваших посланников.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "REJECT_MAKE_DEAL_FROM_AI",
+    "file": "art/voice/candidates/review-round2/reject-make-deal-from-ai-clean.wav",
+    "sha256": "00ebdb0c5bd0d8c0b46247c98ad1cb1614119546a65287973d11c5ec3ca2b1f1",
+    "text": "Нет, эти условия не отвечают интересам России.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "REJECT_OPEN_BORDERS_FROM_HUMAN",
+    "file": "art/voice/candidates/review-round4/reject-open-borders-from-human-clean.wav",
+    "sha256": "fcd93b92b2d3abe19ac825f98685cadfe48a5f4f5fd6fb1cf9650b96494ce15e",
+    "text": "Мы не готовы открыть наши границы.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "WARNING_TOO_MANY_TROOPS_NEAR_ME",
+    "file": "art/voice/candidates/diplomacy-v1/warning-too-many-troops-near-me-clean.wav",
+    "sha256": "a3dba3289e3d00fd26d13e2ce185ab84881189025e0feb9be5d3df843df397e8",
+    "text": "Россия стремится к миру, а вы стягиваете войска к нашим границам. Отведите их немедленно.",
+    "status": "user-requested in-game trial"
+  },
+  {
+    "key": "DEFEAT_FROM_HUMAN",
+    "file": "art/voice/candidates/review-round2/defeat-from-human-clean.wav",
+    "sha256": "5388afc337a26551b85ef21de6bff2a45b1d8361c77c76bdc5225c3a51952552",
+    "text": "Вы одержали верх. Пусть же Россия обретет силы подняться вновь.",
+    "status": "in-game trial; sadness and pacing not approved"
+  }
+]

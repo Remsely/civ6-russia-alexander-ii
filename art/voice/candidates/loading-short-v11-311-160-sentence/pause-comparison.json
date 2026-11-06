@@ -1,0 +1,37 @@
+{
+  "comparison": [
+    {
+      "asr_report": "art\\voice\\candidates\\loading-short-v9-normal-088\\asr-seed-311-words.json",
+      "before": {
+        "start": 17.76,
+        "end": 18.5,
+        "word": "освобождения,",
+        "probability": 0.9768745501836141
+      },
+      "after": {
+        "start": 18.78,
+        "end": 19.34,
+        "word": "губерния,",
+        "probability": 0.9067527055740356
+      },
+      "asr_gap_seconds": 0.28000000000000114
+    },
+    {
+      "asr_report": "art\\voice\\candidates\\loading-short-v11-311-160-sentence\\asr-check.json",
+      "before": {
+        "start": 19.46,
+        "end": 20.16,
+        "word": "освобождения.",
+        "probability": 0.9854763746261597
+      },
+      "after": {
+        "start": 20.78,
+        "end": 21.42,
+        "word": "Губернии",
+        "probability": 0.9668766260147095
+      },
+      "asr_gap_seconds": 0.620000000000001
+    }
+  ],
+  "limitation": "ASR boundaries are approximate; natural phrasing must be judged by listening"
+}

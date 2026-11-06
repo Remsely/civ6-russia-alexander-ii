@@ -1,0 +1,18 @@
+{
+  "source": "review-round4/loading-ru-96-raw.wav",
+  "matched_filtered_source": "review-round4/loading-ru-96-clean-slow.wav",
+  "pause_s": 0.25,
+  "pause_insert_at_s": 19.4,
+  "boundary": "faster-whisper word timestamps and recognition of split crops; approximate, requires listening",
+  "fade_s": 0.008,
+  "tempo": "atempo=0.90 on original and filtered comparison",
+  "unfiltered_gain": 2.095041575723203,
+  "filtered_rms": 0.12823058267865858,
+  "unfiltered_rms": 0.1282305826786586,
+  "filter": "original Butterworth order2 bandpass 70–9500Hz sosfiltfilt",
+  "status": "experimental edit; awaiting user review",
+  "outputs": {
+    "loading-ru-96-filtered-pause.wav": "0ef6fc5f263532144db4b3ea7e87228dea4c4576fd08a76f420a005440435c10",
+    "loading-ru-96-unfiltered-pause.wav": "831163806a11481499536f9a737f414ac0ba60cd922e28e2366a0f72cbf30f9b"
+  }
+}

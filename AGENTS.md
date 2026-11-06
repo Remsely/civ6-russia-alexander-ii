@@ -8,7 +8,7 @@ Codex: источник проектных скиллов — `.agents/skills/`;
 
 ## Состояние проекта
 
-Репозиторий — мод «Remsely's Alexander II» (альтернативный лидер России для Civilization VI). Реализовано: лидер, способность «Великие реформы», повестка «Освободитель», города и столица, 31 реплика дипломатии, арт (портреты, иконки, фоны). Идут проверка в игре, вычитка текстов, полировка (см. `ROADMAP.md`).
+Репозиторий — мод «Remsely's Russian Empire: Alexander II» (альтернативный лидер России для Civilization VI). Реализовано: лидер, способность «Великие реформы», повестка «Освободитель», города и столица, 31 реплика дипломатии, арт (портреты, иконки, фоны). Идут проверка в игре, вычитка текстов, полировка (см. `ROADMAP.md`).
 
 Источники истины:
 - `ROADMAP.md` / `ROADMAP.ru.md` — двуязычный план версий и задач.
@@ -22,16 +22,20 @@ Codex: источник проектных скиллов — `.agents/skills/`;
 
 Мод лидера — это база данных, тексты, 2D-арт и 3D-ассет лидера:
 - `RemselysAlexanderII.modinfo` (пишется руками) описывает файлы и действия: во FrontEnd `Data/Config.sql` (экран выбора лидера), во InGame `Data/GameDefines.sql` (всё остальное); `Data/Icons.sql` (иконка лидера), `Data/Colors.sql` (цвета), `Text/{en_US,ru_RU}.xml`, `UpdateArt` с `RemselysAlexanderII.dep`.
-- `Lua/RemselysAlexanderII_Farms.lua` — смежность ферм (считает соседей, ставит свойства клетки, которые читают XML-модификаторы).
+- Бонус ферм убран 3 ноября 2026; `RemselysAlexanderII_Railways.lua` — ж/д-связность городов (ставит свойства клетки-центра, которые читают XML-модификаторы; оба бонуса ограничены населением города).
 - `art/source/` — исходные картинки; `tools/slice_art.py` режет их в `art/build/` (не в git), `tools/make_art.py` генерирует `Textures/*.dds|.tex`, `XLPs/`, `ArtDefs/`, `.dep`, `Data/Icons.sql`. BLP (`Platforms/{Windows,MacOS}/BLPs/`) собирает `tools/build.py` (cooker SDK); после изменения картинок их нужно пересобрать.
 - `tools/validate.py`, `tools/install.py` — проверка и установка. `art/prompts.md` — промпты для нейросетей.
 - `reference/` — в `.gitignore`: ванильные файлы игры, образцы модов, копии баз.
 
 Игру из Codex не запускай: на этом шаге объясни пользователю ручную проверку. Логи в `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Logs\` читай сам, если они доступны; для 3D особенно важен `ArtDef.log`.
 
+## Новые worktree
+
+- После создания worktree сразу подготовь его для самостоятельной работы: проверь Python и зависимости, `reference/` (ванильные данные, образцы и все три базы `game-db`), а также игнорируемые файлы мода из `.modinfo`, включая BLP обеих платформ. Восстанови недостающее из подходящего основного checkout или собери штатными инструментами; проверь соответствие исходникам ветки и не перезаписывай чужие изменения. Общие junction-ссылки используй осознанно: изменения через них затрагивают исходный каталог.
+- До объявления worktree готовым запусти `tools/validate.py` из него и добейся `OK`; проверь остальные зависимости, нужные для задачи. Если подготовка невозможна, прямо укажи, что отсутствует и почему, не называя worktree полноценным.
 ## Окружение (Windows)
 
-- Python-зависимости в `.venv`: `.venv\Scripts\python.exe -m pip install -r tools\requirements.txt`; запуск — `.venv\Scripts\python.exe tools\validate.py`. `sqlite3` CLI не установлен — для SQLite использовать модуль `sqlite3` из Python. `gh` стоит в `C:\Program Files\GitHub CLI\gh.exe`; способ доступа Git проверять по фактическому окружению.
+- Python-зависимости в `.venv`: `.venv\Scripts\python.exe -m pip install -r tools\requirements.txt`; запуск — `.venv\Scripts\python.exe tools\validate.py`. `sqlite3` CLI не установлен — для SQLite использовать модуль `sqlite3` из Python. `gh` стоит в `C:\Program Files\GitHub CLI\gh.exe`. Для GitHub используем CLI: `gh` для операций GitHub и его авторизацию для `git fetch/push` по HTTPS. SSH-ключа в окружении агента нет; не начинать с SSH и не повторять эту нерабочую попытку. Порядок и команда credential helper — `docs/git-access.md`.
 - Игра: `C:\Program Files (x86)\Steam\steamapps\common\Sid Meier's Civilization VI`; SDK (ModBuddy, Asset Editor, FireTuner) — рядом, в `... Civilization VI SDK`.
 - `reference/` в `.gitignore` и состоит из junction-ссылок на установку игры: `vanilla/{Base,Expansion1,Expansion2}` (данные и тексты), `samples/DLC` (официальные DLC-лидеры как образцы), `samples/SDK-{Examples,Documentation}`. `reference/game-db/` — копии `DebugGameplay.sqlite`, `DebugLocalization.sqlite`, `DebugConfiguration.sqlite` из `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Cache` (перезаписываются при каждой загрузке набора правил игрой; в них могут быть следы сторонних модов).
 - Моды ставятся в `Documents\My Games\Sid Meier's Civilization VI\Mods`.
@@ -72,7 +76,7 @@ Codex: источник проектных скиллов — `.agents/skills/`;
 
 ## Правила
 
-- Коммиты выпусков в основной ветке (`main`/`master`): заголовок `v<версия>: <описание на английском> (#<PR>)`, например `v1.5.0-alpha: Add an animated 3D model of Alexander II to the diplomacy screen (#1)`; номер PR — при наличии. В рабочих ветках заголовок `тип(область): что изменено`, подробности и проверки — в теле при необходимости; подробная конвенция — `docs/commit-conventions.md`. Для существенного вклада Codex добавляй `Co-authored-by: Codex <codex@openai.com>`; не приписывай себе чужую работу.
+- Коммиты выпусков в основной ветке (`main`/`master`): заголовок `v<версия>: <описание на английском> (#<PR>)`, например `v1.5.0-alpha: Add an animated 3D model of Alexander II to the diplomacy screen (#1)`; номер PR — при наличии. Все сообщения коммитов (заголовок и тело) — на английском. В рабочих ветках заголовок `type(scope): what changed`, подробности и проверки — в теле при необходимости; подробная конвенция — `docs/commit-conventions.md`. Для существенного вклада Codex добавляй `Co-authored-by: Codex <codex@openai.com>`; не приписывай себе чужую работу.
 - Названия таблиц, колонок, типов модификаторов, эффектов и требований брать только из `reference/game-db/DebugGameplay.sqlite` или `reference/vanilla/`, не придумывать. Перед реализацией механики найти ванильный аналог и сослаться на него.
 - Русские игровые термины — только из `DebugLocalization.sqlite`.
 - Префикс `REMSELY_`; ключи текста вида `LOC_..._REMSELY_...`.

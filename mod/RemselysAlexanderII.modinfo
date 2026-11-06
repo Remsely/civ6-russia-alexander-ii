@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Mod id="2963ce6a-9b5e-4b12-b040-219e08807d3b" version="2">
+<?xml version='1.0' encoding='UTF-8'?>
+<Mod id="2963ce6a-9b5e-4b12-b040-219e08807d3b" version="3">
   <Properties>
-    <Name>[COLOR_FLOAT_CULTURE]Remsely's[ENDCOLOR] Alexander II</Name>
+    <Name>[COLOR_Emergency_In_Progress]Remsely's[ENDCOLOR] Russian Empire: Alexander II</Name>
     <Description>LOC_REMSELY_ALEXANDER_II_MOD_DESCRIPTION</Description>
     <Teaser>LOC_REMSELY_ALEXANDER_II_MOD_TEASER</Teaser>
     <Authors>Remsely</Authors>
@@ -9,7 +9,7 @@
     <CompatibleVersions>1.2,2.0</CompatibleVersions>
   </Properties>
   <Dependencies>
-    <Mod id="1B28771A-C749-434B-9053-D1380C553DE9" title="LOC_EXPANSION1_MOD_TITLE"/>
+    <Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="LOC_EXPANSION2_MOD_TITLE"/>
   </Dependencies>
   <FrontEndActions>
     <UpdateDatabase id="REMSELY_FrontEnd_Config">
@@ -31,8 +31,38 @@
     <UpdateColors id="REMSELY_FrontEnd_Colors">
       <File>Data/Colors.sql</File>
     </UpdateColors>
+    <UpdateAudio id="REMSELY_FrontEnd_Audio">
+      <Properties>
+        <LoadOrder>10</LoadOrder>
+      </Properties>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderIILoadingBanks.ini</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.bnk</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.xml</File>
+    </UpdateAudio>
+    <ImportFiles id="REMSELY_LoadScreen_Voice">
+      <Properties>
+        <LoadOrder>20</LoadOrder>
+      </Properties>
+      <File>UI/LoadScreen.lua</File>
+      <File>UI/RemselysAlexanderII_LoadScreen.lua</File>
+      <File>UI/RemselysAlexanderII_LoadingEraDurations.lua</File>
+    </ImportFiles>
   </FrontEndActions>
   <InGameActions>
+    <ImportFiles id="REMSELY_LoadScreen_Voice_InGame">
+      <Properties>
+        <LoadOrder>20</LoadOrder>
+      </Properties>
+      <File>UI/LoadScreen.lua</File>
+    </ImportFiles>
+    <UpdateAudio id="REMSELY_Loading_Audio">
+      <Properties>
+        <LoadOrder>10</LoadOrder>
+      </Properties>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderIILoadingBanks.ini</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.bnk</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.xml</File>
+    </UpdateAudio>
     <UpdateDatabase id="REMSELY_InGame_Data">
       <Properties>
         <LoadOrder>10</LoadOrder>
@@ -52,19 +82,36 @@
     <UpdateColors id="REMSELY_InGame_Colors">
       <File>Data/Colors.sql</File>
     </UpdateColors>
-    <AddGameplayScripts id="REMSELY_InGame_Farms">
+    <AddGameplayScripts id="REMSELY_InGame_Scripts">
       <Properties>
         <LoadOrder>100</LoadOrder>
       </Properties>
-      <File>Lua/RemselysAlexanderII_Farms.lua</File>
+      <File>Lua/RemselysAlexanderII_Railways.lua</File>
     </AddGameplayScripts>
+    <AddUserInterfaces id="REMSELY_Voice_UI">
+      <Properties>
+        <Context>InGame</Context>
+      </Properties>
+      <File>UI/RemselysAlexanderII_Voice.xml</File>
+    </AddUserInterfaces>
+    <ImportFiles id="REMSELY_LoadingEraDurations_InGame">
+      <Properties>
+        <LoadOrder>20</LoadOrder>
+      </Properties>
+      <File>UI/RemselysAlexanderII_LoadingEraDurations.lua</File>
+    </ImportFiles>
+    <UpdateAudio id="REMSELY_InGame_Audio">
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderIIBanks.ini</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.bnk</File>
+      <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.xml</File>
+    </UpdateAudio>
   </InGameActions>
   <Files>
     <File>Data/Config.sql</File>
     <File>Data/Colors.sql</File>
     <File>Data/GameDefines.sql</File>
     <File>Data/Icons.sql</File>
-    <File>Lua/RemselysAlexanderII_Farms.lua</File>
+    <File>Lua/RemselysAlexanderII_Railways.lua</File>
     <File>Text/en_US.xml</File>
     <File>Text/ru_RU.xml</File>
     <File>Textures/RemselysAlexanderII_Icon256.dds</File>
@@ -104,5 +151,16 @@
     <File>XLPs/Leader_AlexanderII.xlp</File>
     <File>Platforms/Windows/BLPs/leaders/leader_remsely_alexander_ii.blp</File>
     <File>Platforms/MacOS/BLPs/leaders/leader_remsely_alexander_ii.blp</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderIIBanks.ini</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.bnk</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.xml</File>
+    <File>UI/RemselysAlexanderII_Voice.xml</File>
+    <File>UI/RemselysAlexanderII_Voice.lua</File>
+    <File>UI/RemselysAlexanderII_LoadScreen.lua</File>
+    <File>UI/LoadScreen.lua</File>
+    <File>UI/RemselysAlexanderII_LoadingEraDurations.lua</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderIILoadingBanks.ini</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.bnk</File>
+    <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Loading.xml</File>
   </Files>
 </Mod>

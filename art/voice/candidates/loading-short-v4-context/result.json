@@ -1,0 +1,5 @@
+{
+  "status": "rejected before listening",
+  "reason": "Model spoke English style instruction before Russian text; ending complete but whole-content check fails",
+  "installed": false
+}

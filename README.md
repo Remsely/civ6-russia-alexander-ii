@@ -1,6 +1,6 @@
 [![English](https://img.shields.io/badge/lang-English-blue)](README.md) [![Русский](https://img.shields.io/badge/lang-Русский-red)](README.ru.md)
 
-# Remsely's Alexander II
+# Remsely's Russian Empire: Alexander II
 
 A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate leader of Russia.
 
@@ -8,18 +8,20 @@ A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate lea
 
 ## What's in the mod
 
-**Leader ability: The Great Reforms**
-- *Emancipation of the Serfs:* Builders have +1 charge, Pastures get +1 Production, and Farms get +1 Food for every 2 adjacent Farms (max +2 at 4).
-- *Zemstvo Reform:* cities with an assigned Governor get +2 Culture and +4 Loyalty; from the Medieval Era the bonus grows by +1 Culture and +2 Loyalty with every new era (Future Era: +9 and +18).
-- *Military Reform:* unit upgrades cost 50% less Gold.
+**Leader ability: The Great Reforms** (from the Industrial Era)
+- *Emancipation of the Serfs:* Builders have +1 charge.
+- *Zemstvos:* on entering the Industrial Era the empire gains 1 Governor title; cities with an assigned Governor get +10% growth.
+- *Railway Network:* every city gets +1 Gold for each foreign city and +1 Production for each of your other cities connected to it by railroad; neither bonus can exceed the city's Population.
 
-**AI agenda: The Liberator.** Likes civilizations that have kept the peace for a long time; dislikes those that recently declared war.
+**AI agenda: The Liberator.** Likes civilizations that have kept the peace and those that share his religion; dislikes recent declarations of war and conversion of his cities to another faith.
 
 **A 3D leader on the diplomacy screen** — Alexander stands in his own hall in the portrait's pose and breathes, blinks and shifts his weight in his idle loop.
 
 **Also:** a researched 45-name city list led by Saint Petersburg (Moscow, Odessa, Kharkov, Sevastopol, Vladivostok, Tashkent, Baku, Riga…), black-and-gold border colors, a loading screen background, a diplomacy background, 31 diplomacy lines and a Civilopedia page, in English and Russian.
 
-Requires Rise and Fall; Gathering Storm is recommended (the Future Era). Platforms: Windows and macOS (BLPs are built for both; the mod has not been tested in game on macOS).
+**Voice (Windows):** recordings for all 31 diplomacy texts and loading narration in Russian and English are integrated in the development build. Alexander always speaks Russian; subtitles are English or Russian. The loading narrator follows the selected game audio language, after the native era introduction. The English take at 90% tempo was selected by listening; the user reported that the installed voice playback works. Individual languages, eras and save paths still need separate verification. Extended dialogue routing and both defeat variants still need in-game confirmation; some takes need polishing.
+
+Requires Gathering Storm. Art packages are built for Windows and macOS; voice integration currently targets Windows. The mod has not been tested in game on macOS.
 
 ## Install
 
@@ -27,7 +29,7 @@ Requires Rise and Fall; Gathering Storm is recommended (the Future Era). Platfor
 
 1. Download `RemselysAlexanderII-vX.zip` from the [Releases](https://github.com/Remsely/civ6-russia-alexander-ii/releases) section (a `.sha256` sits next to it).
 2. Unpack the `RemselysAlexanderII` folder into `Documents\My Games\Sid Meier's Civilization VI\Mods\`.
-3. In game: "Additional Content" → "Mods", enable **Remsely's Alexander II**. The leader appears among Russia's leaders in a new game.
+3. In game: "Additional Content" → "Mods", enable **Remsely's Russian Empire: Alexander II**. The leader appears among Russia's leaders in a new game.
 
 Colors and city lists are written into the save at game creation; start a new game to test changes to them.
 
@@ -53,7 +55,7 @@ Documentation:
 - [docs/en/terms.md](docs/en/terms.md) — the game terms glossary;
 - [CHANGELOG.md](CHANGELOG.md) — version history.
 
-The current development branch contains v1.5.0 changes; published releases may differ.
+The current development branch contains v2.0.0-alpha release preparation; published releases may differ. See the [roadmap](ROADMAP.md) and [draft release notes](docs/v2.0.0-alpha-release-notes.md).
 
 The `reference/` folder (in `.gitignore`) consists of links to game files and database dumps — see "Окружение" in [CLAUDE.md](CLAUDE.md).
 

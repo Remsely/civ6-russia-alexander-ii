@@ -1,0 +1,26 @@
+{
+  "output": "art/voice/candidates/loading-short-v14-preferred-reference",
+  "cfg": 2,
+  "sample_rate": 48000,
+  "items": [
+    {
+      "key": "LOADING_RU_PREFERRED_REFERENCE",
+      "number": 32,
+      "text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать.",
+      "synthesis_text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения; губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать.",
+      "steps": 128,
+      "seed": 311,
+      "mode": "solemn-narrator",
+      "reference": "art/build/voice/integration/narrator/v9-311-reference-native.wav",
+      "prompt_wav": "art/build/voice/integration/narrator/v9-311-reference-native.wav",
+      "prompt_text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и правосудию. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать.",
+      "feedback": "Controlled reference-only Basic Cloning from preferred v9 native raw. Same mode, seed311,128steps,CFG2,style,semicolon as v12. No prompt continuation, no slowed reference. Final peak0.85/no filter/atempo0.88.",
+      "style": "(A Russian narrator speaks Russian in a stately, solemn, serious, firm and dignified voice, with measured pace and deliberate phrasing.)",
+      "reference_origin": {
+        "path": "art/voice/candidates/loading-short-v9-normal-088/loading-ru-seed-311-raw.wav",
+        "sha256": "0232bef9a298d90161dcb6f1e23bdd911082b22e134811f8be19af228fc64a22",
+        "processing": "peak0.85 only; native speed; no filter, cuts or splicing"
+      }
+    }
+  ]
+}

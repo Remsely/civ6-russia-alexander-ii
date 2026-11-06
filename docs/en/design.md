@@ -1,4 +1,4 @@
-# Mod Design — Remsely's Alexander II
+# Mod Design — Remsely's Russian Empire: Alexander II
 
 > Detailed earlier design notes are preserved in [the historical document](../remselys-alexander-ii.md). For current behaviour, code and in-game tests take precedence.
 
@@ -9,12 +9,12 @@ Russian version: [`../ru/design.md`](../ru/design.md). Game terms follow the glo
 
 | Field | Value |
 |---|---|
-| Mod name | Remsely's Alexander II (kept in both languages; only the description is translated) |
+| Mod name | Remsely's Russian Empire: Alexander II (kept in both languages; only the description is translated) |
 | Type | Alternate leader for the Russia civilization (`CIVILIZATION_RUSSIA`) |
 | Leader | Alexander II Nikolaevich, Emperor of All Russia (1855–1881), called the Tsar Liberator |
 | Kept from vanilla Russia | Civilization ability Mother Russia, unique unit Cossack, unique district Lavra |
 | New in the mod | Leader ability, AI agenda, city list, colors, 3D leader, art, texts |
-| Requirements | Rise and Fall or Gathering Storm (Governors and Loyalty are needed for Zemstvos); the Future Era exists only in Gathering Storm |
+| Requirements | Gathering Storm (railroads for the Railway Network; Governors for the Zemstvos) |
 | Type prefix | `REMSELY_` (e.g. `LEADER_REMSELY_ALEXANDER_II`) |
 | Structural reference | JFD's Russia: Elisabeth (`reference/samples/JFD-Russia-Elisabeth`) |
 
@@ -26,42 +26,43 @@ Game terms must be official, taken from the game's own localization files (see [
 
 ## 3. Leader Ability: The Great Reforms
 
+The whole ability unlocks in the **Industrial Era** — the reforms of the 1860s-70s. Before it the trait deliberately gives nothing — a conscious trade-off: compensating the early game with starting preferences was rejected; Russia historically fought its own way to the seas ([ideas bank](ideas.md)).
+
 ### 3.1. Emancipation of the Serfs
 
+From the Industrial Era:
+
 - Builders get **+1 charge**.
-- Each **Pasture** gets **+1 Production**.
-- Each **Farm** gets **+1 Food per 2 adjacent Farms** (max +2 at 4). Food, not Production: Russia's civ ability already grants Production on tundra, and stacking Production made the trait too strong. Only Farms count as neighbours. Adjacency is counted in Lua (`mod/Lua/RemselysAlexanderII_Farms.lua`); modifiers read plot properties.
 
-### 3.2. Zemstvo Reform
+The Farm bonus (+1 Food per 2 adjacent Farms) was removed entirely on 3 November 2026 by the user's decision — farms are vanilla now. Pastures (+1 Production) and the Military Reform (50% unit upgrade discount) were removed earlier in v2.0.0; the military theme returns as a unique unit (ROADMAP, v3.5.0).
 
-Cities with an assigned Governor get Culture and Loyalty that grow with the player's eras:
+### 3.2. Zemstvos
 
-| Era (official names) | Culture | Loyalty |
-|---|---|---|
-| Ancient Era | +2 | +4 |
-| Classical Era | +2 | +4 |
-| Medieval Era | +3 | +6 |
-| Renaissance Era | +4 | +8 |
-| Industrial Era | +5 | +10 |
-| Modern Era | +6 | +12 |
-| Atomic Era | +7 | +14 |
-| Information Era | +8 | +16 |
-| Future Era (Gathering Storm only) | +9 | +18 |
+- On entering the Industrial Era the empire gains **1 Governor title**.
+- From the Industrial Era on, cities with an assigned Governor get **+10% growth**.
 
-### 3.3. Military Reform
+Rationale: schools and medicine are the best documented effects of the historical zemstvos. Loyalty is gone: Governors already provide it, and the zemstvos were a hotbed of liberal opposition to the crown. Culture was dropped to keep the trait legible. Analogs: the title grant as Casa de Contratación; growth as the Hanging Gardens and the Colonial Offices policy; growth gated on a city condition as the Palenque city-state (growth with a Campus). Granting a title on an era threshold has no vanilla precedent (titles come from built things), so it is a mandatory in-game check.
 
-Unit upgrades cost **50% less Gold** (vanilla analogue: the Professional Army policy).
+### 3.3. Railway Network
+
+- Every city gets **+1 Production for each of your other cities connected to it by railroad**.
+- Every city gets **+1 Gold for each foreign city** (city-states and civilizations at war count) **connected to it by railroad**.
+- **Each bonus is capped by the city's Population** (a 10-Pop city gets at most +10 of each — the user's rule of 3 November 2026; before that Gold was uncapped). The scale: 15 own cities all interconnected and linked to 10 foreign ones give a 14+ Pop city up to +14 Production and +10 Gold; the technical bound of the tier machinery (200) is beyond any real game.
+
+Connection rules: two cities are connected when an unbroken railroad path leads from center to center — over plots with `ROUTE_RAILROAD`, with city centers acting as junctions (a line may pass through a city and tie networks together through it). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is an ordinary city of the network and receives bonuses like any other. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
+
+Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties of own city centers — `REMSELY_RAIL_OWN_N` (connected own cities, already capped by the city's Population) and `REMSELY_RAIL_FOREIGN_N` (connected foreign cities) — up to date (recomputed on route, city and population events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Production and 200 Gold tiers - a technical margin, not a design cap; the plot-property + MODIFIER_PLAYER_ADJUST_PLOT_YIELD pattern). Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
 
 ### 3.4. Ability texts
 
-Ability descriptions state values explicitly, without references to the Civilopedia. Current texts live in `mod/Text/{en_US,ru_RU}.xml`; the Russian column mirrors them (see [`../ru/design.md`](../ru/design.md)).
+Ability descriptions state values explicitly, without references to the Civilopedia. Current texts live in `mod/Text/{en_US,ru_RU}.xml`; the Russian table mirroring them is in [`../ru/design.md`](../ru/design.md).
 
 ## 4. AI Agenda: The Liberator
 
-He likes civilizations that have not declared wars for a long time (threshold ~30 turns) and dislikes those that declared war recently. Implemented in XML without Lua (`MODIFIER_PLAYER_DIPLOMACY_*`).
+He likes civilizations that have not declared wars for a long time (threshold ~30 turns) and dislikes those that declared war recently. It also adds +3 for a shared religion and -12 for converted cities using Philip II’s condition, and favors Holy War when available. Conversion of foreign cities is not implemented. Values and AI behavior require in-game testing.
 
 - Name: The Liberator / «Освободитель»
-- Description: Likes civilizations that have kept the peace for a long time. Dislikes those that recently declared war.
+- Description: Likes civilizations that have kept the peace for a long time and those that share his religion. Dislikes those that recently declared war or converted his cities to another religion.
 
 ## 5. Cities
 
@@ -149,6 +150,14 @@ Only words Alexander II actually spoke or signed may appear as quotes. Invented 
 Not allowed: the opening of the 1856 speech about "rumours" (out of context it means the opposite); anything found only on quote aggregator sites.
 
 Print sources: «Голос минувшего», 1916, № 5–6, p. 393; Tatishchev S. S., Emperor Alexander II, vol. 1, Moscow, 1996, p. 331; Lyashenko L. M., Alexander II, Moscow, 2002, pp. 170–171 (in Russian).
+
+## 10. Voice
+
+Alexander's diplomacy dialogue is always spoken in Russian, regardless of interface language. Subtitles are localized into en_US and ru_RU. English voice is planned only for the loading-screen narrator; English versions of Alexander's own dialogue are not required.
+
+The current Windows build integrates recordings for all 31 diplomacy texts and full Russian loading narration. The user confirmed the original six scenes; new routes, separate selection of the two defeat texts and loading narration still require in-game checks. Some takes are being refined. An English narrator is not yet selected or integrated: the English interface temporarily plays Russian loading narration. MacOS art packages do not establish voice support on that platform.
+
+Settings and feedback: `../voice-v2-plan.ru.md`; listening catalog: `../voice-review.ru.md`; integration and verification limits: `../voice-integration.ru.md` (Russian).
 
 ## Sources
 

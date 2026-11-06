@@ -1,0 +1,5 @@
+{
+  "status": "rejected by user",
+  "feedback": "В конце все равно обрывается. Речь слишком быстрая.",
+  "asr_limitation": "ASR may reconstruct an unfinished word; a matching transcript does not prove natural articulation."
+}

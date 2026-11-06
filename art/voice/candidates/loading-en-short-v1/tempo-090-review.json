@@ -1,0 +1,11 @@
+{
+  "file": "art/voice/candidates/loading-en-short-v1/loading-en-seed-311-tempo-090.wav",
+  "sha256": "062a8b2f06f1f7618762a9c0fa78f6d906fcd41d5ba04b66d959f7e8ddc1a032",
+  "source": "art/voice/candidates/loading-en-short-v1/loading-en-seed-311-raw.wav",
+  "source_sha256": "d2e8570779bce6a05f49a33a7d0eebc5cccc0fd1c78ec19b2b4960b5163394ad",
+  "seconds": 42.486125,
+  "processing": "same raw generation, peak0.85, no filter, atempo0.90, PCM24; no splicing",
+  "status": "audition only, not installed",
+  "reference_preview": "art\\build\\voice\\integration\\narrator\\en-peter-loading-listening.wav",
+  "reference_processing": "peak0.85 only; original pace, no filter; local game audio excluded from git"
+}

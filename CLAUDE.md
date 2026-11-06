@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Состояние проекта
 
-Репозиторий — мод «Remsely's Alexander II» (альтернативный лидер России для Civilization VI). Реализовано: лидер, способность «Великие реформы», повестка «Освободитель», города и столица, 31 реплика дипломатии, арт (портреты, иконки, фоны). Идут проверка в игре, вычитка текстов, полировка (см. `ROADMAP.md`).
+Репозиторий — мод «Remsely's Russian Empire: Alexander II» (альтернативный лидер России для Civilization VI). Реализовано: лидер, способность «Великие реформы», повестка «Освободитель», города и столица, 31 реплика дипломатии, арт (портреты, иконки, фоны). Идут проверка в игре, вычитка текстов, полировка (см. `ROADMAP.md`).
 
 Источники истины:
 - `ROADMAP.md` / `ROADMAP.ru.md` — двуязычный план версий и задач.
@@ -20,7 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Мод лидера — это база данных, тексты, 2D-арт и 3D-ассет лидера:
 - `RemselysAlexanderII.modinfo` (пишется руками) описывает файлы и действия: во FrontEnd `Data/Config.sql` (экран выбора лидера), во InGame `Data/GameDefines.sql` (всё остальное); `Data/Icons.sql` (иконка лидера), `Data/Colors.sql` (цвета), `Text/{en_US,ru_RU}.xml`, `UpdateArt` с `RemselysAlexanderII.dep`.
-- `Lua/RemselysAlexanderII_Farms.lua` — смежность ферм (считает соседей, ставит свойства клетки, которые читают XML-модификаторы).
+- Бонус ферм убран 3 ноября 2026; `RemselysAlexanderII_Railways.lua` — ж/д-связность городов (ставит свойства клетки-центра, которые читают XML-модификаторы; оба бонуса ограничены населением города).
 - `art/source/` — исходные картинки; `tools/slice_art.py` режет их в `art/build/` (не в git), `tools/make_art.py` генерирует `Textures/*.dds|.tex`, `XLPs/`, `ArtDefs/`, `.dep`, `Data/Icons.sql`. BLP (`Platforms/{Windows,MacOS}/BLPs/`) собирает `tools/build.py` (cooker SDK); после изменения картинок их нужно пересобрать.
 - `tools/validate.py`, `tools/install.py` — проверка и установка. `art/prompts.md` — промпты для нейросетей.
 - `reference/` — в `.gitignore`: ванильные файлы игры, образцы модов, копии баз.
@@ -29,7 +29,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Окружение (Windows)
 
-- Python-зависимости в `.venv`: `.venv\Scripts\python.exe -m pip install -r tools\requirements.txt`; запуск — `.venv\Scripts\python.exe tools\validate.py`. `sqlite3` CLI не установлен — для SQLite использовать модуль `sqlite3` из Python. `gh` стоит в `C:\Program Files\GitHub CLI\gh.exe` (вход через `gh auth login`); `git push` по SSH из Claude Code не проходит (нет ключа), после `gh auth login` пушить по HTTPS.
+- Python-зависимости в `.venv`: `.venv\Scripts\python.exe -m pip install -r tools\requirements.txt`; запуск — `.venv\Scripts\python.exe tools\validate.py`. `sqlite3` CLI не установлен — для SQLite использовать модуль `sqlite3` из Python. `gh` стоит в `C:\Program Files\GitHub CLI\gh.exe`. Для GitHub используем CLI: `gh` для операций GitHub и его авторизацию для `git fetch/push` по HTTPS. SSH-ключа в окружении агента нет; не начинать с SSH и не повторять эту нерабочую попытку. Порядок и команда credential helper — `docs/git-access.md`.
 - Игра: `C:\Program Files (x86)\Steam\steamapps\common\Sid Meier's Civilization VI`; SDK (ModBuddy, Asset Editor, FireTuner) — рядом, в `... Civilization VI SDK`.
 - `reference/` в `.gitignore` и состоит из junction-ссылок на установку игры: `vanilla/{Base,Expansion1,Expansion2}` (данные и тексты), `samples/DLC` (официальные DLC-лидеры как образцы), `samples/SDK-{Examples,Documentation}`. `reference/game-db/` — копии `DebugGameplay.sqlite`, `DebugLocalization.sqlite`, `DebugConfiguration.sqlite` из `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VI\Cache` (перезаписываются при каждой загрузке набора правил игрой; в них могут быть следы сторонних модов).
 - Моды ставятся в `Documents\My Games\Sid Meier's Civilization VI\Mods`.
@@ -71,7 +71,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Правила
 
-- Конвенция коммитов — `docs/commit-conventions.md`: выпуск в `main`/`master`: `v<версия>: <описание на английском> (#<PR>)`, номер PR при наличии, рабочие коммиты — `тип(область): что изменено`, содержательное тело при необходимости и указание фактических соавторов.
+- Конвенция коммитов — `docs/commit-conventions.md`: выпуск в `main`/`master`: `v<версия>: <описание на английском> (#<PR>)`, номер PR при наличии, рабочие коммиты — `type(scope): what changed`, содержательное тело при необходимости и указание фактических соавторов. Заголовок и тело всех коммитов — на английском.
 - Названия таблиц, колонок, типов модификаторов, эффектов и требований брать только из `reference/game-db/DebugGameplay.sqlite` или `reference/vanilla/`, не придумывать. Перед реализацией механики найти ванильный аналог и сослаться на него.
 - Русские игровые термины — только из `DebugLocalization.sqlite`.
 - Префикс `REMSELY_`; ключи текста вида `LOC_..._REMSELY_...`.
