@@ -1,12 +1,46 @@
--- Stop only our branch on diplomacy transitions. Native Escape/RMB also stops
--- it through the shared vanilla LeaderSpeech parent.
+-- Stop our speech branches on diplomacy transitions. Cinematic speech shares
+-- vanilla LeaderSpeech and is reached by native Escape/RMB. Standalone lines
+-- use a private parent and rely on our transition/close handlers; their exact
+-- Escape/RMB behavior must be checked in game.
 include("DiplomacyStatementSupport");
+include("RemselysAlexanderII_FullVoice");
+local fullStatementEvents = REMSELY_FullVoice_statement or {};
+local fullReasonEvents = REMSELY_FullVoice_reason or {};
+local fullDealEvents = REMSELY_FullVoice_deal_ui or {};
+-- Only these non-speaking vanilla animations may accompany reason speech.
+-- KUDOS/WARNING and other speech cinematics fire their own audio in the AST.
+local silentReasonAnimations = {
+    NEUTRAL_POSITIVE = true, HAPPY_POSITIVE = true, UNHAPPY_POSITIVE = true,
+    NEUTRAL_NEGATIVE = true, HAPPY_NEGATIVE = true, UNHAPPY_NEGATIVE = true,
+};
 local statementHandler = { ParseStatement = DiplomacySupport_ParseStatement,
     ParseStatementSelection = DiplomacySupport_ParseStatementSelection };
 local observingAlexander = false;
+local speechPosted = false;
+-- Non-cinematic replies can themselves close the conversation automatically.
+-- Let them finish across that transition, but still stop on explicit close,
+-- the next local statement, or shutdown.
+local finishAfterSceneClose = false;
+local tailSceneClosed = false;
+local currentDealVoice = false;
 
-local function StopVoice()
+local function StopVoice(reason)
+    finishAfterSceneClose = false;
+    tailSceneClosed = false;
+    if observingAlexander or speechPosted then
+        print("REMSELY voice: stop " .. tostring(type(reason) == "string" and reason or "event"));
+    end
+    speechPosted = false;
+    currentDealVoice = false;
     UI.PlaySound("Stop_REMSELY_AlexanderII_Speech");
+end
+local function OnHideLeaderScreen()
+    if not finishAfterSceneClose then StopVoice("hide leader screen");
+    elseif speechPosted then print("REMSELY voice: hide leader screen, standalone speech retained"); end
+end
+local function OnUserRequestClose() StopVoice("user request close"); end
+local function OnShowLeaderScreen(leaderName)
+    print("REMSELY voice: show leader screen " .. tostring(leaderName));
 end
 
 -- Defined with the dawn-of-man driver below; declared early because Shutdown uses it.
@@ -49,11 +83,19 @@ local function SetDefeatVariant(value)
     UI.SetSoundSwitchValue("REMSELY_AlexanderII_DefeatVariant", value);
 end
 local function OnSceneOpened(playerID)
+    if finishAfterSceneClose and tailSceneClosed then
+        StopVoice("another scene opened");
+    end
     local config = PlayerConfigurations[playerID];
     observingAlexander = config ~= nil and config:GetLeaderTypeName() == "LEADER_REMSELY_ALEXANDER_II";
     if observingAlexander then
         print("REMSELY voice: Alexander scene opened");
     end
+end
+
+local function OnLeaderSelected(playerID)
+    local config = PlayerConfigurations[playerID];
+    observingAlexander = config ~= nil and config:GetLeaderTypeName() == "LEADER_REMSELY_ALEXANDER_II";
 end
 
 local function OnAnimationComplete(name)
@@ -63,14 +105,24 @@ local function OnAnimationComplete(name)
 end
 
 local function OnStatement(fromPlayer, toPlayer, variants)
-    StopVoice();
+    -- Ignore statements between other players: they must not interrupt speech
+    -- currently playing for the local player.
+    local localPlayer = Game.GetLocalPlayer();
+    if fromPlayer ~= localPlayer and toPlayer ~= localPlayer then return; end
     local config = PlayerConfigurations[fromPlayer];
     if config == nil or config:GetLeaderTypeName() ~= "LEADER_REMSELY_ALEXANDER_II" or variants == nil then return; end
-    if toPlayer ~= Game.GetLocalPlayer() then return; end
-    SetDefeatVariant("FROM_AI");
+    if toPlayer ~= localPlayer then return; end
     local kind = DiplomacyManager.GetKeyName(variants.StatementType);
     local subtype = DiplomacyManager.GetKeyName(variants.StatementSubType) or "NONE";
     if kind == nil then return; end
+    -- Vanilla distinguishes evaluations from final answers. Suppress these
+    -- only while Alexander's scene is not displayed; visible evaluations keep
+    -- the same text-selection route regardless of which UI initiated them.
+    if not observingAlexander and kind == "MAKE_DEAL" and DealProposalAction ~= nil
+        and (variants.RespondingToDealAction == DealProposalAction.INSPECT
+            or variants.RespondingToDealAction == DealProposalAction.EQUALIZE) then
+        return;
+    end
     -- Match DiplomacyActionView.GetStatementMood, including reaction-time mood.
     local speaker = variants.FromPlayer or fromPlayer;
     local mood = variants.FromPlayerMood;
@@ -83,42 +135,94 @@ local function OnStatement(fromPlayer, toPlayer, variants)
         local textKey = DiplomacyManager.FindTextKey(parsed.StatementText, speaker, variants.FromMood, toPlayer);
         local defeatVariant = defeatTextSwitches[textKey];
         if defeatVariant ~= nil then
+            StopVoice("defeat statement");
             SetDefeatVariant(defeatVariant);
             print("REMSELY voice: defeat variant " .. defeatVariant);
             return;
         end
-        local slot = trialTextEvents[textKey];
+        local slot = trialTextEvents[textKey] or fullStatementEvents[textKey];
+        -- Hidden agendas display their reason separately from StatementText.
+        -- Only play a reason when the very same leader-scoped key was resolved
+        -- for display, preserving subtitle/audio agreement.
+        if slot == nil and parsed.ReasonText ~= nil and silentReasonAnimations[parsed.LeaderAnimation]
+            and DiplomacyManager.FindReasonTextKey ~= nil then
+            local reasonKey = DiplomacyManager.FindReasonTextKey(parsed.ReasonText, speaker,
+                variants.AiReason, variants.AiModifier);
+            if reasonKey ~= nil then slot = fullReasonEvents[reasonKey]; end
+        end
         if slot ~= nil then
+            -- A completed trade outside Alexander's visible diplomatic scene
+            -- has no leader speech surface. This applies to any interface.
+            if kind == "MAKE_DEAL" and not observingAlexander then
+                print("REMSELY voice: skipped off-screen trade " .. slot);
+                return;
+            end
+            StopVoice("new voiced statement");
+            -- A trade response is displayed before CHOICE_EXIT closes its
+            -- session. It must start with the statement, not after that exit.
+            finishAfterSceneClose = kind ~= "MAKE_DEAL";
             UI.PlaySound("Play_REMSELY_AlexanderII_" .. slot);
+            speechPosted = true;
             print("REMSELY voice: trial statement " .. slot);
         end
     end
 end
 
+-- The deal view hook sends its final displayed vanilla key, scoped to the
+-- visible leader. Its custom subtitle and this audio lookup share one manifest.
+local function OnDealLine(playerID, textKey)
+    local config = PlayerConfigurations[playerID];
+    if config == nil or config:GetLeaderTypeName() ~= "LEADER_REMSELY_ALEXANDER_II" then return; end
+    local slot = fullDealEvents[textKey];
+    if slot == nil then
+        if currentDealVoice then StopVoice("deal text changed"); end
+        return;
+    end
+    StopVoice("new deal line");
+    UI.PlaySound("Play_REMSELY_AlexanderII_" .. slot);
+    speechPosted = true;
+    currentDealVoice = true;
+    print("REMSELY voice: deal line " .. slot);
+end
+
+local function OnDealClosed(playerID)
+    if currentDealVoice then StopVoice("deal view closed"); end
+end
+
 local function OnSceneClosed()
-    StopVoice();
+    if not finishAfterSceneClose then StopVoice("scene closed");
+    else
+        tailSceneClosed = true;
+        if speechPosted then print("REMSELY voice: scene closed, standalone speech retained"); end
+    end
     observingAlexander = false;
 end
 
 local function Shutdown()
     StopVoice();
     StopLoadingDawn();
-    Events.HideLeaderScreen.Remove(StopVoice);
-    Events.ShowLeaderScreen.Remove(StopVoice);
+    Events.HideLeaderScreen.Remove(OnHideLeaderScreen);
+    Events.ShowLeaderScreen.Remove(OnShowLeaderScreen);
     Events.DiplomacyStatement.Remove(OnStatement);
-    Events.UserRequestClose.Remove(StopVoice);
+    Events.UserRequestClose.Remove(OnUserRequestClose);
     Events.LeaderAnimationComplete.Remove(OnAnimationComplete);
     LuaEvents.DiploScene_SceneOpened.Remove(OnSceneOpened);
+    LuaEvents.DiploScene_LeaderSelect.Remove(OnLeaderSelected);
     LuaEvents.DiploScene_SceneClosed.Remove(OnSceneClosed);
+    LuaEvents.REMSELY_DealLine.Remove(OnDealLine);
+    LuaEvents.REMSELY_DealClosed.Remove(OnDealClosed);
 end
 
-Events.HideLeaderScreen.Add(StopVoice);
-Events.ShowLeaderScreen.Add(StopVoice);
+Events.HideLeaderScreen.Add(OnHideLeaderScreen);
+Events.ShowLeaderScreen.Add(OnShowLeaderScreen);
 Events.DiplomacyStatement.Add(OnStatement);
-Events.UserRequestClose.Add(StopVoice);
+Events.UserRequestClose.Add(OnUserRequestClose);
 Events.LeaderAnimationComplete.Add(OnAnimationComplete);
 LuaEvents.DiploScene_SceneOpened.Add(OnSceneOpened);
+LuaEvents.DiploScene_LeaderSelect.Add(OnLeaderSelected);
 LuaEvents.DiploScene_SceneClosed.Add(OnSceneClosed);
+LuaEvents.REMSELY_DealLine.Add(OnDealLine);
+LuaEvents.REMSELY_DealClosed.Add(OnDealClosed);
 ContextPtr:SetShutdown(Shutdown);
 print("REMSELY Alexander II: voice prototype UI loaded");
 

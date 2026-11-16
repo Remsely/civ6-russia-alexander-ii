@@ -3,11 +3,27 @@ import struct
 from pathlib import Path
 import pytest
 from verify_voice import verify_voice, voice_hash
-from leader_voice import ROOT, BANK, DEFEAT_SWITCH, DEFEAT_GROUP
+from leader_voice import ROOT, BANK, DEFEAT_SWITCH, DEFEAT_GROUP, LEADER_SPEECH
 
 
 def test_bank_and_both_defeat_recordings():
     verify_voice()
+
+
+def test_native_exit_really_stops_leader_speech():
+    """The shipped game's exit action explains why Lua-only fixes were insufficient."""
+    import runpy
+    from build_voice import GAME_AUDIO
+    tool = runpy.run_path(str(ROOT / 'art/build/voice/integration/bnktool.py'))
+    bank = (GAME_AUDIO / 'UI_Bank.bnk').read_bytes()
+    objs = {struct.unpack_from('<I', body)[0]: (kind, body)
+            for kind, body in tool['read_hirc'](bank)}
+    kind, event = objs[voice_hash('Exit_Leader_Screen')]
+    assert kind == 4
+    count = struct.unpack_from('<I', event, 4)[0]
+    actions = [objs[action_id][1] for action_id in struct.unpack_from('<' + 'I' * count, event, 8)]
+    assert any(action[4:6] == b'\x02\x01' and
+               struct.unpack_from('<I', action, 6)[0] == LEADER_SPEECH for action in actions)
 
 
 def switch_offset(data):

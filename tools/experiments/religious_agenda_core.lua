@@ -12,11 +12,11 @@ local RULES = {
 -- The host must also check that the offender is a living major civilization.
 function M.qualifies(action)
     return action.actor ~= nil and action.leader ~= nil and action.cityOwner ~= nil
-        and action.actor ~= action.leader and action.cityOwner ~= action.actor
+        and action.actor ~= action.leader
         and action.known == true and action.alexanderAI == true
         and action.success == true and action.candidateCount == 1
-        and action.beforeReligion ~= nil and action.beforeReligion >= 0
-        and action.beforeReligion == action.leaderReligion
+        and action.leaderReligion ~= nil and action.leaderReligion >= 0
+        and (action.cityOwner == action.leader or action.beforeReligion == action.leaderReligion)
         and action.unitReligion ~= nil and action.unitReligion >= 0
         and action.unitReligion ~= action.leaderReligion
 end

@@ -45,7 +45,7 @@ def test_reject_innocent_ambiguous_and_ineligible_cases():
     for field, value in [('success', False), ('candidateCount', 2), ('candidateCount', 0),
                          ('beforeReligion', 4), ('beforeReligion', -1), ('unitReligion', 3),
                          ('unitReligion', -1), ('known', False), ('alexanderAI', False),
-                         ('cityOwner', 1), ('actor', 0)]:
+                         ('actor', 0)]:
         _, core, state, action, calls, apply = setup()
         action[field] = value
         assert not core.offense(state, action, 1, apply), field
@@ -59,6 +59,32 @@ def test_failed_diplomacy_write_does_not_advance_state():
     assert not core.expire(state, 31, lambda delta: False)
     assert state.abroadExpires == 31
     assert core.expire(state, 32, apply)
+
+
+def test_home_does_not_require_alexanders_faith_to_dominate():
+    _, core, state, action, calls, apply = setup()
+    action.cityOwner = 0
+    action.beforeReligion = 7
+    assert core.offense(state, action, 1, apply)
+    assert calls == [-12]
+
+
+def test_offender_own_city_with_alexanders_faith_is_foreign_to_alexander():
+    _, core, state, action, calls, apply = setup()
+    action.cityOwner = action.actor
+    assert core.offense(state, action, 1, apply)
+    assert state.abroad == 6
+    assert calls == [-6]
+
+
+def test_requires_alexanders_established_religion_for_both_cases():
+    for city_owner in (0, 2):
+        for missing in (None, -1):
+            _, core, state, action, calls, apply = setup()
+            action.cityOwner = city_owner
+            action.leaderReligion = missing
+            assert not core.offense(state, action, 1, apply)
+            assert calls == []
 
 def test_matching_requires_one_city_same_turn_and_actual_gain():
     lua, core, _, action, _, _ = setup()

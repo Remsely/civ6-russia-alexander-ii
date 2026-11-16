@@ -37,7 +37,7 @@ def main():
    for kind in ['raw','clean']:assert sha(out/existing[kind])==existing[kind+'_sha256']
    print('EXISTS',item['number'],item['key'],flush=True)
    continue
-  reference=root/item['reference'];prompt=root/item['prompt_wav']
+  reference=root/item['reference'];prompt=None if item['mode']=='reference-only' else root/item['prompt_wav']
   stem=item['key'].lower().replace('_','-')
   raw=out/f'{stem}-raw.wav';clean=out/f'{stem}-clean.wav'
   if raw.exists() or clean.exists():raise FileExistsError(raw)
@@ -50,7 +50,7 @@ def main():
     if option in item:kwargs[option]=int(item[option])
    if item['mode'] in ('calm-continuation','styled-continuation'):
     kwargs.update(prompt_wav_path=str(prompt),prompt_text=item['prompt_text'])
-   if item['mode'] != 'calm-continuation':
+   if item['mode'] not in ('calm-continuation','reference-only'):
     text=item['style']+' '+text
    audio=model.generate(text=text,**kwargs)
    assert len(audio)>sr/2 and np.isfinite(audio).all()
@@ -62,7 +62,7 @@ def main():
   filtered=sosfiltfilt(butter(2,[70,9500],btype='bandpass',fs=sr,output='sos'),audio)
   filtered=filtered/np.max(np.abs(filtered))*0.85
   sf.write(clean,filtered,sr,subtype='PCM_24')
-  report.append(dict(**item,cfg=plan['cfg'],sample_rate=sr,seconds=len(audio)/sr,inference_seconds=time.perf_counter()-started,reference_sha256=sha(reference),prompt_wav_sha256=sha(prompt),raw=raw.name,clean=clean.name,raw_sha256=sha(raw),clean_sha256=sha(clean),segments_generated=segment_report,status='awaiting user review; correction intent not listening verification',processing='Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24'))
+  report.append(dict(**item,cfg=plan['cfg'],sample_rate=sr,seconds=len(audio)/sr,inference_seconds=time.perf_counter()-started,reference_sha256=sha(reference),prompt_wav_sha256=sha(prompt) if prompt else None,raw=raw.name,clean=clean.name,raw_sha256=sha(raw),clean_sha256=sha(clean),segments_generated=segment_report,status='awaiting user review; correction intent not listening verification',processing='Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24'))
   report_path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
   print('DONE',item['number'],item['key'],len(audio)/sr,flush=True)
  print('COMPLETE',len(report),flush=True)

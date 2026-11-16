@@ -5,7 +5,7 @@ import hashlib
 import wave
 import numpy as np
 from lxml import etree
-from leader_voice import DEFEAT_GROUP, DEFEAT_VALUES, DEFEAT_SWITCH, BANK, GAIN_DB, LEADER_SPEECH, LINES, ROOT, STOP, event, scene_duration
+from leader_voice import DEFEAT_GROUP, DEFEAT_VALUES, DEFEAT_SWITCH, BANK, EXTRA_MIXER, EXTRA_PARENT, EXTRA_ROOT, GAIN_DB, LEADER_SPEECH, LINES, ROOT, STOP, event, scene_duration
 
 
 def voice_hash(name):
@@ -30,16 +30,23 @@ def verify_voice():
     assert chunks[b'DATA'][0] % 16 == 0, 'unaligned media'
     media = list(struct.iter_unpack('<III', chunks[b'DIDX'][1]))
     trial = json.loads((ROOT / 'art/voice/game-trial-manifest.json').read_text(encoding='utf-8'))
+    full = json.loads((ROOT / 'art/voice/full-game-manifest.json').read_text(encoding='utf-8'))
     selected = {row['file']: row for row in json.loads((ROOT / 'art/voice/selected/manifest.json').read_text(encoding='utf-8-sig'))}
     sources = {slot: dict(file='art/voice/selected/' + filename, sha256=selected[filename]['sha256'])
                for slot, (filename, _) in LINES.items()}
-    extras = [row['key'] for row in trial]
+    extras = [row['key'] for row in trial] + [row['slot'] for row in full]
     assert len(set(extras)) == len(extras) and not set(extras) & set(LINES), 'duplicate voice slot'
     sources.update({row['key']: row for row in trial})
+    sources.update({row['slot']: row for row in full})
     texts = {r.get('Tag'): r.findtext('Text') for r in etree.parse(str(ROOT / 'mod/Text/ru_RU.xml')).findall('.//Replace')}
     for row in trial:
         text = texts['LOC_DIPLO_' + row['key'] + '_LEADER_REMSELY_ALEXANDER_II_ANY'].replace(' (Осуждает вас)', '')
         assert text == row['text'], 'voice/subtitle mismatch: ' + row['key']
+    for language, field in (('ru_RU', 'text_ru'), ('en_US', 'text_en')):
+        full_texts = {r.get('Tag'): r.findtext('Text') for r in etree.parse(str(ROOT / ('mod/Text/FullVoice_' + language + '.xml'))).findall('.//Replace')}
+        assert len(full_texts) == len(full), 'full voice localization duplicate'
+        for row in full:
+            assert full_texts[row['tag']] == row[field], 'full voice subtitle mismatch: ' + row['slot']
     from loading_voice import verify_loading_voice
     verify_loading_voice()
     assert len(media) == len(LINES) + len(extras) and media == sorted(media), 'media index'
@@ -87,7 +94,7 @@ def verify_voice():
     scene = etree.parse(str(ROOT / 'mod/Assets/AlexanderII.ast'))
     names = [e.get('text') for e in scene.iter('m_FXName')]
     assert event('DEFEAT_FROM_HUMAN') not in names, 'do not trigger both defeat recordings'
-    assert not any('Play_RUSS_PA_' in name for name in names), 'Peter speech remains in scene'
+    assert not any(name.startswith(('Play_RUSS_PA_', 'RUSS_PA_')) for name in names), 'Peter voice/breath remains in scene'
     for slot in [*LINES, *extras]:
         name = event(slot)
         if slot in LINES:
@@ -104,6 +111,9 @@ def verify_voice():
             sound_id = defeat_children[0]
         kind, sound = objects[sound_id]
         assert kind == 2 and struct.unpack_from('<I', sound, 4)[0] == 0x00010001 and sound[8] == 0
+        if slot not in ('DEFEAT', 'DEFEAT_FROM_HUMAN'):
+            expected_parent = voice_hash(BANK + '/chain0') if slot in LINES else voice_hash(EXTRA_MIXER)
+            assert struct.unpack_from('<I', sound, 25)[0] == expected_parent, 'sound branch: ' + slot
         media_id, size = struct.unpack_from('<II', sound, 9)
         assert any(mid == media_id and length == size for mid, _, length in media)
         source = sources[slot]
@@ -140,9 +150,22 @@ def verify_voice():
     assert mixer[16:18] == b'\x01\x00'
     assert struct.unpack_from('<f', mixer, 18)[0] == -8.0 + GAIN_DB, 'voice gain'
     _, stop = objects[voice_hash(STOP)]
-    _, action = objects[struct.unpack_from('<I', stop, 8)[0]]
-    assert action[4:6] == b'\x02\x01' and struct.unpack_from('<I', action, 6)[0] == voice_hash(BANK + '/chain0')
+    assert struct.unpack_from('<I', stop, 4)[0] == 2
+    targets = set()
+    for action_id in struct.unpack_from('<II', stop, 8):
+        _, action = objects[action_id]
+        assert action[4:6] == b'\x02\x01'
+        targets.add(struct.unpack_from('<I', action, 6)[0])
+    assert targets == {voice_hash(BANK + '/chain0'), voice_hash(EXTRA_MIXER)}
     assert struct.unpack_from('<I', mixer, 11)[0] == LEADER_SPEECH, 'native stop must reach our branch'
+    extra = objects[voice_hash(EXTRA_MIXER)][1]
+    extra_parent = objects[voice_hash(EXTRA_PARENT)][1]
+    assert struct.unpack_from('<I', extra, 11)[0] == voice_hash(EXTRA_PARENT)
+    assert struct.unpack_from('<I', extra_parent, 11)[0] == voice_hash(EXTRA_ROOT)
+    extra_root = objects[voice_hash(EXTRA_ROOT)][1]
+    assert struct.unpack_from('<I', extra_root, 11)[0] == 0, 'extra speech must not share the limited actor hierarchy'
+    assert struct.unpack_from('<I', extra_root, 7)[0] == voice_hash('Speech Bus'), 'speech output bus'
+    assert struct.unpack_from('<f', extra, 18)[0] == -8.0 + GAIN_DB
     assert LEADER_SPEECH not in objects, 'do not replace vanilla mixer'
     assert voice_hash(BANK + '/chain1') not in objects and voice_hash(BANK + '/chain2') not in objects
     meta = etree.parse(str(path.with_suffix('.xml')))
@@ -155,19 +178,38 @@ if __name__ == '__main__':
 
 
 def verify_cooked_timing():
-    """Check actual BLP timing: AST duration alone can silently leave the 16s idle."""
+    """Compare cooked duration and trigger timing/counts to the source AST.
+
+    Event names are hashed in BLP, so this timing comparison cannot prove the
+    identity of two different events with identical start times.
+    """
     from collections import Counter
     from verify_leader_bindings import CookedPackage
     scene = etree.parse(str(ROOT / 'mod/Assets/AlexanderII.ast'))
     expected = Counter()
+    expected_triggers = Counter()
     for timeline in scene.findall('.//m_Timelines/Element'):
         name = timeline.find('m_AnimationName').get('text')
         description = etree.parse(str(ROOT / 'mod/Animations' / (name + '.anm')))
-        expected[round(float(description.findtext('m_fDuration')), 4)] += 1
+        duration = round(float(description.findtext('m_fDuration')), 4)
+        expected[duration] += 1
+        starts = tuple(sorted(round(float(x.findtext('m_fStartTime')), 4)
+                              for x in timeline.findall('m_Triggers/Element')))
+        expected_triggers[(duration, starts)] += 1
     for platform in ('Windows', 'MacOS'):
         package = CookedPackage(ROOT / 'mod/Platforms' / platform / 'BLPs/leaders/leader_remsely_alexander_ii.blp')
-        actual = Counter(round(t['Duration'], 4) for t in package.objects('TimelineSet::Timeline'))
+        timelines = package.objects('TimelineSet::Timeline')
+        triggers = package.objects('TimelineSet::Trigger')
+        actual = Counter(round(t['Duration'], 4) for t in timelines)
         # Standard_Leader adds one empty timeline for its no-animation state.
         assert actual.pop(0.0, 0) == 1, 'missing DSG empty timeline'
         assert actual == expected, f'{platform}: cooked cinematic durations differ: {actual} != {expected}'
+        actual_triggers = Counter()
+        for timeline in timelines:
+            start, count = timeline['TriggerStart'], timeline['TriggerCount']
+            assert start + count <= len(triggers), f'{platform}: trigger range exceeds BLP'
+            starts = tuple(sorted(round(x['StartTime'], 4) for x in triggers[start:start + count]))
+            actual_triggers[(round(timeline['Duration'], 4), starts)] += 1
+        assert actual_triggers.pop((0.0, ()), 0) == 1, f'{platform}: missing empty trigger timeline'
+        assert actual_triggers == expected_triggers, f'{platform}: cooked trigger timings/counts differ from AST'
         print('voice scene durations OK:', platform)

@@ -8,6 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SELECTED = ROOT / 'art/voice/selected'
 BANK = 'REMSELY_AlexanderII_Speech'
 STOP = 'Stop_REMSELY_AlexanderII_Speech'
+EXTRA_MIXER = BANK + '/extra-mixer'
+EXTRA_PARENT = BANK + '/extra-parent'
+EXTRA_ROOT = BANK + '/extra-root'
 # Vanilla LeaderSpeech mixer, read from Base Speech.bnk (Stop_Leader_Speech target).
 LEADER_SPEECH = 854467727
 GAIN_DB = 1.0
@@ -34,8 +37,41 @@ def event(slot):
     return 'Play_REMSELY_AlexanderII_' + slot
 
 
+PETER_VOCAL_REACTIONS = frozenset({
+    'RUSS_PA_Hmm_NeutralPositive',
+    'RUSS_PA_Ha_NeutralToNegative',
+    'RUSS_PA_Hmm_HappyPositive',
+    'RUSS_PA_Ha_HappyNegative',
+    'RUSS_PA_Breath_HappyToNeutral',
+    'RUSS_PA_Breath_NeutralToEnraged',
+    'RUSS_PA_Breath_UnhappyToEnraged',
+})
+
+
+def remove_peter_vocal_reactions(tree):
+    """Remove Peter's vocal reactions, preserving foley and all other triggers."""
+    removed = 0
+    for triggers in tree.findall('.//m_Timelines/Element/m_Triggers'):
+        for trigger in list(triggers):
+            fx = trigger.find('m_FXName')
+            if fx is not None and fx.get('text') in PETER_VOCAL_REACTIONS:
+                # Retain the removed node's surrounding XML whitespace so the
+                # next trigger or closing tag keeps its original indentation.
+                previous = trigger.getprevious()
+                if previous is not None:
+                    previous.tail = trigger.tail
+                else:
+                    triggers.text = trigger.tail
+                triggers.remove(trigger)
+                removed += 1
+    return removed
+
+
 def bind_scene(tree):
     """Bind the six selected speech recordings and their cinematic durations."""
+    # The inherited Peter scene also has Hmm/Ha/breath voice events. They can
+    # overlap Alexander's recordings or play Peter's voice between lines.
+    remove_peter_vocal_reactions(tree)
     replacements = {old: event(slot) for slot, (_, old) in LINES.items()}
     for trigger in list(tree.iter('Element')):
         fx = trigger.find('m_FXName')

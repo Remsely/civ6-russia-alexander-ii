@@ -1,0 +1,1380 @@
+{
+  "source": "docs/voice-remaining-review-round3.ru.md",
+  "global_feedback": "Спокойная, уверенная речь без суеты и искусственных акцентов; угрозы сдержанные и зловещие. Сохранять сходство с утвержденным голосом.",
+  "note": "Существующий выбор сохранен; отсутствие замечаний не означает утверждения. Новые записи не подключены к игре.",
+  "items": [
+    {
+      "number": 1,
+      "current_text": "Я вижу, вы не стремитесь к новым чудесам. Что ж, это оставляет больше возможностей для России.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-001-clean.wav",
+      "current_audio_sha256": "28892ce3f4929d8f8ee0e59fbc75da30d8d91fd731fde6625e9325dda6b41cb0",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 2,
+      "current_text": "Ваша держава ныне процветает. Не всякое благополучие бывает прочным.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-002-clean.wav",
+      "current_audio_sha256": "a36574138c2bfc101ea74b6d057c4ba390fdb38a54ffb7de23b8ae7af5227217",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 3,
+      "current_text": "Мой народ не рад вашим проповедникам. Прошу вас отозвать их немедленно.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-003-clean.wav",
+      "current_audio_sha256": "15b818218c9d1539efcacbf36ccf859e2d150fa4c5ad1a7aee0be3e646aeea2f",
+      "action": "regenerate",
+      "user_feedback": "Странный ускоренный, лагучий темп повествования.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 4,
+      "current_text": "Сильный флот укрепляет могущество державы. Советую вам уделить больше внимания развитию морских сил.",
+      "current_audio": "art/voice/candidates/remaining-revision-v1/revision-004-clean.wav",
+      "current_audio_sha256": "9072825ffd08a4d15a4503f1153344c849c79f01e145d4fe39b52425a76f4c4c",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 5,
+      "current_text": "Я принимаю ваши условия. Пусть это соглашение послужит нашим державам.",
+      "current_audio": "art/voice/candidates/remaining-asr-retry-v1/make-deal-ai-accept-clean.wav",
+      "current_audio_sha256": "80bf200ab367c3fed3190a88acd326e50bb07f38e7e69fdf1a20e37778f423be",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 2,
+      "previous_selection_variant": 2
+    },
+    {
+      "number": 6,
+      "current_text": "Предложенные условия не отвечают интересам России.",
+      "current_audio": "art/voice/candidates/remaining-revision-v1/revision-006-clean.wav",
+      "current_audio_sha256": "8793d42f4c3e9a04b80049feaa542966636c33deb60905ba2a5bc1895682ce59",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 7,
+      "current_text": "Полагаю, эти условия нас устроят.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-007-clean.wav",
+      "current_audio_sha256": "7d12df08b84f8b9437ef4690531aff6dfe0698483520bd3953984846d9873bf1",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 8,
+      "current_text": "Замечательно!",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-accept-delegation-from-ai-any-any-clean.wav",
+      "current_audio_sha256": "bd43d29d35eb312949bd0d5e7b7e2e6de1d66bd0123852dc9a1e2b1aa9d2f5de",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 9,
+      "current_text": "О, счастливый день!",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-accept-embassy-from-ai-any-any-clean.wav",
+      "current_audio_sha256": "da9ac4f1f4f80f9c98b217a6cd9e79a6e28e067ca0983b6f2f08bb3cf82d1d80",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 10,
+      "current_text": "Мы с радостью позволяем вам учредить посольство в нашей столице.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-accept-embassy-from-human-any-any-clean.wav",
+      "current_audio_sha256": "834d6004a36ac1075acc8552853961e4b8fb971a7ecc26ea530636e7c21a138f",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 11,
+      "current_text": "Замечательно.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-accept-make-alliance-from-ai-leader-any-any-clean.wav",
+      "current_audio_sha256": "018617560ebbffa73b604b450bc2c9455b4ba788da69c437cf67c235e2e9c44c",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 12,
+      "current_text": "Война закончилась.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-accept-make-peace-from-ai-any-any-clean.wav",
+      "current_audio_sha256": "5de72058dc0ffc930be7d3b8e03008af3f229990ba37ff41ba36602a137f33d9",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 13,
+      "current_text": "Замечательно!",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-accept-open-borders-from-ai-any-any-clean.wav",
+      "current_audio_sha256": "6f30e54fe04c5749f8aba3179d6617f5a1f0cf6b559e126232ff2f0507469473",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 14,
+      "current_text": "Соглашусь.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-ai-accept-demand-any-any-clean.wav",
+      "current_audio_sha256": "2c7cfe7e04cb625010c0aebf7cc8d5a6a4f7c795aa1c5d9071386224a5b94fb9",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 15,
+      "current_text": "Пустые требования ни к чему не приведут.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-ai-refuse-demand-any-any-clean.wav",
+      "current_audio_sha256": "3bd2b0463826a99b1f09952e50868540f4f2abff36417fa1d72d732bc0dd8e02",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 16,
+      "current_text": "Вы позволите нам основать посольство в вашей столице?",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-016-clean.wav",
+      "current_audio_sha256": "80dbb62ad7f875a66bacf3f3ccd3d22b1271811dc8ca831b55da6d638182da5c",
+      "action": "regenerate",
+      "user_feedback": "Не похож то ли голос, то ли подача.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 17,
+      "current_text": "Вы поступили мудро, приняв мои требования.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-017-clean.wav",
+      "current_audio_sha256": "c4c5bdc8eec46f7e5255cd9ff76ea8d9dc822f936a57cc08f252ae9e2fca6383",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 18,
+      "current_text": "Мне придется прибегнуть к другим мерам, чтобы удовлетворить свои требования!",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-018-clean.wav",
+      "current_audio_sha256": "a62f56267d0543c566248d03a5e2545130447d02e86ae9f680940a092a87feb0",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 19,
+      "current_text": "Жаль, что вы не приняли наших посланников. Возможно, в другой раз.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-019-clean.wav",
+      "current_audio_sha256": "033f3d338022911eae5059ff43c09477b5569aca9d45d340a5fb3d608dfc0538",
+      "action": "rewrite_and_regenerate",
+      "user_feedback": "Перефразировать; допускается «Очень жаль». Не получается нормально озвучить прежнюю фразу.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 20,
+      "current_text": "Очень жаль.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-reject-embassy-from-ai-any-any-clean.wav",
+      "current_audio_sha256": "6fbb577a2e7f35bd74c68a984e4e4ff2b4a8a6f5ae3adea1d4178467f6b5482e",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 21,
+      "current_text": "Благодарю за предложение, но я пока не готов принять ваше посольство.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-021-clean.wav",
+      "current_audio_sha256": "9f4e46c0f2577ee45ec9df303fe1da992fe16fea6c292b6aa66bf86f25f531d6",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 22,
+      "current_text": "К сожалению, сейчас наш союз невозможен.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-022-clean.wav",
+      "current_audio_sha256": "871eb263bf7ae161c698c7644d49d6c842004e6a5b7a0aacbbab9fc29ffccbdd",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 23,
+      "current_text": "Мне жаль, что мы не смогли договориться. Боевые действия продолжатся.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-023-clean.wav",
+      "current_audio_sha256": "ca2f6c397557894d4a5df86e7ce5e343beb9ec3655347c01bf98bcc4591b8339",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 24,
+      "current_text": "Понимаю. Быть может, мы обсудим открытие ваших границ в другой раз.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-024-clean.wav",
+      "current_audio_sha256": "536660d5b84ebb1e494785756901a7692aaad273ed50a320c7a142be16c1d0b9",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 25,
+      "current_text": "Ваш народ селится слишком близко! Найдите себе землю где-нибудь еще.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-dont-settle-near-me-ai-any-any-clean.wav",
+      "current_audio_sha256": "6030d975572b783c41e20087fbd6f9acf87a3029c6f5f02357f95f9d79b45a14",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 26,
+      "current_text": "Моему народу нужна земля. Кто вы такие, чтобы обделять нас?",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-dont-settle-near-me-ai-response-negative-any-any-clean.wav",
+      "current_audio_sha256": "8ca326cbb16c69faafb313ee78b7bba4273398be835c9d79eceb94fdf9b8839f",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 27,
+      "current_text": "Мои искренние извинения! Мы не заметили, что ваш город так близко.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-027-clean.wav",
+      "current_audio_sha256": "622b04badbe7285a51f6029aead65ed2edaba7df952496a97ffdd410ff8f83c7",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 28,
+      "current_text": "Если вы не уважаете наши границы, то и мы не станем уважать ваши.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-dont-settle-near-me-human-response-negative-any-any-clean.wav",
+      "current_audio_sha256": "a3f00a3b082a1f7cfe698b905ea76e9bd54faffee12c607cfcd87eeb0170ce64",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 29,
+      "current_text": "Спасибо.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-dont-settle-near-me-human-response-positive-any-any-clean.wav",
+      "current_audio_sha256": "d5b3344d986381eace44dca5be39a598db3ecfa091ed096efa582a0bbdb8bd1b",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 30,
+      "current_text": "Я не стану отзывать наших проповедников. Их дело слишком важно для нас.",
+      "current_audio": "art/voice/candidates/remaining-revision-asr-v1/asr-retry-030-clean.wav",
+      "current_audio_sha256": "09f6baf8162673ce9f698c32b7ca9399793f44508e69465a6a0da6947451073f",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 2,
+      "previous_selection_variant": 2
+    },
+    {
+      "number": 31,
+      "current_text": "Я выполню ваши пожелания, хоть и печально видеть, как глубоко вы заблуждаетесь.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-stop-converting-my-cities-ai-response-positive-any-any-clean.wav",
+      "current_audio_sha256": "8c2a170e3ba37dbd4ec8901b68bc0bc343922b775b8723174d104acbde61acff",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 32,
+      "current_text": "Будьте уверены, это не останется безнаказанным. Если не сейчас, то позже.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-stop-converting-my-cities-human-response-negative-any-any-clean.wav",
+      "current_audio_sha256": "83d5e5263cdfbd7b599f36a00ecf9de8a7850e7a33ff67d8889938b3c224d6c9",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 33,
+      "current_text": "Спасибо.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-stop-converting-my-cities-human-response-positive-any-any-clean.wav",
+      "current_audio_sha256": "d5b3344d986381eace44dca5be39a598db3ecfa091ed096efa582a0bbdb8bd1b",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 34,
+      "current_text": "Тайны прошлого – достояние всех. Вы не вправе претендовать на них!",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-stop-digging-up-artifacts-ai-response-negative-any-any-clean.wav",
+      "current_audio_sha256": "508e626b459201762747917f29fe85ff6a2e831de9dfef8e0d9e81cdb132fdcc",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 35,
+      "current_text": "Ваше беспокойство мне понятно. Я распоряжусь прекратить раскопки.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-035-clean.wav",
+      "current_audio_sha256": "39b428b7029f7b1e620793f69d1e1036bf708e89b6d9f4fefc756f7c85944065",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 36,
+      "current_text": "Если вы не уважаете наши границы, то и мы не станем уважать ваши.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-stop-digging-up-artifacts-human-response-negative-any-any-clean.wav",
+      "current_audio_sha256": "a3f00a3b082a1f7cfe698b905ea76e9bd54faffee12c607cfcd87eeb0170ce64",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 37,
+      "current_text": "Спасибо.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-stop-digging-up-artifacts-human-response-positive-any-any-clean.wav",
+      "current_audio_sha256": "d5b3344d986381eace44dca5be39a598db3ecfa091ed096efa582a0bbdb8bd1b",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 38,
+      "current_text": "Мы не позволим расхищать наше культурное достояние. Вам пора убраться с нашей земли!",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-038-clean.wav",
+      "current_audio_sha256": "017c19f7af18680049c95e10b5aba6e4bc276e82105ccd48927359152e20caf6",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 39,
+      "current_text": "Ха! С чего вы решили, что я сделаю такое одолжение?",
+      "current_audio": "art/voice/candidates/remaining-asr-retry-v1/loc-diplo-warning-stop-spying-on-me-ai-response-negative-any-any-clean.wav",
+      "current_audio_sha256": "7e1c064bcd2f9b45cc82ff16e6b06ee97020343288ca4eb9bcec4e374365726c",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 2,
+      "previous_selection_variant": 2
+    },
+    {
+      "number": 40,
+      "current_text": "Да, вы правы. Очень сожалею, что пришлось прибегнуть к подобным методам. Это больше не повторится.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-040-clean.wav",
+      "current_audio_sha256": "3c2cbc5de3cd861ae4b9cbdb76863ad5876223746bd1e13246b04d425aa2d7b5",
+      "action": "inspect_tail",
+      "user_feedback": "Выбранный ранее вариант 1: фраза заканчивается нормально, но после нее странный звук или пролаг. Проверить технический конец, прежде чем менять запись.",
+      "selected_variant": 1,
+      "previous_selection_variant": 1
+    },
+    {
+      "number": 41,
+      "current_text": "Будьте уверены: я не прощу вам этого оскорбления!",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-041-clean.wav",
+      "current_audio_sha256": "f4c52998b8c846647cd67c6aa126e6c285de407ae8646f3da35a0ce3fc05657f",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 42,
+      "current_text": "Спасибо.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-stop-spying-on-me-human-response-positive-any-any-clean.wav",
+      "current_audio_sha256": "d5b3344d986381eace44dca5be39a598db3ecfa091ed096efa582a0bbdb8bd1b",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 43,
+      "current_text": "Мне следовало знать, что вы падете так низко, что начнете шпионить за мной. Отзовите своих шпионов сейчас же!",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-043-clean.wav",
+      "current_audio_sha256": "7f865790b752998bb876b12c4b0aa19b5ec29bae5c0801f2a546571486bbeee1",
+      "action": "rewrite_and_regenerate",
+      "user_feedback": "По подаче лучше предыдущий вариант 2, по голосу вариант 1. Предложена замена «за мной» на «за нами».",
+      "selected_variant": null,
+      "previous_selection_variant": null,
+      "previous_variant2_audio": "art/voice/candidates/remaining-revision-asr-v1/asr-retry-043-clean.wav",
+      "previous_variant2_sha256": "8c980643f06b717c252b48bf223a8775ca8cbd09d72807c2aa3bd16f169d7537",
+      "selection_note": "В предыдущей паре вариант 1 предпочтен по голосу, вариант 2 — по подаче; ни один не является окончательным."
+    },
+    {
+      "number": 44,
+      "current_text": "Я люблю выводить войска на марш. Пусть все видят мое могущество. Понимаете, к чему я клоню?",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-044-clean.wav",
+      "current_audio_sha256": "df3e7f5a123ca6c98666a07623ce71dcd9f4ef9b8d1bbf9ebddee481d8bc91e6",
+      "action": "regenerate",
+      "user_feedback": "Нет спокойной пассивной зловещей угрозы в голосе.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 45,
+      "current_text": "Мои войска не угрожают вам. Я распоряжусь отвести их от ваших границ.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-045-clean.wav",
+      "current_audio_sha256": "1a6e9bf87f02f73c3a246e3278181251c796cfc2c31fd048d3292e377119c0cf",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 46,
+      "current_text": "Спасибо.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-too-many-troops-near-me-human-response-positive-any-any-clean.wav",
+      "current_audio_sha256": "d5b3344d986381eace44dca5be39a598db3ecfa091ed096efa582a0bbdb8bd1b",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 47,
+      "current_text": "Варвары досаждают всем нам. Благодарю за вашу помощь!",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-clears-barbarian-camps-clean.wav",
+      "current_audio_sha256": "e97ee3c4a9c454d6cf4bd8a51f7d3f4534273f5283fb32a3eb84376302bd18ad",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 48,
+      "current_text": "Лишь в сражении раскрывается истинная душа цивилизации. Пусть победит сильнейший.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-enjoys-war-clean.wav",
+      "current_audio_sha256": "dd6ddcde72b03d07635e0fe87b62e42a2719cce38800f5263d72c6288c9a9f5f",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 2,
+      "previous_selection_variant": 2
+    },
+    {
+      "number": 49,
+      "current_text": "Нам дарована лишь одна земля. Приятно видеть, что кто-то еще, помимо меня, считается с этим.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-049-clean.wav",
+      "current_audio_sha256": "bc890d617d0a43e3621b1096111efe22ef7c96b63bc038923efb3e34a47b03aa",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 50,
+      "current_text": "Лучше не захватывайте слишком много земель. Все равно вам не хватит способностей, чтобы ими управлять.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-050-clean.wav",
+      "current_audio_sha256": "baedbdc7eb9f4f492a4bf83192684af17b7928e024261ddf98488e012ac9ac48",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 51,
+      "current_text": "Вы умело используете ресурсы своей державы. Это заслуживает уважения.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-051-clean.wav",
+      "current_audio_sha256": "bed5c02531215a7d0ec0fd8b1b8e324e64809ae0391c6a6ac4122415e76d1409",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 52,
+      "current_text": "Соглашусь. На Земле достаточно забот, чтобы пока не стремиться к звездам.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-052-clean.wav",
+      "current_audio_sha256": "b9c56c2651cbc02687914bc8261b3bcdf610e2969c3d3bb3b1b7003aedc11470",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 53,
+      "current_text": "Это хорошо, что наши отношения скреплены знанием секретов друг друга.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-053-clean.wav",
+      "current_audio_sha256": "7a7b7b337b95390012435cb985376ecc31135f800f930c3a166185b26ff6c880",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 54,
+      "current_text": "Тот, кто создаст великий флот, будет диктовать свою волю всему миру. Мы – истинные повелители морей.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-great-white-fleet-clean.wav",
+      "current_audio_sha256": "5988adaad747ae9aeabfce62f5989aca46ede57f6240f0f28b4039a9b7db8dc2",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 55,
+      "current_text": "Нужно сказать, мощь ваших ВВС внушает уважение. Неплохо.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-high-airpower-clean.wav",
+      "current_audio_sha256": "3fa3f608892158e27711182ccfb3bc6d7da2b0b4dbedeba8839d15bf28e34e8c",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 56,
+      "current_text": "Ваш народ развил уникальнейшую культуру. Я под впечатлением.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-high-culture-clean.wav",
+      "current_audio_sha256": "87dbaf41e25a790fc9c67e36d97bfab1c31c4ac2e25fd4e66ac74d0bf7955461",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 57,
+      "current_text": "Мир вам и вашему народу. Приятно видеть кого-то столь же набожного, как и я.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-057-clean.wav",
+      "current_audio_sha256": "df2243f78b0ac19f6906a50f1300f8175911ff2fb5e0cbd7068a70a16f2c9307",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 58,
+      "current_text": "Молва говорит, что ваши подданные довольны своим положением. Забота о народе достойна уважения.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-058-clean.wav",
+      "current_audio_sha256": "cea72bd2a8c02e3f5c21678faa3151098007695b102e6935f6b5230a091bf541",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 59,
+      "current_text": "Ваша сокровищница регулярно пополняется. Приятно располагать большими доходами, верно?",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-high-income-clean.wav",
+      "current_audio_sha256": "c5ff81c12553a41679980d7e77eeacbb4028b68c795a802f8790548e040c20d3",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 60,
+      "current_text": "От всей души поздравляю вас с таким высоким уровнем производства.",
+      "current_audio": "art/voice/candidates/remaining-revision-targeted-recovered-v1/target-060-clean.wav",
+      "current_audio_sha256": "fb65662ea2f478d87738e14915564dbf0ec54c718b9adc0bda97362d1d04cf71",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 61,
+      "current_text": "Я вижу, что вы не пренебрегаете ядерным оружием. Эта мощь способна изменить судьбу держав.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-061-clean.wav",
+      "current_audio_sha256": "ee5bf58cb221973f20f77e4b0fbd99ea07e394a113a439e0942eca1ef3b19c15",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 62,
+      "current_text": "Разоряя владения противника, вы лишаете его средств вести войну. Такой расчет нельзя не признать.",
+      "current_audio": "art/voice/candidates/remaining-revision-targeted-recovered-v1/target-062-clean.wav",
+      "current_audio_sha256": "cfcd76bc21fe900fd37096f79bc538ec389d30f5483848ba00a2dd1e123c3780",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 2,
+      "previous_selection_variant": 2
+    },
+    {
+      "number": 63,
+      "current_text": "Количество людей, населяющих вашу империю, воистину производит впечатление.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-063-clean.wav",
+      "current_audio_sha256": "939e229db41b6e321e63da91913a27cb64aeb4b91b17fde3263a8e578775fa33",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 64,
+      "current_text": "Защищая право города-государства на существование, вы подаете пример всему миру.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-high-protect-city-states-clean.wav",
+      "current_audio_sha256": "a246ba20ee3805382742a146dd7c8010fe64e6d5dd8f69ad98ca7c0755303b7d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 65,
+      "current_text": "Отдаю дань уважения вашим научным исследованиям.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-high-science-clean.wav",
+      "current_audio_sha256": "b8fc752d00c07b12efc52cb0d4284d410f605c58369b23f31648f5ed76179205",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 66,
+      "current_text": "Сила вашей армии не может остаться незамеченной. Надеюсь, она послужит делу мира.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-066-clean.wav",
+      "current_audio_sha256": "01d644ba88024e43f2f1a770a696acc9e48e2887a7e1e3a074903922a416f54a",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 67,
+      "current_text": "Сколь счастлива страна, правитель которой исповедует лишь одну истинную религию и спасает души своих подданных!",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-067-clean.wav",
+      "current_audio_sha256": "30af2cefa43ad12a8d8859d5a05ab9787c337724fc16299787fdc960c468cc1d",
+      "action": "regenerate_stress_keep_performance",
+      "user_feedback": "Пользователь уточнил: слышится души́, нужно ду́ши; остальная подача понравилась. Сохранить прежний дубль и попробовать новые записи без монтажа с ним как аудиоконтекстом.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 68,
+      "current_text": "Неограниченную свободу несут лишь те цивилизации, что преследуют свои собственные интересы, не правда ли?",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-low-diplovp-clean.wav",
+      "current_audio_sha256": "aed7ce8f2091afcc8b8e97873efe9d17bd27c514376b2262b1e7386826f30bde",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 69,
+      "current_text": "Вы не спешите исследовать дальние края. Это оставляет больше возможностей для наших экспедиций.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-069-clean.wav",
+      "current_audio_sha256": "d88f81aee832c1d9994ee85a1b4a4c1992358ac8c42308865fcfd6222a999824",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 70,
+      "current_text": "Вы оставляете России больше возможностей для влияния на мировой арене. Я ценю такую предусмотрительность.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-070-clean.wav",
+      "current_audio_sha256": "cb048ed28e2d77e61cf3d4e100f72906cc15d52aabeefbbd1aaed3d2b59307aa",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 71,
+      "current_text": "Мы предлагаем вашим гражданам путешествия высочайшего класса. Похоже, в вашей державе ничего подобного нет.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-071-clean.wav",
+      "current_audio_sha256": "2410da0d92f328dc76ee82d902e2f2c26eca719af1ba6770a18d932bfce3e242",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 72,
+      "current_text": "Сильные должны защищать слабых. Радостно видеть, что вы с этим согласны.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-med-protect-city-states-clean.wav",
+      "current_audio_sha256": "4dc48853efde10302df3ca2b5d5ef790ac26db92d2ae5adeffb518effed8a104",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 73,
+      "current_text": "Радостно слышать, что великие умы мира предпочитают нашу империю вашей.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-modifier-great-person-advocate-lag-clean.wav",
+      "current_audio_sha256": "7ecb6a7f7824916054d45693a133c751015931c025e77c5716de95de70b7e55e",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 74,
+      "current_text": "Вы истинный друг малых цивилизаций. Мы это очень ценим.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-modifier-not-competing-minors-clean.wav",
+      "current_audio_sha256": "387be655fd181aeb4f3b5299f275395ed8043eead23a82783551ae2a56befa62",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 1,
+      "previous_selection_variant": 1
+    },
+    {
+      "number": 75,
+      "current_text": "Ваша сокровищница регулярно пополняется. Постоянный значительный доход не может не радовать, верно?",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-075-clean.wav",
+      "current_audio_sha256": "1431d97d29217ffa31397294e18860d24813fb76f2ff8c81bc6d944cf104b1a0",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 76,
+      "current_text": "Мне приятно видеть, что вы не представляете для нас опасности.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-paranoid-clean.wav",
+      "current_audio_sha256": "3a6162c20f4017fc16d882429c8e10a8fa8d5e675a1b986424cf3c8f3aba656d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 77,
+      "current_text": "Вы заботитесь о тех, кто не в состоянии позаботиться о себе. Это достойно восхищения.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-agenda-protects-city-states-clean.wav",
+      "current_audio_sha256": "d219bf05a08b785f8610b8a4ce81b1be99d6752dc570d814bd76c4eea4233f3c",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 78,
+      "current_text": "Я вижу в вас родственную душу и восхищаюсь вашими государственными решениями.",
+      "current_audio": "art/voice/candidates/remaining-asr-retry-v1/loc-diplo-kudo-leader-any-reason-agenda-same-government-clean.wav",
+      "current_audio_sha256": "09c1044d394eacb498199950e5ec5cdc9d5df91391da5c665965fe583d154819",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 2,
+      "previous_selection_variant": 2
+    },
+    {
+      "number": 79,
+      "current_text": "Наши поэты и философы считают вашу державу светочем для всего мира, и я не могу с ними не согласиться.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-079-clean.wav",
+      "current_audio_sha256": "782d92d1f196c49a5b3d76e51ce03d85e4a2a1d8159c0beb3b4ce2bfc1dbaa24",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 80,
+      "current_text": "Наша держава восхищена вашей стойкостью перед лицом нынешних напастей.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-080-clean.wav",
+      "current_audio_sha256": "fd84691c578a6c3075bfd5cde20f32789a8ea5436a5c3da52af019e7b7f4275d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 81,
+      "current_text": "Крепкие заборы — добрые соседи. Хочешь мира — готовься к войне. Мне нравится, что вы хорошо защищаете вашу страну.",
+      "current_audio": "art/voice/candidates/remaining-round3-81-v1/round3-context-081-clean.wav",
+      "current_audio_sha256": "11c583babf2a50826751235e76f60619ea3a19fdbc9b47367fb52d8ef571c49b",
+      "action": "selected_keep",
+      "user_feedback": "Выбран вариант 1.",
+      "selected_variant": 1,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 82,
+      "current_text": "Мы уже сделали очень многое, но меня беспокоит, что в мире еще остались души, не ищущие спасения.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-082-clean.wav",
+      "current_audio_sha256": "e57467623f2ab2761d7c4368180fcac4f6c25f32657e90d46918d9dae2d1eda9",
+      "action": "regenerate",
+      "user_feedback": "Слышится «ищу́щие»; пользователь не уверен в правильности. В этом контексте нормативно «и́щущие».",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 83,
+      "current_text": "Унижать слабых - недостойное поведение.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-083-clean.wav",
+      "current_audio_sha256": "4dbfa92abb85f25248783dbb9ed8ac317c0cd74f6c91e98e3983d9b59e17e3f4",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 84,
+      "current_text": "Я не могу одобрить ваши принципы правления. Наши представления об устройстве государства слишком различны.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-084-clean.wav",
+      "current_audio_sha256": "4a2acefda083e5042ac770bf9bf5c283bcc5a7a318bba38c4fcb7617492ddb4d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 85,
+      "current_text": "Разрушая природу, вы подвергаете опасности не только свою державу, но и весь мир.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-085-clean.wav",
+      "current_audio_sha256": "6af291139ef4f7f9271373178b2c158bb8a92cfe49af885fc2b485eb1fffb65a",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 86,
+      "current_text": "Зачем вам эта земля, если ваша страна слаба и плохо управляется?",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-086-clean.wav",
+      "current_audio_sha256": "677e1ccc2d12fb050ade344c019113ae3896ffb626eee188a3d486b3b463bbd6",
+      "action": "rewrite_and_regenerate",
+      "user_feedback": "Проблемное ударение в слове «слаба» не ушло; заменить слово.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 87,
+      "current_text": "Ваши владения богаты, но вы не используете их возможности. Разве не следует позаботиться об их развитии?",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-087-clean.wav",
+      "current_audio_sha256": "5b907aaee5e3aa55cff790e6377c2dd2fcbb7fcd4a1036fbcd8c88c72fa614c7",
+      "action": "regenerate",
+      "user_feedback": "Слово «развитии» странно обрывается, будто заканчивается воздух.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 88,
+      "current_text": "Как вы можете думать о космосе, когда на Земле столько проблем, требующих вашего самого пристального внимания?",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-088-clean.wav",
+      "current_audio_sha256": "89c0e1ae9cee62190fd97a99eab014064dd7c393371d87cc13cdef44a3eb96a1",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 89,
+      "current_text": "Мы знаем слишком мало о намерениях вашей державы. Подобная скрытность едва ли способствует доверию.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-089-clean.wav",
+      "current_audio_sha256": "d45946eca5a6e039c200f8def014483266ba4cd3cce97d9702cc6c369d71fbda",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 90,
+      "current_text": "Только трусы нападают на слабых. Вы для нас бесполезны.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-090-clean.wav",
+      "current_audio_sha256": "b45228a1a41265500536e07c1e25efc295e897fac5b51d657cb7efc539e57289",
+      "action": "rewrite_and_regenerate",
+      "user_feedback": "Заменить «трусы» на «подлецы» из-за повторяющейся ошибки ударения.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 91,
+      "current_text": "По какому праву вы навязываете свою политику нашей суверенной державе? Я не буду подчиняться чужой воле.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-091-clean.wav",
+      "current_audio_sha256": "4a2578f1bdc051665b7ac65953e6b895804d17889da682e116a95985572f6019",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 92,
+      "current_text": "В мире не так и много неоткрытого. Боюсь, я не стану терпеть тех, кто пытается обогнать моих собственных исследователей.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-092-clean.wav",
+      "current_audio_sha256": "50cf1de6ad2eee628c540c5a1037060eddb59612b7f19f86a0ed6c1595ee06da",
+      "action": "rewrite_and_regenerate",
+      "user_feedback": "Перефразировать: фраза звучит глупо и нелогично.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 93,
+      "current_text": "Я хорошо вижу, что скрывается за вашими льстивыми речами и подачками. Вы стремитесь к власти над всем миром и хотите, чтобы остальные страны добровольно с этим согласились.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-leader-any-reason-agenda-high-favor-clean.wav",
+      "current_audio_sha256": "d661b1bf1d8484a7795f436baec151e5774691e891f0088c2df6d31b9b86ebdb",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 2,
+      "previous_selection_variant": 2
+    },
+    {
+      "number": 94,
+      "current_text": "Ваша страна привлекает множество гостей. Но и России есть что показать миру, и мы не намерены уступать вам в этом.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-094-clean.wav",
+      "current_audio_sha256": "31458e0cc483b1fce5a50e02a803b6592c510ac369545fb5a5ed9d11c15d7f09",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 95,
+      "current_text": "Как вы подпускаете злобных варваров настолько близко к своим стенам?",
+      "current_audio": "art/voice/candidates/remaining-revision-targeted-recovered-v1/target-095-clean.wav",
+      "current_audio_sha256": "ec793b03bcb44f5fd72f80cfdc5d9873e8e715ef12532375bea5b8fd687fd0b9",
+      "action": "selected_keep",
+      "user_feedback": null,
+      "selected_variant": 2,
+      "previous_selection_variant": 2
+    },
+    {
+      "number": 96,
+      "current_text": "Вера моего народа заслуживает уважения. Ваши попытки распространять иное учение не останутся без ответа.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-096-clean.wav",
+      "current_audio_sha256": "4f9cf6357c8fe34b81ac694e1dfbf19a9e246d809736f8b2398cef6320053164",
+      "action": "regenerate",
+      "user_feedback": "Странный искусственный акцент.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 97,
+      "current_text": "Нет славы в том, чтобы твердо стоять на земле. Задумайтесь о создании воздушных сил.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-097-clean.wav",
+      "current_audio_sha256": "373cba86a7a0d74029195e2843bca1804829011db2a1efa7c8b5bbae6596a69a",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 98,
+      "current_text": "Вы не вкладываете силы в развитие культуры. Какая память останется от вашего народа?",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-leader-any-reason-agenda-low-culture-clean.wav",
+      "current_audio_sha256": "28715b7ae71a04d12755be4c78c04148f2cdcff561a51c709b8cebfa7c37ce3d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 99,
+      "current_text": "Что вами движет? Нельзя же не верить ни во что. Обратите свой народ к свету!",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-leader-any-reason-agenda-low-faith-clean.wav",
+      "current_audio_sha256": "08bddf58ae29a01ebd53181e649b1742053607f5a63a7255a2759883ae75b233",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 100,
+      "current_text": "Вам следует задуматься о благе ваших подданных. Похоже, они не слишком счастливы под вашим правлением.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-leader-any-reason-agenda-low-happiness-clean.wav",
+      "current_audio_sha256": "b959ac29577a07c5b6d6fc5aa46342c6e891eec83747d25e729c2f672aed4356",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 101,
+      "current_text": "Ваша империя скатывается в нищету. Как можно жить с такой кучей долгов?",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-101-clean.wav",
+      "current_audio_sha256": "32b1b2be9bc32d092197e5faab810ed181bc7799d60a8e15e0de68824df9629d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 102,
+      "current_text": "Ваш народ ленив и бесполезен. Цивилизация, которая ничего не производит, скоро будет забыта.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-leader-any-reason-agenda-low-industry-clean.wav",
+      "current_audio_sha256": "6a25f647ff5381ba8105dc5055fe5982139dbc0e0c668e7da788ee4afbeb6dac",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 103,
+      "current_text": "За ядерным оружием будущее. Как вы можете пренебрегать силой, способной определить судьбу державы?",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-103-clean.wav",
+      "current_audio_sha256": "0f26fababa5fd4f3273f12392020b90d134ba23df61aa107bed4fac507b2e856",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 104,
+      "current_text": "На вас идут войной, а вы даже не разоряете вражескую территорию? Это трусость или избыток вежливости?",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-104-clean.wav",
+      "current_audio_sha256": "7a04360930100caba8fdf066ee2fa6c439765e0f5d8739e5a651576284a70eb3",
+      "action": "regenerate",
+      "user_feedback": "Оба предложения звучат как утверждения, нужны вопросы.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 105,
+      "current_text": "В вашей империи так мало людей. Должно быть, вам трудно даются достижения.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-105-clean.wav",
+      "current_audio_sha256": "f62d18fe585dd4e7b3cb83b0b718c42621bc68931ad2840a7d69e6f5051c143d",
+      "action": "regenerate",
+      "user_feedback": "Странный искусственный акцент.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 106,
+      "current_text": "Вы уделяете слишком мало внимания научным изысканиям. Как вашему народу угнаться за другими?",
+      "current_audio": "art/voice/candidates/remaining-round3-asr-text-v1/round3-asr-text-106-clean.wav",
+      "current_audio_sha256": "53c6e34cf09ffdc0edb485b0849c6770527296380b37fd52334f8079eb95936a",
+      "action": "selected_keep",
+      "user_feedback": "Выбран вариант 2 с текстом «Вы уделяете слишком мало внимания научным изысканиям…».",
+      "selected_variant": 2,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 107,
+      "current_text": "Ваша армия немногочисленна. Надеюсь, вы не оставите свою державу без надежной защиты.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-107-clean.wav",
+      "current_audio_sha256": "b9f5f5742cea5457b1d76826089c24557791449186a1c95d8618eacd4d1f284b",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 108,
+      "current_text": "Считайте это предупреждением. Не нападайте больше на малые государства.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-108-clean.wav",
+      "current_audio_sha256": "1426bfddf7fe7d57b23a2542b8e8f55bde5fc7a47132788927baea8a90a80b70",
+      "action": "regenerate",
+      "user_feedback": "Как в №105: странный искусственный акцент.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 109,
+      "current_text": "Вы вступаете на опасный путь, поддерживая отношения с городами-государствами. Оставьте их нам.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-109-clean.wav",
+      "current_audio_sha256": "67ef6669454940472958fc91641759d451e7c4167ed28ce7c9a7757fe2ba027e",
+      "action": "regenerate",
+      "user_feedback": "Как в №105: странный искусственный акцент.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 110,
+      "current_text": "Мы тоже хотели пригласить этих выдающихся людей. Ваш успех в этом соперничестве вызывает мое беспокойство.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-110-clean.wav",
+      "current_audio_sha256": "ee990fd1846f28a064a5dda762a044c03902882c9ac62f281a9d189f36f96023",
+      "action": "regenerate",
+      "user_feedback": "Странная подача, голос чуть более басовый, чем обычно.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 111,
+      "current_text": "Как вы не понимаете, что чудеса должны сооружать исключительно мы?",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-leader-any-reason-agenda-modifier-wonder-advocate-lead-clean.wav",
+      "current_audio_sha256": "e4941dd129437f96935fe8fd615ad14661d05cfc27e1c7bbf120a3b61edbe961",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 112,
+      "current_text": "Ваша империя скатывается в нищету. Как можно жить с такой кучей долгов?",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-112-clean.wav",
+      "current_audio_sha256": "32b1b2be9bc32d092197e5faab810ed181bc7799d60a8e15e0de68824df9629d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 113,
+      "current_text": "Ваши города близки к российским границам, а армия внушительна. Я буду внимательно следить за нашей безопасностью.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-113-clean.wav",
+      "current_audio_sha256": "e5301d9bac5e0ffbe381c35dba454b93c5a4e3797a5bc2ed5454881182c1d55a",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 114,
+      "current_text": "Стремитесь стать примером для всего мира! Ведите свой народ к славе – и он будет обожать вас.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-114-clean.wav",
+      "current_audio_sha256": "e1c3c4b8b0f507de652621038e8a92306e76e095f95a5bd9539c267dba1d619d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 115,
+      "current_text": "Война ради новых владений приносит немало бед. Берегите свой народ и укрепляйте границы.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-115-clean.wav",
+      "current_audio_sha256": "a0d970fdb1759ea83509775262681299b5dc7f71bdc24701ee4ab7a68d6d06b6",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 116,
+      "current_text": "Я намереваюсь спасти вашу душу, хотите вы того или нет!",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-116-clean.wav",
+      "current_audio_sha256": "b1b527057b8fc9b51860f064adaa82c141a786693903072475ffe88202714683",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 117,
+      "current_text": "Наш союз принес немало пользы нашим народам. Мы предлагаем продлить его.",
+      "current_audio": "art/voice/candidates/remaining-revision-recovered-v1/revision-117-clean.wav",
+      "current_audio_sha256": "eb1654f7f7e1b3a949e1fb7169ac82c9708c3c4c0427aa7899bbf1eb4e069cc5",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 118,
+      "current_text": "Мы рады, что вы согласились.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-accept-renew-alliance-from-ai-any-any-clean.wav",
+      "current_audio_sha256": "c8a2eb769665027bca32cfe4b1ae90521ef5e15bd192f1d93d66be013b7def06",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 119,
+      "current_text": "Мне жаль, что вы не приняли наше предложение. Надеюсь, наши державы сохранят добрые отношения.",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-119-clean.wav",
+      "current_audio_sha256": "266cd88773f7ff0609f822dd6294e131898398aaa0ecd1e8e766d8251a78322a",
+      "action": "selected_keep",
+      "user_feedback": "Выбран вариант 1 с новой формулировкой.",
+      "selected_variant": 1,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 120,
+      "current_text": "Отличная мысль. Мы согласны.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-accept-renew-alliance-from-human-any-any-clean.wav",
+      "current_audio_sha256": "6ffff62dbaa59c1741fdb1b9fe9ba8447d72a73436fb97a0ce228e31161e6cba",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 121,
+      "current_text": "В данный момент сохранение существующего положения не входит в наши намерения.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-reject-renew-alliance-from-human-any-any-clean.wav",
+      "current_audio_sha256": "acdfabc6c6d7823085833d22d4575ccbcb2863359fc4cc23e18c48bc502066c8",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 122,
+      "current_text": "Я вижу ваши тайные знаки. Радостно встретить родственную душу.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-kudo-leader-any-reason-standard-diplomatic-same-secret-society-clean.wav",
+      "current_audio_sha256": "e6d6749e4b71e4fa27854b44d8402a01b2afbe6057cd63283312df568f518b7a",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 123,
+      "current_text": "Я вижу на вас печать зла. Истинную суть вашего общества не скроешь от знающих.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-warning-leader-any-reason-standard-diplomatic-different-secret-society-clean.wav",
+      "current_audio_sha256": "0548ac884203927a2106e6d9b3afe16722d8a9de885b60f5cd3446fe23eb24e9",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 124,
+      "current_text": "Очень жаль.",
+      "current_audio": "art/voice/candidates/remaining-bulk-v1/loc-diplo-deal-leader-trade-refused-neutral-1-clean.wav",
+      "current_audio_sha256": "6fbb577a2e7f35bd74c68a984e4e4ff2b4a8a6f5ae3adea1d4178467f6b5482e",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 125,
+      "current_text": "Быть может, в будущем мы придем к приемлемым условиям?",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-125-clean.wav",
+      "current_audio_sha256": "73e16963585a89d10c54b2ffee0f03a4ac019ca43dab5c89bc1d96446e0bf4a6",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 126,
+      "current_text": "Вы отвергаете эти условия. Что ж, Россия найдет иной способ защитить свои интересы.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-126-clean.wav",
+      "current_audio_sha256": "bec7de973dcfba471f58ed3911216fc0d10a5f52562d75abcd3dc056d89d19a8",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 127,
+      "current_text": "Я не соглашусь на это ни при каких условиях.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-127-clean.wav",
+      "current_audio_sha256": "90cf9e17030ca1c19a577b324c4c410dbb902a9bdede9a4da34635fbbd5abc62",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 128,
+      "current_text": "Что я могу сделать для вас?",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-128-clean.wav",
+      "current_audio_sha256": "3e1d26d77daf4bfd0958ad8d54684d2eb1deb992f4457a80b29621ab3d95dc57",
+      "action": "regenerate",
+      "user_feedback": "Нужен смысловой акцент на «сделать», а не на «вас».",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 129,
+      "current_text": "Что вы об этом думаете?",
+      "current_audio": "art/voice/candidates/remaining-deal-ui-v1/loc-diplo-deal-intro-ai-clean.wav",
+      "current_audio_sha256": "f118a6427458772bb5bffefa1b10bd86b17b124ac311a19c2cc7b035a814d7be",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 130,
+      "current_text": "Думаю, нужно поторговаться.",
+      "current_audio": "art/voice/candidates/remaining-deal-ui-v1/loc-diplo-deal-leader-demand-clean.wav",
+      "current_audio_sha256": "4f8e9dda69a98a30f4bf7e08948bb7cf2b999254a5cbb88323d383f3eb5fe4fb",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 131,
+      "current_text": "Я не пойду на эту сделку",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-131-clean.wav",
+      "current_audio_sha256": "3d697278077c1e13f541052069e238c8b181ca0c585d2daba9721d13b5b2e771",
+      "action": "regenerate",
+      "user_feedback": "«Сделку» обрывается в конце.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 132,
+      "current_text": "Вас устроят эти условия?",
+      "current_audio": "art/voice/candidates/remaining-round3-rewrite-v1/round3-rewrite-132-clean.wav",
+      "current_audio_sha256": "6cb47daea42588f6305b41b77b49a64d308561a9fddf8715f6ddbf5227e6eb24",
+      "action": "regenerate",
+      "user_feedback": "Звучит как утверждение, нужна вопросительная интонация.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 133,
+      "current_text": "Я приму этот дар.",
+      "current_audio": "art/voice/candidates/remaining-deal-ui-v1/loc-diplo-deal-leader-gift-clean.wav",
+      "current_audio_sha256": "bdd6658bc23fd49f847ff5b0e77e6d52817208c4fc672ee14c4ca3af84eaa5a4",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 134,
+      "current_text": "Мне нечего предложить в ответ.",
+      "current_audio": "art/voice/candidates/remaining-round3-asr-text-v1/round3-asr-text-134-clean.wav",
+      "current_audio_sha256": "3f98fbeac7be19c3005a1223978961a8e26c7cde0b8d5d70836d1e0451e515a1",
+      "action": "selected_keep",
+      "user_feedback": "Выбран вариант 2 с текстом «Мне нечего предложить в ответ».",
+      "selected_variant": 2,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 135,
+      "current_text": "Я не могу этого принять ни при каких обстоятельствах.",
+      "current_audio": "art/voice/candidates/remaining-deal-ui-v1/loc-diplo-deal-unacceptable-deal-clean.wav",
+      "current_audio_sha256": "86613e9fbb1fca35e0fdb159c59c099e9e6bbd2ab72a8168849c33ac8fc9e10d",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 136,
+      "current_text": "Это нечестная сделка, она неприемлема.",
+      "current_audio": "art/voice/candidates/remaining-round3-stable-v2/round3v2-136-clean.wav",
+      "current_audio_sha256": "eed55eadb1e381f40d474326b4714c93f8b0269a2a046ff95aa1c574c75ac131",
+      "action": "rewrite_and_regenerate",
+      "user_feedback": "Странное разделение смысловых частей; попробовать точку вместо запятой.",
+      "selected_variant": null,
+      "previous_selection_variant": null
+    },
+    {
+      "number": 137,
+      "current_text": "Мои требования следует принять.",
+      "current_audio": "art/voice/candidates/remaining-deal-ui-v1/loc-diplo-demand-intro-clean.wav",
+      "current_audio_sha256": "c5044a36d4418eabf9f2e83b1a112cda48fd7537f7d9cb3610cb09f3149d1abb",
+      "action": "uncommented_keep_for_review",
+      "user_feedback": null,
+      "selected_variant": null,
+      "previous_selection_variant": null
+    }
+  ]
+}

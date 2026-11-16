@@ -34,9 +34,9 @@ def runtime(leader='LEADER_REMSELY_ALEXANDER_II', marker=None, is_resync=False, 
             return e
         end
         Events = {HideLeaderScreen=Event(), ShowLeaderScreen=Event(), DiplomacyStatement=Event(),
-            UserRequestClose=Event(), LeaderAnimationComplete=Event(),
+            UserRequestClose=Event(), LeaderAnimationComplete=Event(), DiplomacySessionClosed=Event(),
             GameCoreEventPublishComplete=Event(), LoadScreenClose=Event()}
-        LuaEvents = {DiploScene_SceneOpened=Event(), DiploScene_SceneClosed=Event()}
+        LuaEvents = {DiploScene_SceneOpened=Event(), DiploScene_SceneClosed=Event(), DiploScene_LeaderSelect=Event(), DiplomacyActionView_ShowIngameUI=Event(), REMSELY_DealLine=Event(), REMSELY_DealClosed=Event()}
         now=0; sounds={}; switchLog={}
         language='Russian'
         function print(...) end
@@ -77,8 +77,11 @@ def runtime(leader='LEADER_REMSELY_ALEXANDER_II', marker=None, is_resync=False, 
         DiplomacyManager={GetKeyName=function() return nil end}
         DiplomacyMoodTypes={UNDEFINED=0}
         function include(name)
-            assert(name == 'DiplomacyStatementSupport' or name == 'RemselysAlexanderII_LoadingEraDurations',
+            assert(name == 'DiplomacyStatementSupport' or name == 'RemselysAlexanderII_LoadingEraDurations' or name == 'RemselysAlexanderII_FullVoice',
                 'unexpected include '..name)
+            if name == 'RemselysAlexanderII_FullVoice' then
+                REMSELY_FullVoice_statement={}; REMSELY_FullVoice_reason={}; REMSELY_FullVoice_deal_ui={}
+            end
             if name == 'RemselysAlexanderII_LoadingEraDurations' then
                 REMSELY_LoadingEraSeconds={Russian={ERA_ANCIENT=15, ERA_RENAISSANCE=26},
                     ['English(US)']={ERA_ANCIENT=19, ERA_RENAISSANCE=26}}

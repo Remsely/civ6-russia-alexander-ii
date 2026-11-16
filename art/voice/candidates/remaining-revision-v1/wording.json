@@ -1,0 +1,312 @@
+{
+  "description": "Proposed Russian drafts for listening; not game text or user-approved wording.",
+  "source_sha256": {
+    "feedback.json": "0881586bac33b9006f72e3645bd05cec789e9303de71a5e5a3d776f7f7d0782d",
+    "wording-1-52.json": "28959fdf46ffa155b2013d4e2eb5b31606d072a0ea849b002c195934680dd826",
+    "wording-high-review.json": "054a1e1d92ba63f8e106c497a2e186778ed07f7148ff7df03827b4d93168f36d"
+  },
+  "stress_checks": [
+    {
+      "number": 80,
+      "word": "напа́стей",
+      "source": "https://ru.wiktionary.org/wiki/%D0%BD%D0%B0%D0%BF%D0%B0%D1%81%D1%82%D1%8C",
+      "note": "Форма родительного падежа множественного числа слова «напа́сть»."
+    },
+    {
+      "number": 95,
+      "word": "сте́нам",
+      "source": "https://gramota.ru/meta/stena",
+      "note": "Современная форма дательного падежа множественного числа; вариант «стена́м» указан как устаревший в Большом универсальном словаре."
+    }
+  ],
+  "items": [
+    {
+      "number": 1,
+      "original_key": "WONDER_ADVOCATE_LAG",
+      "original_text": "Приятно, что вы предоставляете право на постройку чудес нам.",
+      "text": "Я вижу, вы не стремитесь к новым чудесам. Что ж, это оставляет больше возможностей для России.",
+      "reason": "Игрок отстает в строительстве чудес; оставить сдержанную иронию и убрать слияние чудес нам.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 2,
+      "original_key": "SYMPATHIZER_GOLDEN_AGE",
+      "original_text": "Ваша славная эпоха меня немного раздражает. Жду не дождусь вашего краха.",
+      "text": "Ваша держава ныне процветает. Не всякое благополучие бывает прочным.",
+      "reason": "Золотой век игрока вызывает недовольство; спокойное предостережение вместо пожелания краха.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 4,
+      "original_key": "WARNING_GREAT_WHITE_FLEET",
+      "original_text": "Сильный флот и заморские владения укрепляют державу. Советую вам уделить им больше внимания.",
+      "text": "Сильный флот укрепляет могущество державы. Советую вам уделить больше внимания развитию морских сил.",
+      "reason": "Убрать совет приобретать заморские владения по замечанию пользователя, сохранив акцент на флоте.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 7,
+      "original_key": "MAKE_DEAL_AI_ADJUST",
+      "original_text": "Этот договор мне по душе.",
+      "text": "Полагаю, эти условия нас устроят.",
+      "reason": "Краткая положительная оценка условий сделки без предположения о том, кто их предложил; точный игровой момент еще требует проверки.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 17,
+      "original_key": "LOC_DIPLO_HUMAN_ACCEPT_DEMAND_FROM_AI_ANY_ANY",
+      "original_text": "Признать мои требования было мудрым решением.",
+      "text": "Вы поступили мудро, приняв мои требования.",
+      "reason": "Игрок принял требования Александра; заменить признать на принять, как предложил пользователь.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 19,
+      "original_key": "LOC_DIPLO_REJECT_DELEGATION_FROM_AI_ANY_ANY",
+      "original_text": "Это не очень хорошо. Возможно, как-нибудь позже.",
+      "text": "Жаль, что вы не приняли наших посланников. Возможно, в другой раз.",
+      "reason": "Игрок отказал в приеме делегации; сдержанная реакция вместо разговорного Это не очень хорошо.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 21,
+      "original_key": "LOC_DIPLO_REJECT_EMBASSY_FROM_HUMAN_ANY_ANY",
+      "original_text": "Прямо сейчас нам это неинтересно.",
+      "text": "Благодарю за предложение, но я пока не готов принять ваше посольство.",
+      "reason": "Александр отказывает в посольстве; дипломатичная формулировка.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 22,
+      "original_key": "LOC_DIPLO_REJECT_MAKE_ALLIANCE_FROM_AI_LEADER_ANY_ANY",
+      "original_text": "Не повезло.",
+      "text": "К сожалению, сейчас наш союз невозможен.",
+      "reason": "Общий шаблон отказа от союза встречается для обоих инициаторов; фраза не приписывает отказ конкретной стороне.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 23,
+      "original_key": "LOC_DIPLO_REJECT_MAKE_PEACE_FROM_AI_ANY_ANY",
+      "original_text": "Тогда война продолжается.",
+      "text": "Мне жаль, что мы не смогли договориться. Боевые действия продолжатся.",
+      "reason": "Игрок отказал на предложение мира; спокойное констатирование последствий без злорадства.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 24,
+      "original_key": "LOC_DIPLO_REJECT_OPEN_BORDERS_FROM_AI_ANY_ANY",
+      "original_text": "Как некстати.",
+      "text": "Жаль, что нам не удалось договориться об открытии границ.",
+      "reason": "Ответ после отказа от открытия границ; уточнить предмет без неопределенного Как некстати.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 30,
+      "original_key": "LOC_DIPLO_WARNING_STOP_CONVERTING_MY_CITIES_AI_RESPONSE_NEGATIVE_ANY_ANY",
+      "original_text": "Нет-нет, так будет лучше, уверяю вас. Вот увидите.",
+      "text": "Я не стану отзывать наших проповедников. Их дело слишком важно для нас.",
+      "reason": "Александр отказывается выполнить просьбу прекратить обращение чужих городов; сдержанная решительность и религиозная мотивация.",
+      "source": "wording-1-52.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 35,
+      "original_key": "LOC_DIPLO_WARNING_STOP_DIGGING_UP_ARTIFACTS_AI_RESPONSE_POSITIVE_ANY_ANY",
+      "original_text": "Мы не знали, что вы претендуете на эти земли. Мы допустили ошибку.",
+      "text": "Мы не знали, что вы предъявляете права на эту территорию. Мы допустили ошибку.",
+      "reason": "Ответ на требование прекратить раскопки; исключено неоднозначное произношение «земли».",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 45,
+      "original_key": "LOC_DIPLO_WARNING_TOO_MANY_TROOPS_NEAR_ME_AI_RESPONSE_POSITIVE_ANY_ANY",
+      "original_text": "Прошу прощения. Мы просто смотрим, не надо ли задать взбучку варварам.",
+      "text": "Мои войска не угрожают вам. Я распоряжусь отвести их от ваших границ.",
+      "reason": "Предложено при подготовке раунда: не подразумевает присутствие варваров или учения.",
+      "source": "override",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 51,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_EXPLOITATION",
+      "original_text": "Мир достанется тому, кто возьмет его. Вот вы и взяли.",
+      "text": "Ваши владения богаты, и вы находите им достойное применение. Это укрепляет державу.",
+      "reason": "Похвала за использование ресурсов вместо торжества захвата всего мира.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 58,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_HIGH_HAPPINESS",
+      "original_text": "Говорят, ваши подданные устраивают празднества в честь вашего правления. Вы сумели сделать их счастливыми.",
+      "text": "Молва говорит, что ваши подданные довольны своим положением. Забота о народе достойна уважения.",
+      "reason": "Похвала за довольство населения без утверждения о празднествах.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 60,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_HIGH_INDUSTRY",
+      "original_text": "От всего сердца поздравляю вас с таким высоким уровнем производства.",
+      "text": "От всей души поздравляю вас с успехами в развитии производства.",
+      "reason": "Пользователь предложил «от всей души»; сохраняется похвала производству.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 62,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_HIGH_PILLAGE",
+      "original_text": "Недруги дрожат, слыша ваше имя. Они просят у небес защиты от вашей ярости, но небеса глухи к их мольбам.",
+      "text": "Разоряя владения противника, вы лишаете его средств вести войну. Такой расчет нельзя не признать.",
+      "reason": "Сдержанная оценка разорения владений противника; исключено проблемное «дрожат».",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 66,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_HIGH_STANDING_ARMY",
+      "original_text": "Приятно видеть того, кто окружает себя впечатляющей военной мощью.",
+      "text": "Сила вашей армии не может остаться незамеченной. Надеюсь, она послужит делу мира.",
+      "reason": "Это положительная причина высокой численности армии; осторожное признание силы без «приятно».",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 69,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_LOW_EXPLORATION",
+      "original_text": "Да, очень хорошо. Оставьте открытия мне.",
+      "text": "Вы не спешите исследовать дальние края. Это оставляет больше возможностей для наших экспедиций.",
+      "reason": "Низкая разведка, сдержанная ирония вместо приказа оставить открытия.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 70,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_LOW_FAVOR",
+      "original_text": "Отрадно, что вы готовы признать мою верховную власть над всей планетой. Многие уже согласны с тем, что мое время скоро придет.",
+      "text": "Вы оставляете России больше возможностей для влияния на мировой арене. Я ценю такую предусмотрительность.",
+      "reason": "Низкое дипломатическое влияние собеседника без притязания на власть над всей планетой.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 71,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_LOW_TOURISM",
+      "original_text": "Мы предлагаем вашим гражданам туры высочайшего класса. Похоже, в вашей цивилизации ничего подобного нет.",
+      "text": "Мы предлагаем вашим гражданам путешествия высочайшего класса. Похоже, в вашей державе ничего подобного нет.",
+      "reason": "По просьбе заменено слово «туры», смысл ванильной строки сохранен.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 81,
+      "original_key": "LOC_DIPLO_KUDO_LEADER_ANY_REASON_AGENDA_TURTLER",
+      "original_text": "Крепкие заборы – добрые соседи. Хочешь мира – готовься к войне. Мне нравится, что вы хорошо защищаете свои земли.",
+      "text": "Крепкие заборы — добрые соседи. Хочешь мира — готовься к войне. Мне нравится, что вы хорошо защищаете свои рубежи.",
+      "reason": "Остальная формулировка понравилась пользователю; только «земли» заменено на «рубежи».",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 84,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_DIFFERENT_GOVERNMENT",
+      "original_text": "Наши идеологические различия - это только начало. Не могу согласиться с тем, как вы правите своим народом.",
+      "text": "Я не могу одобрить ваши принципы правления. Наши представления об устройстве государства слишком различны.",
+      "reason": "Недовольство иным государственным строем без чрезмерной угрозы.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 85,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_ENVIRONMENT",
+      "original_text": "Хочу напомнить, что разрушение земли скажется не только на вас, но и на ваших соседях.",
+      "text": "Разрушая природу, вы подвергаете опасности не только свою державу, но и соседние страны.",
+      "reason": "Сдержанное предупреждение об ущербе природе и соседям.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 87,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_EXPLOITATION",
+      "original_text": "Вас окружают богатейшие земли! Как вы можете их игнорировать?",
+      "text": "Ваши владения богаты, но вы не используете их возможности. Разве не следует позаботиться об их развитии?",
+      "reason": "Недовольство неиспользованными ресурсами, без неоднозначного «земли».",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 89,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_GOSSIP_NEGATIVE",
+      "original_text": "Часто думаю, почему вы так немногословны. А вам просто нечего сказать.",
+      "text": "Мы знаем слишком мало о намерениях вашей державы. Подобная скрытность едва ли способствует доверию.",
+      "reason": "Недовольство недостатком дипломатических сведений без оскорбления собеседника.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 94,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_HIGH_TOURISM",
+      "original_text": "Мне известно, что толпы туристов уже протоптали дорогу к вашим достопримечательностям. Но берегитесь! У нас есть джинсы и рок-музыка, и мы готовы их использовать!",
+      "text": "Ваша страна привлекает множество гостей. Но и России есть что показать миру, и мы не намерены уступать вам в этом.",
+      "reason": "Соперничество в туризме без джинсов и рок-музыки; выдержанный тон.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 96,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_INTOLERANT_ENCROACHING_RELIGION",
+      "original_text": "Уста ваших подданных извергают богохульства и ересь! Спасите заблудшие души – обратитесь в истинную веру!",
+      "text": "Вера моего народа заслуживает уважения. Ваши попытки распространять иное учение не останутся без ответа.",
+      "reason": "Не ограничивать неподтвержденную причину исключительно российскими городами.",
+      "source": "override",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 103,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_LOW_NUKE_LOVE",
+      "original_text": "За ядерным оружием будущее! Как вы этого не видите?",
+      "text": "За ядерным оружием будущее. Как вы можете пренебрегать силой, способной определить судьбу державы?",
+      "reason": "Недовольство недостатком ядерного оружия, более державная русская формулировка.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 107,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_LOW_STANDING_ARMY",
+      "original_text": "У вас такое скромное войско. Вы за свою жизнь не опасаетесь?",
+      "text": "Ваша армия немногочисленна. Надеюсь, вы не оставите свою державу без надежной защиты.",
+      "reason": "Недовольство слабой армией без личной угрозы или издевки.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 113,
+      "original_key": "LOC_DIPLO_WARNING_LEADER_ANY_REASON_AGENDA_PARANOID",
+      "original_text": "Ваши города слишком близки. Ваши войска слишком сильны. Вы заставляете меня нервничать!",
+      "text": "Ваши города расположены близко к нашим границам, а ваши войска весьма сильны. Россия не может оставить это без внимания.",
+      "reason": "Сохраняет причину недовольства близкими городами и сильной армией без нервозности.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    },
+    {
+      "number": 126,
+      "original_key": "LOC_DIPLO_DEAL_LEADER_TRADE_REFUSED_AGGRESSIVE_2",
+      "original_text": "Так или иначе, я получу все, чего желаю.",
+      "text": "Вы отвергаете эти условия. Что ж, Россия найдет иной способ защитить свои интересы.",
+      "reason": "Сдержанная реакция на отказ от сделки при неприязни, с умеренной угрозой.",
+      "source": "wording-high-review.json",
+      "status": "draft for listening; not approved or installed"
+    }
+  ]
+}

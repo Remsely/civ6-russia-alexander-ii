@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <AssetObjects..AssetInstance>
   <m_BehaviorData>
     <m_behaviorDataSets>
@@ -363,17 +363,6 @@
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>0</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="134"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Hmm_NeutralPositive"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.244444</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>0</m_nTrackIndex>
-              </Element>
             </m_Triggers>
             <m_Tracks>
               <Element>
@@ -427,17 +416,6 @@
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>1.493827</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>0</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="135"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Hmm_NeutralPositive"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.244444</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>0</m_nTrackIndex>
               </Element>
@@ -540,17 +518,6 @@
                 <m_fStartTime>1.881226</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="132"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Ha_NeutralToNegative"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.185185</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>0</m_nTrackIndex>
               </Element>
             </m_Triggers>
             <m_Tracks>
@@ -656,17 +623,6 @@
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="133"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Ha_NeutralToNegative"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.185185</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>0</m_nTrackIndex>
-              </Element>
             </m_Triggers>
             <m_Tracks>
               <Element>
@@ -759,17 +715,6 @@
                 <m_fStartTime>0.174433</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="108"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Hmm_HappyPositive"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.561111</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>0</m_nTrackIndex>
               </Element>
             </m_Triggers>
             <m_Tracks>
@@ -864,17 +809,6 @@
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="110"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Hmm_HappyPositive"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.561111</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>0</m_nTrackIndex>
-              </Element>
             </m_Triggers>
             <m_Tracks>
               <Element>
@@ -957,17 +891,6 @@
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="9"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Ha_HappyNegative"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.477778</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
             </m_Triggers>
             <m_Tracks>
               <Element>
@@ -1047,17 +970,6 @@
                 <m_CollectionName text=""/>
                 <m_AttachmentPointName text=""/>
                 <m_fStartTime>2.442910</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="11"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Ha_HappyNegative"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.477778</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
               </Element>
@@ -1601,17 +1513,6 @@
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>0</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="131"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Breath_HappyToNeutral"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>0.174074</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>0</m_nTrackIndex>
-              </Element>
             </m_Triggers>
             <m_Tracks>
               <Element>
@@ -1986,17 +1887,6 @@
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>2</m_nTrackIndex>
               </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="137"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Breath_NeutralToEnraged"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>2.668634</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>2</m_nTrackIndex>
-              </Element>
             </m_Triggers>
             <m_Tracks>
               <Element>
@@ -2104,17 +1994,6 @@
                 <m_fStartTime>1.400391</m_fStartTime>
                 <m_fDuration>0.000000</m_fDuration>
                 <m_nTrackIndex>1</m_nTrackIndex>
-              </Element>
-              <Element>
-                <m_eType>SOUND</m_eType>
-                <m_Name text="138"/>
-                <m_Description text=""/>
-                <m_FXName text="RUSS_PA_Breath_UnhappyToEnraged"/>
-                <m_CollectionName text=""/>
-                <m_AttachmentPointName text=""/>
-                <m_fStartTime>1.793427</m_fStartTime>
-                <m_fDuration>0.000000</m_fDuration>
-                <m_nTrackIndex>2</m_nTrackIndex>
               </Element>
             </m_Triggers>
             <m_Tracks>

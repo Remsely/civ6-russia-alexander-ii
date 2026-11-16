@@ -51,7 +51,7 @@ Rationale: schools and medicine are the best documented effects of the historica
 
 Connection rules: two cities are connected when an unbroken railroad path leads from center to center — over plots with `ROUTE_RAILROAD`, with city centers acting as junctions (a line may pass through a city and tie networks together through it). Whoever built the rails does not matter: transit over foreign rails counts. The Capital is an ordinary city of the network and receives bonuses like any other. No era gate: railroads need the Steam Power tech, Iron, Coal and Military Engineers and cannot physically exist before the Industrial Era.
 
-Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` keeps the plot properties of own city centers — `REMSELY_RAIL_OWN_N` (connected own cities, already capped by the city's Population) and `REMSELY_RAIL_FOREIGN_N` (connected foreign cities) — up to date (recomputed on route, city and population events, at turn start and at load); modifiers in `Data/GameDefines.sql` read them through thresholds (200 Production and 200 Gold tiers - a technical margin, not a design cap; the plot-property + MODIFIER_PLAYER_ADJUST_PLOT_YIELD pattern). Railroads are Gathering Storm content, an explicit mod dependency since v2.0.0.
+Implementation: `mod/Lua/RemselysAlexanderII_Railways.lua` maintains binary plot properties `REMSELY_RAIL_OWN_BIT_*` and `REMSELY_RAIL_FOREIGN_BIT_*` on own city centers for the population-capped connected-city counts. Eight weighted modifiers per yield represent exact values up to the technical limit of 200. The script caches rail and city locations, rebuilds the graph when the network changes and writes properties only when values change. Legacy numeric properties are cleared at load; migration of saved in-game modifiers requires in-game verification. The map is not scanned while no Alexander is alive; with a living Alexander, some route add/remove events still trigger a full map pass because their coordinates and ordering are unconfirmed. Their cost and event order need in-game verification. Railroads require Gathering Storm.
 
 ### 3.4. Ability texts
 
@@ -59,7 +59,7 @@ Ability descriptions state values explicitly, without references to the Civilope
 
 ## 4. AI Agenda: The Liberator
 
-He likes civilizations that have not declared wars for a long time (threshold ~30 turns) and dislikes those that declared war recently. It also adds +3 for a shared religion and -12 for converted cities using Philip II’s condition, and favors Holy War when available. Conversion of foreign cities is not implemented. Values and AI behavior require in-game testing.
+He likes civilizations that have not declared wars for a long time (threshold ~30 turns) and dislikes those that declared war recently. The agenda configures +3 for a shared religion and -12 for converted cities using Philip II’s condition; the game also has a separate standard conversion modifier with an initial value of -9. A Holy War preference is configured, but its effect on AI decisions has not been verified. Conversion of foreign cities is not implemented. The values, their interaction, and AI behavior require in-game testing. See the [religious agenda research](../religious-agenda-deep-analysis.ru.md).
 
 - Name: The Liberator / «Освободитель»
 - Description: Likes civilizations that have kept the peace for a long time and those that share his religion. Dislikes those that recently declared war or converted his cities to another religion.

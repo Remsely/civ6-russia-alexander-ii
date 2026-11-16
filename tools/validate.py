@@ -131,8 +131,13 @@ def check_text(files):
     text_files = sorted(f for f in files if f.startswith("Text/") and f.endswith(".xml"))
     by_lang = {}
     for rel in text_files:
-        lang = Path(rel).stem
-        by_lang[lang] = read_text_file(MOD / rel)
+        stem = Path(rel).stem
+        lang = next((x for x in ("en_US", "ru_RU") if stem == x or stem.endswith("_" + x)), stem)
+        incoming = read_text_file(MOD / rel)
+        target = by_lang.setdefault(lang, {})
+        for tag in incoming.keys() & target.keys():
+            err(f"text: duplicate tag {tag} across {lang} files")
+        target.update(incoming)
     en, ru = by_lang.get("en_US", {}), by_lang.get("ru_RU", {})
     for tag in sorted(en.keys() - ru.keys()):
         err(f"text: {tag} has no ru_RU translation")

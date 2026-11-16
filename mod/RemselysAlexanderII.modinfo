@@ -68,6 +68,7 @@
         <LoadOrder>10</LoadOrder>
       </Properties>
       <File>Data/GameDefines.sql</File>
+      <File>Data/FullVoice.sql</File>
     </UpdateDatabase>
     <UpdateIcons id="REMSELY_InGame_Icons">
       <File>Data/Icons.sql</File>
@@ -78,7 +79,16 @@
     <UpdateText id="REMSELY_InGame_Text">
       <File>Text/en_US.xml</File>
       <File>Text/ru_RU.xml</File>
+      <File>Text/FullVoice_en_US.xml</File>
+      <File>Text/FullVoice_ru_RU.xml</File>
     </UpdateText>
+    <ImportFiles id="REMSELY_FullVoice_UI">
+      <Properties>
+        <LoadOrder>20</LoadOrder>
+      </Properties>
+      <File>UI/RemselysAlexanderII_FullVoice.lua</File>
+      <File>UI/DiplomacyDealView_REMSELY_Voice.lua</File>
+    </ImportFiles>
     <UpdateColors id="REMSELY_InGame_Colors">
       <File>Data/Colors.sql</File>
     </UpdateColors>
@@ -110,10 +120,15 @@
     <File>Data/Config.sql</File>
     <File>Data/Colors.sql</File>
     <File>Data/GameDefines.sql</File>
+    <File>Data/FullVoice.sql</File>
     <File>Data/Icons.sql</File>
     <File>Lua/RemselysAlexanderII_Railways.lua</File>
     <File>Text/en_US.xml</File>
     <File>Text/ru_RU.xml</File>
+    <File>Text/FullVoice_en_US.xml</File>
+    <File>Text/FullVoice_ru_RU.xml</File>
+    <File>UI/RemselysAlexanderII_FullVoice.lua</File>
+    <File>UI/DiplomacyDealView_REMSELY_Voice.lua</File>
     <File>Textures/RemselysAlexanderII_Icon256.dds</File>
     <File>Textures/RemselysAlexanderII_Icon80.dds</File>
     <File>Textures/RemselysAlexanderII_Icon64.dds</File>

@@ -13,6 +13,8 @@ description: Сборка мода Civilization VI без ModBuddy - cooker SDK 
 ```
 `build.py` вызывает `...\Civilization VI SDK\AssetModTools\Cooker\Civ6AssetCooker_FinalRelease.exe --mode XLP` для каждого `mod/XLPs/*.xlp` и платформ Windows/MacOS, `--pantry` = `mod/` + пантри SDK Assets по `RequiredGameArtIDs` из `.dep`. Результат в `mod/Platforms/*/BLPs/` совпадает с ModBuddy байт в байт. При наличии FGX лидера после cook проверяются палитры костей BLP обеих платформ; при ошибке установка останавливается. Потом `install.py` копирует наш `.modinfo` и всё из `<Files>`. Отдельная проверка: `python tools/validate.py --leader-bindings`.
 
+Перед установкой проверь исходный worktree и целевой каталог: `install.py` удаляет каталог установленного мода целиком, включая файлы вне `<Files>`. Не теряй чужие или вручную изменённые файлы; при необходимости сохрани их вне `Mods`. После установки сверь состав и хеши значимых файлов с нужной сборкой. Если игра уже запущена, текущий процесс может использовать прежние данные: сообщи, что лежит в `Mods` и нужен ли перезапуск, а не называй это тем, что уже загружено в игру. Для временной диагностики обозначь отличие от обычной сборки и способ отката.
+
 ## Что когда запускать
 - Правка картинок: `slice_art.py` → `make_art.py` → `make_leader3d.py` (если включён 3D-лидер: `make_art.py` перезаписывает `Leaders.artdef` и `.dep`) → `build.py`.
 - Правка `.fgx`/`.ast` 3D-лидера → `build.py` (пакет `leaders/leader_remsely_alexander_ii`).
@@ -33,4 +35,4 @@ description: Сборка мода Civilization VI без ModBuddy - cooker SDK 
 
 ## Озвучка
 
-При изменении выбранных WAV/событий сначала `tools/build_voice.py` (зависимость bnktool закреплена SHA; подготовка — `docs/voice-integration.ru.md`), затем validate и обычный build. `build.py` перед cook генерирует реальные короткие речевые FGX через `voice_animations.ps1`, после cook проверяет длительности BLP. Один короткий ANM поверх старого длинного FGX недостаточен. При правке только банка, без изменения AST/ANM/FGX, повторный cook арта не нужен; требуется validate/install. Банк поддержан на Windows; MacOS BLP не подтверждает аудио MacOS.
+Если изменён только аудиобанк и не изменились игровые арт-ассеты или их длительности, повторный cook арта может не требоваться. Конкретную сборку банка, зависимости и проверку речи см. в `civ6-leader-voice`; наличие BLP платформы не доказывает работоспособности её аудио.

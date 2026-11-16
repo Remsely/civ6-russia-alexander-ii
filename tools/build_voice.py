@@ -16,7 +16,7 @@ import numpy as np
 import wave
 from lxml import etree
 
-from leader_voice import DEFEAT_GROUP, DEFEAT_VALUES, DEFEAT_SWITCH, BANK, GAIN_DB, LEADER_SPEECH, LINES, ROOT, SELECTED, STOP, bind_scene, event
+from leader_voice import DEFEAT_GROUP, DEFEAT_VALUES, DEFEAT_SWITCH, BANK, EXTRA_MIXER, EXTRA_PARENT, EXTRA_ROOT, GAIN_DB, LEADER_SPEECH, LINES, ROOT, SELECTED, STOP, bind_scene, event
 
 TOOL_SHA = '6bde737465b5b06b376af4489cc84e06d591d40f284c62a3f8f92fac9609edad'
 GAME_AUDIO = Path("C:/Program Files (x86)/Steam/steamapps/common/Sid Meier's Civilization VI/Base/Platforms/Windows/audio")
@@ -59,13 +59,19 @@ def main():
     # Keep the shared LeaderSpeech ancestry so native Escape/RMB stop actions
     # reach us. Only our own lower mixer is cloned; no vanilla object is replaced.
     assert tool['mixer_parent'](mixer)[0] == LEADER_SPEECH
+    leader_parent = chain[1]
+    speech_root = chain[2]
+    assert struct.unpack_from('<I', leader_parent)[0] == LEADER_SPEECH
     chain = [bytes(mixer)]
     manifest = {x['file']: x for x in json.loads((SELECTED / 'manifest.json').read_text(encoding='utf-8-sig'))}
     voices, report = [], []
     trial = json.loads((ROOT / 'art/voice/game-trial-manifest.json').read_text(encoding='utf-8'))
+    full = json.loads((ROOT / 'art/voice/full-game-manifest.json').read_text(encoding='utf-8'))
     with tempfile.TemporaryDirectory(prefix='alexander-voice-') as temp:
         items = [(slot, SELECTED / filename, manifest[filename]['sha256']) for slot, (filename, _) in LINES.items()]
         items += [(row['key'], ROOT / row['file'], row['sha256']) for row in trial]
+        items += [(row['slot'], ROOT / row['file'], row['sha256']) for row in full]
+        assert len({slot for slot, _, _ in items}) == len(items), 'duplicate speech event'
         for slot, source, expected_sha in items:
             filename = source.name
             if hashlib.sha256(source.read_bytes()).hexdigest() != expected_sha:
@@ -89,8 +95,9 @@ def main():
             voices.append(dict(event=event(slot), wem=tool['pcm_wem'](str(wav)), body=body, plugin=0x00010001))
             report.append(dict(slot=slot, event=event(slot), source=filename, seconds=len(samples) / rate))
     blob, ids = tool['build_bank'](BANK, voices, chain=chain)
-    # Our UI stop targets only our own branch. Native Stop_Leader_Speech reaches
-    # the same sounds through their shared vanilla LeaderSpeech ancestor.
+    # Our UI stop targets both branches. Native Stop_Leader_Speech reaches only
+    # cinematic speech through its shared vanilla LeaderSpeech ancestor;
+    # standalone speech uses a private hierarchy created below.
     stop_event = objects[fnv('Stop_Leader_Speech')][1]
     stop_action = bytearray(objects[struct.unpack_from('<I', stop_event, 8)[0]][1])
     assert stop_action[4:6] == b'\x02\x01'
@@ -102,6 +109,31 @@ def main():
     # The cinematic still fires one DEFEAT event. Only its sound selection changes.
     # Use our own switch group; never change the game's civilization/era switches.
     by_id = {struct.unpack_from('<I', body)[0]: (kind, body) for kind, body in built}
+    # Exit_Leader_Screen stops the vanilla LeaderSpeech mixer. Keep cinematic
+    # sounds there, but place standalone UI lines on a private clone of its
+    # parent chain so automatic scene exits cannot truncate them.
+    extra_slots = ({row['key'] for row in trial} - {'DEFEAT_FROM_HUMAN'}) | {row['slot'] for row in full}
+    extra_sounds = []
+    for slot in extra_slots:
+        ev = by_id[fnv(event(slot))][1]
+        act = by_id[struct.unpack_from('<I', ev, 8)[0]][1]
+        extra_sounds.append(struct.unpack_from('<I', act, 6)[0])
+    extra_sounds.sort()
+    extra_id, parent_id, root_id = fnv(EXTRA_MIXER), fnv(EXTRA_PARENT), fnv(EXTRA_ROOT)
+    extra_head, _ = tool['split_children'](by_id[fnv(BANK + '/chain0')][1])
+    extra_head = bytearray(extra_head)
+    struct.pack_into('<I', extra_head, 0, extra_id)
+    struct.pack_into('<I', extra_head, 11, parent_id)
+    extra_mixer = bytes(extra_head) + struct.pack('<I', len(extra_sounds)) + b''.join(struct.pack('<I', x) for x in extra_sounds)
+    parent_head, _ = tool['split_children'](leader_parent)
+    parent_head = bytearray(parent_head)
+    struct.pack_into('<I', parent_head, 0, parent_id)
+    struct.pack_into('<I', parent_head, 11, root_id)
+    extra_parent = bytes(parent_head) + struct.pack('<II', 1, extra_id)
+    root_head, _ = tool['split_children'](speech_root)
+    root_head = bytearray(root_head)
+    struct.pack_into('<I', root_head, 0, root_id)
+    extra_root = bytes(root_head) + struct.pack('<II', 1, parent_id)
     sounds = []
     for slot in ('DEFEAT', 'DEFEAT_FROM_HUMAN'):
         ev = by_id[fnv(event(slot))][1]
@@ -117,17 +149,28 @@ def main():
         if oid in sounds:
             body = bytearray(body)
             struct.pack_into('<I', body, 25, container_id)
+        elif oid in extra_sounds:
+            body = bytearray(body)
+            struct.pack_into('<I', body, 25, extra_id)
         elif oid == fnv(BANK + '/chain0'):
             head, children = tool['split_children'](body)
-            children = [c for c in children if c not in sounds] + [container_id]
+            children = [c for c in children if c not in sounds and c not in extra_sounds] + [container_id]
             updated.append((6, container))
+            updated.append((7, extra_mixer))
+            updated.append((7, extra_parent))
+            updated.append((7, extra_root))
             body = head + struct.pack('<I', len(children)) + b''.join(struct.pack('<I', c) for c in children)
         elif oid == play_id:
             body = bytearray(body)
             struct.pack_into('<I', body, 6, container_id)
         updated.append((kind, bytes(body)))
     built = updated
-    built.extend([(3, bytes(stop_action)), (4, struct.pack('<III', fnv(STOP), 1, stop_id))])
+    extra_stop = bytearray(stop_action)
+    extra_stop_id = fnv(BANK + '/stop-extra')
+    struct.pack_into('<I', extra_stop, 0, extra_stop_id)
+    struct.pack_into('<I', extra_stop, 6, extra_id)
+    built.extend([(3, bytes(stop_action)), (3, bytes(extra_stop)),
+                  (4, struct.pack('<IIII', fnv(STOP), 2, stop_id, extra_stop_id))])
     media = [(fnv(f'{BANK}/media{i}'), v['wem']) for i, v in enumerate(voices)]
     blob = tool['assemble'](BANK, built, media)
     chunks = {tag: (off, size) for tag, off, size in tool['read_chunks'](blob)}
