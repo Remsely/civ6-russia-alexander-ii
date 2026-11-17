@@ -64,6 +64,20 @@ def main() -> int:
     if not COOKER.is_file():
         print(f"cooker not found: {COOKER}")
         return 1
+    # Cooker can report success while replacing the leader with ErrorMesh when
+    # ignored source DDS files were not restored in a new worktree.
+    missing = [p.with_suffix('.dds') for p in (MOD / 'Textures').glob('LEAD_REMSELY_ALEXANDER_II_*.tex')
+               if not p.with_suffix('.dds').is_file()]
+    if missing:
+        print('FAIL: missing leader source DDS; restore matching textures before cooking:')
+        for path in missing:
+            print(path)
+        return 1
+    if (MOD / 'Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.bnk').exists():
+        result = subprocess.run(['powershell', '-NoProfile', '-File',
+                                 str(ROOT / 'tools/voice_animations.ps1'), '-Root', str(ROOT)])
+        if result.returncode:
+            return result.returncode
     if not cook():
         return 1
     if (MOD / 'Geometries/AlexanderII.fgx').exists():
@@ -74,7 +88,10 @@ def main() -> int:
 
         try:
             verify_current()
-        except (ValueError, IndexError, KeyError, StopIteration) as error:
+            if (MOD / 'Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.bnk').exists():
+                from verify_voice import verify_cooked_timing
+                verify_cooked_timing()
+        except (ValueError, IndexError, KeyError, StopIteration, AssertionError) as error:
             print('FAIL: cooked leader bindings:', error)
             return 1
     if "--no-install" in sys.argv:

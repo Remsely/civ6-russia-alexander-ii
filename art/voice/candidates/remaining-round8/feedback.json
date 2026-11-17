@@ -1,0 +1,25 @@
+{
+  "16": {
+    "feedback": "Все три варианта: голос не похож на выбранный, вопросительная интонация очень плохая.",
+    "rejected": [
+      {
+        "path": "art/voice/candidates/remaining-round7/round7-016-01-clean.wav",
+        "sha256": "3ff06ba2e3ee4c47b6a7952ee067505bae8c316ea87bb6a4eb0f009296303108",
+        "seed": 733,
+        "prompt_wav": "art/voice/selected/first-meet-clean.wav"
+      },
+      {
+        "path": "art/voice/candidates/remaining-round7/round7-016-02-clean.wav",
+        "sha256": "64a1585ebecdacd6f42dfb4ffb24868c5b5f6122d63d3cdb78b2b6912da8a32b",
+        "seed": 733,
+        "prompt_wav": "art/voice/candidates/diplomacy-v1/first-meet-no-mans-info-exchange-clean.wav"
+      },
+      {
+        "path": "art/voice/candidates/remaining-round7/round7-016-03-clean.wav",
+        "sha256": "957b2016bb2dffa3f0cf680d1d19f28a25a65c0b3a779a3cce49d928a9611786",
+        "seed": 118,
+        "prompt_wav": "art/voice/candidates/diplomacy-v1/first-meet-no-mans-info-exchange-clean.wav"
+      }
+    ]
+  }
+}

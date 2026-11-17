@@ -2,3 +2,4 @@ Pillow
 lxml
 pytest
 numpy
+lupa

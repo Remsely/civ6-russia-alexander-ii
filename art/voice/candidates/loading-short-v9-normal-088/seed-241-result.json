@@ -1,0 +1,6 @@
+{
+  "status": "rejected before listening; not installed",
+  "reason": "Both whole-file and independent ending transcription stop at «а мир даст ва…»; last words are missing",
+  "whole_asr": "asr-seed-241.json",
+  "tail_asr": "asr-seed-241-tail.json"
+}

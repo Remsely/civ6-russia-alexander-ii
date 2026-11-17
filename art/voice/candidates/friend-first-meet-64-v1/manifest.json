@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ACCEPT_DECLARE_FRIEND_FROM_AI",
+    "text": "Благодарю. Россия ценит вашу дружбу.",
+    "prompt": "(A mature male Russian emperor speaks in Russian, measured pace, calm composed and dignified, quiet even tone, restrained natural conversational acting, clear pronunciation.)",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "seed": 731,
+    "steps": 64,
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 2.72,
+    "raw": "accept-declare-friend-from-ai-raw.wav",
+    "clean": "accept-declare-friend-from-ai-clean.wav",
+    "raw_sha256": "e4959743d296c18550a5d214ae187a1d5538b75832767706607f6944cff41c25",
+    "clean_sha256": "cf8d70d8ab71f6130a0371ad7082208c9eadda6f03c5125ec089be40010075cc",
+    "status": "awaiting user review",
+    "processing": "Butterworth order 2 70-9500Hz sosfiltfilt peak 0.85 PCM24",
+    "comparison_note": "First meeting uses approved greeting as voice reference; comparison with original selected take is not a strict steps-only experiment."
+  },
+  {
+    "key": "FIRST_MEET",
+    "text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "prompt": "(A mature male Russian emperor speaks in Russian, measured pace, calm composed and dignified, quiet even tone, restrained natural conversational acting, clear pronunciation.)",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "seed": 311,
+    "steps": 64,
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 6.56,
+    "raw": "first-meet-raw.wav",
+    "clean": "first-meet-clean.wav",
+    "raw_sha256": "4214a24f7f113fb10bd3ef869055cf0791aff3f0e3e90ac26cf0d6f7d4d6408a",
+    "clean_sha256": "54448490f4997566a01606da8519be3cfca0a3607a1ce6ede97ca4b72d33fba9",
+    "status": "not selected; user prefers existing approved 32-step first meeting",
+    "processing": "Butterworth order 2 70-9500Hz sosfiltfilt peak 0.85 PCM24",
+    "comparison_note": "First meeting uses approved greeting as voice reference; comparison with original selected take is not a strict steps-only experiment.",
+    "user_feedback": "Для первой встречи лучше 32 шага"
+  }
+]

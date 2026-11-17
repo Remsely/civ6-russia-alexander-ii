@@ -1,0 +1,8 @@
+{
+  "source": "art/voice/candidates/remaining-round5/round5-132-14-clean.wav",
+  "source_sha256": "8c5bcb0c205ce19749aacaa96c0423d5e92637678cf0f13316362a3f6def671d",
+  "removed_initial_silence_seconds": 0.65,
+  "max_removed_amplitude": 4.0531158447265625e-06,
+  "approx_initial_signal_seconds": 0.9,
+  "note": "Only leading near-silence removed, no speech editing; original retained; listening must confirm onset."
+}

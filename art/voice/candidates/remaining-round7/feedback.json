@@ -1,0 +1,15 @@
+{
+  "16": "Оба варианта звучат голосом, непохожим на выбранный.",
+  "selections": {
+    "44": {
+      "path": "art/voice/candidates/remaining-round6/round6-044-04-clean.wav",
+      "sha256": "befd43e25d2e7b2929cb16b6d4153de66a35145af036026686ef676463e9c1ed",
+      "selection": "вариант 2"
+    },
+    "82": {
+      "path": "art/voice/candidates/remaining-round6/round6-082-07-clean.wav",
+      "sha256": "a84d31bc0d9385422026fdd54e17bb6831ff89fb36276ed345290dc160452efb",
+      "selection": "новая запись, 64 шага"
+    }
+  }
+}

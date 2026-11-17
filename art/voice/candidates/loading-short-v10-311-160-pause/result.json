@@ -1,0 +1,6 @@
+{
+  "status": "rejected before listening; not installed",
+  "reason": "Pause before губернии increased by ASR alignment0.28→0.48s, but whole and ending-only transcriptions miss the final words; last phrase incomplete",
+  "whole_asr": "asr-check.json",
+  "tail_asr": "asr-tail.json"
+}

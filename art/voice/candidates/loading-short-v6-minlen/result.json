@@ -1,0 +1,11 @@
+{
+  "status": "rejected before listening; not installed",
+  "reason": "min_len continuation added unintelligible extra speech; whole-content ASR failed",
+  "conclusion": "Do not use a high min_len to fix incomplete words.",
+  "prefix_comparison": {
+    "seconds": 25,
+    "exact_equal": true,
+    "old_sha256": "f6b9317d39a8087a34162429b320922e24c0e533749f1965d6d99631a229ab3b",
+    "new_sha256": "f6b9317d39a8087a34162429b320922e24c0e533749f1965d6d99631a229ab3b"
+  }
+}

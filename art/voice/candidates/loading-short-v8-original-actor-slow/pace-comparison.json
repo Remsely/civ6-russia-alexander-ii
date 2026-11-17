@@ -1,0 +1,24 @@
+{
+  "previous_seconds": 34.17933333333333,
+  "new_seconds": 40.16,
+  "previous_timing": {
+    "aligned_words": 75,
+    "median_word_seconds": 0.4399999999999995,
+    "total_word_seconds": 31.119999999999994,
+    "total_gaps_seconds": 2.9200000000000035
+  },
+  "new_timing": {
+    "aligned_words": 75,
+    "median_word_seconds": 0.46000000000000085,
+    "total_word_seconds": 34.34,
+    "total_gaps_seconds": 5.659999999999997
+  },
+  "matched_words": 73,
+  "median_matched_word_duration_ratio": 1.1250000000000002,
+  "last_word": {
+    "start": 39.16,
+    "end": 40.0,
+    "word": "созидать.",
+    "probability": 0.9196621775627136
+  }
+}

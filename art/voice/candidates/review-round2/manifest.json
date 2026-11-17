@@ -1,0 +1,571 @@
+[
+  {
+    "key": "ACCEPT_DECLARE_FRIEND_FROM_HUMAN",
+    "text": "Я принимаю ваше предложение дружбы. Пусть она послужит обоим нашим народам.",
+    "number": 2,
+    "feedback": "Слишком суетливо",
+    "synthesis_text": "Я принимаю ваше предложение дружбы. Пусть она послужит обоим нашим народам.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.96,
+    "inference_seconds": 20.449964600000385,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "accept-declare-friend-from-human-raw.wav",
+    "clean": "accept-declare-friend-from-human-clean.wav",
+    "raw_sha256": "5b8d5fbc4c6cf7f7b14b32254dd0c459022250e709470465dcb0c0bea5708342",
+    "clean_sha256": "ac89cb87d5c6062f84347497ac871690d7d063661f51a6259f24cb71cd91f1ce",
+    "segments_generated": [
+      {
+        "text": "Я принимаю ваше предложение дружбы. Пусть она послужит обоим нашим народам.",
+        "seconds": 4.96
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "ACCEPT_DELEGATION_FROM_HUMAN",
+    "text": "Ваши посланники будут приняты при русском дворе с подобающими почестями.",
+    "number": 3,
+    "feedback": "Сделать спокойнее",
+    "synthesis_text": "Ваши посланники будут приняты при русском дворе с подобающими почестями.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.32,
+    "inference_seconds": 16.444113800000196,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "accept-delegation-from-human-raw.wav",
+    "clean": "accept-delegation-from-human-clean.wav",
+    "raw_sha256": "92ba3f6ce8007e419de2b3ee2c349bc68b22219b7da3ed7bc033c6b48fd6895a",
+    "clean_sha256": "2884f7092304a4c3bca184c940efa5361da0a84744f5d94d7a93bc2340e2a33e",
+    "segments_generated": [
+      {
+        "text": "Ваши посланники будут приняты при русском дворе с подобающими почестями.",
+        "seconds": 4.32
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "DECLARE_FRIEND_FROM_AI",
+    "text": "Россия была бы рада считать вас другом. Объявим ли мы об этом?",
+    "number": 6,
+    "feedback": "Неверное другОм; нужно дрУгом",
+    "synthesis_text": "Россия была бы рада считать вас дру́гом. Объявим ли мы об этом?",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.0,
+    "inference_seconds": 15.020742400000017,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "declare-friend-from-ai-raw.wav",
+    "clean": "declare-friend-from-ai-clean.wav",
+    "raw_sha256": "bd3b50eda1bb47fe8de36fda24d606d2a3b36650df4521b16fc44f2e39daaf41",
+    "clean_sha256": "b7feab08c69dfd6d3da0f3ad3311fc54c9977612fe0c607d19ca3b07ec559f8f",
+    "segments_generated": [
+      {
+        "text": "Россия была бы рада считать вас дру́гом. Объявим ли мы об этом?",
+        "seconds": 4.0
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "DECLARE_WAR_FROM_AI",
+    "text": "Я стремился сохранить мир, но вы не оставили мне выбора. Россия будет защищать свои интересы.",
+    "number": 7,
+    "feedback": "Голос не похож на наш",
+    "synthesis_text": "Я стремился сохранить мир, но вы не оставили мне выбора. Россия будет защищать свои интересы.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 5.6,
+    "inference_seconds": 20.91739179999786,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "declare-war-from-ai-raw.wav",
+    "clean": "declare-war-from-ai-clean.wav",
+    "raw_sha256": "9aea3a934254abdcba31028f349fbf4097481e369d257107d3a5a0e4ff13ced8",
+    "clean_sha256": "26fa50649cdd2e6432696b5c610e5b3d2e07195815bff8e67fc2372a345bc975",
+    "segments_generated": [
+      {
+        "text": "Я стремился сохранить мир, но вы не оставили мне выбора. Россия будет защищать свои интересы.",
+        "seconds": 5.6
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "DEFEAT_FROM_AI",
+    "text": "Империя пала, но дело преобразований меня переживет.",
+    "number": 9,
+    "feedback": "Голос не похож на наш",
+    "synthesis_text": "Империя пала, но дело преобразований меня переживет.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "restrained-sadness",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "style": "(A mature Russian emperor speaks very quietly and slowly in Russian, weary and sorrowful after defeat, composed and dignified, restrained sadness, no anger, no cheerfulness, clear natural dialogue.)",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.64,
+    "inference_seconds": 17.28278980000323,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "defeat-from-ai-raw.wav",
+    "clean": "defeat-from-ai-clean.wav",
+    "raw_sha256": "3ed636e6259d48a58530d57db0d49172b6a7fa639d9f1c0e25a77aa04a0fa55d",
+    "clean_sha256": "8ae6fabea3a194478191aac61a4d49cb948408af15a7b0fc2ec795615bd3a109",
+    "segments_generated": [
+      {
+        "text": "(A mature Russian emperor speaks very quietly and slowly in Russian, weary and sorrowful after defeat, composed and dignified, restrained sadness, no anger, no cheerfulness, clear natural dialogue.) Империя пала, но дело преобразований меня переживет.",
+        "seconds": 4.64
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "DEFEAT_FROM_HUMAN",
+    "text": "Вы одержали верх. Пусть же Россия обретет силы подняться вновь.",
+    "number": 10,
+    "feedback": "Нет грусти; спокойнее и медленнее",
+    "synthesis_text": "Вы одержали верх. Пусть же Россия обретет силы подняться вновь.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "restrained-sadness",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "style": "(A mature Russian emperor speaks very quietly and slowly in Russian, weary and sorrowful after defeat, composed and dignified, restrained sadness, no anger, no cheerfulness, clear natural dialogue.)",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.48,
+    "inference_seconds": 16.99000530000194,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "defeat-from-human-raw.wav",
+    "clean": "defeat-from-human-clean.wav",
+    "raw_sha256": "135e543443781e1702a7c4eee7165ee07c21e3e05920bb86c18b1df89176f0cd",
+    "clean_sha256": "5388afc337a26551b85ef21de6bff2a45b1d8361c77c76bdc5225c3a51952552",
+    "segments_generated": [
+      {
+        "text": "(A mature Russian emperor speaks very quietly and slowly in Russian, weary and sorrowful after defeat, composed and dignified, restrained sadness, no anger, no cheerfulness, clear natural dialogue.) Вы одержали верх. Пусть же Россия обретет силы подняться вновь.",
+        "seconds": 4.48
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "DELEGATION_FROM_AI",
+    "text": "Я направляю к вашему двору посланников с дарами и уверениями в моем расположении.",
+    "number": 11,
+    "feedback": "Неверное дАрами; нужно дарАми",
+    "synthesis_text": "Я направляю к вашему двору посланников с дара́ми и уверениями в моем расположении.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 5.12,
+    "inference_seconds": 19.394919099999242,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "delegation-from-ai-raw.wav",
+    "clean": "delegation-from-ai-clean.wav",
+    "raw_sha256": "15587a2e896420ca16e15b7ae0747fc5ebb5785ba7fff639829906c2cf3df206",
+    "clean_sha256": "ce6000873c1e62a3f829a331065bff4e15f2dd89d159101aa3071f49fac85699",
+    "segments_generated": [
+      {
+        "text": "Я направляю к вашему двору посланников с дара́ми и уверениями в моем расположении.",
+        "seconds": 5.12
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "DENOUNCE_FROM_AI",
+    "text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+    "number": 12,
+    "feedback": "Не та интонация; слишком суетливо и быстро",
+    "synthesis_text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.48,
+    "inference_seconds": 17.068686500002514,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "denounce-from-ai-raw.wav",
+    "clean": "denounce-from-ai-clean.wav",
+    "raw_sha256": "8ef9218c9a0c0ff091eed4ee7fa945e28052355a5b2f70ab0b000b8677d520d9",
+    "clean_sha256": "b847705b3a103ac4e18b5d640952039b383b01a34d5d87b3ad4d4bbba1bb4114",
+    "segments_generated": [
+      {
+        "text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+        "seconds": 4.48
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "FIRST_MEET_NEAR_INITIATOR_POSITIVE",
+    "text": "Благодарю за теплый прием. Надеюсь, это начало добрых отношений между нашими державами.",
+    "number": 15,
+    "feedback": "Слишком маленькая пауза между предложениями",
+    "synthesis_text": "Благодарю за теплый прием. Надеюсь, это начало добрых отношений между нашими державами.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "segments": [
+      "Благодарю за теплый прием.",
+      "Надеюсь, это начало добрых отношений между нашими державами."
+    ],
+    "additional_sentence_pause_seconds": 0.45,
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 6.37,
+    "inference_seconds": 22.27754880000066,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "first-meet-near-initiator-positive-raw.wav",
+    "clean": "first-meet-near-initiator-positive-clean.wav",
+    "raw_sha256": "0d9e4c8e6db383a02b491a4a058bf6707081202d58199d789b49dfa89644fef2",
+    "clean_sha256": "0d020634b34ad69e25d7c6065257a63ead28ac9fa30c0b134ab2335bbc51c5b6",
+    "segments_generated": [
+      {
+        "text": "Благодарю за теплый прием.",
+        "seconds": 1.76
+      },
+      {
+        "text": "Надеюсь, это начало добрых отношений между нашими державами.",
+        "seconds": 4.16
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "GREETING",
+    "text": "Рад вас видеть. Россия желает мира и добрых дел.",
+    "number": 18,
+    "feedback": "Рад вас видеть звучит как робот",
+    "synthesis_text": "Рад вас видеть. Россия желает мира и добрых дел.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 3.36,
+    "inference_seconds": 12.670302200000151,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "greeting-raw.wav",
+    "clean": "greeting-clean.wav",
+    "raw_sha256": "698585d2133311e837d1a3e39df780d10020d3852446583cf6762a12aa0d82be",
+    "clean_sha256": "3c0dde1dc55eef6812b3b0ead068d28805a04df6ddee8f07f031fa309a826e09",
+    "segments_generated": [
+      {
+        "text": "Рад вас видеть. Россия желает мира и добрых дел.",
+        "seconds": 3.36
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "KUDO_EXIT",
+    "text": "Ваше государство хорошо управляется. Такой порядок служит народу.",
+    "number": 19,
+    "feedback": "Голос не похож на наш",
+    "synthesis_text": "Ваше государство хорошо управляется. Такой порядок служит народу.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.16,
+    "inference_seconds": 15.651300499997888,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "kudo-exit-raw.wav",
+    "clean": "kudo-exit-clean.wav",
+    "raw_sha256": "f4f0612e59ea12aa2bc7f79e45297cb8083142235bade289217078b6f72cfade",
+    "clean_sha256": "88c745d08d69c40b658a97e0c36727d906dbaff4d958f575c21ee6f1ce620f91",
+    "segments_generated": [
+      {
+        "text": "Ваше государство хорошо управляется. Такой порядок служит народу.",
+        "seconds": 4.16
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "MAKE_PEACE_AI_ACCEPT_DEAL",
+    "text": "Мир - лучший путь. Я согласен.",
+    "number": 21,
+    "feedback": "Слишком большие паузы, слова слишком быстрые; голос не похож",
+    "synthesis_text": "Мир лучший путь. Я согласен.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 2.08,
+    "inference_seconds": 7.9471793999982765,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "make-peace-ai-accept-deal-raw.wav",
+    "clean": "make-peace-ai-accept-deal-clean.wav",
+    "raw_sha256": "ad9210a05e9fc849c308df7da8100cae08bc19168a96dd21e831077934038efc",
+    "clean_sha256": "331b6451182616e2caf0f676f4dfa2636e1a3be82af892237f7d04bda8953dfc",
+    "segments_generated": [
+      {
+        "text": "Мир лучший путь. Я согласен.",
+        "seconds": 2.08
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "MAKE_PEACE_FROM_AI",
+    "text": "Довольно крови. Заключим мир.",
+    "number": 23,
+    "feedback": "Сломан конец, неравномерное произношение, другой голос",
+    "synthesis_text": "Довольно крови. Заключим мир.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 2.08,
+    "inference_seconds": 7.9759698000016215,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "make-peace-from-ai-raw.wav",
+    "clean": "make-peace-from-ai-clean.wav",
+    "raw_sha256": "986df8ac2bf27e1591f7362456c5ec9945c97b437c3ef37230135b2f3a4dcd9e",
+    "clean_sha256": "fa0513776b66e26747701091740f33ee3df0278a1026e91e2b73960a2fecd863",
+    "segments_generated": [
+      {
+        "text": "Довольно крови. Заключим мир.",
+        "seconds": 2.08
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "OPEN_BORDERS_FROM_AI",
+    "text": "Позволите ли вы нашим людям и товарам пересекать ваши земли?",
+    "number": 24,
+    "feedback": "Неверное землИ; нужно зЕмли",
+    "synthesis_text": "Позволите ли вы нашим людям и товарам пересекать ваши зе́мли?",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 3.84,
+    "inference_seconds": 14.515495000003284,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "open-borders-from-ai-raw.wav",
+    "clean": "open-borders-from-ai-clean.wav",
+    "raw_sha256": "e60acbc733d5ea771539fdefbda67b317b967286673f9ab78e1468aa6120dc40",
+    "clean_sha256": "62a780b2aa1716cddebfc5eb2f5d50a134d334b21efc490a20f72fb7f16704a5",
+    "segments_generated": [
+      {
+        "text": "Позволите ли вы нашим людям и товарам пересекать ваши зе́мли?",
+        "seconds": 3.84
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "REJECT_DECLARE_FRIEND_FROM_AI",
+    "text": "Мне жаль, что вы отвергли мою дружбу. Надеюсь, это не помешает добрым отношениям между нашими державами.",
+    "number": 25,
+    "feedback": "Заменить отношениям между нами на отношениям между нашими державами",
+    "synthesis_text": "Мне жаль, что вы отвергли мою дружбу. Надеюсь, это не помешает добрым отношениям между нашими державами.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 6.88,
+    "inference_seconds": 25.701634799999738,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "reject-declare-friend-from-ai-raw.wav",
+    "clean": "reject-declare-friend-from-ai-clean.wav",
+    "raw_sha256": "e846d0271eb9c82407893678f11b11d68e09ee8f77a285a54d62dbd6f5c1b7d2",
+    "clean_sha256": "335134e7c12b4aeac0e2019c498c6d025fa74311ae4ef50b0f62cd7b4eb7c01f",
+    "segments_generated": [
+      {
+        "text": "Мне жаль, что вы отвергли мою дружбу. Надеюсь, это не помешает добрым отношениям между нашими державами.",
+        "seconds": 6.88
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "REJECT_MAKE_DEAL_FROM_AI",
+    "text": "Нет, эти условия не отвечают интересам России.",
+    "number": 28,
+    "feedback": "Вопросительная интонация вместо утверждения",
+    "synthesis_text": "Нет, эти условия не отвечают интересам России.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 3.04,
+    "inference_seconds": 11.46736349999992,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "reject-make-deal-from-ai-raw.wav",
+    "clean": "reject-make-deal-from-ai-clean.wav",
+    "raw_sha256": "7371aee8a860dbfdc602093c024f3ff1ea17c75f76627e1e5269b922d1e086e8",
+    "clean_sha256": "00ebdb0c5bd0d8c0b46247c98ad1cb1614119546a65287973d11c5ec3ca2b1f1",
+    "segments_generated": [
+      {
+        "text": "Нет, эти условия не отвечают интересам России.",
+        "seconds": 3.04
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "WARNING_EXIT",
+    "text": "Вы развязали войну, и я не могу этого не заметить. Россия помнит.",
+    "number": 30,
+    "feedback": "Как будто акцент; голос отличается от нашего",
+    "synthesis_text": "Вы развязали войну, и я не могу этого не заметить. Россия помнит.",
+    "steps": 32,
+    "seed": 311,
+    "mode": "calm-continuation",
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\review-round2\\first-meet-pacing-088.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.0,
+    "inference_seconds": 15.173980100000335,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "5aad21bd30cf445522233f6e40402665c8d8a7dcf2817504ebd7ded182b0f055",
+    "raw": "warning-exit-raw.wav",
+    "clean": "warning-exit-clean.wav",
+    "raw_sha256": "323771069184a07de5487ed43790b364af7a1dcd7fcf41a8069638c8f1c6c5de",
+    "clean_sha256": "a175004daf5a4366b0316c2a95c85ccbeba65bc726903ea0face5256403f32fc",
+    "segments_generated": [
+      {
+        "text": "Вы развязали войну, и я не могу этого не заметить. Россия помнит.",
+        "seconds": 4.0
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  },
+  {
+    "key": "LOADING_RU",
+    "number": 32,
+    "text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и справедливому суду. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?",
+    "synthesis_text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и справедливому суду́. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?",
+    "steps": 64,
+    "seed": 731,
+    "mode": "calm-continuation",
+    "reference": "art\\build\\voice\\integration\\narrator\\ru-peter-loading.wav",
+    "prompt_wav": "art\\build\\voice\\integration\\narrator\\ru-peter-loading.wav",
+    "prompt_text": "Холодный ветер родины не остудит ваш пыл, царь Петр. Ваша страсть к науке и культуре – великий дар; вы многому научитесь благодаря посольствам в дальних странах. Под вашим правлением Россия будет расти и процветать, занимая все новые земли, дабы стать величайшей империей на свете.",
+    "feedback": "Озвучить весь текст на 64 шагах; размеренно, исправить суду́ и смысловую интонацию",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 38.72,
+    "inference_seconds": 274.069423500001,
+    "reference_sha256": "a8e326e0b88eda832c748e902f51842a1647d8cc0ea516d0e901b512c7841ee3",
+    "prompt_wav_sha256": "a8e326e0b88eda832c748e902f51842a1647d8cc0ea516d0e901b512c7841ee3",
+    "raw": "loading-ru-raw.wav",
+    "clean": "loading-ru-clean.wav",
+    "raw_sha256": "d4ba18c4178dcda3336723469e190a3ed028f8d245ee0833db64b8f167700fe1",
+    "clean_sha256": "c9c884c5cdf17224c37c7c3d28318e9153b481fcc11da087fcd53f2071d082d7",
+    "segments_generated": [
+      {
+        "text": "Добро пожаловать в Зимний дворец, император Александр. От берегов Балтики до Тихого океана раскинулась ваша держава. Но величие России измеряется не только ее пределами: ее будущее зависит от тех, кто возделывает землю, строит города и хранит ее рубежи. Крестьяне ждут освобождения, губернии — права самим решать свои дела, а армия — обновления. Даруйте людям волю, доверьте земствам заботу о крае и откройте путь образованию и справедливому суду́. Пусть перемены укрепят государство, а мир даст вашим подданным время созидать. Сумеете ли вы провести Россию через испытания и оставить потомкам державу, чья сила рождается из благополучия ее народа?",
+        "seconds": 38.72
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  }
+]

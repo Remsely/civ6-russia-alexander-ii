@@ -1,0 +1,34 @@
+[
+  {
+    "key": "DENOUNCE_FROM_AI_ALTERNATIVE",
+    "number": 12,
+    "text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+    "synthesis_text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+    "steps": 32,
+    "seed": 117,
+    "mode": "restrained-disapproval",
+    "reference": "art/voice/selected/first-meet-clean.wav",
+    "prompt_wav": "art/voice/selected/first-meet-clean.wav",
+    "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+    "feedback": "Альтернативная проба: спокойное осуждение",
+    "style": "(A mature Russian emperor speaks in Russian, calm and restrained but clearly disapproving, firm and dignified, natural conversation, without shouting.)",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 4.64,
+    "inference_seconds": 19.742658399998618,
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "prompt_wav_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "raw": "denounce-from-ai-alternative-raw.wav",
+    "clean": "denounce-from-ai-alternative-clean.wav",
+    "raw_sha256": "e3731d1b9324da119d885afea3f8be81f13758fe4de894ebfa12f2e385950944",
+    "clean_sha256": "eaab0f6bf7c25eb0aed879e747bad06b08e525d8548fc6aaa2be8255fdd5c97a",
+    "segments_generated": [
+      {
+        "text": "(A mature Russian emperor speaks in Russian, calm and restrained but clearly disapproving, firm and dignified, natural conversation, without shouting.) Ваши действия недостойны великой державы. Россия этого не забудет.",
+        "seconds": 4.64
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  }
+]

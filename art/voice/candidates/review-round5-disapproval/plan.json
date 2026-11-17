@@ -1,0 +1,21 @@
+{
+  "output": "art/voice/candidates/review-round5-disapproval",
+  "cfg": 2,
+  "sample_rate": 48000,
+  "items": [
+    {
+      "key": "DENOUNCE_FROM_AI_ALTERNATIVE",
+      "number": 12,
+      "text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+      "synthesis_text": "Ваши действия недостойны великой державы. Россия этого не забудет.",
+      "steps": 32,
+      "seed": 117,
+      "mode": "restrained-disapproval",
+      "reference": "art/voice/selected/first-meet-clean.wav",
+      "prompt_wav": "art/voice/selected/first-meet-clean.wav",
+      "prompt_text": "Я Александр, император Всероссийский. Приветствую вас и надеюсь, что наши державы найдут общий язык.",
+      "feedback": "Альтернативная проба: спокойное осуждение",
+      "style": "(A mature Russian emperor speaks in Russian, calm and restrained but clearly disapproving, firm and dignified, natural conversation, without shouting.)"
+    }
+  ]
+}
