@@ -15,16 +15,18 @@ The release order reflects the agreed direction. Dates are unset; mechanics that
 
 ## v2.0.0 — reforms and voice
 
-**Status:** implementation prepared; in-game testing and voice polishing continue. The release has not been published.
+**Status:** the Windows test build includes the reforms, railways, religious agenda and expanded voice coverage. Final in-game checks are pending. The alpha has not been published.
 
 - [x] Rework the ability: from the Industrial Era, +1 Builder charge, a one-time Governor title and +10% growth for cities with an assigned Governor; remove Pasture Production, the unit upgrade discount and (3 Nov 2026) the Farm adjacency bonus entirely.
 - [x] Implement the railway network: each city gets +1 Production per rail-connected own city and +1 Gold per rail-connected foreign city, each bonus capped by the receiving city's Population (both bonuses capped since 3 Nov 2026). A Capital connection is not required; city-states and civilizations at war count. Gathering Storm is required.
 - [ ] Complete in-game checks of the ability, railways, save/load and compatibility ([TESTING](docs/en/TESTING.md)).
-- [ ] Complete the religious diplomacy feature: validate the conversion event and target, then implement and test cumulative penalties and reactions to foreign cities. The current +3/−12 agenda and Holy War preference do not implement this feature ([research](docs/religious-agenda-deep-analysis.ru.md)).
+- [x] Integrate the Liberator's religious agenda using the game's existing conditions: +3 for shared faith, −12 for conversion of his own cities, a preference for founding Eastern Orthodoxy and an AI preference for Holy War.
+- [ ] Verify the religious agenda in game, including the displayed modifiers and the interaction with the standard conversion penalty. Cumulative penalties and reactions to conversion of foreign cities are outside this alpha's scope. See the [engine research](docs/religious-agenda-deep-analysis.ru.md).
 - [x] Select a Russian voice and integrate six core diplomacy recordings on Windows; the user confirmed the earlier build on November 1, 2026 after loop, duration and speech-stop fixes.
 - [x] Prepare recordings for all 31 diplomacy texts, including the other 24 lines and the second defeat variant; integrate trial routing, separate audio selection for the two DEFEAT texts, and full Russian loading narration.
 - [ ] Test the loading narration and volume, extended dialogue and both defeat variants in game; refine takes with outstanding feedback. Trial routes for 137 additional recordings cover statements, agenda reasons and trade UI; their reachability and playback are not yet confirmed. [Voice audit (Russian)](docs/voice-coverage.ru.md).
-- [ ] Test the selected English narrator and language selection on the loading screen. Alexander's dialogue stays Russian in every interface language, with RU/EN subtitles.
+- [x] Integrate the Russian and English loading narrators. The player confirmed playback in the installed build; Alexander's diplomacy lines stay in Russian with RU/EN subtitles.
+- [ ] Verify narration for both audio languages across eras, restarts and saved games. Check the latest diplomacy exit-button fix, plus trade subtitles and voice during quantity edits, with and without UI mods.
 - [ ] Complete text review, final checks, release versioning and packaging.
 - [x] Pause-menu restart narration: register the loading screen in both FrontEnd and InGame. User reported the restart worked; logs show the early handler running and the fallback skipping. Other eras and languages remain to be tested. [Release notes](docs/v2.0.0-alpha-release-notes.md), [technical history (Russian)](docs/voice-integration.ru.md), [release checklist](docs/v2.0.0-alpha-release-checklist.md).
 

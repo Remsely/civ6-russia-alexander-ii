@@ -28,8 +28,8 @@ Speed-up: FireTuner — grant techs, change era, assign a Governor.
 - [ ] Railroads: bonuses appear right after a segment is built (route events); a captured city or a moved capital is picked up by the next turn. The Military Engineer unlocks railroads after Steam Power (1 Iron + 1 Coal per tile).
 - [ ] The old Zemstvos are gone: no Culture or Loyalty in Governor cities.
 - [ ] AI Alexander plays without errors, the agenda fires (likes peaceful, dislikes recent aggressors).
-- [ ] In a new game with AI Alexander, check the shared-religion bonus and reaction to conversion of his city, including the diplomatic reason and value; also check behavior without a founded religion and after a majority changes.
-- [ ] Check the Holy War preference when the casus belli is available; a preference does not guarantee a declaration. Accumulation to −75 and reactions to foreign cities are not included in the current mod.
+- [ ] With AI Alexander, verify +3 for a shared religion and −12 for conversion of his own city. Check the displayed reasons, the separate standard conversion modifier and behavior without a founded religion. Repeat a conversion and confirm that no custom accumulating penalty appears.
+- [ ] Observe which religion AI Alexander founds when Eastern Orthodoxy is available. When Holy War is available, record the casus belli the AI uses if it declares one. These settings are preferences.
 
 ## Cities
 
@@ -54,14 +54,14 @@ Speed-up: FireTuner — grant techs, change era, assign a Governor.
 
 ## Voice confirmation and regression checks
 
-On November 1, 2026, the user confirmed the earlier Windows build with six diplomacy recordings after loop, duration and Escape fixes. That confirmation does not cover the later expansion. All 31 diplomacy texts and Russian loading narration are now integrated; new routing needs testing after a game restart. The user launches the game.
+The player has confirmed basic diplomacy playback, the line when concluding a trade deal, loading narration and a restart from the pause menu. Use the latest Windows build for the remaining checks. The player launches the game.
 
 - [ ] First meeting, both war directions and agenda approval/warning: one playback, timely transition to responses, Escape/RMB during speech, leader switching and the speech-volume control.
 - [ ] Both defeat texts: the recording matches the subtitles, the two voices never overlap and neither ending is cut off. Lua.log markers: `REMSELY voice: defeat variant FROM_AI` / `FROM_HUMAN`.
 - [ ] Other 24 dialogue lines: correct recordings for delegations, friendship, deals, borders and peace; opening the scene does not immediately stop them.
-- [ ] New trial routes: for a statement, an agenda reason and a deal-interface line, compare audio to RU/EN subtitles, check start, completion and Escape/RMB, then repeat with and without supported UI mods. Presence in the bank does not establish that all 137 lines are reachable. A number of takes still require listening review.
-- [ ] Russian loading narration: full text, measured delivery, volume comparable to other loading narrators, no loops, and stops when loading closes. Marker: `REMSELY voice: loading narration started`.
+- [ ] Extended voice routes: sample a statement, an agenda reason and a deal-interface line. Compare timing and audio to the English and Russian subtitles. Check that “Goodbye”, Escape and right-click stop a playing line, while a follow-up response can finish after an automatic close. The 137 additional routes have not all been verified.
+- [ ] Trade: change a resource amount several times, leave the screen and conclude a deal. Check that voice does not replay on quantity changes, and that subtitles and the deal conclusion line work. Test the standard UI and the UI mod setup independently.
+- [ ] Test Russian and English loading narration at the in-game volume. For a new game, a second game in the same session, a restart and a saved game, check that the era introduction is followed by the selected narrator and that entering the game stops playback. Include a later era.
 - [ ] In both Russian and English interfaces, Alexander speaks Russian and subtitles follow the interface language.
-- [ ] Check both installed loading narrations against the game audio language; Alexander’s diplomacy remains Russian regardless of interface language.
 
 Quality review by number: [catalog](../voice-review.ru.md); build, limitations and current routes: [integration](../voice-integration.ru.md) (Russian). A recording's presence in the bank does not complete a listening check.

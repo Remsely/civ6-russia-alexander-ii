@@ -2,7 +2,7 @@
 
 # Remsely's Russian Empire: Alexander II
 
-A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate leader of Russia.
+A Civilization VI mod: **Alexander II, the Emperor-Liberator**, as an alternate leader of Russia.
 
 ![Preview](workshop/preview.png)
 
@@ -13,13 +13,13 @@ A Civilization VI mod: **Alexander II, the Tsar Liberator**, as an alternate lea
 - *Zemstvos:* on entering the Industrial Era the empire gains 1 Governor title; cities with an assigned Governor get +10% growth.
 - *Railway Network:* every city gets +1 Gold for each foreign city and +1 Production for each of your other cities connected to it by railroad; neither bonus can exceed the city's Population.
 
-**AI agenda: The Liberator.** Likes civilizations that have kept the peace and those that share his religion; dislikes recent declarations of war and conversion of his cities to another faith.
+**AI agenda: The Liberator.** Alexander likes civilizations that have kept the peace and dislikes recent declarations of war. The agenda gives +3 for a shared religion and −12 when the game's standard condition for conversion of his own cities applies. The AI prefers Eastern Orthodoxy when founding a religion and favors Holy War when the casus belli is available.
 
 **A 3D leader on the diplomacy screen** — Alexander stands in his own hall in the portrait's pose and breathes, blinks and shifts his weight in his idle loop.
 
 **Also:** a researched 45-name city list led by Saint Petersburg (Moscow, Odessa, Kharkov, Sevastopol, Vladivostok, Tashkent, Baku, Riga…), black-and-gold border colors, a loading screen background, a diplomacy background, leader-specific diplomacy and a Civilopedia page, in English and Russian.
 
-**Voice (Windows):** the development build includes recordings for 31 core diplomacy texts, loading narration in Russian and English, and trial routes for 137 additional recordings covering statements, agenda reasons and the trade interface. The added routes and some takes remain unverified in game; their presence does not guarantee every line is reachable. Alexander always speaks Russian; subtitles are English or Russian. The loading narrator follows the selected game audio language, after the native era introduction. The English take at 90% tempo was selected by listening; the user reported that the installed voice playback works. Individual languages, eras and save paths still need separate verification. Extended dialogue routing and both defeat variants still need in-game confirmation; some takes need polishing.
+**Voice (Windows).** Alexander speaks Russian with English or Russian subtitles. The build includes recordings for 31 core diplomacy texts and trial routes for 137 additional recordings covering statements, agenda reasons and the trade interface. The loading narrator follows the native era introduction and plays in Russian or English according to the game audio language. See the [in-game checklist](docs/en/TESTING.md) for remaining checks on individual lines, scene exits, trade, loading and saves.
 
 Requires Gathering Storm. Art packages are built for Windows and macOS; voice integration currently targets Windows. The mod has not been tested in game on macOS.
 

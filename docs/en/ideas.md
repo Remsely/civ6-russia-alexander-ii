@@ -4,7 +4,7 @@ Future ideas, **not in the current release**. Chosen items move to [`../../ROADM
 
 ## Agreed direction — 31 October 2026
 
-These decisions supersede conflicting earlier proposals below; implementation and balance still need testing.
+This is the October design record. The current [design](design.md) and [roadmap](../../ROADMAP.md) supersede it. Both railway bonuses now have separate Population caps, and the Farm bonus has been removed.
 
 - Railways: **implemented in v2.0.0** ("Railway Network", design doc 3.3) — connectivity is pairwise: Lua builds connected components of railroad plots with cities as junctions (a line may pass through a city and tie networks together); every own city gets +1 Production for each own city connected to it by railroad, **capped by the city's Population** (the user's rule of 31 October 2026, late evening: a 10-Pop city counts at most 10 cities), and +1 Gold for each foreign city (city-states and civs at war count) connected to it **uncapped**, transit over foreign rails included; the Capital is an ordinary city of the network; no design cap — the user's explicit demand (the tier machinery's technical bound of 200 cities of each kind is beyond any conceivable game); Gathering Storm is now a hard mod dependency. The pairwise wording is the user's repeated demand of 31 October 2026 (evening): the first "tree from the Capital" implementation did not match it and was reworked.
 - Emancipation: **implemented in v2.0.0** — from the Industrial Era, +1 Builder charge and +1 Food per two adjacent Farms; Pastures and the upgrade discount removed. The +2 cap was removed the same day at the user's insistence: a tier at 6 neighbours was added (natural max +3), fulfilling the "no artificial cap" agreement.

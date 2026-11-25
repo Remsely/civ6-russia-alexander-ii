@@ -59,10 +59,10 @@ Ability descriptions state values explicitly, without references to the Civilope
 
 ## 4. AI Agenda: The Liberator
 
-He likes civilizations that have not declared wars for a long time (threshold ~30 turns) and dislikes those that declared war recently. The agenda configures +3 for a shared religion and -12 for converted cities using Philip II’s condition; the game also has a separate standard conversion modifier with an initial value of -9. A Holy War preference is configured, but its effect on AI decisions has not been verified. Conversion of foreign cities is not implemented. The values, their interaction, and AI behavior require in-game testing. See the [religious agenda research](../religious-agenda-deep-analysis.ru.md).
+He likes civilizations that have kept the peace and dislikes recent declarations of war. The agenda configures +3 for a shared religion and −12 for conversion of his own cities, using the same native condition as Philip II. The game's standard conversion modifier (initial value −9) remains separate. The AI prefers Eastern Orthodoxy when founding a religion and favors Holy War when that casus belli is available. The displayed modifiers and the AI's choices still need in-game verification. This alpha includes no cumulative penalty, custom −75 cap or reaction to foreign-city conversions. See the [religious agenda research](../religious-agenda-deep-analysis.ru.md).
 
 - Name: The Liberator / «Освободитель»
-- Description: Likes civilizations that have kept the peace for a long time and those that share his religion. Dislikes those that recently declared war or converted his cities to another religion.
+- Description: Likes peaceful civilizations and those that share his religion. Dislikes recent declarations of war and conversion of his own cities to another religion. Favors Holy War when available.
 
 ## 5. Cities
 
@@ -153,9 +153,9 @@ Print sources: «Голос минувшего», 1916, № 5–6, p. 393; Tatis
 
 ## 10. Voice
 
-Alexander's diplomacy dialogue is always spoken in Russian, regardless of interface language. Subtitles are localized into en_US and ru_RU. English voice is planned only for the loading-screen narrator; English versions of Alexander's own dialogue are not required.
+Alexander's diplomacy dialogue is spoken in Russian in every interface language, with English and Russian subtitles. The loading narrator has Russian and English recordings. The game audio language selects the recording, which follows the standard era introduction.
 
-The current Windows build integrates recordings for all 31 diplomacy texts and full Russian loading narration. The user confirmed the original six scenes; new routes, separate selection of the two defeat texts and loading narration still require in-game checks. Some takes are being refined. An English narrator is not yet selected or integrated: the English interface temporarily plays Russian loading narration. MacOS art packages do not establish voice support on that platform.
+The Windows build has recordings for 31 core diplomacy texts, separate audio for the two defeat texts, and trial routes for 137 additional statements, agenda reasons and trade-interface lines. The player confirmed loading narration, pause-menu restart and playback when a trade deal is concluded. Individual routes, the latest exit-button fix, trade edits and subtitles, both defeat variants and the full loading matrix still need verification. Voice integration targets Windows. See the [voice audit](../voice-coverage.ru.md) and [in-game checklist](TESTING.md).
 
 Settings and feedback: `../voice-v2-plan.ru.md`; listening catalog: `../voice-review.ru.md`; integration and verification limits: `../voice-integration.ru.md` (Russian).
 
