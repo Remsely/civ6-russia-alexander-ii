@@ -89,6 +89,8 @@ def test_statement_reason_and_deal_handlers_route_separately():
         reasonKey='UNSCOPED_REASON'; statement(1,0,variant); assert(#calls==4)
         LuaEvents.REMSELY_DealLine.handlers[1](1,'CUSTOM_DEAL')
         assert(calls[6]=='Play_REMSELY_AlexanderII_FULL_132')
+        LuaEvents.REMSELY_DealLine.handlers[1](1,'CUSTOM_DEAL')
+        assert(#calls==6, 'duplicate opening notification must not restart the same line')
         LuaEvents.REMSELY_DealLine.handlers[1](1,'')
         assert(calls[7]=='Stop_REMSELY_AlexanderII_Speech')
         LuaEvents.REMSELY_DealLine.handlers[1](2,'CUSTOM_DEAL'); assert(#calls==7)

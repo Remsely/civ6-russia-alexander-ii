@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A passive input observer: no controls, no mouse consumption. -->
+<Context Name="RemselysAlexanderII_VoiceInput" ID="RemselysAlexanderII_VoiceInput" />

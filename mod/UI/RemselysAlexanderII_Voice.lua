@@ -23,6 +23,7 @@ local speechPosted = false;
 local finishAfterSceneClose = false;
 local tailSceneClosed = false;
 local currentDealVoice = false;
+local currentDealSlot = nil;
 
 local function StopVoice(reason)
     finishAfterSceneClose = false;
@@ -32,6 +33,7 @@ local function StopVoice(reason)
     end
     speechPosted = false;
     currentDealVoice = false;
+    currentDealSlot = nil;
     UI.PlaySound("Stop_REMSELY_AlexanderII_Speech");
 end
 local function OnHideLeaderScreen()
@@ -39,6 +41,9 @@ local function OnHideLeaderScreen()
     elseif speechPosted then print("REMSELY voice: hide leader screen, standalone speech retained"); end
 end
 local function OnUserRequestClose() StopVoice("user request close"); end
+local function OnVoiceUserSkip()
+    if speechPosted then StopVoice("user advanced diplomacy"); end
+end
 local function OnShowLeaderScreen(leaderName)
     print("REMSELY voice: show leader screen " .. tostring(leaderName));
 end
@@ -115,13 +120,15 @@ local function OnStatement(fromPlayer, toPlayer, variants)
     local kind = DiplomacyManager.GetKeyName(variants.StatementType);
     local subtype = DiplomacyManager.GetKeyName(variants.StatementSubType) or "NONE";
     if kind == nil then return; end
-    -- Vanilla distinguishes evaluations from final answers. Suppress these
-    -- only while Alexander's scene is not displayed; visible evaluations keep
-    -- the same text-selection route regardless of which UI initiated them.
-    if not observingAlexander and kind == "MAKE_DEAL" and DealProposalAction ~= nil
-        and (variants.RespondingToDealAction == DealProposalAction.INSPECT
-            or variants.RespondingToDealAction == DealProposalAction.EQUALIZE) then
-        return;
+    -- The deal view automatically sends INSPECT when the player edits items.
+    -- Its reply updates the visible deal text, not a spoken statement in the
+    -- conversation view. Suppress it even while Alexander is visible.
+    if kind == "MAKE_DEAL" and DealProposalAction ~= nil then
+        if DealProposalAction.INSPECT ~= nil and variants.RespondingToDealAction == DealProposalAction.INSPECT then return; end
+        -- Equalizing is an explicit action, but a result outside a visible
+        -- leader scene is still not a conversation for the local player.
+        if not observingAlexander and DealProposalAction.EQUALIZE ~= nil
+            and variants.RespondingToDealAction == DealProposalAction.EQUALIZE then return; end
     end
     -- Match DiplomacyActionView.GetStatementMood, including reaction-time mood.
     local speaker = variants.FromPlayer or fromPlayer;
@@ -178,10 +185,15 @@ local function OnDealLine(playerID, textKey)
         if currentDealVoice then StopVoice("deal text changed"); end
         return;
     end
+    -- The deal view may publish the same initial line more than once while
+    -- opening. Do not restart the same speech until its view has closed or
+    -- its displayed text has changed.
+    if currentDealVoice and currentDealSlot == slot then return; end
     StopVoice("new deal line");
     UI.PlaySound("Play_REMSELY_AlexanderII_" .. slot);
     speechPosted = true;
     currentDealVoice = true;
+    currentDealSlot = slot;
     print("REMSELY voice: deal line " .. slot);
 end
 
@@ -211,6 +223,7 @@ local function Shutdown()
     LuaEvents.DiploScene_SceneClosed.Remove(OnSceneClosed);
     LuaEvents.REMSELY_DealLine.Remove(OnDealLine);
     LuaEvents.REMSELY_DealClosed.Remove(OnDealClosed);
+    LuaEvents.REMSELY_VoiceUserSkip.Remove(OnVoiceUserSkip);
 end
 
 Events.HideLeaderScreen.Add(OnHideLeaderScreen);
@@ -223,6 +236,7 @@ LuaEvents.DiploScene_LeaderSelect.Add(OnLeaderSelected);
 LuaEvents.DiploScene_SceneClosed.Add(OnSceneClosed);
 LuaEvents.REMSELY_DealLine.Add(OnDealLine);
 LuaEvents.REMSELY_DealClosed.Add(OnDealClosed);
+LuaEvents.REMSELY_VoiceUserSkip.Add(OnVoiceUserSkip);
 ContextPtr:SetShutdown(Shutdown);
 print("REMSELY Alexander II: voice prototype UI loaded");
 

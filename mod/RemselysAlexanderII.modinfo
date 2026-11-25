@@ -104,6 +104,18 @@
       </Properties>
       <File>UI/RemselysAlexanderII_Voice.xml</File>
     </AddUserInterfaces>
+    <AddUserInterfaces id="REMSELY_DealSubtitle_UI">
+      <Properties>
+        <Context>InGame</Context>
+      </Properties>
+      <File>UI/RemselysAlexanderII_DealSubtitle.xml</File>
+    </AddUserInterfaces>
+    <AddUserInterfaces id="REMSELY_VoiceInput_UI">
+      <Properties>
+        <Context>InGame</Context>
+      </Properties>
+      <File>UI/RemselysAlexanderII_VoiceInput.xml</File>
+    </AddUserInterfaces>
     <ImportFiles id="REMSELY_LoadingEraDurations_InGame">
       <Properties>
         <LoadOrder>20</LoadOrder>
@@ -171,6 +183,10 @@
     <File>Platforms/Windows/Audio/REMSELY_AlexanderII_Speech.xml</File>
     <File>UI/RemselysAlexanderII_Voice.xml</File>
     <File>UI/RemselysAlexanderII_Voice.lua</File>
+    <File>UI/RemselysAlexanderII_VoiceInput.xml</File>
+    <File>UI/RemselysAlexanderII_VoiceInput.lua</File>
+    <File>UI/RemselysAlexanderII_DealSubtitle.xml</File>
+    <File>UI/RemselysAlexanderII_DealSubtitle.lua</File>
     <File>UI/RemselysAlexanderII_LoadScreen.lua</File>
     <File>UI/LoadScreen.lua</File>
     <File>UI/RemselysAlexanderII_LoadingEraDurations.lua</File>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Optional, non-interactive fallback for a hidden deal-dialog bubble. -->
+<Context Name="RemselysAlexanderII_DealSubtitle" ID="RemselysAlexanderII_DealSubtitle" Size="parent,parent"
+         ConsumeAllMouse="0" ConsumeMouseButton="0" ConsumeMouseOver="0" ConsumeMouseWheel="0">
+  <Grid ID="SubtitleBox" Anchor="L,T" Size="400,90" Style="DiplomacyWordBubbleRightGrid" Hidden="1"
+        ConsumeAllMouse="0" ConsumeMouseButton="0" ConsumeMouseOver="0" ConsumeMouseWheel="0">
+    <Label ID="SubtitleText" Anchor="C,C" Style="BodyText18" WrapWidth="368"
+           ConsumeAllMouse="0" ConsumeMouseButton="0" ConsumeMouseOver="0" ConsumeMouseWheel="0"/>
+  </Grid>
+</Context>

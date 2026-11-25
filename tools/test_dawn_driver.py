@@ -36,7 +36,7 @@ def runtime(leader='LEADER_REMSELY_ALEXANDER_II', marker=None, is_resync=False, 
         Events = {HideLeaderScreen=Event(), ShowLeaderScreen=Event(), DiplomacyStatement=Event(),
             UserRequestClose=Event(), LeaderAnimationComplete=Event(), DiplomacySessionClosed=Event(),
             GameCoreEventPublishComplete=Event(), LoadScreenClose=Event()}
-        LuaEvents = {DiploScene_SceneOpened=Event(), DiploScene_SceneClosed=Event(), DiploScene_LeaderSelect=Event(), DiplomacyActionView_ShowIngameUI=Event(), REMSELY_DealLine=Event(), REMSELY_DealClosed=Event()}
+        LuaEvents = {DiploScene_SceneOpened=Event(), DiploScene_SceneClosed=Event(), DiploScene_LeaderSelect=Event(), DiplomacyActionView_ShowIngameUI=Event(), REMSELY_DealLine=Event(), REMSELY_DealClosed=Event(), REMSELY_VoiceUserSkip=Event()}
         now=0; sounds={}; switchLog={}
         language='Russian'
         function print(...) end

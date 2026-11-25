@@ -62,8 +62,8 @@ def test_only_local_statements_interrupt_and_open_does_not_stop():
         Events.HideLeaderScreen.handlers[1]()
         assert(calls[4] == 'Stop_REMSELY_AlexanderII_Speech')
 
-        -- The first-meeting invitation closes the view automatically. The
-        -- two close events must not stop the tail; explicit Escape still does.
+        -- Automatic close retains the first-meeting invitation. UserRequestClose
+        -- is a separate application-close event; it does not simulate Escape.
         currentText = 'LOC_DIPLO_FIRST_MEET_VISIT_RECIPIENT_LEADER_REMSELY_ALEXANDER_II_ANY'
         statement(1, 0, variant)
         assert(calls[6] == 'Play_REMSELY_AlexanderII_FIRST_MEET_VISIT_RECIPIENT')
@@ -72,6 +72,22 @@ def test_only_local_statements_interrupt_and_open_does_not_stop():
         assert(#calls == 6)
         Events.UserRequestClose.handlers[1]()
         assert(calls[7] == 'Stop_REMSELY_AlexanderII_Speech')
+
+        -- A user choice stops the old response before the next statement, and
+        -- therefore cannot stop the new speech posted by that statement.
+        statement(1, 0, variant)
+        local old = #calls
+        LuaEvents.REMSELY_VoiceUserSkip.handlers[1]()
+        assert(calls[old+1] == 'Stop_REMSELY_AlexanderII_Speech')
+        statement(1, 0, variant)
+        assert(calls[old+3] == 'Play_REMSELY_AlexanderII_FIRST_MEET_VISIT_RECIPIENT')
+        LuaEvents.REMSELY_VoiceUserSkip.handlers[1]()
+        local stopped = #calls
+        LuaEvents.REMSELY_VoiceUserSkip.handlers[1]()
+        assert(#calls == stopped, 'skip when no speech is active does nothing')
+
+        -- Reset the count expected by the subsequent trade assertions.
+        calls = {calls[1],calls[2],calls[3],calls[4],calls[5],calls[6],calls[7]}
 
         LuaEvents.DiploScene_SceneOpened.handlers[1](1)
         currentText = 'LOC_DIPLO_ACCEPT_MAKE_DEAL_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY'
@@ -108,7 +124,10 @@ def test_only_local_statements_interrupt_and_open_does_not_stop():
         local beforeVisible = #calls
         variant.RespondingToDealAction=DealProposalAction.INSPECT
         statement(1, 0, variant)
-        assert(calls[beforeVisible+2] == 'Play_REMSELY_AlexanderII_ACCEPT_MAKE_DEAL_FROM_AI')
+        assert(#calls == beforeVisible, 'automatic INSPECT is silent even in a visible scene')
+        variant.RespondingToDealAction=DealProposalAction.EQUALIZE
+        statement(1, 0, variant)
+        assert(calls[beforeVisible+2] == 'Play_REMSELY_AlexanderII_ACCEPT_MAKE_DEAL_FROM_AI', 'explicit equalize still receives a response')
         LuaEvents.DiploScene_LeaderSelect.handlers[1](2)
         local beforeOther = #calls
         statement(1, 0, variant)

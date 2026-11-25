@@ -24,6 +24,9 @@ local pendingKey = nil;
 local publishedKey = nil;
 local publishedPlayer = nil;
 local batchDepth = 0;
+local subtitlePlayer = nil;
+local subtitleText = nil;
+local subtitleRightEdge = nil;
 
 local function IsAlexander()
     local config = PlayerConfigurations[ms_OtherPlayerID];
@@ -32,13 +35,46 @@ local function IsAlexander()
         and config:GetLeaderTypeName() == "LEADER_REMSELY_ALEXANDER_II";
 end
 
-local function PublishDisplayedLine()
-    if batchDepth ~= 0 or ContextPtr:IsHidden() or not IsAlexander() then return; end
+local function ClearSubtitle()
+    if subtitlePlayer ~= nil then
+        LuaEvents.REMSELY_DealSubtitle(subtitlePlayer, "", nil, false);
+    end
+    subtitlePlayer, subtitleText, subtitleRightEdge = nil, nil, nil;
+end
+
+-- Some UI layouts deliberately hide the native leader speech bubble. Supply
+-- its actual resolved text to our optional non-interactive overlay only in
+-- that case. Any missing or unusual controls disable the overlay safely.
+local function PublishSubtitle()
+    if ContextPtr:IsHidden() or not IsAlexander() then ClearSubtitle(); return; end
+    local ok, text, rightEdge, hidden = pcall(function()
+        local bubble = Controls.LeaderDialogFade:GetParent();
+        local tradeArea = Controls.DealContentStack:GetParent();
+        local x = tradeArea:GetScreenOffset();
+        return Controls.LeaderDialog:GetText(), x + tradeArea:GetSizeX(), bubble:IsHidden();
+    end);
+    if not ok or hidden ~= true or type(text) ~= "string" or text == ""
+        or type(rightEdge) ~= "number" then
+        ClearSubtitle(); return;
+    end
+    if subtitlePlayer == ms_OtherPlayerID and subtitleText == text and subtitleRightEdge == rightEdge then return; end
+    if subtitlePlayer ~= nil and subtitlePlayer ~= ms_OtherPlayerID then ClearSubtitle(); end
+    subtitlePlayer, subtitleText, subtitleRightEdge = ms_OtherPlayerID, text, rightEdge;
+    LuaEvents.REMSELY_DealSubtitle(subtitlePlayer, subtitleText, subtitleRightEdge, true);
+end
+
+local function PublishDisplayedLine(allowSpeech)
+    if batchDepth ~= 0 then return; end
+    PublishSubtitle();
+    if ContextPtr:IsHidden() or not IsAlexander() then return; end
     local key = pendingKey or "";
     if publishedPlayer == ms_OtherPlayerID and publishedKey == key then return; end
     publishedPlayer = ms_OtherPlayerID;
     publishedKey = key;
-    LuaEvents.REMSELY_DealLine(ms_OtherPlayerID, key);
+    -- Status refreshes are automatic while the player edits quantities; they
+    -- update subtitles but should not start a new spoken sentence per click.
+    -- An empty notification stops a previously spoken line if its text changed.
+    LuaEvents.REMSELY_DealLine(ms_OtherPlayerID, allowSpeech and key or "");
 end
 
 function SetLeaderDialog(leaderDialog, leaderEffect)
@@ -56,7 +92,7 @@ function UpdateDealStatus(...)
     batchDepth = batchDepth + 1;
     previousUpdateDealStatus(...);
     batchDepth = batchDepth - 1;
-    PublishDisplayedLine();
+    PublishDisplayedLine(false);
 end
 
 function OnShow(...)
@@ -66,11 +102,12 @@ function OnShow(...)
     batchDepth = batchDepth + 1;
     previousOnShow(...);
     batchDepth = batchDepth - 1;
-    PublishDisplayedLine();
+    PublishDisplayedLine(true);
 end
 
 function OnHide(...)
     if publishedPlayer ~= nil then LuaEvents.REMSELY_DealClosed(publishedPlayer); end
+    ClearSubtitle();
     pendingKey = nil;
     publishedKey = nil;
     publishedPlayer = nil;
@@ -82,11 +119,12 @@ end
 -- the already-localized szText can replace it without a status update. Observe
 -- the same event after the vanilla handler to publish that change as well.
 local function OnDealUpdatedComplete()
-    PublishDisplayedLine();
+    PublishDisplayedLine(false);
 end
 LuaEvents.DiploPopup_DealUpdated.Add(OnDealUpdatedComplete);
 
 function OnShutdown(...)
+    ClearSubtitle();
     LuaEvents.DiploPopup_DealUpdated.Remove(OnDealUpdatedComplete);
     previousOnShutdown(...);
 end
