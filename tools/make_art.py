@@ -30,7 +30,7 @@ BACKGROUND_LOADING = f"{LEADER}_BACKGROUND"  # LoadingInfo.BackgroundImage
 SCENE_LAYERS = ["REMSELY_ALEXANDER_II_1"]
 ATLAS = "ICON_ATLAS_REMSELY_ALEXANDER_II"
 DEP_GUID = "9c1f5b0e-4a3d-4f7e-8b21-6d5a0c9e7f13"
-DEP_NAME = "Remsely's Alexander II"
+DEP_NAME = "Remsely's Russian Empire: Alexander II"
 
 
 def icon_name(size: int) -> str:

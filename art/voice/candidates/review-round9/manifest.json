@@ -1,0 +1,29 @@
+[
+  {
+    "file": "loading-ru-tempo-094.wav",
+    "tempo": 0.94,
+    "source": "art\\voice\\candidates\\review-round8\\loading-ru-unfiltered.wav",
+    "source_sha256": "cea7e470e8729f7eada8d1f640441787bfde1329eb595679ea143ff08902dd70",
+    "sha256": "147bd85be2660b6d372107a6e4dcc147c43a38592b0cb3e1bfa374bb68d157b8",
+    "processing": "ffmpeg atempo, pitch preserved, no filter; no manual pause",
+    "status": "awaiting user review"
+  },
+  {
+    "file": "loading-ru-tempo-088.wav",
+    "tempo": 0.88,
+    "source": "art\\voice\\candidates\\review-round8\\loading-ru-unfiltered.wav",
+    "source_sha256": "cea7e470e8729f7eada8d1f640441787bfde1329eb595679ea143ff08902dd70",
+    "sha256": "0fde5bdd7bd3b3e312aeb352ee6d57ea1d28583de8b8ce1b85deef45e640a7b4",
+    "processing": "ffmpeg atempo, pitch preserved, no filter; no manual pause",
+    "status": "awaiting user review"
+  },
+  {
+    "file": "loading-ru-tempo-091.wav",
+    "tempo": 0.91,
+    "source": "art\\voice\\candidates\\review-round8\\loading-ru-unfiltered.wav",
+    "source_sha256": "cea7e470e8729f7eada8d1f640441787bfde1329eb595679ea143ff08902dd70",
+    "sha256": "85c2b2a860919246d4366c8a0b0ea7cd011e7f25cc561fc0e277c256d0d32a55",
+    "processing": "ffmpeg atempo, pitch preserved, no filter; no manual pause",
+    "status": "awaiting user review"
+  }
+]

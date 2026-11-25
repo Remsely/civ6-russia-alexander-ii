@@ -1,0 +1,416 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<GameData>
+  <LocalizedText>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MODIFIER_WONDER_ADVOCATE_LAG" Language="ru_RU">
+      <Text>Я вижу, вы не стремитесь к новым чудесам. Что ж, это оставляет больше возможностей для России.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_SYMPATHIZER_GOLDEN_AGE" Language="ru_RU">
+      <Text>Ваша держава ныне процветает. Не всякое благополучие бывает прочным.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_CONVERTING_MY_CITIES_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мой народ не рад вашим проповедникам. Прошу вас отозвать их немедленно.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_GREAT_WHITE_FLEET" Language="ru_RU">
+      <Text>Сильный флот укрепляет могущество державы. Советую вам уделить больше внимания развитию морских сил.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MAKE_DEAL_AI_ACCEPT_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Я принимаю ваши условия. Пусть это соглашение послужит нашим державам.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MAKE_DEAL_AI_REFUSE_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Предложенные условия не отвечают интересам России.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_MAKE_DEAL_AI_ADJUST_DEAL_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Полагаю, эти условия нас устроят.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_DELEGATION_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Замечательно!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_EMBASSY_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>О, счастливый день!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_EMBASSY_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мы с радостью позволяем вам учредить посольство в нашей столице.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_MAKE_ALLIANCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Замечательно.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_MAKE_PEACE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Война закончилась.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_OPEN_BORDERS_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Замечательно!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_AI_ACCEPT_DEMAND_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Соглашусь.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_AI_REFUSE_DEMAND_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Пустые требования ни к чему не приведут.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_EMBASSY_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Можем ли мы открыть посольство в вашей столице?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_HUMAN_ACCEPT_DEMAND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Вы поступили мудро, приняв мои требования.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_HUMAN_REFUSE_DEMAND_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мне придется прибегнуть к другим мерам, чтобы удовлетворить свои требования!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_DELEGATION_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Очень жаль.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_EMBASSY_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Очень жаль.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_EMBASSY_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Благодарю за предложение, но я пока не готов принять ваше посольство.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_MAKE_ALLIANCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>К сожалению, сейчас наш союз невозможен.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_MAKE_PEACE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мне жаль, что мы не смогли договориться. Боевые действия продолжатся.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_OPEN_BORDERS_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Понимаю. Быть может, мы обсудим открытие ваших границ в другой раз.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_DONT_SETTLE_NEAR_ME_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Ваш народ селится слишком близко! Найдите себе землю где-нибудь еще.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_DONT_SETTLE_NEAR_ME_AI_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Моему народу нужна земля. Кто вы такие, чтобы обделять нас?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_DONT_SETTLE_NEAR_ME_AI_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мои искренние извинения! Мы не заметили, что ваш город так близко.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_DONT_SETTLE_NEAR_ME_HUMAN_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Если вы не уважаете наши границы, то и мы не станем уважать ваши.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_DONT_SETTLE_NEAR_ME_HUMAN_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Спасибо.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_CONVERTING_MY_CITIES_AI_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Я не стану отзывать наших проповедников. Их дело слишком важно для нас.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_CONVERTING_MY_CITIES_AI_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Я выполню ваши пожелания, хоть и печально видеть, как глубоко вы заблуждаетесь.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_CONVERTING_MY_CITIES_HUMAN_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Будьте уверены, это не останется безнаказанным. Если не сейчас, то позже.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_CONVERTING_MY_CITIES_HUMAN_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Спасибо.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_DIGGING_UP_ARTIFACTS_AI_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Тайны прошлого – достояние всех. Вы не вправе претендовать на них!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_DIGGING_UP_ARTIFACTS_AI_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Ваше беспокойство мне понятно. Я распоряжусь прекратить раскопки.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_DIGGING_UP_ARTIFACTS_HUMAN_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Если вы не уважаете наши границы, то и мы не станем уважать ваши.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_DIGGING_UP_ARTIFACTS_HUMAN_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Спасибо.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_DIGGING_UP_ARTIFACTS_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мы не позволим расхищать наше культурное достояние. Вам пора убраться с нашей земли!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_SPYING_ON_ME_AI_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Ха! С чего вы решили, что я сделаю такое одолжение?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_SPYING_ON_ME_AI_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Да, вы правы. Очень сожалею, что пришлось прибегнуть к подобным методам. Это больше не повторится.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_SPYING_ON_ME_HUMAN_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Будьте уверены: я не прощу вам этого оскорбления!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_SPYING_ON_ME_HUMAN_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Спасибо.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_STOP_SPYING_ON_ME_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мне следовало знать, что вы падете так низко, что начнете шпионить за нами. Отзовите своих шпионов сейчас же!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_TOO_MANY_TROOPS_NEAR_ME_AI_RESPONSE_NEGATIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Я люблю выводить войска на марш. Пусть все видят мое могущество. Понимаете, к чему я клоню?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_TOO_MANY_TROOPS_NEAR_ME_AI_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мои войска не угрожают вам. Я распоряжусь отвести их от ваших границ.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_TOO_MANY_TROOPS_NEAR_ME_HUMAN_RESPONSE_POSITIVE_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Спасибо.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_CLEARS_BARBARIAN_CAMPS" Language="ru_RU">
+      <Text>Варвары досаждают всем нам. Благодарю за вашу помощь!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_ENJOYS_WAR" Language="ru_RU">
+      <Text>Лишь в сражении раскрывается истинная душа цивилизации. Пусть победит сильнейший.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_ENVIRONMENT" Language="ru_RU">
+      <Text>Нам дарована лишь одна земля. Приятно видеть, что кто-то еще, помимо меня, считается с этим.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_EXPANSIONIST" Language="ru_RU">
+      <Text>Лучше не захватывайте слишком много земель. Все равно вам не хватит способностей, чтобы ими управлять.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_EXPLOITATION" Language="ru_RU">
+      <Text>Вы умело используете ресурсы своей державы. Это заслуживает уважения.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_FLAT_EARTHER" Language="ru_RU">
+      <Text>Соглашусь. На Земле достаточно забот, чтобы пока не стремиться к звездам.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_GOSSIP_POSITIVE" Language="ru_RU">
+      <Text>Это хорошо, что наши отношения скреплены знанием секретов друг друга.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_GREAT_WHITE_FLEET" Language="ru_RU">
+      <Text>Тот, кто создаст великий флот, будет диктовать свою волю всему миру. Мы – истинные повелители морей.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_AIRPOWER" Language="ru_RU">
+      <Text>Нужно сказать, мощь ваших ВВС внушает уважение. Неплохо.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_CULTURE" Language="ru_RU">
+      <Text>Ваш народ развил уникальнейшую культуру. Я под впечатлением.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_FAITH" Language="ru_RU">
+      <Text>Мир вам и вашему народу. Приятно видеть кого-то столь же набожного, как и я.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_HAPPINESS" Language="ru_RU">
+      <Text>Молва говорит, что ваши подданные довольны своим положением. Забота о народе достойна уважения.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_INCOME" Language="ru_RU">
+      <Text>Ваша сокровищница регулярно пополняется. Приятно располагать большими доходами, верно?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_INDUSTRY" Language="ru_RU">
+      <Text>От всей души поздравляю вас с таким высоким уровнем производства.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_NUKE_LOVE" Language="ru_RU">
+      <Text>Я вижу, что вы не пренебрегаете ядерным оружием. Эта мощь способна изменить судьбу держав.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_PILLAGE" Language="ru_RU">
+      <Text>Разоряя владения противника, вы лишаете его средств вести войну. Такой расчет нельзя не признать.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_POPULATION" Language="ru_RU">
+      <Text>Количество людей, населяющих вашу империю, воистину производит впечатление.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_PROTECT_CITY_STATES" Language="ru_RU">
+      <Text>Защищая право города-государства на существование, вы подаете пример всему миру.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_SCIENCE" Language="ru_RU">
+      <Text>Отдаю дань уважения вашим научным исследованиям.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_STANDING_ARMY" Language="ru_RU">
+      <Text>Сила вашей армии не может остаться незамеченной. Надеюсь, она послужит делу мира.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_INTOLERANT_SAME_RELIGION" Language="ru_RU">
+      <Text>Сколь счастлива страна, правитель которой исповедует истинную веру и заботится о спасении своих подданных!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_DIPLOVP" Language="ru_RU">
+      <Text>Неограниченную свободу несут лишь те цивилизации, что преследуют свои собственные интересы, не правда ли?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_EXPLORATION" Language="ru_RU">
+      <Text>Вы не спешите исследовать далекие страны. Это оставляет больше возможностей для наших экспедиций.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_FAVOR" Language="ru_RU">
+      <Text>Вы оставляете России больше возможностей для влияния на мировой арене. Я ценю такую предусмотрительность.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_TOURISM" Language="ru_RU">
+      <Text>Мы предлагаем вашим гражданам путешествия высочайшего класса. Похоже, в вашей державе ничего подобного нет.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MED_PROTECT_CITY_STATES" Language="ru_RU">
+      <Text>Сильные должны защищать слабых. Радостно видеть, что вы с этим согласны.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MODIFIER_GREAT_PERSON_ADVOCATE_LAG" Language="ru_RU">
+      <Text>Радостно слышать, что великие умы мира предпочитают нашу империю вашей.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MODIFIER_NOT_COMPETING_MINORS" Language="ru_RU">
+      <Text>Вы истинный друг малых цивилизаций. Мы это очень ценим.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MONEY_GRUBBER" Language="ru_RU">
+      <Text>Ваша сокровищница регулярно пополняется. Постоянный значительный доход не может не радовать, верно?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_PARANOID" Language="ru_RU">
+      <Text>Мне приятно видеть, что вы не представляете для нас опасности.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_PROTECTS_CITY_STATES" Language="ru_RU">
+      <Text>Вы заботитесь о тех, кто не в состоянии позаботиться о себе. Это достойно восхищения.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_SAME_GOVERNMENT" Language="ru_RU">
+      <Text>Я вижу в вас родственную душу и восхищаюсь вашими государственными решениями.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_SYCOPHANT_GOLDEN_AGE" Language="ru_RU">
+      <Text>Наши поэты и философы считают вашу державу светочем для всего мира, и я не могу с ними не согласиться.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_SYMPATHIZER_DARK_AGE" Language="ru_RU">
+      <Text>Наша держава восхищена вашей стойкостью перед лицом нынешних напастей.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_TURTLER" Language="ru_RU">
+      <Text>Крепкие заборы — добрые соседи. Хочешь мира — готовься к войне. Мне нравится, что вы хорошо защищаете вашу страну.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_ZEALOT" Language="ru_RU">
+      <Text>Мы уже сделали очень многое, но меня беспокоит, что в мире еще остались люди, которые не стремятся к спасению.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_ATTACKS_CITY_STATES" Language="ru_RU">
+      <Text>Унижать слабых - недостойное поведение.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_DIFFERENT_GOVERNMENT" Language="ru_RU">
+      <Text>Я не могу одобрить ваши принципы правления. Наши представления об устройстве государства слишком различны.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_ENVIRONMENT" Language="ru_RU">
+      <Text>Разрушая природу, вы подвергаете опасности не только свою державу, но и весь мир.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_EXPANSIONIST" Language="ru_RU">
+      <Text>Зачем вам эта земля, если вашей стране недостает сил и порядка?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_EXPLOITATION" Language="ru_RU">
+      <Text>Ваши владения богаты, но вы не используете их возможности. Разве не следует позаботиться об их развитии?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_FLAT_EARTHER" Language="ru_RU">
+      <Text>Как вы можете думать о космосе, когда на Земле столько проблем, требующих вашего самого пристального внимания?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_GOSSIP_NEGATIVE" Language="ru_RU">
+      <Text>Мы знаем слишком мало о намерениях вашей державы. Подобная скрытность едва ли способствует доверию.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_ATTACK_CITY_STATES" Language="ru_RU">
+      <Text>Только подлецы нападают на слабых. Вы для нас бесполезны.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_DIPLOVP" Language="ru_RU">
+      <Text>По какому праву вы навязываете свою политику нашей суверенной державе? Я не буду подчиняться чужой воле.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_EXPLORATION" Language="ru_RU">
+      <Text>Ваши исследователи достигли далеких рубежей. Россия не намерена уступать первенство в познании мира.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_FAVOR" Language="ru_RU">
+      <Text>Я хорошо вижу, что скрывается за вашими льстивыми речами и подачками. Вы стремитесь к власти над всем миром и хотите, чтобы остальные страны добровольно с этим согласились.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_HIGH_TOURISM" Language="ru_RU">
+      <Text>Ваша страна привлекает множество гостей. Но и России есть что показать миру, и мы не намерены уступать вам в этом.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_IGNORES_BARBARIAN_CAMPS" Language="ru_RU">
+      <Text>Как вы подпускаете злобных варваров настолько близко к своим стенам?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_INTOLERANT_ENCROACHING_RELIGION" Language="ru_RU">
+      <Text>Вера моего народа заслуживает уважения. Ваши попытки распространять иное учение не останутся без ответа.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_AIRPOWER" Language="ru_RU">
+      <Text>Нет славы в том, чтобы твердо стоять на земле. Задумайтесь о создании воздушных сил.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_CULTURE" Language="ru_RU">
+      <Text>Вы не вкладываете силы в развитие культуры. Какая память останется от вашего народа?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_FAITH" Language="ru_RU">
+      <Text>Что вами движет? Нельзя же не верить ни во что. Обратите свой народ к свету!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_HAPPINESS" Language="ru_RU">
+      <Text>Вам следует задуматься о благе ваших подданных. Похоже, они не слишком счастливы под вашим правлением.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_INCOME" Language="ru_RU">
+      <Text>Ваша империя скатывается в нищету. Как можно жить с такой кучей долгов?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_INDUSTRY" Language="ru_RU">
+      <Text>Ваш народ ленив и бесполезен. Цивилизация, которая ничего не производит, скоро будет забыта.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_NUKE_LOVE" Language="ru_RU">
+      <Text>За ядерным оружием будущее. Как вы можете пренебрегать силой, способной определить судьбу державы?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_PILLAGE" Language="ru_RU">
+      <Text>На вас идут войной, а вы даже не разоряете вражескую территорию? Это трусость или избыток вежливости?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_POPULATION" Language="ru_RU">
+      <Text>В вашей империи так мало людей. Должно быть, вам трудно даются достижения.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_SCIENCE" Language="ru_RU">
+      <Text>Вы уделяете слишком мало внимания научным изысканиям. Как вашему народу угнаться за другими?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_LOW_STANDING_ARMY" Language="ru_RU">
+      <Text>Ваша армия немногочисленна. Надеюсь, вы не оставите свою державу без надежной защиты.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MED_ATACK_CITY_STATES" Language="ru_RU">
+      <Text>Считайте это предупреждением. Не нападайте больше на малые государства.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MODIFIER_COMPETING_MINORS" Language="ru_RU">
+      <Text>Вы вступаете на опасный путь, поддерживая отношения с городами-государствами. Оставьте их нам.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MODIFIER_GREAT_PERSON_ADVOCATE_LEAD" Language="ru_RU">
+      <Text>Мы тоже хотели пригласить этих выдающихся людей. Ваш успех в этом соперничестве вызывает мое беспокойство.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MODIFIER_WONDER_ADVOCATE_LEAD" Language="ru_RU">
+      <Text>Как вы не понимаете, что чудеса должны сооружать исключительно мы?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_MONEY_GRUBBER" Language="ru_RU">
+      <Text>Ваша империя скатывается в нищету. Как можно жить с такой кучей долгов?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_PARANOID" Language="ru_RU">
+      <Text>Ваши города близки к российским границам, а армия внушительна. Я буду внимательно следить за нашей безопасностью.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_SYCOPHANT_DARK_AGE" Language="ru_RU">
+      <Text>Стремитесь стать примером для всего мира! Ведите свой народ к славе – и он будет обожать вас.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_TURTLER" Language="ru_RU">
+      <Text>Война ради новых владений приносит немало бед. Берегите свой народ и укрепляйте границы.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_AGENDA_ZEALOT" Language="ru_RU">
+      <Text>Я намереваюсь спасти вашу душу, хотите вы того или нет!</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_RENEW_ALLIANCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Наш союз принес немало пользы нашим народам. Мы предлагаем продлить его.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_RENEW_ALLIANCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мы рады, что вы согласились.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_RENEW_ALLIANCE_FROM_AI_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Мне жаль, что вы не приняли наше предложение. Надеюсь, наши державы сохранят добрые отношения.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_ACCEPT_RENEW_ALLIANCE_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>Отличная мысль. Мы согласны.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_REJECT_RENEW_ALLIANCE_FROM_HUMAN_LEADER_REMSELY_ALEXANDER_II_ANY" Language="ru_RU">
+      <Text>В данный момент сохранение существующего положения не входит в наши намерения.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_KUDO_LEADER_REMSELY_ALEXANDER_II_REASON_STANDARD_DIPLOMATIC_SAME_SECRET_SOCIETY" Language="ru_RU">
+      <Text>Я вижу ваши тайные знаки. Радостно встретить родственную душу.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_WARNING_LEADER_REMSELY_ALEXANDER_II_REASON_STANDARD_DIPLOMATIC_DIFFERENT_SECRET_SOCIETY" Language="ru_RU">
+      <Text>Я вижу на вас печать зла. Истинную суть вашего общества не скроешь от знающих.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_LEADER_TRADE_REFUSED_NEUTRAL_1_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Очень жаль.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_LEADER_TRADE_REFUSED_FRIENDLY_1_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Быть может, в будущем мы придем к приемлемым условиям?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_LEADER_TRADE_REFUSED_AGGRESSIVE_2_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Вы отвергаете эти условия. Что ж, Россия найдет иной способ защитить свои интересы.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLOMACY_DEAL_INVALID_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Я не соглашусь на это ни при каких условиях.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_INTRO_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Что вы желаете обсудить?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_INTRO_AI_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Что вы об этом думаете?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_LEADER_DEMAND_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Думаю, нужно поторговаться.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_LEADER_EQUALIZE_FAILED_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Эти условия неприемлемы. Я не могу принять такую сделку.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_LEADER_EQUALIZE_SUCCEEDED_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Согласны ли вы на такие условия?</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_LEADER_GIFT_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Я приму этот дар.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_LEADER_GIFT_EQUALIZE_FAILED_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Мне нечего предложить в ответ.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_UNACCEPTABLE_DEAL_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Я не могу этого принять ни при каких обстоятельствах.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEAL_UNFAIR_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Это нечестная сделка. Она неприемлема.</Text>
+    </Replace>
+    <Replace Tag="LOC_DIPLO_DEMAND_INTRO_REMSELY_ALEXANDER_II" Language="ru_RU">
+      <Text>Мои требования следует принять.</Text>
+    </Replace>
+  </LocalizedText>
+</GameData>

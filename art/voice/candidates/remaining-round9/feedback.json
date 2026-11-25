@@ -1,0 +1,24 @@
+{
+  "16": {
+    "feedback": "По голосу варианты 3 и 4 лучшие, но вопросительной интонации почти нет. Это предпочтение, не утверждение полной записи.",
+    "preferred_voice": [
+      {
+        "path": "art/voice/candidates/remaining-round8/round8-016-03-clean.wav",
+        "sha256": "3a96cb4f4c37b1e2bcf8e612efa810da0cc8d7581838d52393c24bba4b9a9cf7"
+      },
+      {
+        "path": "art/voice/candidates/remaining-round8/round8-016-04-clean.wav",
+        "sha256": "7095e77c060b2e57a8c47d254feb86c2a4381558fa5132e29d8b668be75db4a9"
+      }
+    ],
+    "selection": {
+      "variant": 4,
+      "path": "art/voice/candidates/remaining-round9/round9-016-04-clean.wav",
+      "sha256": "f0da0e570faaab476e4c290b3c4d559597dfbabe9857b3670623571d460d8089",
+      "text": "Можем ли мы открыть посольство в вашей столице?",
+      "seed": 886,
+      "steps": 32,
+      "status": "выбран пользователем для дальнейшей работы; в игру пока не подключен"
+    }
+  }
+}

@@ -1,0 +1,737 @@
+{
+  "audio": "art\\voice\\candidates\\loading-en-short-v1\\loading-en-seed-311-tempo-090.wav",
+  "audio_sha256": "062a8b2f06f1f7618762a9c0fa78f6d906fcd41d5ba04b66d959f7e8ddc1a032",
+  "seconds": 42.486125,
+  "expected_text": "Welcome to the Winter Palace, Emperor Alexander. From the shores of the Baltic to the Pacific Ocean, your realm stretches far and wide. Yet Russia's greatness is measured in more than its borders: its future rests with those who till its soil, build its cities, and guard its frontiers. The serfs await freedom, the provinces a voice in their own affairs, and the army reform. Free your people, entrust the zemstvos with the care of their communities, and open the way to education and justice. Let reform strengthen the state, and peace give your subjects time to build.",
+  "recognized_text": "Welcome to the Winter Palace, Emperor Alexander. From the shores of the Baltic to the Pacific Ocean, your realm stretches far and wide. Yet Russia's greatness is measured in more than its borders. Its future rests with those who till its soil, build its cities and guard its frontiers. The serfs await freedom. The provinces a voice in their own affairs and the army reform. Free your people, entrust the Zemstvost with the care of their communities and open the way to education and justice. Let reform strengthen the state and peace give your subjects time to build.",
+  "beginning_matches": true,
+  "expected_first_words": [
+    "welcome",
+    "to",
+    "the",
+    "winter",
+    "palace"
+  ],
+  "recognized_first_words": [
+    "welcome",
+    "to",
+    "the",
+    "winter",
+    "palace"
+  ],
+  "expected_last_words": [
+    "your",
+    "subjects",
+    "time",
+    "to",
+    "build"
+  ],
+  "recognized_last_words": [
+    "your",
+    "subjects",
+    "time",
+    "to",
+    "build"
+  ],
+  "ending_matches": true,
+  "word_similarity": 0.98989898989899,
+  "unexpected_latin_words": [],
+  "unexpected_foreign_words": [],
+  "content_matches": true,
+  "language": "en",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 3.04,
+      "text": "Welcome to the Winter Palace, Emperor Alexander.",
+      "words": [
+        {
+          "start": 0.0,
+          "end": 0.34,
+          "word": "Welcome",
+          "probability": 0.8001477122306824
+        },
+        {
+          "start": 0.34,
+          "end": 0.72,
+          "word": "to",
+          "probability": 0.9944018721580505
+        },
+        {
+          "start": 0.72,
+          "end": 0.86,
+          "word": "the",
+          "probability": 0.9739872217178345
+        },
+        {
+          "start": 0.86,
+          "end": 1.22,
+          "word": "Winter",
+          "probability": 0.859961748123169
+        },
+        {
+          "start": 1.22,
+          "end": 1.7,
+          "word": "Palace,",
+          "probability": 0.9714956879615784
+        },
+        {
+          "start": 2.06,
+          "end": 2.44,
+          "word": "Emperor",
+          "probability": 0.9713946580886841
+        },
+        {
+          "start": 2.44,
+          "end": 3.04,
+          "word": "Alexander.",
+          "probability": 0.9943918585777283
+        }
+      ]
+    },
+    {
+      "start": 4.06,
+      "end": 7.12,
+      "text": "From the shores of the Baltic to the Pacific Ocean,",
+      "words": [
+        {
+          "start": 4.06,
+          "end": 4.34,
+          "word": "From",
+          "probability": 0.9660763144493103
+        },
+        {
+          "start": 4.34,
+          "end": 4.52,
+          "word": "the",
+          "probability": 0.9953299760818481
+        },
+        {
+          "start": 4.52,
+          "end": 4.86,
+          "word": "shores",
+          "probability": 0.9992778897285461
+        },
+        {
+          "start": 4.86,
+          "end": 5.22,
+          "word": "of",
+          "probability": 0.9985532164573669
+        },
+        {
+          "start": 5.22,
+          "end": 5.34,
+          "word": "the",
+          "probability": 0.9939572811126709
+        },
+        {
+          "start": 5.34,
+          "end": 5.88,
+          "word": "Baltic",
+          "probability": 0.9986355006694794
+        },
+        {
+          "start": 5.88,
+          "end": 6.08,
+          "word": "to",
+          "probability": 0.9666073322296143
+        },
+        {
+          "start": 6.08,
+          "end": 6.28,
+          "word": "the",
+          "probability": 0.9941745400428772
+        },
+        {
+          "start": 6.28,
+          "end": 6.62,
+          "word": "Pacific",
+          "probability": 0.9913458228111267
+        },
+        {
+          "start": 6.62,
+          "end": 7.12,
+          "word": "Ocean,",
+          "probability": 0.9404688477516174
+        }
+      ]
+    },
+    {
+      "start": 7.62,
+      "end": 10.18,
+      "text": "your realm stretches far and wide.",
+      "words": [
+        {
+          "start": 7.62,
+          "end": 7.8,
+          "word": "your",
+          "probability": 0.9764332175254822
+        },
+        {
+          "start": 7.8,
+          "end": 8.34,
+          "word": "realm",
+          "probability": 0.966398298740387
+        },
+        {
+          "start": 8.34,
+          "end": 8.86,
+          "word": "stretches",
+          "probability": 0.9951613545417786
+        },
+        {
+          "start": 8.86,
+          "end": 9.5,
+          "word": "far",
+          "probability": 0.9986988306045532
+        },
+        {
+          "start": 9.5,
+          "end": 9.8,
+          "word": "and",
+          "probability": 0.9985735416412354
+        },
+        {
+          "start": 9.8,
+          "end": 10.18,
+          "word": "wide.",
+          "probability": 0.9996172189712524
+        }
+      ]
+    },
+    {
+      "start": 10.92,
+      "end": 14.52,
+      "text": "Yet Russia's greatness is measured in more than its borders.",
+      "words": [
+        {
+          "start": 10.92,
+          "end": 11.16,
+          "word": "Yet",
+          "probability": 0.9892753958702087
+        },
+        {
+          "start": 11.16,
+          "end": 11.78,
+          "word": "Russia's",
+          "probability": 0.9701103866100311
+        },
+        {
+          "start": 11.78,
+          "end": 12.26,
+          "word": "greatness",
+          "probability": 0.9906994700431824
+        },
+        {
+          "start": 12.26,
+          "end": 12.64,
+          "word": "is",
+          "probability": 0.9973857998847961
+        },
+        {
+          "start": 12.64,
+          "end": 13.12,
+          "word": "measured",
+          "probability": 0.999408483505249
+        },
+        {
+          "start": 13.12,
+          "end": 13.4,
+          "word": "in",
+          "probability": 0.9981995820999146
+        },
+        {
+          "start": 13.4,
+          "end": 13.74,
+          "word": "more",
+          "probability": 0.9988773465156555
+        },
+        {
+          "start": 13.74,
+          "end": 13.96,
+          "word": "than",
+          "probability": 0.9978280663490295
+        },
+        {
+          "start": 13.96,
+          "end": 14.12,
+          "word": "its",
+          "probability": 0.9828137159347534
+        },
+        {
+          "start": 14.12,
+          "end": 14.52,
+          "word": "borders.",
+          "probability": 0.9986993074417114
+        }
+      ]
+    },
+    {
+      "start": 15.22,
+      "end": 18.26,
+      "text": "Its future rests with those who till its soil,",
+      "words": [
+        {
+          "start": 15.22,
+          "end": 15.38,
+          "word": "Its",
+          "probability": 0.9177290797233582
+        },
+        {
+          "start": 15.38,
+          "end": 15.82,
+          "word": "future",
+          "probability": 0.9988055229187012
+        },
+        {
+          "start": 15.82,
+          "end": 16.38,
+          "word": "rests",
+          "probability": 0.9984252452850342
+        },
+        {
+          "start": 16.38,
+          "end": 16.72,
+          "word": "with",
+          "probability": 0.9985644221305847
+        },
+        {
+          "start": 16.72,
+          "end": 17.08,
+          "word": "those",
+          "probability": 0.9993343949317932
+        },
+        {
+          "start": 17.08,
+          "end": 17.38,
+          "word": "who",
+          "probability": 0.9947686195373535
+        },
+        {
+          "start": 17.38,
+          "end": 17.62,
+          "word": "till",
+          "probability": 0.9617919325828552
+        },
+        {
+          "start": 17.62,
+          "end": 17.82,
+          "word": "its",
+          "probability": 0.9686180353164673
+        },
+        {
+          "start": 17.82,
+          "end": 18.26,
+          "word": "soil,",
+          "probability": 0.9961977601051331
+        }
+      ]
+    },
+    {
+      "start": 18.72,
+      "end": 21.32,
+      "text": "build its cities and guard its frontiers.",
+      "words": [
+        {
+          "start": 18.72,
+          "end": 19.04,
+          "word": "build",
+          "probability": 0.9968473315238953
+        },
+        {
+          "start": 19.04,
+          "end": 19.3,
+          "word": "its",
+          "probability": 0.9954105019569397
+        },
+        {
+          "start": 19.3,
+          "end": 19.66,
+          "word": "cities",
+          "probability": 0.9985153079032898
+        },
+        {
+          "start": 19.66,
+          "end": 20.04,
+          "word": "and",
+          "probability": 0.6856489181518555
+        },
+        {
+          "start": 20.04,
+          "end": 20.4,
+          "word": "guard",
+          "probability": 0.9980664849281311
+        },
+        {
+          "start": 20.4,
+          "end": 20.68,
+          "word": "its",
+          "probability": 0.996256947517395
+        },
+        {
+          "start": 20.68,
+          "end": 21.32,
+          "word": "frontiers.",
+          "probability": 0.9949981272220612
+        }
+      ]
+    },
+    {
+      "start": 21.96,
+      "end": 23.54,
+      "text": "The serfs await freedom.",
+      "words": [
+        {
+          "start": 21.96,
+          "end": 22.1,
+          "word": "The",
+          "probability": 0.9902132153511047
+        },
+        {
+          "start": 22.1,
+          "end": 22.66,
+          "word": "serfs",
+          "probability": 0.9063644111156464
+        },
+        {
+          "start": 22.66,
+          "end": 22.92,
+          "word": "await",
+          "probability": 0.9860673546791077
+        },
+        {
+          "start": 22.92,
+          "end": 23.54,
+          "word": "freedom.",
+          "probability": 0.9966006875038147
+        }
+      ]
+    },
+    {
+      "start": 24.06,
+      "end": 26.3,
+      "text": "The provinces a voice in their own affairs",
+      "words": [
+        {
+          "start": 24.06,
+          "end": 24.2,
+          "word": "The",
+          "probability": 0.9970811009407043
+        },
+        {
+          "start": 24.2,
+          "end": 24.68,
+          "word": "provinces",
+          "probability": 0.9803285002708435
+        },
+        {
+          "start": 24.68,
+          "end": 24.98,
+          "word": "a",
+          "probability": 0.6004621982574463
+        },
+        {
+          "start": 24.98,
+          "end": 25.3,
+          "word": "voice",
+          "probability": 0.9632685780525208
+        },
+        {
+          "start": 25.3,
+          "end": 25.54,
+          "word": "in",
+          "probability": 0.9979804158210754
+        },
+        {
+          "start": 25.54,
+          "end": 25.72,
+          "word": "their",
+          "probability": 0.998289167881012
+        },
+        {
+          "start": 25.72,
+          "end": 25.92,
+          "word": "own",
+          "probability": 0.99809330701828
+        },
+        {
+          "start": 25.92,
+          "end": 26.3,
+          "word": "affairs",
+          "probability": 0.9995193481445312
+        }
+      ]
+    },
+    {
+      "start": 26.3,
+      "end": 27.72,
+      "text": "and the army reform.",
+      "words": [
+        {
+          "start": 26.3,
+          "end": 26.68,
+          "word": "and",
+          "probability": 0.8827381730079651
+        },
+        {
+          "start": 26.68,
+          "end": 26.84,
+          "word": "the",
+          "probability": 0.9882418513298035
+        },
+        {
+          "start": 26.84,
+          "end": 27.18,
+          "word": "army",
+          "probability": 0.8978596925735474
+        },
+        {
+          "start": 27.18,
+          "end": 27.72,
+          "word": "reform.",
+          "probability": 0.9946587681770325
+        }
+      ]
+    },
+    {
+      "start": 28.279999999999998,
+      "end": 31.32,
+      "text": "Free your people, entrust the Zemstvost",
+      "words": [
+        {
+          "start": 28.279999999999998,
+          "end": 28.66,
+          "word": "Free",
+          "probability": 0.47633835673332214
+        },
+        {
+          "start": 28.66,
+          "end": 28.98,
+          "word": "your",
+          "probability": 0.9711530208587646
+        },
+        {
+          "start": 28.98,
+          "end": 29.42,
+          "word": "people,",
+          "probability": 0.9958832263946533
+        },
+        {
+          "start": 29.9,
+          "end": 30.42,
+          "word": "entrust",
+          "probability": 0.9765848517417908
+        },
+        {
+          "start": 30.42,
+          "end": 30.62,
+          "word": "the",
+          "probability": 0.9658483266830444
+        },
+        {
+          "start": 30.62,
+          "end": 31.32,
+          "word": "Zemstvost",
+          "probability": 0.717419558763504
+        }
+      ]
+    },
+    {
+      "start": 31.32,
+      "end": 33.04,
+      "text": "with the care of their communities",
+      "words": [
+        {
+          "start": 31.32,
+          "end": 31.54,
+          "word": "with",
+          "probability": 0.8773636221885681
+        },
+        {
+          "start": 31.54,
+          "end": 31.68,
+          "word": "the",
+          "probability": 0.9864262342453003
+        },
+        {
+          "start": 31.68,
+          "end": 32.02,
+          "word": "care",
+          "probability": 0.9986874461174011
+        },
+        {
+          "start": 32.02,
+          "end": 32.18,
+          "word": "of",
+          "probability": 0.9985876083374023
+        },
+        {
+          "start": 32.18,
+          "end": 32.36,
+          "word": "their",
+          "probability": 0.9957797527313232
+        },
+        {
+          "start": 32.36,
+          "end": 33.04,
+          "word": "communities",
+          "probability": 0.9966126084327698
+        }
+      ]
+    },
+    {
+      "start": 33.04,
+      "end": 36.2,
+      "text": "and open the way to education and justice.",
+      "words": [
+        {
+          "start": 33.04,
+          "end": 33.6,
+          "word": "and",
+          "probability": 0.5103850364685059
+        },
+        {
+          "start": 33.6,
+          "end": 33.96,
+          "word": "open",
+          "probability": 0.9959098100662231
+        },
+        {
+          "start": 33.96,
+          "end": 34.2,
+          "word": "the",
+          "probability": 0.9941483736038208
+        },
+        {
+          "start": 34.2,
+          "end": 34.44,
+          "word": "way",
+          "probability": 0.9969898462295532
+        },
+        {
+          "start": 34.44,
+          "end": 34.66,
+          "word": "to",
+          "probability": 0.9979392886161804
+        },
+        {
+          "start": 34.66,
+          "end": 35.42,
+          "word": "education",
+          "probability": 0.9926823973655701
+        },
+        {
+          "start": 35.42,
+          "end": 35.68,
+          "word": "and",
+          "probability": 0.9977816939353943
+        },
+        {
+          "start": 35.68,
+          "end": 36.2,
+          "word": "justice.",
+          "probability": 0.9981451034545898
+        }
+      ]
+    },
+    {
+      "start": 36.88,
+      "end": 39.02,
+      "text": "Let reform strengthen the state",
+      "words": [
+        {
+          "start": 36.88,
+          "end": 37.08,
+          "word": "Let",
+          "probability": 0.9936588406562805
+        },
+        {
+          "start": 37.08,
+          "end": 37.62,
+          "word": "reform",
+          "probability": 0.8316685557365417
+        },
+        {
+          "start": 37.62,
+          "end": 38.2,
+          "word": "strengthen",
+          "probability": 0.9842257499694824
+        },
+        {
+          "start": 38.2,
+          "end": 38.62,
+          "word": "the",
+          "probability": 0.9973135590553284
+        },
+        {
+          "start": 38.62,
+          "end": 39.02,
+          "word": "state",
+          "probability": 0.9592655897140503
+        }
+      ]
+    },
+    {
+      "start": 39.02,
+      "end": 42.1,
+      "text": "and peace give your subjects time to build.",
+      "words": [
+        {
+          "start": 39.02,
+          "end": 39.54,
+          "word": "and",
+          "probability": 0.8071699142456055
+        },
+        {
+          "start": 39.54,
+          "end": 39.92,
+          "word": "peace",
+          "probability": 0.9957257509231567
+        },
+        {
+          "start": 39.92,
+          "end": 40.2,
+          "word": "give",
+          "probability": 0.9870486855506897
+        },
+        {
+          "start": 40.2,
+          "end": 40.4,
+          "word": "your",
+          "probability": 0.9968234300613403
+        },
+        {
+          "start": 40.4,
+          "end": 40.92,
+          "word": "subjects",
+          "probability": 0.9965041875839233
+        },
+        {
+          "start": 40.92,
+          "end": 41.46,
+          "word": "time",
+          "probability": 0.9930663108825684
+        },
+        {
+          "start": 41.46,
+          "end": 41.72,
+          "word": "to",
+          "probability": 0.9993269443511963
+        },
+        {
+          "start": 41.72,
+          "end": 42.1,
+          "word": "build.",
+          "probability": 0.9988439083099365
+        }
+      ]
+    }
+  ],
+  "limitation": "ASR only; listening review still required; matching last words does not prove all words or phonemes are correct",
+  "timing": {
+    "aligned_words": 98,
+    "median_word_seconds": 0.3500000000000014,
+    "total_word_seconds": 35.440000000000005,
+    "total_gaps_seconds": 6.659999999999994
+  }
+}

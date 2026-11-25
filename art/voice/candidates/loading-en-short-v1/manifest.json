@@ -1,0 +1,35 @@
+[
+  {
+    "key": "LOADING_EN_SEED_311",
+    "number": 32,
+    "language": "en",
+    "text": "Welcome to the Winter Palace, Emperor Alexander. From the shores of the Baltic to the Pacific Ocean, your realm stretches far and wide. Yet Russia's greatness is measured in more than its borders: its future rests with those who till its soil, build its cities, and guard its frontiers. The serfs await freedom, the provinces a voice in their own affairs, and the army reform. Free your people, entrust the zemstvos with the care of their communities, and open the way to education and justice. Let reform strengthen the state, and peace give your subjects time to build.",
+    "synthesis_text": "Welcome to the Winter Palace, Emperor Alexander. From the shores of the Baltic to the Pacific Ocean, your realm stretches far and wide. Yet Russia's greatness is measured in more than its borders: its future rests with those who till its soil, build its cities, and guard its frontiers. The serfs await freedom, the provinces a voice in their own affairs, and the army reform. Free your people, entrust the zemstvos with the care of their communities, and open the way to education and justice. Let reform strengthen the state, and peace give your subjects time to build.",
+    "steps": 128,
+    "seed": 311,
+    "mode": "solemn-narrator",
+    "reference": "art/build/voice/integration/narrator/en-peter-loading.wav",
+    "prompt_wav": "art/build/voice/integration/narrator/en-peter-loading.wav",
+    "prompt_text": "",
+    "style": "(An English narrator speaks English in a stately, solemn, serious, firm and dignified voice, with measured pace and deliberate phrasing.)",
+    "feedback": "Whole shortened English narration matching current EN subtitles. Native English game narrator reference,128steps,CFG2. Preserve raw; no splicing or forced minimum length. Audition without filter; pace assessed independently of Russian.",
+    "cfg": 2,
+    "sample_rate": 48000,
+    "seconds": 38.24,
+    "inference_seconds": 581.9117334999974,
+    "reference_sha256": "282960714aac6333a5cb054036243b36bcde66d42ad602dd6edaa60434896c72",
+    "prompt_wav_sha256": "282960714aac6333a5cb054036243b36bcde66d42ad602dd6edaa60434896c72",
+    "raw": "loading-en-seed-311-raw.wav",
+    "clean": "loading-en-seed-311-clean.wav",
+    "raw_sha256": "d2e8570779bce6a05f49a33a7d0eebc5cccc0fd1c78ec19b2b4960b5163394ad",
+    "clean_sha256": "c37ae408ab846ae3433c37c06ccccc518ff05c71f7b7b0674d77bf1e7b323c2e",
+    "segments_generated": [
+      {
+        "text": "(An English narrator speaks English in a stately, solemn, serious, firm and dignified voice, with measured pace and deliberate phrasing.) Welcome to the Winter Palace, Emperor Alexander. From the shores of the Baltic to the Pacific Ocean, your realm stretches far and wide. Yet Russia's greatness is measured in more than its borders: its future rests with those who till its soil, build its cities, and guard its frontiers. The serfs await freedom, the provinces a voice in their own affairs, and the army reform. Free your people, entrust the zemstvos with the care of their communities, and open the way to education and justice. Let reform strengthen the state, and peace give your subjects time to build.",
+        "seconds": 38.24
+      }
+    ],
+    "status": "awaiting user review; correction intent not listening verification",
+    "processing": "Butterworth order 2 bandpass 70-9500Hz sosfiltfilt peak 0.85 PCM24"
+  }
+]

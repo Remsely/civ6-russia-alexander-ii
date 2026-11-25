@@ -13,6 +13,8 @@ description: Сборка мода Civilization VI без ModBuddy - cooker SDK 
 ```
 `build.py` вызывает `...\Civilization VI SDK\AssetModTools\Cooker\Civ6AssetCooker_FinalRelease.exe --mode XLP` для каждого `mod/XLPs/*.xlp` и платформ Windows/MacOS, `--pantry` = `mod/` + пантри SDK Assets по `RequiredGameArtIDs` из `.dep`. Результат в `mod/Platforms/*/BLPs/` совпадает с ModBuddy байт в байт. При наличии FGX лидера после cook проверяются палитры костей BLP обеих платформ; при ошибке установка останавливается. Потом `install.py` копирует наш `.modinfo` и всё из `<Files>`. Отдельная проверка: `python tools/validate.py --leader-bindings`.
 
+Перед установкой проверь исходный worktree и целевой каталог: `install.py` удаляет каталог установленного мода целиком, включая файлы вне `<Files>`. Не теряй чужие или вручную изменённые файлы; при необходимости сохрани их вне `Mods`. После установки сверь состав и хеши значимых файлов с нужной сборкой. Если игра уже запущена, текущий процесс может использовать прежние данные: сообщи, что лежит в `Mods` и нужен ли перезапуск, а не называй это тем, что уже загружено в игру. Для временной диагностики обозначь отличие от обычной сборки и способ отката.
+
 ## Что когда запускать
 - Правка картинок: `slice_art.py` → `make_art.py` → `make_leader3d.py` (если включён 3D-лидер: `make_art.py` перезаписывает `Leaders.artdef` и `.dep`) → `build.py`.
 - Правка `.fgx`/`.ast` 3D-лидера → `build.py` (пакет `leaders/leader_remsely_alexander_ii`).
@@ -30,3 +32,7 @@ description: Сборка мода Civilization VI без ModBuddy - cooker SDK 
 - Решение `RemselysAlexanderII.civ6sln` в корне, проект `mod/RemselysAlexanderII.civ6proj` — генерирует `tools/make_modbuddy.py` из `.modinfo` (руками не править). Мод в `mod/`, а не в корне: Asset Editor и cooker сканируют всю папку проекта и ломаются о `reference/` (junction на игру и SDK).
 - ModBuddy при сборке пишет **свой** `.dep` из `.Art.xml`. Пустые списки пакетов в Art.xml = в игре пропадают портрет, иконка, фон загрузки, а вместо 3D-лидера Клеопатра. Поэтому `make_modbuddy.py` строит Art.xml из нашего `.dep`, а проект после сборки копирует наш `.dep` (цель `RestoreDep`). После смены проекта ModBuddy нужно закрыть и заново открыть решение — иначе он собирает старую версию из памяти.
 - Сборка ModBuddy кладёт мод в ту же папку, что `install.py` (`Mods\RemselysAlexanderII`): последняя сборка перезаписывает предыдущую.
+
+## Озвучка
+
+Если изменён только аудиобанк и не изменились игровые арт-ассеты или их длительности, повторный cook арта может не требоваться. Конкретную сборку банка, зависимости и проверку речи см. в `civ6-leader-voice`; наличие BLP платформы не доказывает работоспособности её аудио.

@@ -1,0 +1,854 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="10" SoundbankVersion="113">
+  <SoundBanks>
+    <SoundBank Id="2881740416" Language="SFX">
+      <ShortName>REMSELY_AlexanderII_Speech</ShortName>
+      <Path>REMSELY_AlexanderII_Speech.bnk</Path>
+      <IncludedEvents>
+        <Event Id="3989851997" Name="Play_REMSELY_AlexanderII_FIRST_MEET" GUID="{0D4811B7-F666-5968-9D43-413B05D03C48}"/>
+        <Event Id="1022246950" Name="Play_REMSELY_AlexanderII_DECLARE_WAR_FROM_AI" GUID="{C579C057-8C85-5A33-BD67-8D361BD58699}"/>
+        <Event Id="231957545" Name="Play_REMSELY_AlexanderII_KUDOS" GUID="{B6FC6159-F735-5483-9FB6-D572EA035274}"/>
+        <Event Id="1895120767" Name="Play_REMSELY_AlexanderII_WARNING" GUID="{971A9745-89E3-5D71-96DE-14FBCBE68D80}"/>
+        <Event Id="229343008" Name="Play_REMSELY_AlexanderII_DEFEAT" GUID="{8C64B052-41E9-5614-8986-07DE59708AFB}"/>
+        <Event Id="2234229935" Name="Play_REMSELY_AlexanderII_DECLARE_WAR_FROM_HUMAN" GUID="{0207CFC2-030C-5D2D-9C71-D3091446DE8B}"/>
+        <Event Id="3709316133" Name="Play_REMSELY_AlexanderII_ACCEPT_DECLARE_FRIEND_FROM_AI" GUID="{2BDDD2F7-7229-5DFC-BC92-CF4467F820EA}"/>
+        <Event Id="1999317822" Name="Play_REMSELY_AlexanderII_ACCEPT_DECLARE_FRIEND_FROM_HUMAN" GUID="{3086484A-D0B3-5A95-89CF-53EE8EA0928A}"/>
+        <Event Id="3108196515" Name="Play_REMSELY_AlexanderII_ACCEPT_DELEGATION_FROM_HUMAN" GUID="{F63C4E1E-8DDE-5677-9018-5B954D245B5D}"/>
+        <Event Id="1454641599" Name="Play_REMSELY_AlexanderII_ACCEPT_MAKE_DEAL_FROM_AI" GUID="{C4FBD26B-87A3-5DFD-B01F-31C85C160E88}"/>
+        <Event Id="4174600361" Name="Play_REMSELY_AlexanderII_ACCEPT_OPEN_BORDERS_FROM_HUMAN" GUID="{2D2CC099-B97D-5908-B6DE-335FD1F9931A}"/>
+        <Event Id="3969764932" Name="Play_REMSELY_AlexanderII_DECLARE_FRIEND_FROM_AI" GUID="{C84A677A-6652-5C9C-8A81-124D1E72F12A}"/>
+        <Event Id="1046838927" Name="Play_REMSELY_AlexanderII_DELEGATION_FROM_AI" GUID="{0A2C8C39-DE5B-5ADA-922E-B6AC84903A3F}"/>
+        <Event Id="2025155928" Name="Play_REMSELY_AlexanderII_DENOUNCE_FROM_AI" GUID="{CBCA3850-D3E5-5E2E-B6F3-364EF0622A19}"/>
+        <Event Id="1259556121" Name="Play_REMSELY_AlexanderII_DENOUNCE_FROM_HUMAN" GUID="{E8EBF742-9B4B-5C02-B1B2-0665FCD09825}"/>
+        <Event Id="1172328450" Name="Play_REMSELY_AlexanderII_FIRST_MEET_NEAR_INITIATOR_POSITIVE" GUID="{2E50F67C-490A-51F5-B728-98B9DA3C0472}"/>
+        <Event Id="395317942" Name="Play_REMSELY_AlexanderII_FIRST_MEET_NO_MANS_INFO_EXCHANGE" GUID="{4CC29BEE-DA66-5F0E-9B1A-E4D8E9CC6B3E}"/>
+        <Event Id="2830110297" Name="Play_REMSELY_AlexanderII_FIRST_MEET_VISIT_RECIPIENT" GUID="{62CCF015-0B9F-52B5-97D6-E966CFD2DD7F}"/>
+        <Event Id="748905044" Name="Play_REMSELY_AlexanderII_GREETING" GUID="{8919617F-4136-54EB-BB30-1923CEA379E6}"/>
+        <Event Id="2723600041" Name="Play_REMSELY_AlexanderII_MAKE_ALLIANCE_FROM_AI" GUID="{EA981C2E-866F-5404-82AD-E476A991D776}"/>
+        <Event Id="1132343497" Name="Play_REMSELY_AlexanderII_MAKE_PEACE_AI_ACCEPT_DEAL" GUID="{2F493215-854E-5971-BA71-FAA770AE2FAB}"/>
+        <Event Id="2336675661" Name="Play_REMSELY_AlexanderII_MAKE_PEACE_AI_REFUSE_DEAL" GUID="{34C745E4-AA3C-50AA-A5F6-8D011ABB2177}"/>
+        <Event Id="2240501656" Name="Play_REMSELY_AlexanderII_MAKE_PEACE_FROM_AI" GUID="{4FDC0034-2477-533B-8921-FDB7B691B121}"/>
+        <Event Id="4263227437" Name="Play_REMSELY_AlexanderII_OPEN_BORDERS_FROM_AI" GUID="{00AA476E-8765-537A-8D08-AD0F4EF571AA}"/>
+        <Event Id="293157166" Name="Play_REMSELY_AlexanderII_REJECT_DECLARE_FRIEND_FROM_AI" GUID="{59EE120B-3E58-5D2D-8A3F-255CC01825C6}"/>
+        <Event Id="97796263" Name="Play_REMSELY_AlexanderII_REJECT_DECLARE_FRIEND_FROM_HUMAN" GUID="{5C1E4A19-D2E7-5FCA-8C92-6515F67E2DAF}"/>
+        <Event Id="792165102" Name="Play_REMSELY_AlexanderII_REJECT_DELEGATION_FROM_HUMAN" GUID="{137013EE-2F19-5FDB-910A-52CF8BAF0C08}"/>
+        <Event Id="920522074" Name="Play_REMSELY_AlexanderII_REJECT_MAKE_DEAL_FROM_AI" GUID="{F0076F5F-D092-50D8-BA68-092B12AAEFD8}"/>
+        <Event Id="195726976" Name="Play_REMSELY_AlexanderII_REJECT_OPEN_BORDERS_FROM_HUMAN" GUID="{0F385228-F960-5A0C-B467-8A5F0037A1AB}"/>
+        <Event Id="184067940" Name="Play_REMSELY_AlexanderII_WARNING_TOO_MANY_TROOPS_NEAR_ME" GUID="{502778A9-57A4-5DD5-BB11-7946B433D603}"/>
+        <Event Id="2690794365" Name="Play_REMSELY_AlexanderII_DEFEAT_FROM_HUMAN" GUID="{7F1B6168-725F-5BB2-9F9F-584A85B4D028}"/>
+        <Event Id="4142130066" Name="Play_REMSELY_AlexanderII_FULL_001" GUID="{2E0FF4A2-2D58-5B30-9251-64CB3B4463BD}"/>
+        <Event Id="4142130065" Name="Play_REMSELY_AlexanderII_FULL_002" GUID="{D2F18173-B783-5CCA-A2F9-C5B652CB3E09}"/>
+        <Event Id="4142130064" Name="Play_REMSELY_AlexanderII_FULL_003" GUID="{94B92D62-0C82-54BC-B36F-8A0F60CDF434}"/>
+        <Event Id="4142130071" Name="Play_REMSELY_AlexanderII_FULL_004" GUID="{3971D77C-19C2-59BC-9756-003638B41816}"/>
+        <Event Id="4142130070" Name="Play_REMSELY_AlexanderII_FULL_005" GUID="{E41AEF39-709D-507B-8555-19F666EB15B9}"/>
+        <Event Id="4142130069" Name="Play_REMSELY_AlexanderII_FULL_006" GUID="{B386E64A-1A3A-5B93-9B21-25457B75DC5E}"/>
+        <Event Id="4142130068" Name="Play_REMSELY_AlexanderII_FULL_007" GUID="{1FADD438-C135-5937-B715-29AE81BF49F9}"/>
+        <Event Id="4142130075" Name="Play_REMSELY_AlexanderII_FULL_008" GUID="{927CE5F7-421B-5F30-B1BB-A8A7B475CBAA}"/>
+        <Event Id="4142130074" Name="Play_REMSELY_AlexanderII_FULL_009" GUID="{26C2198A-D5A6-5092-B6EB-CB198532F118}"/>
+        <Event Id="4125352480" Name="Play_REMSELY_AlexanderII_FULL_010" GUID="{0C3D995E-60F9-5DB5-9571-E15583421939}"/>
+        <Event Id="4125352481" Name="Play_REMSELY_AlexanderII_FULL_011" GUID="{9D57B4B6-6534-52BB-8EDA-D051DF3B0816}"/>
+        <Event Id="4125352482" Name="Play_REMSELY_AlexanderII_FULL_012" GUID="{F3271D91-A514-57B8-B2B7-27E1B0C337EF}"/>
+        <Event Id="4125352483" Name="Play_REMSELY_AlexanderII_FULL_013" GUID="{7DC39290-B883-5837-ACB9-15B14BAF47D7}"/>
+        <Event Id="4125352484" Name="Play_REMSELY_AlexanderII_FULL_014" GUID="{7812F5B1-8116-5AAA-9092-F71A75E80994}"/>
+        <Event Id="4125352485" Name="Play_REMSELY_AlexanderII_FULL_015" GUID="{5C90E107-ADA9-5109-AE49-B5A2DAAB72A0}"/>
+        <Event Id="4125352486" Name="Play_REMSELY_AlexanderII_FULL_016" GUID="{D1791916-F765-5DB3-8FB1-B66F237C2246}"/>
+        <Event Id="4125352487" Name="Play_REMSELY_AlexanderII_FULL_017" GUID="{3E84D74A-DD56-535C-8A73-E65AE9F23BC5}"/>
+        <Event Id="4125352488" Name="Play_REMSELY_AlexanderII_FULL_018" GUID="{971C9C04-0731-5B3E-9E7B-AE08F06B49BB}"/>
+        <Event Id="4125352489" Name="Play_REMSELY_AlexanderII_FULL_019" GUID="{4B161AF2-8073-5BF2-B108-52E494EDD931}"/>
+        <Event Id="4175685369" Name="Play_REMSELY_AlexanderII_FULL_020" GUID="{0E420804-F16A-5CAE-A0D7-15E2E85748D4}"/>
+        <Event Id="4175685368" Name="Play_REMSELY_AlexanderII_FULL_021" GUID="{EF3551AC-54FD-5AEE-959C-E578ED2A0C13}"/>
+        <Event Id="4175685371" Name="Play_REMSELY_AlexanderII_FULL_022" GUID="{86CCEBDE-C24B-5116-B7D0-8732AAC38B17}"/>
+        <Event Id="4175685370" Name="Play_REMSELY_AlexanderII_FULL_023" GUID="{5EF1CD44-7C06-5814-9878-07918D0E398A}"/>
+        <Event Id="4175685373" Name="Play_REMSELY_AlexanderII_FULL_024" GUID="{9B7A49E7-96DD-5091-BEC5-7120842C7E02}"/>
+        <Event Id="4175685372" Name="Play_REMSELY_AlexanderII_FULL_025" GUID="{2872DF9A-E24F-52FC-8A2A-0FF720300B54}"/>
+        <Event Id="4175685375" Name="Play_REMSELY_AlexanderII_FULL_026" GUID="{62EFE0C0-FDFD-50B2-8BF6-A5D917417825}"/>
+        <Event Id="4175685374" Name="Play_REMSELY_AlexanderII_FULL_027" GUID="{76C5728C-208E-5AB8-8319-1682E2CEFD3D}"/>
+        <Event Id="4175685361" Name="Play_REMSELY_AlexanderII_FULL_028" GUID="{335605E5-21EB-5864-A1FF-67E2466A4392}"/>
+        <Event Id="4175685360" Name="Play_REMSELY_AlexanderII_FULL_029" GUID="{4993C23B-5FB5-556C-A9E3-29240E58CCCF}"/>
+        <Event Id="4158907654" Name="Play_REMSELY_AlexanderII_FULL_030" GUID="{71DCD77A-8126-58AB-BC17-0B9EA9C68F97}"/>
+        <Event Id="4158907655" Name="Play_REMSELY_AlexanderII_FULL_031" GUID="{4788F129-1C30-5222-A0AA-CB7B672636F1}"/>
+        <Event Id="4158907652" Name="Play_REMSELY_AlexanderII_FULL_032" GUID="{36D030C0-2C86-5585-9738-1D6C28162A7A}"/>
+        <Event Id="4158907653" Name="Play_REMSELY_AlexanderII_FULL_033" GUID="{5B4A986B-B8D3-5832-AB56-1FADB80EE9A1}"/>
+        <Event Id="4158907650" Name="Play_REMSELY_AlexanderII_FULL_034" GUID="{839E8788-BB24-58AB-BE78-D4F136806ED7}"/>
+        <Event Id="4158907651" Name="Play_REMSELY_AlexanderII_FULL_035" GUID="{75FC2798-D423-5D28-8D22-C4E09A1AC9CF}"/>
+        <Event Id="4158907648" Name="Play_REMSELY_AlexanderII_FULL_036" GUID="{191F9C37-64D7-52FA-A062-F0DDF5BBAB3A}"/>
+        <Event Id="4158907649" Name="Play_REMSELY_AlexanderII_FULL_037" GUID="{7368C941-D266-55E6-8693-35B067231D1B}"/>
+        <Event Id="4158907662" Name="Play_REMSELY_AlexanderII_FULL_038" GUID="{D002402A-27AA-5BF6-AA36-2662B3118429}"/>
+        <Event Id="4158907663" Name="Play_REMSELY_AlexanderII_FULL_039" GUID="{73F846A8-D295-5DEA-83D7-5B044D33DBEE}"/>
+        <Event Id="4209240543" Name="Play_REMSELY_AlexanderII_FULL_040" GUID="{E084ABF5-2D44-5371-9EC6-4650F979CD92}"/>
+        <Event Id="4209240542" Name="Play_REMSELY_AlexanderII_FULL_041" GUID="{17C5BC65-7D73-5FAD-BA9C-FA9898BB3E9E}"/>
+        <Event Id="4209240541" Name="Play_REMSELY_AlexanderII_FULL_042" GUID="{14E629A4-A860-5CD5-BACB-C33E593FCB25}"/>
+        <Event Id="4209240540" Name="Play_REMSELY_AlexanderII_FULL_043" GUID="{605A956D-B1AB-51C8-9264-7C5129C2F518}"/>
+        <Event Id="4209240539" Name="Play_REMSELY_AlexanderII_FULL_044" GUID="{AE709F4B-96CD-5E99-845C-58CBFD7E99FB}"/>
+        <Event Id="4209240538" Name="Play_REMSELY_AlexanderII_FULL_045" GUID="{1A2E441B-52E3-5E68-B7A4-EEE5F5CD4EEA}"/>
+        <Event Id="4209240537" Name="Play_REMSELY_AlexanderII_FULL_046" GUID="{CB43EFED-41A7-5BB3-BBB7-7CEF9B3CA764}"/>
+        <Event Id="4209240536" Name="Play_REMSELY_AlexanderII_FULL_047" GUID="{DC81B51B-D5F8-5ACF-B517-DC06CE9630B2}"/>
+        <Event Id="4209240535" Name="Play_REMSELY_AlexanderII_FULL_048" GUID="{869A3AF1-9B93-5250-99FD-7E435E933CCD}"/>
+        <Event Id="4209240534" Name="Play_REMSELY_AlexanderII_FULL_049" GUID="{7EB8D739-9D8D-5F58-A5AE-3CE527C6B096}"/>
+        <Event Id="4192462956" Name="Play_REMSELY_AlexanderII_FULL_050" GUID="{27E82A08-335B-55E8-AB09-074C26ED6102}"/>
+        <Event Id="4192462957" Name="Play_REMSELY_AlexanderII_FULL_051" GUID="{A22114FD-CD82-5B39-94B1-CC0EAAE1ACEC}"/>
+        <Event Id="4192462958" Name="Play_REMSELY_AlexanderII_FULL_052" GUID="{1773F12B-7C43-5B1D-B3AD-97D956567FC6}"/>
+        <Event Id="4192462959" Name="Play_REMSELY_AlexanderII_FULL_053" GUID="{758774EB-8DA1-558C-82ED-1C0852A798B7}"/>
+        <Event Id="4192462952" Name="Play_REMSELY_AlexanderII_FULL_054" GUID="{2967587F-36FB-5755-BCC8-F26A0B9F04F1}"/>
+        <Event Id="4192462953" Name="Play_REMSELY_AlexanderII_FULL_055" GUID="{EBADD678-0870-59A3-88D8-BC09FB79E284}"/>
+        <Event Id="4192462954" Name="Play_REMSELY_AlexanderII_FULL_056" GUID="{47D96F10-6CBA-5B98-9D9A-34814474630B}"/>
+        <Event Id="4192462955" Name="Play_REMSELY_AlexanderII_FULL_057" GUID="{9C346708-561E-5109-8DA9-26A82986E640}"/>
+        <Event Id="4192462948" Name="Play_REMSELY_AlexanderII_FULL_058" GUID="{3A037797-BF63-5A25-9E83-82D372C55B60}"/>
+        <Event Id="4192462949" Name="Play_REMSELY_AlexanderII_FULL_059" GUID="{796D6E98-7C30-53CC-B258-39E282EED001}"/>
+        <Event Id="4242795813" Name="Play_REMSELY_AlexanderII_FULL_060" GUID="{F0F29158-DFC7-536D-9FB1-235B034DE409}"/>
+        <Event Id="4242795812" Name="Play_REMSELY_AlexanderII_FULL_061" GUID="{FEA76BCD-7F42-5D40-AD8D-69B9EF78D7B5}"/>
+        <Event Id="4242795815" Name="Play_REMSELY_AlexanderII_FULL_062" GUID="{416AA837-5267-5CCF-A6FC-3069160BB842}"/>
+        <Event Id="4242795814" Name="Play_REMSELY_AlexanderII_FULL_063" GUID="{F9C810C5-582F-5858-9934-B57CAB3885FA}"/>
+        <Event Id="4242795809" Name="Play_REMSELY_AlexanderII_FULL_064" GUID="{00C2C54F-8873-5CC5-B192-9F71AB4D744D}"/>
+        <Event Id="4242795808" Name="Play_REMSELY_AlexanderII_FULL_065" GUID="{878F15AF-B99D-5F3F-89E8-48F5A6F8326C}"/>
+        <Event Id="4242795811" Name="Play_REMSELY_AlexanderII_FULL_066" GUID="{D168C16E-E1F2-5CF5-8CF5-51EA21C6C571}"/>
+        <Event Id="4242795810" Name="Play_REMSELY_AlexanderII_FULL_067" GUID="{B72A5230-6DA7-5C72-9D40-FA49C48C9107}"/>
+        <Event Id="4242795821" Name="Play_REMSELY_AlexanderII_FULL_068" GUID="{122C52BE-6B11-5A64-8409-3CB3B0C8AA0E}"/>
+        <Event Id="4242795820" Name="Play_REMSELY_AlexanderII_FULL_069" GUID="{E5FD13CE-7F92-531E-B334-5440E2732FDA}"/>
+        <Event Id="4226018226" Name="Play_REMSELY_AlexanderII_FULL_070" GUID="{4176E4EB-C37F-5862-B1FA-51457C1BE86D}"/>
+        <Event Id="4226018227" Name="Play_REMSELY_AlexanderII_FULL_071" GUID="{BB2206A4-CB25-5D2F-A017-C8FEB1904208}"/>
+        <Event Id="4226018224" Name="Play_REMSELY_AlexanderII_FULL_072" GUID="{0B6E44D8-DB7B-531A-A770-A79E692C3B42}"/>
+        <Event Id="4226018225" Name="Play_REMSELY_AlexanderII_FULL_073" GUID="{978F842B-D9CD-5160-82C6-34ED756D37BF}"/>
+        <Event Id="4226018230" Name="Play_REMSELY_AlexanderII_FULL_074" GUID="{BFF5CE5B-221B-538E-888D-6915EA3561E2}"/>
+        <Event Id="4226018231" Name="Play_REMSELY_AlexanderII_FULL_075" GUID="{1EA10893-D1C4-5DA0-B7FF-BC4BEA423BA4}"/>
+        <Event Id="4226018228" Name="Play_REMSELY_AlexanderII_FULL_076" GUID="{90C43809-FFB2-5BD0-BB15-D49989202E0A}"/>
+        <Event Id="4226018229" Name="Play_REMSELY_AlexanderII_FULL_077" GUID="{C68420FA-BE8B-52EC-89FB-6174FCF75840}"/>
+        <Event Id="4226018234" Name="Play_REMSELY_AlexanderII_FULL_078" GUID="{5B82A768-78B5-5FD4-950A-3CD7B5F5C348}"/>
+        <Event Id="4226018235" Name="Play_REMSELY_AlexanderII_FULL_079" GUID="{14A85E94-D675-5FED-B5B7-0AA49BC103B3}"/>
+        <Event Id="4276350987" Name="Play_REMSELY_AlexanderII_FULL_080" GUID="{0C62F275-1B33-5B82-AD51-348E03FAFB14}"/>
+        <Event Id="4276350986" Name="Play_REMSELY_AlexanderII_FULL_081" GUID="{CDD3FE5F-BDFA-56A5-A4C4-36CDC90A520C}"/>
+        <Event Id="4276350985" Name="Play_REMSELY_AlexanderII_FULL_082" GUID="{0F47C0D6-A781-5140-ADE2-83A89025C7AB}"/>
+        <Event Id="4276350984" Name="Play_REMSELY_AlexanderII_FULL_083" GUID="{8F17ED30-C2BC-50C6-8D59-6C039DC77B91}"/>
+        <Event Id="4276350991" Name="Play_REMSELY_AlexanderII_FULL_084" GUID="{49C1191D-1CB8-5624-BE4A-ECE5A75623C1}"/>
+        <Event Id="4276350990" Name="Play_REMSELY_AlexanderII_FULL_085" GUID="{1941DA33-0CF1-5C59-B966-6E0290FCADC3}"/>
+        <Event Id="4276350989" Name="Play_REMSELY_AlexanderII_FULL_086" GUID="{9389A99F-5BBC-5B38-9A4A-3FF99089B2B1}"/>
+        <Event Id="4276350988" Name="Play_REMSELY_AlexanderII_FULL_087" GUID="{4D3E8804-5675-5BE5-AE0E-E07CFDBC2648}"/>
+        <Event Id="4276350979" Name="Play_REMSELY_AlexanderII_FULL_088" GUID="{9AADA4A3-9190-5BD1-A946-B9800D28A67E}"/>
+        <Event Id="4276350978" Name="Play_REMSELY_AlexanderII_FULL_089" GUID="{B3573A07-7774-5A05-A378-2C42C1F622D7}"/>
+        <Event Id="4259573400" Name="Play_REMSELY_AlexanderII_FULL_090" GUID="{1CF3C23C-B8A1-50D1-8CFA-E75C172DC104}"/>
+        <Event Id="4259573401" Name="Play_REMSELY_AlexanderII_FULL_091" GUID="{A35214A4-465E-5AD9-9E85-7E7EC5AE9896}"/>
+        <Event Id="4259573402" Name="Play_REMSELY_AlexanderII_FULL_092" GUID="{8B0C9A92-1C88-5814-B167-DBEE80019747}"/>
+        <Event Id="4259573403" Name="Play_REMSELY_AlexanderII_FULL_093" GUID="{EAF24011-499C-5829-B37C-AE5A0E748A18}"/>
+        <Event Id="4259573404" Name="Play_REMSELY_AlexanderII_FULL_094" GUID="{40846C51-4601-5CD4-A14F-948ED528EE31}"/>
+        <Event Id="4259573405" Name="Play_REMSELY_AlexanderII_FULL_095" GUID="{173EE4D8-9686-5F69-9B99-7F615CB7ECF2}"/>
+        <Event Id="4259573406" Name="Play_REMSELY_AlexanderII_FULL_096" GUID="{034E2E64-965F-54E3-94CC-2CBEBD21B8BA}"/>
+        <Event Id="4259573407" Name="Play_REMSELY_AlexanderII_FULL_097" GUID="{FD1A0AC5-1847-50BC-9EA8-8A21002D4581}"/>
+        <Event Id="4259573392" Name="Play_REMSELY_AlexanderII_FULL_098" GUID="{6DF5E311-7F1F-56B0-88EE-BF73B9D1E936}"/>
+        <Event Id="4259573393" Name="Play_REMSELY_AlexanderII_FULL_099" GUID="{D4B4485E-2A72-5825-9BC0-93BB6BFC30A8}"/>
+        <Event Id="2430665802" Name="Play_REMSELY_AlexanderII_FULL_100" GUID="{2D401BB2-EB2C-5E53-A388-F6E0C31489EB}"/>
+        <Event Id="2430665803" Name="Play_REMSELY_AlexanderII_FULL_101" GUID="{26759619-C6CC-581B-BF63-136C044C6F61}"/>
+        <Event Id="2430665800" Name="Play_REMSELY_AlexanderII_FULL_102" GUID="{5ECCA654-2321-55D1-8A89-9150B9861A0F}"/>
+        <Event Id="2430665801" Name="Play_REMSELY_AlexanderII_FULL_103" GUID="{55CC7776-5059-5C36-BC70-9CE54F34927F}"/>
+        <Event Id="2430665806" Name="Play_REMSELY_AlexanderII_FULL_104" GUID="{07035F1B-586D-5881-87C9-3C9C780CBCFF}"/>
+        <Event Id="2430665807" Name="Play_REMSELY_AlexanderII_FULL_105" GUID="{2CC036C3-5317-57B1-A371-2B1386583AF0}"/>
+        <Event Id="2430665804" Name="Play_REMSELY_AlexanderII_FULL_106" GUID="{71309E68-8CDF-5202-8213-C123C955E0D0}"/>
+        <Event Id="2430665805" Name="Play_REMSELY_AlexanderII_FULL_107" GUID="{66070CD6-4674-58E8-B8CA-E99259C6CA36}"/>
+        <Event Id="2430665794" Name="Play_REMSELY_AlexanderII_FULL_108" GUID="{E5298A32-4F8D-50B3-98C9-1B3B5550F4AE}"/>
+        <Event Id="2430665795" Name="Play_REMSELY_AlexanderII_FULL_109" GUID="{C6C91DCD-3E83-518F-A01C-824755D34D13}"/>
+        <Event Id="2447443517" Name="Play_REMSELY_AlexanderII_FULL_110" GUID="{94B1678C-CF94-51D6-8234-A79529A5A8C1}"/>
+        <Event Id="2447443516" Name="Play_REMSELY_AlexanderII_FULL_111" GUID="{EC74E289-2191-503C-8F8B-300B89C28E39}"/>
+        <Event Id="2447443519" Name="Play_REMSELY_AlexanderII_FULL_112" GUID="{721F27C7-520F-563B-A6C3-5B54B5E0525B}"/>
+        <Event Id="2447443518" Name="Play_REMSELY_AlexanderII_FULL_113" GUID="{5005C3C5-66C7-5BDB-8FFA-EA6A7D5D1E65}"/>
+        <Event Id="2447443513" Name="Play_REMSELY_AlexanderII_FULL_114" GUID="{15390BD6-E2AF-51C7-B0E1-556F8A023E5D}"/>
+        <Event Id="2447443512" Name="Play_REMSELY_AlexanderII_FULL_115" GUID="{2E563350-EBCA-5742-BBFE-FA1821DAAF06}"/>
+        <Event Id="2447443515" Name="Play_REMSELY_AlexanderII_FULL_116" GUID="{61EEE9C5-5C64-5212-A744-7301A4301DD9}"/>
+        <Event Id="2447443514" Name="Play_REMSELY_AlexanderII_FULL_117" GUID="{4D3C741A-29C9-5FC7-B165-45BFF16E5033}"/>
+        <Event Id="2447443509" Name="Play_REMSELY_AlexanderII_FULL_118" GUID="{E50EC4BF-2DDF-501F-98DA-913B7294D442}"/>
+        <Event Id="2447443508" Name="Play_REMSELY_AlexanderII_FULL_119" GUID="{517E7657-5A0E-5A58-91EB-BC8FBF7B84C7}"/>
+        <Event Id="2397110628" Name="Play_REMSELY_AlexanderII_FULL_120" GUID="{6B2D0E31-1684-58A6-9A88-77AB2EFC91F0}"/>
+        <Event Id="2397110629" Name="Play_REMSELY_AlexanderII_FULL_121" GUID="{C176B8D0-C688-5BF6-8BAE-21BADAD8458D}"/>
+        <Event Id="2397110630" Name="Play_REMSELY_AlexanderII_FULL_122" GUID="{C2986CAF-7868-5E0A-8714-E9D5DD420231}"/>
+        <Event Id="2397110631" Name="Play_REMSELY_AlexanderII_FULL_123" GUID="{D068BA27-5E9E-57FC-9FF9-515F8CAC58B9}"/>
+        <Event Id="2397110624" Name="Play_REMSELY_AlexanderII_FULL_124" GUID="{71CDF19F-D54A-5FD6-AFE8-E7760789A95E}"/>
+        <Event Id="2397110625" Name="Play_REMSELY_AlexanderII_FULL_125" GUID="{798C2D2D-DD3E-5AFC-934D-1508767AEAB6}"/>
+        <Event Id="2397110626" Name="Play_REMSELY_AlexanderII_FULL_126" GUID="{D6FBD616-F2F5-53CC-8B87-DFB2670F0E19}"/>
+        <Event Id="2397110627" Name="Play_REMSELY_AlexanderII_FULL_127" GUID="{DCE81F45-A842-5774-9DEE-C07BCC15C453}"/>
+        <Event Id="2397110636" Name="Play_REMSELY_AlexanderII_FULL_128" GUID="{BB329402-B932-5D28-8035-17080B876121}"/>
+        <Event Id="2397110637" Name="Play_REMSELY_AlexanderII_FULL_129" GUID="{D83B8D2E-4996-5804-8198-77A851A4DB03}"/>
+        <Event Id="2413888215" Name="Play_REMSELY_AlexanderII_FULL_130" GUID="{716DFC26-FE85-5EBD-9201-03E88931E3B1}"/>
+        <Event Id="2413888214" Name="Play_REMSELY_AlexanderII_FULL_131" GUID="{E076C351-A208-5F69-B7DD-C72329AB2B12}"/>
+        <Event Id="2413888213" Name="Play_REMSELY_AlexanderII_FULL_132" GUID="{43B6B616-EB35-50D0-8741-F0E050019F88}"/>
+        <Event Id="2413888212" Name="Play_REMSELY_AlexanderII_FULL_133" GUID="{29725327-7813-5DA8-959E-855DD7A3FDFA}"/>
+        <Event Id="2413888211" Name="Play_REMSELY_AlexanderII_FULL_134" GUID="{97D141F5-2D5D-5F59-8733-090FEB1BDC7E}"/>
+        <Event Id="2413888210" Name="Play_REMSELY_AlexanderII_FULL_135" GUID="{F779BEDE-019D-5E61-B40C-DC17C8C48696}"/>
+        <Event Id="2413888209" Name="Play_REMSELY_AlexanderII_FULL_136" GUID="{B37ABF94-1AE2-5C6E-B467-CC69C7B417F2}"/>
+        <Event Id="2413888208" Name="Play_REMSELY_AlexanderII_FULL_137" GUID="{99DA7ACE-1474-543E-94CD-CADBBFC27B7E}"/>
+        <Event Id="870329749" Name="Stop_REMSELY_AlexanderII_Speech" GUID="{2C113551-EDDD-5EE5-9DB0-214C70A49778}"/>
+      </IncludedEvents>
+      <IncludedMemoryFiles>
+        <File Id="3580184059" Language="SFX">
+          <ShortName>first-meet-clean.wav</ShortName>
+          <Path>3580184059.wem</Path>
+        </File>
+        <File Id="3580184058" Language="SFX">
+          <ShortName>declare-war-ai-clean.wav</ShortName>
+          <Path>3580184058.wem</Path>
+        </File>
+        <File Id="3580184057" Language="SFX">
+          <ShortName>kudos-clean.wav</ShortName>
+          <Path>3580184057.wem</Path>
+        </File>
+        <File Id="3580184056" Language="SFX">
+          <ShortName>warning-clean.wav</ShortName>
+          <Path>3580184056.wem</Path>
+        </File>
+        <File Id="3580184063" Language="SFX">
+          <ShortName>defeat-ai-clean.wav</ShortName>
+          <Path>3580184063.wem</Path>
+        </File>
+        <File Id="3580184062" Language="SFX">
+          <ShortName>declare-war-human-clean.wav</ShortName>
+          <Path>3580184062.wem</Path>
+        </File>
+        <File Id="3580184061" Language="SFX">
+          <ShortName>accept-declare-friend-ai-clean.wav</ShortName>
+          <Path>3580184061.wem</Path>
+        </File>
+        <File Id="3580184060" Language="SFX">
+          <ShortName>accept-declare-friend-from-human-clean.wav</ShortName>
+          <Path>3580184060.wem</Path>
+        </File>
+        <File Id="3580184051" Language="SFX">
+          <ShortName>accept-delegation-from-human-clean.wav</ShortName>
+          <Path>3580184051.wem</Path>
+        </File>
+        <File Id="3580184050" Language="SFX">
+          <ShortName>accept-make-deal-from-ai-clean.wav</ShortName>
+          <Path>3580184050.wem</Path>
+        </File>
+        <File Id="3899467966" Language="SFX">
+          <ShortName>accept-open-borders-from-human-clean.wav</ShortName>
+          <Path>3899467966.wem</Path>
+        </File>
+        <File Id="3899467967" Language="SFX">
+          <ShortName>declare-friend-from-ai-clean.wav</ShortName>
+          <Path>3899467967.wem</Path>
+        </File>
+        <File Id="3899467964" Language="SFX">
+          <ShortName>delegation-from-ai-clean.wav</ShortName>
+          <Path>3899467964.wem</Path>
+        </File>
+        <File Id="3899467965" Language="SFX">
+          <ShortName>denounce-ai-clean.wav</ShortName>
+          <Path>3899467965.wem</Path>
+        </File>
+        <File Id="3899467962" Language="SFX">
+          <ShortName>denounce-from-human-clean.wav</ShortName>
+          <Path>3899467962.wem</Path>
+        </File>
+        <File Id="3899467963" Language="SFX">
+          <ShortName>first-meet-near-initiator-positive-clean.wav</ShortName>
+          <Path>3899467963.wem</Path>
+        </File>
+        <File Id="3899467960" Language="SFX">
+          <ShortName>first-meet-no-mans-info-exchange-clean.wav</ShortName>
+          <Path>3899467960.wem</Path>
+        </File>
+        <File Id="3899467961" Language="SFX">
+          <ShortName>first-meet-visit-recipient-clean.wav</ShortName>
+          <Path>3899467961.wem</Path>
+        </File>
+        <File Id="3899467958" Language="SFX">
+          <ShortName>greeting-clean.wav</ShortName>
+          <Path>3899467958.wem</Path>
+        </File>
+        <File Id="3899467959" Language="SFX">
+          <ShortName>make-alliance-from-ai-clean.wav</ShortName>
+          <Path>3899467959.wem</Path>
+        </File>
+        <File Id="3882690251" Language="SFX">
+          <ShortName>make-peace-ai-accept-deal-clean.wav</ShortName>
+          <Path>3882690251.wem</Path>
+        </File>
+        <File Id="3882690250" Language="SFX">
+          <ShortName>make-peace-ai-refuse-deal-clean.wav</ShortName>
+          <Path>3882690250.wem</Path>
+        </File>
+        <File Id="3882690249" Language="SFX">
+          <ShortName>make-peace-from-ai-clean.wav</ShortName>
+          <Path>3882690249.wem</Path>
+        </File>
+        <File Id="3882690248" Language="SFX">
+          <ShortName>open-borders-from-ai-clean.wav</ShortName>
+          <Path>3882690248.wem</Path>
+        </File>
+        <File Id="3882690255" Language="SFX">
+          <ShortName>reject-declare-friend-from-ai-clean.wav</ShortName>
+          <Path>3882690255.wem</Path>
+        </File>
+        <File Id="3882690254" Language="SFX">
+          <ShortName>reject-declare-friend-from-human-clean.wav</ShortName>
+          <Path>3882690254.wem</Path>
+        </File>
+        <File Id="3882690253" Language="SFX">
+          <ShortName>reject-delegation-from-human-clean.wav</ShortName>
+          <Path>3882690253.wem</Path>
+        </File>
+        <File Id="3882690252" Language="SFX">
+          <ShortName>reject-make-deal-from-ai-clean.wav</ShortName>
+          <Path>3882690252.wem</Path>
+        </File>
+        <File Id="3882690243" Language="SFX">
+          <ShortName>reject-open-borders-from-human-clean.wav</ShortName>
+          <Path>3882690243.wem</Path>
+        </File>
+        <File Id="3882690242" Language="SFX">
+          <ShortName>warning-too-many-troops-near-me-clean.wav</ShortName>
+          <Path>3882690242.wem</Path>
+        </File>
+        <File Id="3865912664" Language="SFX">
+          <ShortName>defeat-from-human-clean.wav</ShortName>
+          <Path>3865912664.wem</Path>
+        </File>
+        <File Id="3865912665" Language="SFX">
+          <ShortName>round3v2-001-clean.wav</ShortName>
+          <Path>3865912665.wem</Path>
+        </File>
+        <File Id="3865912666" Language="SFX">
+          <ShortName>round3v2-002-clean.wav</ShortName>
+          <Path>3865912666.wem</Path>
+        </File>
+        <File Id="3865912667" Language="SFX">
+          <ShortName>round5-003-01-clean.wav</ShortName>
+          <Path>3865912667.wem</Path>
+        </File>
+        <File Id="3865912668" Language="SFX">
+          <ShortName>revision-004-clean.wav</ShortName>
+          <Path>3865912668.wem</Path>
+        </File>
+        <File Id="3865912669" Language="SFX">
+          <ShortName>make-deal-ai-accept-clean.wav</ShortName>
+          <Path>3865912669.wem</Path>
+        </File>
+        <File Id="3865912670" Language="SFX">
+          <ShortName>revision-006-clean.wav</ShortName>
+          <Path>3865912670.wem</Path>
+        </File>
+        <File Id="3865912671" Language="SFX">
+          <ShortName>round3v2-007-clean.wav</ShortName>
+          <Path>3865912671.wem</Path>
+        </File>
+        <File Id="3865912656" Language="SFX">
+          <ShortName>loc-diplo-accept-delegation-from-ai-any-any-clean.wav</ShortName>
+          <Path>3865912656.wem</Path>
+        </File>
+        <File Id="3865912657" Language="SFX">
+          <ShortName>loc-diplo-accept-embassy-from-ai-any-any-clean.wav</ShortName>
+          <Path>3865912657.wem</Path>
+        </File>
+        <File Id="3983355997" Language="SFX">
+          <ShortName>round5-010-02-clean.wav</ShortName>
+          <Path>3983355997.wem</Path>
+        </File>
+        <File Id="3983355996" Language="SFX">
+          <ShortName>loc-diplo-accept-make-alliance-from-ai-leader-any-any-clean.wav</ShortName>
+          <Path>3983355996.wem</Path>
+        </File>
+        <File Id="3983355999" Language="SFX">
+          <ShortName>loc-diplo-accept-make-peace-from-ai-any-any-clean.wav</ShortName>
+          <Path>3983355999.wem</Path>
+        </File>
+        <File Id="3983355998" Language="SFX">
+          <ShortName>loc-diplo-accept-open-borders-from-ai-any-any-clean.wav</ShortName>
+          <Path>3983355998.wem</Path>
+        </File>
+        <File Id="3983355993" Language="SFX">
+          <ShortName>loc-diplo-ai-accept-demand-any-any-clean.wav</ShortName>
+          <Path>3983355993.wem</Path>
+        </File>
+        <File Id="3983355992" Language="SFX">
+          <ShortName>loc-diplo-ai-refuse-demand-any-any-clean.wav</ShortName>
+          <Path>3983355992.wem</Path>
+        </File>
+        <File Id="3983355995" Language="SFX">
+          <ShortName>round9-016-04-clean.wav</ShortName>
+          <Path>3983355995.wem</Path>
+        </File>
+        <File Id="3983355994" Language="SFX">
+          <ShortName>round3v2-017-clean.wav</ShortName>
+          <Path>3983355994.wem</Path>
+        </File>
+        <File Id="3983355989" Language="SFX">
+          <ShortName>round3v2-018-clean.wav</ShortName>
+          <Path>3983355989.wem</Path>
+        </File>
+        <File Id="3983355988" Language="SFX">
+          <ShortName>round4-rewrite-019-clean.wav</ShortName>
+          <Path>3983355988.wem</Path>
+        </File>
+        <File Id="3966578410" Language="SFX">
+          <ShortName>loc-diplo-reject-embassy-from-ai-any-any-clean.wav</ShortName>
+          <Path>3966578410.wem</Path>
+        </File>
+        <File Id="3966578411" Language="SFX">
+          <ShortName>revision-021-clean.wav</ShortName>
+          <Path>3966578411.wem</Path>
+        </File>
+        <File Id="3966578408" Language="SFX">
+          <ShortName>revision-022-clean.wav</ShortName>
+          <Path>3966578408.wem</Path>
+        </File>
+        <File Id="3966578409" Language="SFX">
+          <ShortName>round3v2-023-clean.wav</ShortName>
+          <Path>3966578409.wem</Path>
+        </File>
+        <File Id="3966578414" Language="SFX">
+          <ShortName>round3-rewrite-024-clean.wav</ShortName>
+          <Path>3966578414.wem</Path>
+        </File>
+        <File Id="3966578415" Language="SFX">
+          <ShortName>loc-diplo-warning-dont-settle-near-me-ai-any-any-clean.wav</ShortName>
+          <Path>3966578415.wem</Path>
+        </File>
+        <File Id="3966578412" Language="SFX">
+          <ShortName>loc-diplo-warning-dont-settle-near-me-ai-response-negative-any-any-clean.wav</ShortName>
+          <Path>3966578412.wem</Path>
+        </File>
+        <File Id="3966578413" Language="SFX">
+          <ShortName>round3v2-027-clean.wav</ShortName>
+          <Path>3966578413.wem</Path>
+        </File>
+        <File Id="3966578402" Language="SFX">
+          <ShortName>loc-diplo-warning-dont-settle-near-me-human-response-negative-any-any-clean.wav</ShortName>
+          <Path>3966578402.wem</Path>
+        </File>
+        <File Id="3966578403" Language="SFX">
+          <ShortName>loc-diplo-warning-dont-settle-near-me-human-response-positive-any-any-clean.wav</ShortName>
+          <Path>3966578403.wem</Path>
+        </File>
+        <File Id="3949800823" Language="SFX">
+          <ShortName>asr-retry-030-clean.wav</ShortName>
+          <Path>3949800823.wem</Path>
+        </File>
+        <File Id="3949800822" Language="SFX">
+          <ShortName>loc-diplo-warning-stop-converting-my-cities-ai-response-positive-any-any-clean.wav</ShortName>
+          <Path>3949800822.wem</Path>
+        </File>
+        <File Id="3949800821" Language="SFX">
+          <ShortName>loc-diplo-warning-stop-converting-my-cities-human-response-negative-any-any-clean.wav</ShortName>
+          <Path>3949800821.wem</Path>
+        </File>
+        <File Id="3949800820" Language="SFX">
+          <ShortName>loc-diplo-warning-stop-converting-my-cities-human-response-positive-any-any-clean.wav</ShortName>
+          <Path>3949800820.wem</Path>
+        </File>
+        <File Id="3949800819" Language="SFX">
+          <ShortName>loc-diplo-warning-stop-digging-up-artifacts-ai-response-negative-any-any-clean.wav</ShortName>
+          <Path>3949800819.wem</Path>
+        </File>
+        <File Id="3949800818" Language="SFX">
+          <ShortName>round3-rewrite-035-clean.wav</ShortName>
+          <Path>3949800818.wem</Path>
+        </File>
+        <File Id="3949800817" Language="SFX">
+          <ShortName>loc-diplo-warning-stop-digging-up-artifacts-human-response-negative-any-any-clean.wav</ShortName>
+          <Path>3949800817.wem</Path>
+        </File>
+        <File Id="3949800816" Language="SFX">
+          <ShortName>loc-diplo-warning-stop-digging-up-artifacts-human-response-positive-any-any-clean.wav</ShortName>
+          <Path>3949800816.wem</Path>
+        </File>
+        <File Id="3949800831" Language="SFX">
+          <ShortName>round3v2-038-clean.wav</ShortName>
+          <Path>3949800831.wem</Path>
+        </File>
+        <File Id="3949800830" Language="SFX">
+          <ShortName>loc-diplo-warning-stop-spying-on-me-ai-response-negative-any-any-clean.wav</ShortName>
+          <Path>3949800830.wem</Path>
+        </File>
+        <File Id="3933023108" Language="SFX">
+          <ShortName>round5-040-04-clean.wav</ShortName>
+          <Path>3933023108.wem</Path>
+        </File>
+        <File Id="3933023109" Language="SFX">
+          <ShortName>revision-041-clean.wav</ShortName>
+          <Path>3933023109.wem</Path>
+        </File>
+        <File Id="3933023110" Language="SFX">
+          <ShortName>loc-diplo-warning-stop-spying-on-me-human-response-positive-any-any-clean.wav</ShortName>
+          <Path>3933023110.wem</Path>
+        </File>
+        <File Id="3933023111" Language="SFX">
+          <ShortName>round5-043-06-clean.wav</ShortName>
+          <Path>3933023111.wem</Path>
+        </File>
+        <File Id="3933023104" Language="SFX">
+          <ShortName>round6-044-04-clean.wav</ShortName>
+          <Path>3933023104.wem</Path>
+        </File>
+        <File Id="3933023105" Language="SFX">
+          <ShortName>revision-045-clean.wav</ShortName>
+          <Path>3933023105.wem</Path>
+        </File>
+        <File Id="3933023106" Language="SFX">
+          <ShortName>loc-diplo-warning-too-many-troops-near-me-human-response-positive-any-any-clean.wav</ShortName>
+          <Path>3933023106.wem</Path>
+        </File>
+        <File Id="3933023107" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-clears-barbarian-camps-clean.wav</ShortName>
+          <Path>3933023107.wem</Path>
+        </File>
+        <File Id="3933023116" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-enjoys-war-clean.wav</ShortName>
+          <Path>3933023116.wem</Path>
+        </File>
+        <File Id="3933023117" Language="SFX">
+          <ShortName>round3v2-049-clean.wav</ShortName>
+          <Path>3933023117.wem</Path>
+        </File>
+        <File Id="3782024633" Language="SFX">
+          <ShortName>round3v2-050-clean.wav</ShortName>
+          <Path>3782024633.wem</Path>
+        </File>
+        <File Id="3782024632" Language="SFX">
+          <ShortName>round3v2-051-clean.wav</ShortName>
+          <Path>3782024632.wem</Path>
+        </File>
+        <File Id="3782024635" Language="SFX">
+          <ShortName>round3-rewrite-052-clean.wav</ShortName>
+          <Path>3782024635.wem</Path>
+        </File>
+        <File Id="3782024634" Language="SFX">
+          <ShortName>round3v2-053-clean.wav</ShortName>
+          <Path>3782024634.wem</Path>
+        </File>
+        <File Id="3782024637" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-great-white-fleet-clean.wav</ShortName>
+          <Path>3782024637.wem</Path>
+        </File>
+        <File Id="3782024636" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-high-airpower-clean.wav</ShortName>
+          <Path>3782024636.wem</Path>
+        </File>
+        <File Id="3782024639" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-high-culture-clean.wav</ShortName>
+          <Path>3782024639.wem</Path>
+        </File>
+        <File Id="3782024638" Language="SFX">
+          <ShortName>round3v2-057-clean.wav</ShortName>
+          <Path>3782024638.wem</Path>
+        </File>
+        <File Id="3782024625" Language="SFX">
+          <ShortName>round3v2-058-clean.wav</ShortName>
+          <Path>3782024625.wem</Path>
+        </File>
+        <File Id="3782024624" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-high-income-clean.wav</ShortName>
+          <Path>3782024624.wem</Path>
+        </File>
+        <File Id="3765246918" Language="SFX">
+          <ShortName>target-060-clean.wav</ShortName>
+          <Path>3765246918.wem</Path>
+        </File>
+        <File Id="3765246919" Language="SFX">
+          <ShortName>round3-rewrite-061-clean.wav</ShortName>
+          <Path>3765246919.wem</Path>
+        </File>
+        <File Id="3765246916" Language="SFX">
+          <ShortName>target-062-clean.wav</ShortName>
+          <Path>3765246916.wem</Path>
+        </File>
+        <File Id="3765246917" Language="SFX">
+          <ShortName>round3v2-063-clean.wav</ShortName>
+          <Path>3765246917.wem</Path>
+        </File>
+        <File Id="3765246914" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-high-protect-city-states-clean.wav</ShortName>
+          <Path>3765246914.wem</Path>
+        </File>
+        <File Id="3765246915" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-high-science-clean.wav</ShortName>
+          <Path>3765246915.wem</Path>
+        </File>
+        <File Id="3765246912" Language="SFX">
+          <ShortName>round3v2-066-clean.wav</ShortName>
+          <Path>3765246912.wem</Path>
+        </File>
+        <File Id="3765246913" Language="SFX">
+          <ShortName>round6-067-05-clean.wav</ShortName>
+          <Path>3765246913.wem</Path>
+        </File>
+        <File Id="3765246926" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-low-diplovp-clean.wav</ShortName>
+          <Path>3765246926.wem</Path>
+        </File>
+        <File Id="3765246927" Language="SFX">
+          <ShortName>round6-069-06-clean.wav</ShortName>
+          <Path>3765246927.wem</Path>
+        </File>
+        <File Id="2715231018" Language="SFX">
+          <ShortName>revision-070-clean.wav</ShortName>
+          <Path>2715231018.wem</Path>
+        </File>
+        <File Id="2715231019" Language="SFX">
+          <ShortName>revision-071-clean.wav</ShortName>
+          <Path>2715231019.wem</Path>
+        </File>
+        <File Id="2715231016" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-med-protect-city-states-clean.wav</ShortName>
+          <Path>2715231016.wem</Path>
+        </File>
+        <File Id="2715231017" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-modifier-great-person-advocate-lag-clean.wav</ShortName>
+          <Path>2715231017.wem</Path>
+        </File>
+        <File Id="2715231022" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-modifier-not-competing-minors-clean.wav</ShortName>
+          <Path>2715231022.wem</Path>
+        </File>
+        <File Id="2715231023" Language="SFX">
+          <ShortName>revision-075-clean.wav</ShortName>
+          <Path>2715231023.wem</Path>
+        </File>
+        <File Id="2715231020" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-paranoid-clean.wav</ShortName>
+          <Path>2715231020.wem</Path>
+        </File>
+        <File Id="2715231021" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-protects-city-states-clean.wav</ShortName>
+          <Path>2715231021.wem</Path>
+        </File>
+        <File Id="2715231010" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-agenda-same-government-clean.wav</ShortName>
+          <Path>2715231010.wem</Path>
+        </File>
+        <File Id="2715231011" Language="SFX">
+          <ShortName>revision-079-clean.wav</ShortName>
+          <Path>2715231011.wem</Path>
+        </File>
+        <File Id="2732008605" Language="SFX">
+          <ShortName>revision-080-clean.wav</ShortName>
+          <Path>2732008605.wem</Path>
+        </File>
+        <File Id="2732008604" Language="SFX">
+          <ShortName>round3-context-081-clean.wav</ShortName>
+          <Path>2732008604.wem</Path>
+        </File>
+        <File Id="2732008607" Language="SFX">
+          <ShortName>round6-082-07-clean.wav</ShortName>
+          <Path>2732008607.wem</Path>
+        </File>
+        <File Id="2732008606" Language="SFX">
+          <ShortName>revision-083-clean.wav</ShortName>
+          <Path>2732008606.wem</Path>
+        </File>
+        <File Id="2732008601" Language="SFX">
+          <ShortName>revision-084-clean.wav</ShortName>
+          <Path>2732008601.wem</Path>
+        </File>
+        <File Id="2732008600" Language="SFX">
+          <ShortName>round3-rewrite-085-clean.wav</ShortName>
+          <Path>2732008600.wem</Path>
+        </File>
+        <File Id="2732008603" Language="SFX">
+          <ShortName>round4-rewrite-086-clean.wav</ShortName>
+          <Path>2732008603.wem</Path>
+        </File>
+        <File Id="2732008602" Language="SFX">
+          <ShortName>round4-stable-087-clean.wav</ShortName>
+          <Path>2732008602.wem</Path>
+        </File>
+        <File Id="2732008597" Language="SFX">
+          <ShortName>revision-088-clean.wav</ShortName>
+          <Path>2732008597.wem</Path>
+        </File>
+        <File Id="2732008596" Language="SFX">
+          <ShortName>round3v2-089-clean.wav</ShortName>
+          <Path>2732008596.wem</Path>
+        </File>
+        <File Id="2681675716" Language="SFX">
+          <ShortName>round4-rewrite-090-clean.wav</ShortName>
+          <Path>2681675716.wem</Path>
+        </File>
+        <File Id="2681675717" Language="SFX">
+          <ShortName>round3v2-091-clean.wav</ShortName>
+          <Path>2681675717.wem</Path>
+        </File>
+        <File Id="2681675718" Language="SFX">
+          <ShortName>round4-rewrite-092-clean.wav</ShortName>
+          <Path>2681675718.wem</Path>
+        </File>
+        <File Id="2681675719" Language="SFX">
+          <ShortName>loc-diplo-warning-leader-any-reason-agenda-high-favor-clean.wav</ShortName>
+          <Path>2681675719.wem</Path>
+        </File>
+        <File Id="2681675712" Language="SFX">
+          <ShortName>round3v2-094-clean.wav</ShortName>
+          <Path>2681675712.wem</Path>
+        </File>
+        <File Id="2681675713" Language="SFX">
+          <ShortName>target-095-clean.wav</ShortName>
+          <Path>2681675713.wem</Path>
+        </File>
+        <File Id="2681675714" Language="SFX">
+          <ShortName>round4-stable-096-clean.wav</ShortName>
+          <Path>2681675714.wem</Path>
+        </File>
+        <File Id="2681675715" Language="SFX">
+          <ShortName>revision-097-clean.wav</ShortName>
+          <Path>2681675715.wem</Path>
+        </File>
+        <File Id="2681675724" Language="SFX">
+          <ShortName>loc-diplo-warning-leader-any-reason-agenda-low-culture-clean.wav</ShortName>
+          <Path>2681675724.wem</Path>
+        </File>
+        <File Id="2681675725" Language="SFX">
+          <ShortName>loc-diplo-warning-leader-any-reason-agenda-low-faith-clean.wav</ShortName>
+          <Path>2681675725.wem</Path>
+        </File>
+        <File Id="2698453431" Language="SFX">
+          <ShortName>loc-diplo-warning-leader-any-reason-agenda-low-happiness-clean.wav</ShortName>
+          <Path>2698453431.wem</Path>
+        </File>
+        <File Id="2698453430" Language="SFX">
+          <ShortName>round3v2-101-clean.wav</ShortName>
+          <Path>2698453430.wem</Path>
+        </File>
+        <File Id="2698453429" Language="SFX">
+          <ShortName>loc-diplo-warning-leader-any-reason-agenda-low-industry-clean.wav</ShortName>
+          <Path>2698453429.wem</Path>
+        </File>
+        <File Id="2698453428" Language="SFX">
+          <ShortName>revision-103-clean.wav</ShortName>
+          <Path>2698453428.wem</Path>
+        </File>
+        <File Id="2698453427" Language="SFX">
+          <ShortName>round4-stable-104-clean.wav</ShortName>
+          <Path>2698453427.wem</Path>
+        </File>
+        <File Id="2698453426" Language="SFX">
+          <ShortName>round4-stable-105-clean.wav</ShortName>
+          <Path>2698453426.wem</Path>
+        </File>
+        <File Id="2698453425" Language="SFX">
+          <ShortName>round3-asr-text-106-clean.wav</ShortName>
+          <Path>2698453425.wem</Path>
+        </File>
+        <File Id="2698453424" Language="SFX">
+          <ShortName>round3v2-107-clean.wav</ShortName>
+          <Path>2698453424.wem</Path>
+        </File>
+        <File Id="2698453439" Language="SFX">
+          <ShortName>round4-stable-108-clean.wav</ShortName>
+          <Path>2698453439.wem</Path>
+        </File>
+        <File Id="2698453438" Language="SFX">
+          <ShortName>round4-stable-109-clean.wav</ShortName>
+          <Path>2698453438.wem</Path>
+        </File>
+        <File Id="2648120574" Language="SFX">
+          <ShortName>round4-stable-110-clean.wav</ShortName>
+          <Path>2648120574.wem</Path>
+        </File>
+        <File Id="2648120575" Language="SFX">
+          <ShortName>loc-diplo-warning-leader-any-reason-agenda-modifier-wonder-advocate-lead-clean.wav</ShortName>
+          <Path>2648120575.wem</Path>
+        </File>
+        <File Id="2648120572" Language="SFX">
+          <ShortName>round3v2-112-clean.wav</ShortName>
+          <Path>2648120572.wem</Path>
+        </File>
+        <File Id="2648120573" Language="SFX">
+          <ShortName>round3-rewrite-113-clean.wav</ShortName>
+          <Path>2648120573.wem</Path>
+        </File>
+        <File Id="2648120570" Language="SFX">
+          <ShortName>round3v2-114-clean.wav</ShortName>
+          <Path>2648120570.wem</Path>
+        </File>
+        <File Id="2648120571" Language="SFX">
+          <ShortName>round3-rewrite-115-clean.wav</ShortName>
+          <Path>2648120571.wem</Path>
+        </File>
+        <File Id="2648120568" Language="SFX">
+          <ShortName>round3v2-116-clean.wav</ShortName>
+          <Path>2648120568.wem</Path>
+        </File>
+        <File Id="2648120569" Language="SFX">
+          <ShortName>revision-117-clean.wav</ShortName>
+          <Path>2648120569.wem</Path>
+        </File>
+        <File Id="2648120566" Language="SFX">
+          <ShortName>loc-diplo-accept-renew-alliance-from-ai-any-any-clean.wav</ShortName>
+          <Path>2648120566.wem</Path>
+        </File>
+        <File Id="2648120567" Language="SFX">
+          <ShortName>round3-rewrite-119-clean.wav</ShortName>
+          <Path>2648120567.wem</Path>
+        </File>
+        <File Id="2664898129" Language="SFX">
+          <ShortName>loc-diplo-accept-renew-alliance-from-human-any-any-clean.wav</ShortName>
+          <Path>2664898129.wem</Path>
+        </File>
+        <File Id="2664898128" Language="SFX">
+          <ShortName>loc-diplo-reject-renew-alliance-from-human-any-any-clean.wav</ShortName>
+          <Path>2664898128.wem</Path>
+        </File>
+        <File Id="2664898131" Language="SFX">
+          <ShortName>loc-diplo-kudo-leader-any-reason-standard-diplomatic-same-secret-society-clean.wav</ShortName>
+          <Path>2664898131.wem</Path>
+        </File>
+        <File Id="2664898130" Language="SFX">
+          <ShortName>loc-diplo-warning-leader-any-reason-standard-diplomatic-different-secret-society-clean.wav</ShortName>
+          <Path>2664898130.wem</Path>
+        </File>
+        <File Id="2664898133" Language="SFX">
+          <ShortName>loc-diplo-deal-leader-trade-refused-neutral-1-clean.wav</ShortName>
+          <Path>2664898133.wem</Path>
+        </File>
+        <File Id="2664898132" Language="SFX">
+          <ShortName>round3v2-125-clean.wav</ShortName>
+          <Path>2664898132.wem</Path>
+        </File>
+        <File Id="2664898135" Language="SFX">
+          <ShortName>round3v2-126-clean.wav</ShortName>
+          <Path>2664898135.wem</Path>
+        </File>
+        <File Id="2664898134" Language="SFX">
+          <ShortName>round3v2-127-clean.wav</ShortName>
+          <Path>2664898134.wem</Path>
+        </File>
+        <File Id="2664898137" Language="SFX">
+          <ShortName>round5-128-12-clean.wav</ShortName>
+          <Path>2664898137.wem</Path>
+        </File>
+        <File Id="2664898136" Language="SFX">
+          <ShortName>loc-diplo-deal-intro-ai-clean.wav</ShortName>
+          <Path>2664898136.wem</Path>
+        </File>
+        <File Id="2614565272" Language="SFX">
+          <ShortName>loc-diplo-deal-leader-demand-clean.wav</ShortName>
+          <Path>2614565272.wem</Path>
+        </File>
+        <File Id="2614565273" Language="SFX">
+          <ShortName>round5-131-13-clean.wav</ShortName>
+          <Path>2614565273.wem</Path>
+        </File>
+        <File Id="2614565274" Language="SFX">
+          <ShortName>round6-132-shorter-leading-silence-clean.wav</ShortName>
+          <Path>2614565274.wem</Path>
+        </File>
+        <File Id="2614565275" Language="SFX">
+          <ShortName>loc-diplo-deal-leader-gift-clean.wav</ShortName>
+          <Path>2614565275.wem</Path>
+        </File>
+        <File Id="2614565276" Language="SFX">
+          <ShortName>round3-asr-text-134-clean.wav</ShortName>
+          <Path>2614565276.wem</Path>
+        </File>
+        <File Id="2614565277" Language="SFX">
+          <ShortName>loc-diplo-deal-unacceptable-deal-clean.wav</ShortName>
+          <Path>2614565277.wem</Path>
+        </File>
+        <File Id="2614565278" Language="SFX">
+          <ShortName>round4-rewrite-136-clean.wav</ShortName>
+          <Path>2614565278.wem</Path>
+        </File>
+        <File Id="2614565279" Language="SFX">
+          <ShortName>loc-diplo-demand-intro-clean.wav</ShortName>
+          <Path>2614565279.wem</Path>
+        </File>
+      </IncludedMemoryFiles>
+    </SoundBank>
+  </SoundBanks>
+</SoundBanksInfo>

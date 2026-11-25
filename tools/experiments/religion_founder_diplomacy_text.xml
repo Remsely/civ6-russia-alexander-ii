@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- EXPERIMENT ONLY: not loaded by the mod. A religion's founder may not have
+     sent the unit; the reason intentionally describes rivalry, not blame. -->
+<GameData>
+  <LocalizedText>
+    <Row Tag="LOC_DIPLO_MODIFIER_REMSELY_REL_RIVALRY" Language="en_US">
+      <Text>Religious rivalry</Text>
+    </Row>
+    <Row Tag="LOC_DIPLO_MODIFIER_REMSELY_REL_RIVALRY" Language="ru_RU">
+      <Text>Религиозное соперничество</Text>
+    </Row>
+  </LocalizedText>
+</GameData>

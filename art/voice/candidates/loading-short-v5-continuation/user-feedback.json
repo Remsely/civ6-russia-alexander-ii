@@ -1,0 +1,5 @@
+{
+  "status": "rejected by user",
+  "feedback": "Так голос звучит хуже. Нужен тот же голос диктора, как в предыдущей удачной записи.",
+  "next_experiment": "original reference/seed/steps/mode; min_len 205 only"
+}

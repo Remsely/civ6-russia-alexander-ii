@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- EXPERIMENT ONLY: this file is not connected to the mod. -->
+<GameData>
+  <LocalizedText>
+    <Row Tag="LOC_DIPLO_MODIFIER_REMSELY_REL_COMPONENT75" Language="en_US">
+      <Text>Religious interference</Text>
+    </Row>
+    <Row Tag="LOC_DIPLO_MODIFIER_REMSELY_REL_COMPONENT75" Language="ru_RU">
+      <Text>Религиозное вмешательство</Text>
+    </Row>
+  </LocalizedText>
+</GameData>

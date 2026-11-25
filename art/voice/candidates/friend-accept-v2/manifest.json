@@ -1,0 +1,42 @@
+[
+  {
+    "key": "ACCEPT_DECLARE_FRIEND_FROM_AI",
+    "variant": 1,
+    "text": "Благодарю. Россия ценит такую дружбу.",
+    "synthesis_text": "Благодарю. Россия це́нит такую дружбу.",
+    "prompt": "(A mature male Russian emperor speaks calmly and quietly, composed and dignified, natural conversational acting. Gentle sincere emphasis on the verb ценит, the following words такую дружбу are unstressed and flow softly downward. No dramatic emphasis.)",
+    "seed": 311,
+    "steps": 32,
+    "cfg": 2,
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "seconds": 3.2,
+    "raw": "friend-accept-1-raw.wav",
+    "clean": "friend-accept-1-clean.wav",
+    "raw_sha256": "aeee18b9afeabfeb4ac7cb95252c718e19f7d35862cd73c672416b41563d4d17",
+    "clean_sha256": "8657883244c1b5d1fe0abc8ecee411f4459b3ef2c97e003e255e45025514b735",
+    "status": "rejected by user: no desired emphasis on ценит",
+    "reason": "v1 user rejected emphasis on такую; desired emphasis on ценит",
+    "user_feedback": "Сильный акцент на такую; подача неравномерная"
+  },
+  {
+    "key": "ACCEPT_DECLARE_FRIEND_FROM_AI",
+    "variant": 2,
+    "text": "Благодарю. Россия ценит такую дружбу.",
+    "synthesis_text": "Благодарю. Россия це́нит такую дружбу.",
+    "prompt": "(A mature male Russian emperor speaks calmly and quietly, composed and dignified, natural conversational acting. Gentle sincere emphasis on the verb ценит, the following words такую дружбу are unstressed and flow softly downward. No dramatic emphasis.)",
+    "seed": 731,
+    "steps": 32,
+    "cfg": 2,
+    "reference": "art\\voice\\selected\\first-meet-clean.wav",
+    "reference_sha256": "f28f599c7ccb35999658c2e18cfccce44f6bbb00aed2f206b4734a9bed9f89e6",
+    "seconds": 2.72,
+    "raw": "friend-accept-2-raw.wav",
+    "clean": "friend-accept-2-clean.wav",
+    "raw_sha256": "6e2fa4194edc29a5da6c2557dab9df234afa47ec44a56414f91f5346ef21a0e3",
+    "clean_sha256": "6af3c170ba95129408774ef32d0c240c0c89a0c10ca4e2316ba0dc1856fce64f",
+    "status": "rejected by user: no desired emphasis on ценит",
+    "reason": "v1 user rejected emphasis on такую; desired emphasis on ценит",
+    "user_feedback": "Сильный акцент на такую; подача неравномерная"
+  }
+]
