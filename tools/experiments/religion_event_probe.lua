@@ -2,7 +2,14 @@
 -- This file is not included in the release mod and never writes game state.
 -- Output is bounded and only emitted for actual spread-operation events.
 local remaining = 8
-local operation = UnitOperationTypes.SPREAD_RELIGION
+-- UnitOperationTypes.SPREAD_RELIGION was nil in gameplay Lua in an actual
+-- session. UnitOperationStarted carries the operation hash, not the row index.
+-- This row's Hash matches the examined GameCore build's registered operation;
+-- event delivery and availability of this field in gameplay remain unproven.
+local operations = GameInfo and GameInfo.UnitOperations
+local definition = operations and operations["UNITOPERATION_SPREAD_RELIGION"]
+local operation = definition and definition.Hash
+if type(operation) ~= "number" then operation = nil end
 
 local function atom(value)
     if value == nil then return "nil" end

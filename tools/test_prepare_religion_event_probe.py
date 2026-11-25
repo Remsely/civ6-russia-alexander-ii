@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 from pathlib import Path
 
 import pytest
@@ -69,3 +70,28 @@ def test_running_game_refuses_install_before_modifying_files(sandbox, monkeypatc
         probe.install(candidate)
     assert (target / source.name).read_bytes() == source.read_bytes()
     assert not (target / probe.RELATIVE).exists()
+
+
+def test_restore_accepts_exact_known_legacy_probe(sandbox, monkeypatch):
+    source, target = sandbox
+    candidate = probe.stage()
+    probe.install(candidate)
+    legacy = b"previous known read-only probe"
+    target_probe = target / probe.RELATIVE
+    target_probe.write_bytes(legacy)
+    monkeypatch.setattr(probe, "LEGACY_PROBE_SHA256", frozenset({hashlib.sha256(legacy).hexdigest()}))
+    probe.restore(candidate)
+    assert (target / source.name).read_bytes() == source.read_bytes()
+    assert not target_probe.exists()
+
+
+def test_restore_refuses_unknown_modified_probe(sandbox):
+    source, target = sandbox
+    candidate = probe.stage()
+    probe.install(candidate)
+    target_probe = target / probe.RELATIVE
+    target_probe.write_text("modified externally")
+    with pytest.raises(SystemExit, match="differs"):
+        probe.restore(candidate)
+    assert target_probe.read_text() == "modified externally"
+    assert (target / source.name).read_bytes() == candidate.read_bytes()

@@ -23,6 +23,12 @@ SOURCE = ROOT / "mod" / "RemselysAlexanderII.modinfo"
 PROBE = ROOT / "tools" / "experiments" / "religion_event_probe.lua"
 STAGE = ROOT / "art" / "build" / "religion-probe"
 RELATIVE = "Lua/RemselysAlexanderII_ReligionProbe.lua"
+# Exact digest of the read-only probe installed for the 17 Nov 2026 trial.
+# Its operation constant was nil in gameplay; retain its identity solely so
+# that `--restore` can safely remove it after the source probe is updated.
+LEGACY_PROBE_SHA256 = frozenset({
+    "b053375b8a029408f77fda45489c3c7526ac29e80e665f05ce6600de36086157",
+})
 
 
 def digest(path: Path) -> str:
@@ -90,7 +96,8 @@ def restore(candidate: Path) -> None:
     temporary = target_info.with_suffix(".modinfo.remsely-probe.tmp")
     if not target_info.is_file() or digest(target_info) != digest(candidate):
         raise SystemExit("Installed modinfo differs from staged probe; no files changed.")
-    if not target_probe.is_file() or digest(target_probe) != digest(PROBE) or temporary.exists():
+    recognized_probe_hashes = LEGACY_PROBE_SHA256 | {digest(PROBE)}
+    if not target_probe.is_file() or digest(target_probe) not in recognized_probe_hashes or temporary.exists():
         raise SystemExit("Installed probe differs or temporary path exists; no files changed.")
     temporary.write_bytes((STAGE / "original.modinfo").read_bytes())
     os.replace(temporary, target_info)
